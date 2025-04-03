@@ -1,0 +1,31 @@
+# WordPress specific
+wp-config.php
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/backup-db/
+wp-content/cache/
+wp-content/backups/
+
+# Database credentials
+includes/functions/db.php
+
+# Environment specific
+.env
+.env.*
+
+# Development files
+node_modules/
+vendor/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Logs and temporary files
+*.log
+debug.log
+error_log
+.DS_Store
+Thumbs.db
+
+# Compiled assets
+assets/dist/

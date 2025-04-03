@@ -1,0 +1,51 @@
+As we discussed, this should be like a calendar-type thing where different events can be set up, as well as the start and end of the project. Status can be taken out here. We also need to discuss here that the schedule is linked to the agent order.
+
+Class Type: I am sending a list along with the class types. Class Status: If you load a class, it will always be a new class, because a restart will just restart an existing class. So there shouldn't be a status on op creation, but rather on class management. In class management, you should be able to change a class's status from stop to then restart it when it begins again. Dates: Class can stop and restart more than once a year. The dates must allow for more than one stop date to be entered and more than one restart date. Subjects: Please provide me with a list of class subjects.
+
+Exam class: If you say it's an exam class, you should be allowed to state for each learner who is taking exams and who is not. Not everyone in the class necessarily takes exams.
+
+Exam class: The notes must be operational notes about the class. I will attach a list of suggestions.
+
+Exam class: Visit dates should allow for more than one date, and with each date, you must be required to upload a report.
+
+Learners: Learners must be chosen and then further "modified" in the class. The current status tab that we have in the learner function will be pulled through from the class. So that part you will have to be able to edit in class. Backup agent: This can happen a few times, so you need to be able to choose a date and an agent for that date. Class agent: It happens that we can replace an agent, so if we change the class agent, he must keep the history of the first class agent. You also need to choose a day from when the new agent will take over. SORS/Learnerpacks delivery: We can take this out, it will be part of events later.
+
+
+#########################
+
+Class Type: I am sending a list along with the class types. Class Status: If you load a class, it will always be a new class, because a restart will just restart an existing class. So there shouldn't be a status on op creation, but rather on class management. In class management, you should be able to change a class's status from stop to then restart it when it begins again. Dates: Class can stop and restart more than once a year. The dates must allow for more than one stop date to be entered and more than one restart date. Subjects: Please provide me with a list of class subjects.
+
+## Class Type ( Dropdown )
+AET
+GETC
+Business Admin
+Package
+Joiner
+EEP
+Skills Programs
+Amended Senior Certificate
+
+## Subjects ( Dropdown )
+AET Communication
+AET Numeracy
+AET: GETC
+Business Administration NQF 2
+Business Administration NQF 3
+Business Administration NQF 4
+Employee Enhancement Program
+Skills Program
+Mixed Subjects
+Amended Senior Certificate
+
+## Class notes ( Dropdown )
+Agent Absent
+Client Cancelled
+Poor attendance
+Learners behind schedule
+Learners unhappy
+Client unhappy
+Learners too fast
+Class on track
+Bad QA report
+Good QA report
+Incomplete workbooks
