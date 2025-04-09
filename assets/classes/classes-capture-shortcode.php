@@ -7,36 +7,6 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 
 <!-- Classes Capture Form -->
-<style>
-   /* Calendar Event Type Styling */
-   .event-type-class {
-      background-color: #4285f4 !important;
-      border-color: #4285f4 !important;
-   }
-   .event-type-exam {
-      background-color: #ea4335 !important;
-      border-color: #ea4335 !important;
-   }
-   .event-type-assessment {
-      background-color: #fbbc05 !important;
-      border-color: #fbbc05 !important;
-   }
-   .event-type-break {
-      background-color: #34a853 !important;
-      border-color: #34a853 !important;
-   }
-   #class-calendar {
-      background-color: #fff;
-      border-radius: 4px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-   }
-   .fc-event {
-      cursor: pointer;
-   }
-   .fc-timegrid-event .fc-event-main {
-      padding: 4px;
-   }
-</style>
 <form id="classes-form" class="needs-validation ydcoza-compact-form" novalidate method="POST" enctype="multipart/form-data">
    <!-- Hidden Auto-generated Class ID -->
    <input type="hidden" id="class_id" name="class_id" value="auto-generated">
@@ -185,27 +155,36 @@
                      <form id="eventForm">
                         <input type="hidden" id="eventId">
                         <div class="mb-3">
-                           <label class="form-label">Event Type</label>
+                           <label class="form-label">Class Type</label>
                            <select class="form-select form-select-sm" id="eventType" required>
-                              <option value="class">Regular Class</option>
-                              <option value="exam">Examination</option>
-                              <option value="assessment">Assessment</option>
-                              <option value="break">Break Period</option>
+                              <option value="">Select</option>
+                              <option value="AET">AET</option>
+                              <option value="GETC">GETC</option>
+                              <option value="Business Admin">Business Admin</option>
+                              <option value="Package">Package</option>
+                              <option value="Joiner">Joiner</option>
+                              <option value="EEP">EEP</option>
+                              <option value="Skills Programs">Skills Programs</option>
+                              <option value="Amended Senior Certificate">Amended Senior Certificate</option>
                            </select>
+                           <div class="invalid-feedback">Please select a class type.</div>
+                           <div class="valid-feedback">Looks good!</div>
                         </div>
                         <div class="mb-3">
                            <label class="form-label">Description</label>
                            <textarea class="form-control form-control-sm" id="eventDescription" required></textarea>
+                           <div class="invalid-feedback">Please enter a description.</div>
+                           <div class="valid-feedback">Looks good!</div>
                         </div>
                         <div class="row">
                            <div class="col-md-6 mb-3">
                               <label class="form-label">Date</label>
-                              <input type="date" class="form-control form-control-sm" id="eventDate" readonly required>
+                              <input type="date" class="form-control form-control-sm readonly-field" id="eventDate" readonly required>
                               <small class="text-muted">Date is set from calendar selection</small>
                            </div>
                            <div class="col-md-6 mb-3">
                               <label class="form-label">Day</label>
-                              <input type="text" class="form-control form-control-sm" id="eventDay" readonly required>
+                              <input type="text" class="form-control form-control-sm readonly-field" id="eventDay" readonly required>
                               <small class="text-muted">Day is automatically determined</small>
                            </div>
                         </div>
@@ -215,12 +194,16 @@
                               <select class="form-select form-select-sm" id="eventStartTime" required>
                                  <!-- Will be populated via JavaScript -->
                               </select>
+                              <div class="invalid-feedback">Please select a start time.</div>
+                              <div class="valid-feedback">Looks good!</div>
                            </div>
                            <div class="col-md-6 mb-3">
                               <label class="form-label">End Time</label>
                               <select class="form-select form-select-sm" id="eventEndTime" required>
                                  <!-- Will be populated via JavaScript -->
                               </select>
+                              <div class="invalid-feedback">Please select an end time.</div>
+                              <div class="valid-feedback">Looks good!</div>
                            </div>
                         </div>
                      </form>
@@ -735,6 +718,8 @@
 
 <script>
    jQuery(document).ready(function($) {
+     // Variable to track if calendar has been properly initialized
+     let calendarInitialized = false;
      // 1. Generate 30-min increments from 6:00 AM to 8:00 PM
      function generateTimeOptions() {
        let optionsHTML = '';
@@ -805,11 +790,17 @@
      // Initialize FullCalendar
      const calendarEl = document.getElementById('class-calendar');
      const calendar = new FullCalendar.Calendar(calendarEl, {
-       initialView: 'timeGridWeek',
+       initialView: 'dayGridMonth', // Changed from timeGridWeek to dayGridMonth
        headerToolbar: {
          left: 'prev,next today',
          center: 'title',
          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+       },
+       buttonText: {
+         today: 'Today',
+         month: 'Month',
+         week: 'Week',
+         day: 'Day'
        },
        height: 500,
        allDaySlot: false,
@@ -830,6 +821,9 @@
          return ['event-type-' + arg.event.extendedProps.type];
        },
        select: function(arg) {
+         // Reset validation state
+         resetValidationState();
+
          // Open modal for new event
          const startDate = formatDate(arg.start);
          const endDate = formatDate(arg.end);
@@ -837,7 +831,7 @@
 
          // Set default values in the form
          $('#eventId').val(''); // New event
-         $('#eventType').val('class');
+         $('#eventType').val(''); // Empty to force selection
          $('#eventDescription').val('');
          $('#eventDate').val(startDate);
          $('#eventDay').val(dayOfWeek);
@@ -868,12 +862,15 @@
          }
        },
        eventClick: function(arg) {
+         // Reset validation state
+         resetValidationState();
+
          // Open modal with existing event data
          const event = arg.event;
          const dayOfWeek = event.extendedProps.day || getDayOfWeek(event.start);
 
          $('#eventId').val(event.id);
-         $('#eventType').val(event.extendedProps.type || 'class');
+         $('#eventType').val(event.extendedProps.type || ''); // Empty if not set to force selection
          $('#eventDescription').val(event.title);
          $('#eventDate').val(formatDate(event.start));
          $('#eventDay').val(dayOfWeek);
@@ -911,6 +908,7 @@
        }
      });
 
+     // Render the calendar
      calendar.render();
 
      // Initialize hidden fields
@@ -920,6 +918,70 @@
      calendar.on('eventChange', function() {
        updateHiddenFields();
      });
+
+     // Function to properly initialize calendar when it becomes visible
+     function initializeCalendarInTab() {
+       if (!calendarInitialized) {
+         calendar.updateSize();
+         calendarInitialized = true;
+         console.log('Calendar fully initialized');
+       } else {
+         // Even if already initialized, update size to ensure proper display
+         calendar.updateSize();
+         console.log('Calendar size updated');
+       }
+     }
+
+     // Make the initialization function globally available
+     window.initializeClassCalendar = function() {
+       console.log('Manual calendar initialization triggered');
+       setTimeout(function() {
+         initializeCalendarInTab();
+       }, 100);
+     };
+
+     // Specifically target the vertical tab that contains our calendar
+     $(document).on('click', '[href="#vertical-tabpanel-6"], [data-bs-target="#vertical-tabpanel-6"]', function() {
+       console.log('Calendar tab clicked');
+       // Small delay to let the tab become visible
+       setTimeout(function() {
+         initializeCalendarInTab();
+       }, 100);
+     });
+
+     // Also listen for any tab changes that might affect our calendar
+     $(document).on('click', '[data-toggle="tab"]', function() {
+       if ($('#class-calendar').is(':visible')) {
+         console.log('Calendar became visible via tab change');
+         setTimeout(function() {
+           initializeCalendarInTab();
+         }, 100);
+       }
+     });
+
+     // Check if we're already on the calendar tab on page load
+     if (window.location.hash === '#vertical-tabpanel-6' || $('#vertical-tabpanel-6').is(':visible')) {
+       console.log('Calendar tab is active on page load');
+       setTimeout(function() {
+         initializeCalendarInTab();
+       }, 200);
+     }
+
+     // Listen for Bootstrap's tab shown event
+     $(document).on('shown.bs.tab', function(e) {
+       var target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
+       if (target === '#vertical-tabpanel-6') {
+         console.log('Bootstrap tab event: calendar tab shown');
+         setTimeout(function() {
+           initializeCalendarInTab();
+         }, 100);
+       }
+     });
+
+     // Function to reset validation state
+     function resetValidationState() {
+       $('#eventType, #eventDescription, #eventStartTime, #eventEndTime').removeClass('is-invalid is-valid');
+     }
 
      // Function to close modal properly
      function closeModal() {
@@ -933,6 +995,9 @@
        if (backdrop) {
          backdrop.parentNode.removeChild(backdrop);
        }
+
+       // Reset validation state
+       resetValidationState();
      }
 
 
@@ -953,7 +1018,42 @@
        const endTime = $('#eventEndTime').val();
 
        // Validate form
-       if (!description || !eventDate || !startTime || !endTime) {
+       let isValid = true;
+
+       // Check each required field and add visual indication
+       if (!eventType) {
+         $('#eventType').addClass('is-invalid').removeClass('is-valid');
+         isValid = false;
+       } else {
+         $('#eventType').removeClass('is-invalid').addClass('is-valid');
+       }
+
+       if (!description) {
+         $('#eventDescription').addClass('is-invalid').removeClass('is-valid');
+         isValid = false;
+       } else {
+         $('#eventDescription').removeClass('is-invalid').addClass('is-valid');
+       }
+
+       if (!startTime) {
+         $('#eventStartTime').addClass('is-invalid').removeClass('is-valid');
+         isValid = false;
+       } else {
+         $('#eventStartTime').removeClass('is-invalid').addClass('is-valid');
+       }
+
+       if (!endTime) {
+         $('#eventEndTime').addClass('is-invalid').removeClass('is-valid');
+         isValid = false;
+       } else {
+         $('#eventEndTime').removeClass('is-invalid').addClass('is-valid');
+       }
+
+       if (!eventDate) {
+         isValid = false;
+       }
+
+       if (!isValid) {
          alert('Please fill in all required fields');
          return;
        }

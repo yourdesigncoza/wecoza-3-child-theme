@@ -17,8 +17,8 @@ html {
     font-weight: 400 !important;;
 }
 body,
-input, 
-select, 
+input,
+select,
 textarea {
     font-weight: 400 !important;;
     font-size: 15px !important;;
@@ -33,7 +33,7 @@ textarea {
 body .inside-header {
     padding: 0 2.5rem !important;
 }
-.main-title a, 
+.main-title a,
 .main-title a:hover {
     color: #6e5dc6 !important;
 }
@@ -96,16 +96,16 @@ body .inside-header {
     margin-bottom: .3rem;
     font-size: 0.8em;
 }
-.ydcoza-compact-form input[type=email], 
-.ydcoza-compact-form input[type=number], 
-.ydcoza-compact-form input[type=password], 
-.ydcoza-compact-form input[type=search], 
-.ydcoza-compact-form input[type=tel], 
-.ydcoza-compact-form input[type=text], 
+.ydcoza-compact-form input[type=email],
+.ydcoza-compact-form input[type=number],
+.ydcoza-compact-form input[type=password],
+.ydcoza-compact-form input[type=search],
+.ydcoza-compact-form input[type=tel],
+.ydcoza-compact-form input[type=text],
 .ydcoza-compact-form input[type=url],
 .ydcoza-compact-form input[type=file],
 .ydcoza-compact-form input[type=date],
-.ydcoza-compact-form select, 
+.ydcoza-compact-form select,
 .ydcoza-compact-form textarea {
     border: 2px solid #f3f0ff;
     border-radius: 0;
@@ -235,7 +235,7 @@ body .table-hover>tbody>tr:hover>* {
 
 .gtabs.demo {
   overflow: hidden;
-  position: relative; 
+  position: relative;
   background-color: white;
 }
 
@@ -333,15 +333,15 @@ tr > td > a > i.bi.bi-dash {
     width: 5px;
     left: 5px;
 }
-.nav-item.show .nav-tabs .nav-link::after, 
+.nav-item.show .nav-tabs .nav-link::after,
 .nav-tabs .nav-link.active::after {
     background-color: #6e5dc6 !important;
 }
-.nav-tabs .nav-item.show .nav-link, 
+.nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link {
     text-decoration: none !important;
 }
-.nav-tabs .nav-item.show .nav-link, 
+.nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
     color: #6e5dc6 !important;
     text-decoration: none !important;
@@ -359,7 +359,7 @@ tr > td > a > i.bi.bi-dash {
 /*-----------------------------------------------*/
 
 /* ##############################
-### Theme Overrides 
+### Theme Overrides
 ############################## */
 body>main.container, body>footer {
     max-width: 768px;
@@ -381,9 +381,9 @@ input.svelte-1mhtq7j.svelte-1mhtq7j.svelte-1mhtq7j:checked, input.svelte-1mhtq7j
     border-color: #7ecba0 !important;
     background-color: #7ecba0 !important;
 }
-.gradio-container-4-39-0 .prose ul ul, 
-.gradio-container-4-39-0 .prose ul ol, 
-.gradio-container-4-39-0 .prose ol ol, 
+.gradio-container-4-39-0 .prose ul ul,
+.gradio-container-4-39-0 .prose ul ol,
+.gradio-container-4-39-0 .prose ol ol,
 .gradio-container-4-39-0 .prose ol ul {
     font-size: 100% !important;
 }
@@ -1983,6 +1983,220 @@ code {
 .bd-example-toast-container {
     min-height: 240px;
     background-color: #091e420f
+}
+
+/*------------------YDCOZA-----------------------*/
+/* Calendar Styling                                */
+/*-----------------------------------------------*/
+/* Calendar Class Type Styling */
+.event-type-AET {
+   background-color: #4285f4 !important;
+   border-color: #4285f4 !important;
+   color: #fff !important;
+}
+.event-type-GETC {
+   background-color: #ea4335 !important;
+   border-color: #ea4335 !important;
+   color: #fff !important;
+}
+.event-type-Business\.Admin {
+   background-color: #fbbc05 !important;
+   border-color: #fbbc05 !important;
+   color: #fff !important;
+}
+.event-type-Package {
+   background-color: #34a853 !important;
+   border-color: #34a853 !important;
+   color: #fff !important;
+}
+.event-type-Joiner {
+   background-color: #673ab7 !important;
+   border-color: #673ab7 !important;
+   color: #fff !important;
+}
+.event-type-EEP {
+   background-color: #3f51b5 !important;
+   border-color: #3f51b5 !important;
+   color: #fff !important;
+}
+.event-type-Skills\.Programs {
+   background-color: #009688 !important;
+   border-color: #009688 !important;
+   color: #fff !important;
+}
+.event-type-Amended\.Senior\.Certificate {
+   background-color: #795548 !important;
+   border-color: #795548 !important;
+   color: #fff !important;
+}
+
+/* Calendar theme customization with accent color #f3f0ff */
+#class-calendar {
+   background-color: #fff;
+   border-radius: 4px;
+   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Calendar header styling */
+.fc-header-toolbar {
+   background-color: #f3f0ff;
+   padding: 8px;
+   border-radius: 4px 4px 0 0;
+   margin-bottom: 0 !important;
+}
+
+/* Month view day number styling */
+.fc-daygrid-day-number {
+   color: #6e5dc6;
+   font-weight: 500;
+}
+
+/* Month view header (day names) */
+.fc-col-header-cell {
+   background-color: #f9f8ff;
+   font-weight: 600;
+}
+
+/* Month view grid lines */
+.fc-daygrid-day {
+   border-color: #e5e0ff !important;
+}
+
+/* Today button styling */
+.fc-today-button {
+   background-color: #f3f0ff !important;
+   border-color: #e5e0ff !important;
+   color: #333 !important;
+   text-transform: capitalize !important;
+   font-weight: 500 !important;
+}
+
+/* Active view button styling */
+.fc-button-active {
+   background-color: #6e5dc6 !important;
+   border-color: #6e5dc6 !important;
+   color: white !important;
+   box-shadow: none !important;
+}
+
+/* View buttons (month, week, day) */
+.fc-dayGridMonth-button,
+.fc-timeGridWeek-button,
+.fc-timeGridDay-button {
+   background-color: #f3f0ff !important;
+   border-color: #e5e0ff !important;
+   color: #333 !important;
+   text-transform: capitalize !important;
+   font-weight: 500 !important;
+}
+
+/* View buttons hover */
+.fc-dayGridMonth-button:hover,
+.fc-timeGridWeek-button:hover,
+.fc-timeGridDay-button:hover {
+   background-color: #e5e0ff !important;
+   border-color: #d5d0ff !important;
+}
+
+/* Calendar today highlight */
+.fc-day-today {
+   background-color: rgba(243, 240, 255, 0.3) !important;
+}
+
+/* Month title styling */
+.fc-toolbar-title {
+   color: #6e5dc6;
+   font-weight: 600;
+}
+
+/* Other month days styling */
+.fc-day-other {
+   background-color: #f9f8ff;
+}
+
+/* Weekend days styling */
+.fc-day-sat, .fc-day-sun {
+   background-color: #f9f8ff;
+}
+
+/* Month view hover effect */
+.fc-day:hover {
+   background-color: rgba(243, 240, 255, 0.2);
+}
+
+/* Navigation buttons styling */
+.fc-prev-button, .fc-next-button {
+   background-color: #f3f0ff !important;
+   border-color: #e5e0ff !important;
+   color: #333 !important;
+}
+
+/* Navigation arrows styling */
+.fc-icon-chevron-left:before,
+.fc-icon-chevron-right:before {
+   color: #333 !important;
+}
+
+/* Button hover states */
+.fc-button:hover {
+   background-color: #e5e0ff !important;
+   border-color: #d5d0ff !important;
+}
+
+/* Button focus states */
+.fc-button:focus {
+   box-shadow: 0 0 0 0.2rem rgba(243, 240, 255, 0.5) !important;
+}
+
+/* Modal styling to match theme */
+#eventModal .modal-header {
+   background-color: #f3f0ff;
+   border-bottom: 1px solid #e5e0ff;
+}
+
+#eventModal .modal-footer {
+   background-color: #f9f8ff;
+   border-top: 1px solid #e5e0ff;
+}
+
+#saveEvent {
+   background-color: #f3f0ff;
+   border-color: #e5e0ff;
+   color: #333;
+}
+
+#saveEvent:hover {
+   background-color: #e5e0ff;
+   border-color: #d5d0ff;
+}
+
+#eventModal .form-select:focus,
+#eventModal .form-control:focus {
+   border-color: #e5e0ff;
+   box-shadow: 0 0 0 0.2rem rgba(243, 240, 255, 0.25);
+}
+
+/* Readonly fields styling */
+.readonly-field,
+input[readonly],
+select[readonly],
+textarea[readonly] {
+   background-color: #f3f0ff !important;
+   cursor: not-allowed;
+}
+
+/* Basic calendar table styling */
+#class-calendar table {
+   margin: 0;
+}
+.fc-col-header-cell a {
+   text-decoration: none;
+}
+.fc-timegrid-event .fc-event-main {
+   padding: 4px;
+}
+.fc-event {
+   cursor: pointer;
 }
 
 .bd-w-0 {
