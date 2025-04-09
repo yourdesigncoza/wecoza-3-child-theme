@@ -146,6 +146,46 @@
 - Implement query builder
 - Document complex queries
 
+# Theme Color Guidelines
+
+## Primary Color Palette
+- Base Background: `#ffffff`
+- Secondary Background: `#f7f8f9` 
+- Tertiary Background: `#f3f0ff`
+- Primary Text: `#222222`
+- Secondary Text: `#575760`
+- Tertiary Text: `#b2b2be`
+- Accent Color: `#6e5dc6`
+
+## UI Element Colors
+- Button Background: `#55555e`
+- Button Hover: `#3f4047`
+- Button Text: `#ffffff`
+- Overlay Background: `rgba(0,0,0,0.2)`
+- Modal Background: `rgba(0,0,0,0.4)`
+
+## CSS Variables
+```css
+:root {
+    --base-3: #ffffff;
+    --base-2: #f7f8f9;
+    --base: #f3f0ff;
+    --contrast: #222222;
+    --contrast-2: #575760;
+    --contrast-3: #b2b2be;
+    --accent: #6e5dc6;
+}
+```
+
+## Usage Guidelines
+1. Use `--base-3` for primary content backgrounds
+2. Use `--base-2` for secondary content areas
+3. Use `--base` for tertiary backgrounds and highlights
+4. Use `--contrast` for primary text
+5. Use `--contrast-2` for secondary text
+6. Use `--contrast-3` for tertiary text and borders
+7. Use `--accent` for interactive elements and highlights
+
 # MVC Architecture Guidelines
 
 # Directory Structure
