@@ -10,7 +10,6 @@ wp-content/backups/
 includes/functions/db.php
 extract_schema.py
 database_schema.sql
-.augment-guidelines
 
 # Environment specific
 .env

@@ -1,0 +1,273 @@
+# WeCoza 3 Child Theme - Augment Guidelines
+
+# WordPress Integration Rules
+- Follow WordPress coding standards
+- Use WordPress hooks and filters appropriately
+- Implement proper plugin/theme architecture
+- Follow GeneratePress child theme best practices
+
+# Component Structure
+- Maintain modular component architecture
+- Follow shortcode naming convention: [wecoza_component_action]
+- Keep component-specific logic in dedicated files
+- Use template loader for component views
+
+# Database Handling
+- Use PDO for database connections
+- Support both PostgreSQL and MySQL
+- Implement transaction handling
+- Follow database migration patterns
+- Cache frequent queries
+
+# Frontend Development
+- Use Bootstrap 5 components consistently
+- Follow responsive design principles
+- Implement progressive enhancement
+- Optimize for mobile devices
+- Use AJAX for dynamic updates
+
+# Security Implementation
+- Validate all user inputs
+- Sanitize database queries
+- Implement nonce verification
+- Follow WordPress security best practices
+- Handle file uploads securely
+
+# Form Handling
+- Use Bootstrap validation classes
+- Implement server-side validation
+- Provide user feedback
+- Handle multi-step forms
+- Manage file uploads properly
+
+# JavaScript Patterns
+- Use ES6+ features appropriately
+- Follow module pattern
+- Implement error handling
+- Use async/await for AJAX
+- Handle browser compatibility
+
+# File Organization
+- Group related components
+- Maintain consistent directory structure
+- Follow naming conventions:
+  * PHP: kebab-case for files
+  * JS: camelCase for functions
+  * CSS: BEM methodology
+
+# Documentation Requirements
+- Document all shortcodes
+- Maintain component documentation
+- Update README for new features
+- Include usage examples
+- Document database schema changes
+
+# Error Handling
+- Log errors appropriately
+- Provide user-friendly messages
+- Handle edge cases
+- Implement graceful degradation
+- Monitor PHP errors
+
+# Performance Guidelines
+- Optimize database queries
+- Implement caching strategy
+- Minimize HTTP requests
+- Optimize asset loading
+- Follow WordPress performance best practices
+
+# Testing Standards
+- Test across browsers
+- Validate mobile responsiveness
+- Check database operations
+- Verify form submissions
+- Test file uploads
+
+# Version Control
+- Follow semantic versioning
+- Use feature branching
+- Include meaningful commits
+- Document breaking changes
+- Maintain changelog
+
+# Code Review Requirements
+- Check WordPress compatibility
+- Verify security measures
+- Validate responsive design
+- Test cross-browser compatibility
+- Review database operations
+
+# Shortcode Development
+- Follow naming convention: [wecoza_*]
+- Include parameter validation
+- Document all attributes
+- Provide usage examples
+- Handle error states
+
+# Asset Management
+- Optimize images
+- Minify CSS/JS
+- Use WordPress enqueue
+- Handle dependencies
+- Version assets properly
+
+# Learner Management
+- Validate learner data
+- Handle portfolio uploads
+- Manage assessment records
+- Track progression
+- Implement POE system
+
+# Agent Management
+- Validate agent information
+- Handle status updates
+- Manage relationships
+- Track performance
+- Implement reporting
+
+# Client Management
+- Validate client data
+- Handle relationships
+- Manage permissions
+- Track interactions
+- Implement reporting
+
+# Dashboard Development
+- Use consistent layouts
+- Implement data visualization
+- Handle real-time updates
+- Optimize performance
+- Provide export options
+
+# SQL Integration
+- Use prepared statements
+- Validate SQL queries
+- Handle query errors
+- Implement query builder
+- Document complex queries
+
+# MVC Architecture Guidelines
+
+# Directory Structure
+/wecoza-3-child-theme
+  /app
+    /Models
+      /Learner
+      /Agent
+      /Client
+      /Assessment
+      /Portfolio
+    /Views
+      /learner
+      /agent
+      /client
+      /admin
+      /components
+      /layouts
+    /Controllers
+      /LearnerController.php
+      /AgentController.php
+      /ClientController.php
+      /AssessmentController.php
+    /Services
+      /Database
+      /FileUpload
+      /Authentication
+      /Validation
+  /config
+  /public
+    /assets
+    /js
+    /css
+  /tests
+
+# Model Rules
+- Models represent data structure and business logic
+- No direct database queries in models
+- Use repositories for database operations
+- Implement data validation
+- Handle relationships between models
+
+# View Rules
+- Views only handle presentation logic
+- No business logic in views
+- Use template partials for reusable components
+- Implement view helpers for complex formatting
+- Follow WordPress template hierarchy
+
+# Controller Rules
+- Controllers handle request/response cycle
+- Implement WordPress hooks as entry points
+- Use service classes for complex operations
+- Follow RESTful naming conventions
+- Implement proper error handling
+
+# Service Layer Rules
+- Implement business logic in services
+- Handle complex operations
+- Manage external integrations
+- Implement caching strategy
+- Handle file operations
+
+# Database Rules
+- Use repository pattern
+- Implement data mappers
+- Handle database transactions
+- Use query builders
+- Implement migration system
+
+# Naming Conventions
+Models:
+  - Singular, PascalCase (e.g., LearnerModel)
+  - Properties: camelCase
+  - Methods: camelCase
+
+Controllers:
+  - Suffix with 'Controller'
+  - PascalCase
+  - Action methods: camelCase
+
+Views:
+  - Use kebab-case for files
+  - Suffix with .view.php
+  - Partial views prefix with _
+
+Services:
+  - Suffix with 'Service'
+  - PascalCase
+  - Interface prefix with 'I'
+
+# Code Organization
+- Single Responsibility Principle
+- Dependency Injection
+- Interface Segregation
+- Use WordPress hooks strategically
+- Implement service container
+
+# Shortcode Implementation
+- Register in dedicated ShortcodeController
+- Use view components for rendering
+- Implement proper validation
+- Follow MVC pattern within shortcodes
+- Document parameters
+
+# AJAX Handling
+- Implement in dedicated controllers
+- Use service layer for operations
+- Proper response formatting
+- Security validation
+- Error handling
+
+# Security Guidelines
+- Validate in controllers
+- Sanitize in models
+- Escape in views
+- Implement CSRF protection
+- Handle permissions
+
+# Testing Structure
+- Unit tests for models
+- Integration tests for controllers
+- Feature tests for complete flows
+- Mock external services
+- Test view rendering
