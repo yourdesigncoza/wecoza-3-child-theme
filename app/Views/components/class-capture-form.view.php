@@ -168,7 +168,7 @@
       <!-- ===== Section: Scheduling & Class Info ===== -->
       <div class="row mt-3">
          <!-- Class Type -->
-         <div class="col-md-6">
+         <div class="col-md-4">
             <label for="class_type" class="form-label">Class Type <span class="text-danger">*</span></label>
             <select id="class_type" name="class_type" class="form-select form-select-sm" required>
                <option value="">Select</option>
@@ -186,10 +186,23 @@
          </div>
 
          <!-- Class Original Start Date -->
-         <div class="col-md-6">
+         <div class="col-md-4">
             <label for="class_start_date" class="form-label">Class Original Start Date <span class="text-danger">*</span></label>
             <input type="date" id="class_start_date" name="class_start_date" class="form-control form-control-sm" required>
             <div class="invalid-feedback">Please select the start date.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
+
+         <!-- Class Subjects -->
+         <div class="col-md-4">
+            <label for="course_id" class="form-label">Class Subjects <span class="text-danger">*</span></label>
+            <select id="course_id" name="course_id[]" class="form-select form-select-sm" required>
+               <option value="">Select</option>
+               <?php foreach ($data['products'] as $product): ?>
+                  <option value="<?php echo esc_attr($product['id']); ?>"><?php echo esc_html($product['name']); ?><?php echo !empty($product['learning_area']) ? ' - ' . esc_html($product['learning_area']) : ''; ?></option>
+               <?php endforeach; ?>
+            </select>
+            <div class="invalid-feedback">Please select at least one subject.</div>
             <div class="valid-feedback">Looks good!</div>
          </div>
       </div>
@@ -209,6 +222,7 @@
                <label class="form-label fw-bold">Stop Date</label>
                <input type="date" name="stop_dates[]" class="form-control form-control-sm">
                <div class="invalid-feedback">Please select a valid date.</div>
+               <div class="valid-feedback">Looks good!</div>
             </div>
 
             <!-- Restart Date -->
@@ -216,11 +230,13 @@
                <label class="form-label fw-bold">Restart Date</label>
                <input type="date" name="restart_dates[]" class="form-control form-control-sm">
                <div class="invalid-feedback">Please select a valid date.</div>
+               <div class="valid-feedback">Looks good!</div>
             </div>
 
             <!-- Remove Button -->
-            <div class="col-md-2 mb-2 mt-8">
-               <button type="button" class="btn btn-outline-danger btn-sm remove-date-row-btn">Remove</button>
+            <div class="col-md-2 mb-2">
+               <label class="form-label fw-bold invisible">&nbsp;</label>
+               <button type="button" class="btn btn-outline-danger btn-sm remove-date-row-btn form-control date-remove-btn">Remove</button>
             </div>
          </div>
 
@@ -230,53 +246,13 @@
          </button>
       </div>
 
-      <div class="row mt-3">
-         <!-- Class Subjects -->
-         <div class="col-md-6">
-            <label for="course_id" class="form-label">Class Subjects <span class="text-danger">*</span></label>
-            <select id="course_id" name="course_id[]" class="form-select form-select-sm" size="4" multiple required>
-               <option value="AET Communication">AET Communication</option>
-               <option value="AET Numeracy">AET Numeracy</option>
-               <option value="AET: GETC">AET: GETC</option>
-               <option value="Business Administration NQF 2">Business Administration NQF 2</option>
-               <option value="Business Administration NQF 3">Business Administration NQF 3</option>
-               <option value="Business Administration NQF 4">Business Administration NQF 4</option>
-               <option value="Employee Enhancement Program">Employee Enhancement Program</option>
-               <option value="Skills Program">Skills Program</option>
-               <option value="Mixed Subjects">Mixed Subjects</option>
-               <option value="Amended Senior Certificate">Amended Senior Certificate</option>
-            </select>
-            <div class="invalid-feedback">Please select at least one subject.</div>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
-
-         <!-- Class Notes -->
-         <div class="col-md-6">
-            <label for="class_notes" class="form-label">Class Notes</label>
-            <select id="class_notes" name="class_notes[]" class="form-select form-select-sm" size="4" multiple>
-               <option value="Agent Absent">Agent Absent</option>
-               <option value="Client Cancelled">Client Cancelled</option>
-               <option value="Poor attendance">Poor attendance</option>
-               <option value="Learners behind schedule">Learners behind schedule</option>
-               <option value="Learners unhappy">Learners unhappy</option>
-               <option value="Client unhappy">Client unhappy</option>
-               <option value="Learners too fast">Learners too fast</option>
-               <option value="Class on track">Class on track</option>
-               <option value="Bad QA report">Bad QA report</option>
-               <option value="Good QA report">Good QA report</option>
-               <option value="Incomplete workbooks">Incomplete workbooks</option>
-            </select>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
-      </div>
-
       <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
 
       <!-- ===== Section: Funding & Exam Details ===== -->
       <div class="row">
          <!-- SETA Funded -->
          <div class="col-md-4">
-            <label for="seta_funded" class="form-label">SETA Funded <span class="text-danger">*</span></label>
+            <label for="seta_funded" class="form-label">SETA Funded? <span class="text-danger">*</span></label>
             <select id="seta_funded" name="seta_funded" class="form-select form-select-sm" required>
                <option value="">Select</option>
                <option value="Yes">Yes</option>
@@ -286,32 +262,14 @@
             <div class="valid-feedback">Looks good!</div>
          </div>
 
-         <!-- SETA -->
-         <div class="col-md-4">
+         <!-- SETA (conditionally displayed) -->
+         <div class="col-md-4" id="seta_container" style="display: none;">
             <label for="seta_id" class="form-label">SETA <span class="text-danger">*</span></label>
-            <select id="seta_id" name="seta_id" class="form-select form-select-sm" required>
+            <select id="seta_id" name="seta_id" class="form-select form-select-sm">
                <option value="">Select</option>
-               <option value="AgriSETA">AgriSETA</option>
-               <option value="BANKSETA">BANKSETA</option>
-               <option value="CATHSSETA">CATHSSETA</option>
-               <option value="CETA">CETA</option>
-               <option value="CHIETA">CHIETA</option>
-               <option value="ETDP SETA">ETDP SETA</option>
-               <option value="EWSETA">EWSETA</option>
-               <option value="FASSET">FASSET</option>
-               <option value="FP&M SETA">FP&M SETA</option>
-               <option value="FoodBev SETA">FoodBev SETA</option>
-               <option value="HWSETA">HWSETA</option>
-               <option value="INSETA">INSETA</option>
-               <option value="LGSETA">LGSETA</option>
-               <option value="MICT SETA">MICT SETA</option>
-               <option value="MQA">MQA</option>
-               <option value="PSETA">PSETA</option>
-               <option value="SASSETA">SASSETA</option>
-               <option value="Services SETA">Services SETA</option>
-               <option value="TETA">TETA</option>
-               <option value="W&RSETA">W&RSETA</option>
-               <option value="merSETA">merSETA</option>
+               <?php foreach ($data['setas'] as $seta): ?>
+                  <option value="<?php echo esc_attr($seta['id']); ?>"><?php echo esc_html($seta['name']); ?></option>
+               <?php endforeach; ?>
             </select>
             <div class="invalid-feedback">Please select a SETA.</div>
             <div class="valid-feedback">Looks good!</div>
@@ -338,6 +296,37 @@
             <div class="invalid-feedback">Please provide the exam type.</div>
             <div class="valid-feedback">Looks good!</div>
          </div>
+      </div>
+
+      <!-- Exam Learners (conditionally displayed) -->
+      <div class="row mt-5" id="exam_learners_container" style="display: none;">
+         <div class="col-12">
+            <h5 class="mb-3">Select Learners Taking Exams</h5>
+            <p class="text-muted small mb-3">Not all learners in an exam class necessarily take exams. Select which learners will take exams.</p>
+
+            <!-- Container for exam learners selection -->
+            <div id="exam-learners-list" class="border rounded p-3 mb-3">
+               <div class="alert alert-info">
+                  Please select learners in the "Add Learner" field below first. The list of selected learners will appear here.
+               </div>
+            </div>
+
+            <!-- Hidden field to store exam learners data -->
+            <input type="hidden" id="exam_learners" name="exam_learners" value="">
+         </div>
+
+         <!-- Add Learner (Multi-select) -->
+         <div class="col-md-4">
+            <label for="add_learner" class="form-label">Add Learner <span class="text-danger">*</span></label>
+            <select id="add_learner" name="add_learner[]" class="form-select form-select-sm" size="5" multiple required>
+               <?php foreach ($data['learners'] as $learner): ?>
+                  <option value="<?php echo esc_attr($learner['id']); ?>"><?php echo esc_html($learner['name']); ?></option>
+               <?php endforeach; ?>
+            </select>
+            <div class="invalid-feedback">Please add at least one learner.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
+
       </div>
 
       <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
@@ -393,17 +382,6 @@
             <div class="valid-feedback">Looks good!</div>
          </div>
 
-         <!-- Add Learner (Multi-select) -->
-         <div class="col-md-4">
-            <label for="add_learner" class="form-label">Add Learner <span class="text-danger">*</span></label>
-            <select id="add_learner" name="add_learner[]" class="form-select form-select-sm" size="2" multiple required>
-               <?php foreach ($data['learners'] as $learner): ?>
-                  <option value="<?php echo esc_attr($learner['id']); ?>"><?php echo esc_html($learner['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
-            <div class="invalid-feedback">Please add at least one learner.</div>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
       </div>
 
       <div class="row mt-3">

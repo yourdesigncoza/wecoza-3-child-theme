@@ -8,6 +8,7 @@
 namespace WeCoza\Controllers;
 
 use WeCoza\Models\Assessment\ClassModel;
+use WeCoza\Controllers\MainController;
 
 class ClassController {
     /**
@@ -87,7 +88,9 @@ class ClassController {
             'sites' => $this->getSites(),
             'agents' => $this->getAgents(),
             'supervisors' => $this->getSupervisors(),
-            'learners' => $this->getLearners(),
+            'learners' => $this->getLearnersExam(),
+            'setas' => MainController::getSeta(),
+            'products' => MainController::getProducts(),
             'redirect_url' => $atts['redirect_url']
         ];
 
@@ -356,13 +359,13 @@ class ClassController {
     }
 
     /**
-     * Get all learners
+     * Get all learners for exam selection
      *
-     * @return array List of learners
+     * @return array List of learners available for exam classes
      */
-    private function getLearners() {
+    private function getLearnersExam() {
         // This would typically come from a database query
-        // For now, returning static data
+        // For now, returning static data for exam selection
         return [
             ['id' => 1, 'name' => 'John J.M. Smith'],
             ['id' => 2, 'name' => 'Nosipho N. Dlamini'],

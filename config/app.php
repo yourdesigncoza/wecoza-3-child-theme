@@ -56,6 +56,7 @@ return [
      * Controllers
      */
     'controllers' => [
+        'WeCoza\\Controllers\\MainController',
         'WeCoza\\Controllers\\LearnerController',
         'WeCoza\\Controllers\\AgentController',
         'WeCoza\\Controllers\\ClientController',

@@ -49,6 +49,9 @@ function initializeClassCalendar() {
         // Initialize the exam type toggle
         initializeExamTypeToggle();
 
+        // Initialize the SETA field toggle
+        initializeSetaToggle();
+
         // Initialize the date history functionality
         initializeDateHistory();
 
@@ -548,19 +551,134 @@ function initializeClassCalendar() {
     }
 
     /**
-     * Initialize the exam type toggle
+     * Initialize the SETA field toggle
      */
-    function initializeExamTypeToggle() {
-        document.getElementById('exam_class').addEventListener('change', function() {
-            var examTypeContainer = document.getElementById('exam_type_container');
+    function initializeSetaToggle() {
+        // Handle SETA Funded selection change
+        document.getElementById('seta_funded').addEventListener('change', function() {
+            var setaContainer = document.getElementById('seta_container');
+            var setaSelect = document.getElementById('seta_id');
+
             if (this.value === 'Yes') {
-                examTypeContainer.style.display = 'block';
-                document.getElementById('exam_type').setAttribute('required', 'required');
+                // Show SETA field and make it required
+                setaContainer.style.display = 'block';
+                setaSelect.setAttribute('required', 'required');
             } else {
-                examTypeContainer.style.display = 'none';
-                document.getElementById('exam_type').removeAttribute('required');
+                // Hide SETA field and remove required attribute
+                setaContainer.style.display = 'none';
+                setaSelect.removeAttribute('required');
+                // Reset the SETA selection
+                setaSelect.value = '';
             }
         });
+
+        // Check initial state on page load
+        var setaFunded = document.getElementById('seta_funded');
+        if (setaFunded.value === 'Yes') {
+            var setaContainer = document.getElementById('seta_container');
+            var setaSelect = document.getElementById('seta_id');
+            setaContainer.style.display = 'block';
+            setaSelect.setAttribute('required', 'required');
+        }
+    }
+
+    /**
+     * Initialize the exam type toggle and exam learners functionality
+     */
+    function initializeExamTypeToggle() {
+        // Handle exam class selection change
+        document.getElementById('exam_class').addEventListener('change', function() {
+            var examTypeContainer = document.getElementById('exam_type_container');
+            var examLearnersContainer = document.getElementById('exam_learners_container');
+
+            if (this.value === 'Yes') {
+                // Show exam type field and make it required
+                examTypeContainer.style.display = 'block';
+                document.getElementById('exam_type').setAttribute('required', 'required');
+
+                // Show exam learners container
+                examLearnersContainer.style.display = 'block';
+
+                // Update the exam learners list based on currently selected learners
+                updateExamLearnersList();
+            } else {
+                // Hide exam type field and remove required attribute
+                examTypeContainer.style.display = 'none';
+                document.getElementById('exam_type').removeAttribute('required');
+
+                // Hide exam learners container
+                examLearnersContainer.style.display = 'none';
+            }
+        });
+
+        // Listen for changes to the learner selection
+        $('#add_learner').on('change', function() {
+            // Only update if exam class is Yes
+            if ($('#exam_class').val() === 'Yes') {
+                updateExamLearnersList();
+            }
+        });
+
+        // Function to update the exam learners list
+        function updateExamLearnersList() {
+            var selectedLearners = $('#add_learner').val() || [];
+            var $examLearnersList = $('#exam-learners-list');
+            var examLearnersData = [];
+
+            // Clear the current list
+            $examLearnersList.empty();
+
+            // If no learners selected, show info message
+            if (selectedLearners.length === 0) {
+                $examLearnersList.html('<div class="alert alert-info">Please select learners in the "Add Learner" field below first. The list of selected learners will appear here.</div>');
+                return;
+            }
+
+            // Create a checkbox list of selected learners
+            var html = '<div class="row">';
+
+            // Get the selected learner names and IDs
+            selectedLearners.forEach(function(learnerId) {
+                var learnerName = $('#add_learner option[value="' + learnerId + '"]').text();
+
+                html += '<div class="col-md-4 mb-2">' +
+                        '<div class="form-check">' +
+                        '<input class="form-check-input exam-learner-checkbox" type="checkbox" id="exam_learner_' + learnerId + '" ' +
+                        'data-learner-id="' + learnerId + '" checked>' +
+                        '<label class="form-check-label" for="exam_learner_' + learnerId + '">' + learnerName + '</label>' +
+                        '</div>' +
+                        '</div>';
+
+                // Add to the data array (all checked by default)
+                examLearnersData.push({
+                    id: learnerId,
+                    name: learnerName,
+                    takes_exam: true
+                });
+            });
+
+            html += '</div>';
+            $examLearnersList.html(html);
+
+            // Update the hidden field with the JSON data
+            $('#exam_learners').val(JSON.stringify(examLearnersData));
+
+            // Add event listeners to checkboxes
+            $('.exam-learner-checkbox').on('change', function() {
+                var learnerId = $(this).data('learner-id');
+                var isChecked = $(this).prop('checked');
+
+                // Update the data array
+                examLearnersData.forEach(function(learner) {
+                    if (learner.id == learnerId) {
+                        learner.takes_exam = isChecked;
+                    }
+                });
+
+                // Update the hidden field
+                $('#exam_learners').val(JSON.stringify(examLearnersData));
+            });
+        }
     }
 
     /**
@@ -570,6 +688,40 @@ function initializeClassCalendar() {
         // References to the date history template & container
         const $dateHistoryTemplate = $('#date-history-row-template');
         const $dateHistoryContainer = $('#date-history-container');
+
+        // Function to validate date pairs
+        function validateDatePair($row) {
+            const $stopDate = $row.find('input[name="stop_dates[]"]');
+            const $restartDate = $row.find('input[name="restart_dates[]"]');
+
+            const stopDateValue = $stopDate.val();
+            const restartDateValue = $restartDate.val();
+
+            // Skip validation if either field is empty
+            if (!stopDateValue || !restartDateValue) {
+                return true;
+            }
+
+            // Convert to Date objects for comparison
+            const stopDate = new Date(stopDateValue);
+            const restartDate = new Date(restartDateValue);
+
+            // Check if restart date is after stop date
+            const isValid = restartDate > stopDate;
+
+            // Update validation classes
+            if (isValid) {
+                $restartDate.removeClass('is-invalid').addClass('is-valid');
+                $stopDate.removeClass('is-invalid').addClass('is-valid');
+                $restartDate.siblings('.invalid-feedback').text('Please select a valid date.');
+            } else {
+                $restartDate.removeClass('is-valid').addClass('is-invalid');
+                $restartDate.siblings('.invalid-feedback').text('Restart date must be after stop date.');
+                $stopDate.removeClass('is-invalid').addClass('is-valid');
+            }
+
+            return isValid;
+        }
 
         // Function to add a new date history row
         function addDateHistoryRow() {
@@ -588,6 +740,11 @@ function initializeClassCalendar() {
                 $(this).closest('.date-history-row').remove();
             });
 
+            // Attach date validation handlers
+            $newRow.find('input[name="stop_dates[]"], input[name="restart_dates[]"]').on('change', function() {
+                validateDatePair($(this).closest('.date-history-row'));
+            });
+
             // Append the new row to the container
             $dateHistoryContainer.append($newRow);
         }
@@ -596,6 +753,17 @@ function initializeClassCalendar() {
         $('#add-date-history-btn').on('click', function() {
             addDateHistoryRow();
         });
+
+        // Function to validate all date pairs
+        window.validateAllDatePairs = function() {
+            let allValid = true;
+            $('.date-history-row:not(#date-history-row-template)').each(function() {
+                if (!validateDatePair($(this))) {
+                    allValid = false;
+                }
+            });
+            return allValid;
+        };
     }
 
     /**
@@ -615,9 +783,24 @@ function initializeClassCalendar() {
                         // Update calendar data before validation
                         updateHiddenFields();
 
-                        if (!form.checkValidity()) {
+                        // Add custom validation for date pairs
+                        let dateHistoryValid = true;
+                        if (typeof validateAllDatePairs === 'function') {
+                            dateHistoryValid = validateAllDatePairs();
+                        }
+
+                        if (!form.checkValidity() || !dateHistoryValid) {
                             event.stopPropagation();
                             form.classList.add('was-validated');
+
+                            // Show error message if date validation failed
+                            if (!dateHistoryValid) {
+                                $('#form-messages').html('<div class="alert alert-danger">Please ensure all restart dates are after their corresponding stop dates.</div>');
+                                // Scroll to the date history section
+                                $('html, body').animate({
+                                    scrollTop: $('#date-history-container').offset().top - 100
+                                }, 500);
+                            }
                         } else {
                             // Form is valid, submit via AJAX
                             submitFormViaAjax(form);
