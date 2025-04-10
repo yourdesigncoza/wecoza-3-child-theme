@@ -13,49 +13,6 @@ define('WECOZA_PLUGIN_VERSION', $rand);
 define('WECOZA_CHILD_DIR', get_stylesheet_directory(__FILE__));
 define('WECOZA_CHILD_URL', get_stylesheet_directory_uri(__FILE__));
 
-
-// add_action( 'after_setup_theme', 'setup_hex_color_palette',100 );
-function setup_hex_color_palette() {
-
-    $add_colors = false;
-
-    if ( isset( $_GET[ 'post' ] ) ) {
-        $post_id = absint( $_GET[ 'post' ] );
-        $post_type = get_post_type( $post_id );
-        if ( $post_type && ( strstr( $post_type, 'ngl_' ) || strstr( $post_type, 'newsletterglue' ) ) ) {
-            $add_colors = true;
-        }
-    }
-
-    if ( isset( $_GET[ 'post_type' ] ) ) {
-        $post_type = sanitize_text_field( $_GET[ 'post_type' ] );
-        if ( $post_type && ( strstr( $post_type, 'ngl_' ) || strstr( $post_type, 'newsletterglue' ) ) ) {
-            $add_colors = true;
-        }
-    }
-
-    if ( $add_colors ) {
-        add_theme_support( 'editor-color-palette', array(
-            array(
-                'name'  => esc_attr__( 'Alabaster', 'generatepress' ),
-                'slug'  => 'alabaster',
-                'color' => '#efeeea',
-            ),
-            array(
-                'name'  => esc_attr__( 'Raspberry', 'generatepress'),
-                'slug'  => 'raspberry',
-                'color' => '#ff0066',
-            ),
-            array(
-                'name'  => esc_attr__( 'Soft Red', 'generatepress' ),
-                'slug'  => 'soft-red',
-                'color' => '#f78da7',
-            )
-        ) );
-    }
-
-}
-
 /**
  * Enqueue all necessary GLOBAL assets
  */
@@ -79,8 +36,8 @@ function enqueue_assets() {
         // Check if we are on a specific page
         if (is_page('all-learners-table')) { // Replace 'your-page-slug' with the slug of your target page
             wp_enqueue_script(
-                'gradio-script', 
-                'https://gradio.s3-us-west-2.amazonaws.com/4.40.0/gradio.js', 
+                'gradio-script',
+                'https://gradio.s3-us-west-2.amazonaws.com/4.40.0/gradio.js',
                 array(), // No dependencies
                 WECOZA_PLUGIN_VERSION,    // No version specified
                 true     // Load in the footer
@@ -92,7 +49,7 @@ function enqueue_assets() {
         wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), null, true);
 
 
-        
+
         // Custom scripts with localization
         wp_enqueue_script('wecoza-table-handler', WECOZA_CHILD_URL . '/includes/js/app.js', array('jquery', 'bootstrap-table'), WECOZA_PLUGIN_VERSION, true);
         wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array(
@@ -137,7 +94,7 @@ add_action('wp_enqueue_scripts', 'enqueue_select2_scripts');
 
 
 /**
- * Gradio 
+ * Gradio
  */
 function add_type_module_to_gradio_script($tag, $handle, $src) {
     if ('gradio-script' === $handle) {
@@ -164,9 +121,13 @@ function load_required_files() {
     foreach ($required_files as $file) {
         require_once WECOZA_CHILD_DIR . $file;
     }
+
+    // Load MVC bootstrap file
+    require_once WECOZA_CHILD_DIR . '/app/bootstrap.php';
 }
 load_required_files(); // Load required files
 
+// Legacy files - these will be migrated to the MVC structure
 require_once WECOZA_CHILD_DIR . '/assets/learners/learners-function.php';
 require_once WECOZA_CHILD_DIR . '/assets/agents/agents-functions.php';
 require_once WECOZA_CHILD_DIR . '/assets/clients/clients-functions.php';

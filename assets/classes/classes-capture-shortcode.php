@@ -1,4 +1,10 @@
 <?php
+/**
+ * DEPRECATED: This file has been converted to follow the MVC architecture.
+ * Please use the new implementation in app/Controllers/ClassController.php,
+ * app/Models/Assessment/ClassModel.php, and app/Views/components/class-capture-form.view.php.
+ * This file is kept for backward compatibility and will be removed in a future version.
+ */
    function wecoza_classes_capture_shortcode() {
        ob_start();
        ?>

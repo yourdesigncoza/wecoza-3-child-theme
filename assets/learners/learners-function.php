@@ -1,10 +1,10 @@
 <?php
 /**
  * Learners Management System
- * 
+ *
  * This file contains core functionality for managing learners including file loading,
  * asset enqueueing, and AJAX handlers.
- * 
+ *
  * @package WeCoza
  * @subpackage Learners
  * @since 1.0.0
@@ -23,7 +23,7 @@ function load_learners_files() {
         '/assets/learners/learners-capture-shortcode.php',
         '/assets/learners/learners-diplay-shortcode.php',
         '/assets/learners/learners-update-shortcode.php',
-        '/assets/classes/classes-capture-shortcode.php',
+        // '/assets/classes/classes-capture-shortcode.php', // Removed - now using MVC architecture
     );
 
     // Load each required file
@@ -47,10 +47,10 @@ load_learners_files();
 function enqueue_learners_assets() {
     // Enqueue main learners JavaScript file
     wp_enqueue_script(
-        'learners-app', 
-        WECOZA_CHILD_URL . '/assets/learners/js/learners-app.js', 
-        array('jquery'), 
-        WECOZA_PLUGIN_VERSION, 
+        'learners-app',
+        WECOZA_CHILD_URL . '/assets/learners/js/learners-app.js',
+        array('jquery'),
+        WECOZA_PLUGIN_VERSION,
         true
     );
 
@@ -300,5 +300,5 @@ function fetch_learners_dropdown_data() {
 add_action('wp_ajax_fetch_learners_dropdown_data', 'fetch_learners_dropdown_data');
 add_action('wp_ajax_nopriv_fetch_learners_dropdown_data', 'fetch_learners_dropdown_data');
 
-// Get learners detail ( View ) 
+// Get learners detail ( View )
 require_once WECOZA_CHILD_DIR . '/assets/learners/components/learner-detail.php';
