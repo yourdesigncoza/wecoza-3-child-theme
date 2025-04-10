@@ -26,9 +26,6 @@ class DatabaseService {
             $pgUser = get_option('wecoza_postgres_user', 'doadmin');
             $pgPass = get_option('wecoza_postgres_password', '');
 
-            // Log connection attempt
-            error_log("Connecting to PostgreSQL database: host=$pgHost, port=$pgPort, dbname=$pgName, user=$pgUser");
-
             // Create PDO instance for PostgreSQL
             $this->pdo = new \PDO(
                 "pgsql:host=$pgHost;port=$pgPort;dbname=$pgName",
@@ -41,20 +38,10 @@ class DatabaseService {
                 ]
             );
 
-            // Log successful connection
-            error_log("Successfully connected to PostgreSQL database");
-
-            // Test the connection with a simple query
-            $stmt = $this->pdo->query("SELECT current_database(), current_user");
-            $result = $stmt->fetch();
-            error_log("Connected to database: " . print_r($result, true));
-
         } catch (\PDOException $e) {
-            // Log detailed error
+            // Log error
             error_log('Database connection error: ' . $e->getMessage());
-            error_log('Error code: ' . $e->getCode());
-            error_log('Error trace: ' . $e->getTraceAsString());
-            throw new \Exception('Database connection failed: ' . $e->getMessage());
+            throw new \Exception('Database connection failed');
         }
     }
 
@@ -88,30 +75,12 @@ class DatabaseService {
      */
     public function query($sql, $params = []) {
         try {
-            // Log the query and parameters
-            error_log('Executing query: ' . $sql);
-            if (!empty($params)) {
-                error_log('Query parameters: ' . print_r($params, true));
-            }
-
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
-
-            // Log success
-            error_log('Query executed successfully');
-
             return $stmt;
         } catch (\PDOException $e) {
-            // Log detailed error
             error_log('Query error: ' . $e->getMessage());
-            error_log('Error code: ' . $e->getCode());
-            error_log('SQL: ' . $sql);
-            if (!empty($params)) {
-                error_log('Parameters: ' . print_r($params, true));
-            }
-            error_log('Error trace: ' . $e->getTraceAsString());
-
-            throw new \Exception('Database query failed: ' . $e->getMessage());
+            throw new \Exception('Database query failed');
         }
     }
 

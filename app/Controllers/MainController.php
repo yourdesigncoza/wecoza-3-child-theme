@@ -58,33 +58,18 @@ class MainController {
             // Get database connection
             $db = \WeCoza\Services\Database\DatabaseService::getInstance();
 
-            // Log connection attempt
-            error_log('Attempting to connect to PostgreSQL database for products query');
-
             // Query the products table
             $query = "SELECT product_id, product_name, product_duration, learning_area,
                       learning_area_duration, parent_product_id
                       FROM products
                       ORDER BY product_name ASC";
 
-            // Log the query
-            error_log('Executing query: ' . $query);
-
             $stmt = $db->query($query);
             $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Log the result count
-            error_log('Query returned ' . count($products) . ' products');
-
             // If no products found, return empty array
             if (empty($products)) {
-                error_log('No products found in database');
                 return [];
-            }
-
-            // Log the first product to see its structure
-            if (!empty($products)) {
-                error_log('First product structure: ' . print_r($products[0], true));
             }
 
             // Format the products for the view
@@ -116,12 +101,10 @@ class MainController {
                 $formatted_products[] = $formatted_product;
             }
 
-            error_log('Successfully formatted ' . count($formatted_products) . ' products for view');
             return $formatted_products;
         } catch (\Exception $e) {
-            // Log the error with more details
+            // Log only critical errors
             error_log('Error fetching products: ' . $e->getMessage());
-            error_log('Error trace: ' . $e->getTraceAsString());
 
             // Return empty array in case of error
             return [];
