@@ -60,6 +60,15 @@ function initializeClassCalendar() {
         // Initialize the QA visit dates functionality
         initializeQAVisits();
 
+        // Initialize the class learners functionality
+        initializeClassLearners();
+
+        // Initialize the backup agents functionality
+        initializeBackupAgents();
+
+        // Initialize the agent replacements functionality
+        initializeAgentReplacements();
+
         // Initialize form submission
         initializeFormSubmission();
     }
@@ -772,6 +781,160 @@ function initializeClassCalendar() {
     }
 
     /**
+     * Initialize the class learners functionality
+     */
+    function initializeClassLearners() {
+        // References to DOM elements
+        const $addLearnerSelect = $('#add_learner');
+        const $addSelectedLearnersBtn = $('#add-selected-learners-btn');
+        const $classLearnersTable = $('#class-learners-table');
+        const $classLearnersTbody = $('#class-learners-tbody');
+        const $noLearnersMessage = $('#no-learners-message');
+        const $classLearnersData = $('#class_learners_data');
+
+        // Array to store learner data
+        let classLearners = [];
+
+        // Status options for learners
+        const learnerStatusOptions = [
+            'Active',
+            'Inactive',
+            'Completed',
+            'Dropped Out',
+            'On Hold',
+            'Transferred'
+        ];
+
+        // Function to generate status dropdown
+        function generateStatusDropdown(learnerId, currentStatus = 'Active') {
+            let html = `<select class="form-select form-select-sm learner-status" data-learner-id="${learnerId}">`;
+
+            learnerStatusOptions.forEach(status => {
+                const selected = status === currentStatus ? 'selected' : '';
+                html += `<option value="${status}" ${selected}>${status}</option>`;
+            });
+
+            html += '</select>';
+            return html;
+        }
+
+        // Function to add a learner to the table
+        function addLearnerToTable(learnerId, learnerName, status = 'Active') {
+            // Check if learner already exists in the table
+            if (classLearners.some(learner => learner.id === learnerId)) {
+                return false; // Learner already exists
+            }
+
+            // Add learner to the array
+            classLearners.push({
+                id: learnerId,
+                name: learnerName,
+                status: status
+            });
+
+            // Create table row
+            const $row = $(`
+                <tr data-learner-id="${learnerId}">
+                    <td>${learnerName}</td>
+                    <td>${generateStatusDropdown(learnerId, status)}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-learner-btn" data-learner-id="${learnerId}">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+            `);
+
+            // Add row to table
+            $classLearnersTbody.append($row);
+
+            // Show table if it was hidden
+            if (classLearners.length > 0) {
+                $classLearnersTable.removeClass('d-none');
+                $noLearnersMessage.addClass('d-none');
+            }
+
+            // Update hidden field with JSON data
+            updateClassLearnersData();
+
+            return true;
+        }
+
+        // Function to remove a learner from the table
+        function removeLearnerFromTable(learnerId) {
+            // Remove from array
+            classLearners = classLearners.filter(learner => learner.id !== learnerId);
+
+            // Remove row from table
+            $(`tr[data-learner-id="${learnerId}"]`).remove();
+
+            // Show message if no learners left
+            if (classLearners.length === 0) {
+                $classLearnersTable.addClass('d-none');
+                $noLearnersMessage.removeClass('d-none');
+            }
+
+            // Update hidden field with JSON data
+            updateClassLearnersData();
+        }
+
+        // Function to update the hidden field with learner data
+        function updateClassLearnersData() {
+            $classLearnersData.val(JSON.stringify(classLearners));
+        }
+
+        // Event handler for adding selected learners
+        $addSelectedLearnersBtn.on('click', function() {
+            const selectedOptions = $addLearnerSelect.find('option:selected');
+
+            if (selectedOptions.length === 0) {
+                alert('Please select at least one learner to add.');
+                return;
+            }
+
+            let addedCount = 0;
+
+            selectedOptions.each(function() {
+                const learnerId = $(this).val();
+                const learnerName = $(this).text();
+
+                if (addLearnerToTable(learnerId, learnerName)) {
+                    addedCount++;
+                }
+            });
+
+            // Clear selection
+            $addLearnerSelect.val([]);
+
+            if (addedCount > 0) {
+                const message = addedCount === 1 ? '1 learner added.' : `${addedCount} learners added.`;
+                alert(message);
+            } else {
+                alert('No new learners added. All selected learners are already in the class.');
+            }
+        });
+
+        // Event delegation for remove buttons
+        $classLearnersTbody.on('click', '.remove-learner-btn', function() {
+            const learnerId = $(this).data('learner-id');
+            removeLearnerFromTable(learnerId);
+        });
+
+        // Event delegation for status changes
+        $classLearnersTbody.on('change', '.learner-status', function() {
+            const learnerId = $(this).data('learner-id');
+            const newStatus = $(this).val();
+
+            // Update status in the array
+            const learner = classLearners.find(l => l.id === learnerId);
+            if (learner) {
+                learner.status = newStatus;
+                updateClassLearnersData();
+            }
+        });
+    }
+
+    /**
      * Initialize the QA visit dates functionality
      */
     function initializeQAVisits() {
@@ -857,6 +1020,136 @@ function initializeClassCalendar() {
     }
 
     /**
+     * Initialize the backup agents functionality
+     */
+    function initializeBackupAgents() {
+        // References to DOM elements
+        const $backupAgentTemplate = $('#backup-agent-row-template');
+        const $backupAgentsContainer = $('#backup-agents-container');
+
+        // Function to add a new backup agent row
+        function addBackupAgentRow() {
+            // Clone the template
+            let $newRow = $backupAgentTemplate.clone(true);
+
+            // Make it visible & remove the template ID
+            $newRow.removeClass('d-none').removeAttr('id');
+
+            // Clear any existing values
+            $newRow.find('select[name="backup_agent_ids[]"]').val('');
+            $newRow.find('input[name="backup_agent_dates[]"]').val('');
+
+            // Attach remove-row handler
+            $newRow.find('.remove-backup-agent-btn').on('click', function() {
+                $(this).closest('.backup-agent-row').remove();
+            });
+
+            // Append the new row to the container
+            $backupAgentsContainer.append($newRow);
+        }
+
+        // Click handler to add new backup agent rows
+        $('#add-backup-agent-btn').on('click', function() {
+            addBackupAgentRow();
+        });
+
+        // Add an initial row if container is empty
+        if ($backupAgentsContainer.children().length === 0) {
+            addBackupAgentRow();
+        }
+    }
+
+    /**
+     * Initialize the agent replacements functionality
+     */
+    function initializeAgentReplacements() {
+        // References to DOM elements
+        const $agentReplacementTemplate = $('#agent-replacement-row-template');
+        const $agentReplacementsContainer = $('#agent-replacements-container');
+
+        // Function to validate takeover date
+        function validateTakeoverDate($row) {
+            const $takeoverDate = $row.find('input[name="replacement_agent_dates[]"]');
+            const initialStartDate = $('#initial_agent_start_date').val();
+
+            const takeoverDateValue = $takeoverDate.val();
+
+            // Skip validation if either field is empty
+            if (!takeoverDateValue || !initialStartDate) {
+                return true;
+            }
+
+            // Convert to Date objects for comparison
+            const takeoverDate = new Date(takeoverDateValue);
+            const startDate = new Date(initialStartDate);
+
+            // Check if takeover date is after initial start date
+            const isValid = takeoverDate > startDate;
+
+            // Update validation classes
+            if (isValid) {
+                $takeoverDate.removeClass('is-invalid').addClass('is-valid');
+                $takeoverDate.siblings('.invalid-feedback').text('Please select a valid takeover date.');
+            } else {
+                $takeoverDate.removeClass('is-valid').addClass('is-invalid');
+                $takeoverDate.siblings('.invalid-feedback').text('Takeover date must be after the initial agent start date.');
+            }
+
+            return isValid;
+        }
+
+        // Function to add a new agent replacement row
+        function addAgentReplacementRow() {
+            // Clone the template
+            let $newRow = $agentReplacementTemplate.clone(true);
+
+            // Make it visible & remove the template ID
+            $newRow.removeClass('d-none').removeAttr('id');
+
+            // Clear any existing values
+            $newRow.find('select[name="replacement_agent_ids[]"]').val('');
+            $newRow.find('input[name="replacement_agent_dates[]"]').val('');
+
+            // Attach remove-row handler
+            $newRow.find('.remove-agent-replacement-btn').on('click', function() {
+                $(this).closest('.agent-replacement-row').remove();
+            });
+
+            // Attach date validation handlers
+            $newRow.find('input[name="replacement_agent_dates[]"]').on('change', function() {
+                validateTakeoverDate($(this).closest('.agent-replacement-row'));
+            });
+
+            // Append the new row to the container
+            $agentReplacementsContainer.append($newRow);
+        }
+
+        // Click handler to add new agent replacement rows
+        $('#add-agent-replacement-btn').on('click', function() {
+            addAgentReplacementRow();
+        });
+
+        // Event handler for initial agent start date changes
+        $('#initial_agent_start_date').on('change', function() {
+            // Validate all takeover dates when initial date changes
+            $('.agent-replacement-row:not(#agent-replacement-row-template)').each(function() {
+                validateTakeoverDate($(this));
+            });
+        });
+
+        // Function to validate all takeover dates
+        window.validateAllTakeoverDates = function() {
+            let allValid = true;
+            $('.agent-replacement-row:not(#agent-replacement-row-template)').each(function() {
+                if (!validateTakeoverDate($(this))) {
+                    allValid = false;
+                }
+            });
+            return allValid;
+        };
+    }
+
+    /**
      * Initialize form submission
      */
     function initializeFormSubmission() {
@@ -885,7 +1178,13 @@ function initializeClassCalendar() {
                             qaVisitsValid = validateAllQAVisits();
                         }
 
-                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid) {
+                        // Add custom validation for agent replacements
+                        let takeoverDatesValid = true;
+                        if (typeof validateAllTakeoverDates === 'function') {
+                            takeoverDatesValid = validateAllTakeoverDates();
+                        }
+
+                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid || !takeoverDatesValid) {
                             event.stopPropagation();
                             form.classList.add('was-validated');
 
@@ -904,6 +1203,15 @@ function initializeClassCalendar() {
                                 // Scroll to the QA visits section
                                 $('html, body').animate({
                                     scrollTop: $('#qa-visits-container').offset().top - 100
+                                }, 500);
+                            }
+
+                            // Show error message if takeover dates validation failed
+                            if (!takeoverDatesValid) {
+                                $('#form-messages').html('<div class="alert alert-danger">Please ensure all agent takeover dates are after the initial agent start date.</div>');
+                                // Scroll to the agent replacements section
+                                $('html, body').animate({
+                                    scrollTop: $('#agent-replacements-container').offset().top - 100
                                 }, 500);
                             }
                         } else {

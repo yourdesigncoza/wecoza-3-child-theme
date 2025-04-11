@@ -244,7 +244,7 @@
          <div class="row date-history-row d-none" id="date-history-row-template">
             <!-- Stop Date -->
             <div class="col-md-5 mb-2">
-               <label class="form-label fw-bold">Stop Date</label>
+               <label class="form-label">Stop Date</label>
                <input type="date" name="stop_dates[]" class="form-control form-control-sm">
                <div class="invalid-feedback">Please select a valid date.</div>
                <div class="valid-feedback">Looks good!</div>
@@ -337,18 +337,52 @@
             <input type="hidden" id="exam_learners" name="exam_learners" value="">
          </div>
 
-         <!-- Add Learner (Multi-select) -->
+      </div>
+
+      <!-- Class Learners Section -->
+      <?php echo section_divider(); ?>
+      <?php echo section_header('Class Learners', 'Select learners for this class and manage their status.'); ?>
+
+      <div class="row mb-4">
+         <!-- Learner Selection -->
          <div class="col-md-4">
-            <label for="add_learner" class="form-label">Add Learner <span class="text-danger">*</span></label>
+            <label for="add_learner" class="form-label">Select Learners <span class="text-danger">*</span></label>
             <select id="add_learner" name="add_learner[]" class="form-select form-select-sm" size="5" multiple required>
                <?php foreach ($data['learners'] as $learner): ?>
                   <option value="<?php echo esc_attr($learner['id']); ?>"><?php echo esc_html($learner['name']); ?></option>
                <?php endforeach; ?>
             </select>
-            <div class="invalid-feedback">Please add at least one learner.</div>
+            <div class="form-text">Select multiple learners to add to this class.</div>
+            <div class="invalid-feedback">Please select at least one learner.</div>
             <div class="valid-feedback">Looks good!</div>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-selected-learners-btn">
+               Add Selected Learners
+            </button>
          </div>
 
+         <!-- Learners Table -->
+         <div class="col-md-8">
+            <label class="form-label">Class Learners</label>
+            <div id="class-learners-container" class="border rounded p-3">
+               <div class="alert alert-info" id="no-learners-message">
+                  No learners added to this class yet. Select learners from the list and click "Add Selected Learners".
+               </div>
+               <table class="table table-sm d-none" id="class-learners-table">
+                  <thead>
+                     <tr>
+                        <th>Learner</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                     </tr>
+                  </thead>
+                  <tbody id="class-learners-tbody">
+                     <!-- Learner rows will be added here dynamically -->
+                  </tbody>
+               </table>
+            </div>
+            <!-- Hidden field to store learner data -->
+            <input type="hidden" id="class_learners_data" name="class_learners_data" value="">
+         </div>
       </div>
 
       <?php echo section_divider(); ?>
@@ -420,64 +454,137 @@
       <?php echo section_divider(); ?>
 
       <!-- ===== Section: Assignments & Dates ===== -->
-      <?php echo section_header('Assignments & Dates', 'Assign staff to this class and set important dates.'); ?>
-      <?php echo form_row([
-         [
-            'type' => 'select',
-            'name' => 'class_agent',
-            'label' => 'Class Agent',
-            'col_class' => 'col-md-4',
-            'attributes' => [
-               'id' => 'class_agent',
-               'options' => $data['agents'],
-               'required' => true
-            ],
-            'invalid_feedback' => 'Please select a class agent.'
-         ],
-         [
-            'type' => 'select',
-            'name' => 'project_supervisor',
-            'label' => 'Project Supervisor',
-            'col_class' => 'col-md-4',
-            'attributes' => [
-               'id' => 'project_supervisor',
-               'options' => $data['supervisors'],
-               'required' => true
-            ],
-            'invalid_feedback' => 'Please select a project supervisor.'
-         ]
-      ]); ?>
+      <?php echo section_header('Assignments & Dates', 'Assign staff to this class and track agent changes.'); ?>
 
-      <?php echo form_row([
-         [
-            'type' => 'date',
-            'name' => 'delivery_date',
-            'label' => 'SORS/Learnerpacks Delivery Date',
-            'col_class' => 'col-md-4',
-            'attributes' => [
-               'id' => 'delivery_date',
-               'required' => true
-            ],
-            'required' => true,
-            'invalid_feedback' => 'Please select a delivery date.'
-         ],
-         [
-            'type' => 'select',
-            'name' => 'backup_agent[]',
-            'label' => 'Backup Agent',
-            'col_class' => 'col-md-4',
-            'attributes' => [
-               'id' => 'backup_agent',
-               'options' => $data['agents'],
-               'multiple' => true,
-               'size' => 2,
-               'required' => true
-            ],
-            'required' => true,
-            'invalid_feedback' => 'Please select a backup agent.'
-         ]
-      ]); ?>
+      <!-- Class Agents Section -->
+      <div class="mb-4">
+         <h5 class="mb-3">Class Agents</h5>
+         <p class="text-muted small mb-3">Assign the primary class agent. If the agent changes during the class, the history will be tracked.</p>
 
+         <!-- Initial Class Agent -->
+         <div class="row mb-3">
+            <div class="col-md-5">
+               <label for="initial_class_agent" class="form-label">Initial Class Agent <span class="text-danger">*</span></label>
+               <select id="initial_class_agent" name="initial_class_agent" class="form-select form-select-sm" required>
+                  <option value="">Select</option>
+                  <?php foreach ($data['agents'] as $agent): ?>
+                     <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
+                  <?php endforeach; ?>
+               </select>
+               <div class="invalid-feedback">Please select the initial class agent.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="col-md-5">
+               <label for="initial_agent_start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
+               <input type="date" id="initial_agent_start_date" name="initial_agent_start_date" class="form-control form-control-sm" required>
+               <div class="invalid-feedback">Please select the start date.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+         </div>
+
+         <!-- Agent Replacements -->
+         <h6 class="mb-3">Agent Replacements</h6>
+         <p class="text-muted small mb-3">If the class agent changes, add the replacement agent and takeover date here.</p>
+
+         <!-- Container for all agent replacement rows -->
+         <div id="agent-replacements-container"></div>
+
+         <!-- Hidden Template Row (initially d-none) -->
+         <div class="row agent-replacement-row d-none" id="agent-replacement-row-template">
+            <!-- Replacement Agent -->
+            <div class="col-md-5 mb-2">
+               <label class="form-label">Replacement Agent</label>
+               <select name="replacement_agent_ids[]" class="form-select form-select-sm replacement-agent-select">
+                  <option value="">Select</option>
+                  <?php foreach ($data['agents'] as $agent): ?>
+                     <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
+                  <?php endforeach; ?>
+               </select>
+               <div class="invalid-feedback">Please select a replacement agent.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Takeover Date -->
+            <div class="col-md-5 mb-2">
+               <label class="form-label">Takeover Date</label>
+               <input type="date" name="replacement_agent_dates[]" class="form-control form-control-sm">
+               <div class="invalid-feedback">Please select a valid takeover date.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Remove Button -->
+            <div class="col-md-2 mb-2">
+               <label class="form-label invisible">&nbsp;</label>
+               <button type="button" class="btn btn-outline-danger btn-sm remove-agent-replacement-btn form-control date-remove-btn">Remove</button>
+            </div>
+         </div>
+
+         <!-- Add Row Button -->
+         <button type="button" class="btn btn-outline-primary btn-sm" id="add-agent-replacement-btn">
+         + Add Agent Replacement
+         </button>
+      </div>
+
+      <!-- Project Supervisor -->
+      <div class="row mb-4">
+         <div class="col-md-5">
+            <label for="project_supervisor" class="form-label">Project Supervisor <span class="text-danger">*</span></label>
+            <select id="project_supervisor" name="project_supervisor" class="form-select form-select-sm" required>
+               <option value="">Select</option>
+               <?php foreach ($data['supervisors'] as $supervisor): ?>
+                  <option value="<?php echo esc_attr($supervisor['id']); ?>"><?php echo esc_html($supervisor['name']); ?></option>
+               <?php endforeach; ?>
+            </select>
+            <div class="invalid-feedback">Please select a project supervisor.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
+      </div>
+
+      <!-- Backup Agents Section -->
+      <div class="mt-4 mb-4">
+         <h5 class="mb-3">Backup Agents</h5>
+         <p class="text-muted small mb-3">Add backup agents with specific dates when they will be available.</p>
+
+         <!-- Container for all backup agent rows -->
+         <div id="backup-agents-container"></div>
+
+         <!-- Hidden Template Row (initially d-none) -->
+         <div class="row backup-agent-row d-none" id="backup-agent-row-template">
+            <!-- Backup Agent -->
+            <div class="col-md-5 mb-2">
+               <label class="form-label">Backup Agent</label>
+               <select name="backup_agent_ids[]" class="form-select form-select-sm backup-agent-select">
+                  <option value="">Select</option>
+                  <?php foreach ($data['agents'] as $agent): ?>
+                     <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
+                  <?php endforeach; ?>
+               </select>
+               <div class="invalid-feedback">Please select a backup agent.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Backup Date -->
+            <div class="col-md-5 mb-2">
+               <label class="form-label">Backup Date</label>
+               <input type="date" name="backup_agent_dates[]" class="form-control form-control-sm">
+               <div class="invalid-feedback">Please select a valid date.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Remove Button -->
+            <div class="col-md-2 mb-2">
+               <label class="form-label invisible">&nbsp;</label>
+               <button type="button" class="btn btn-outline-danger btn-sm remove-backup-agent-btn form-control date-remove-btn">Remove</button>
+            </div>
+         </div>
+
+         <!-- Add Row Button -->
+         <button type="button" class="btn btn-outline-primary btn-sm" id="add-backup-agent-btn">
+         + Add Backup Agent
+         </button>
+      </div>
+
+      <?php echo section_divider(); ?>
       <!-- Submit Button -->
       <div class="row mt-4">
          <div class="col-md-3">
