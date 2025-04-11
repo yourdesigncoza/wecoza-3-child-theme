@@ -144,6 +144,27 @@ class MainController {
     }
 
     /**
+     * Get class notes options
+     *
+     * @return array List of class notes options
+     */
+    public static function getClassNotesOptions() {
+        return [
+            ['id' => 'Agent Absent', 'name' => 'Agent Absent'],
+            ['id' => 'Client Cancelled', 'name' => 'Client Cancelled'],
+            ['id' => 'Poor attendance', 'name' => 'Poor attendance'],
+            ['id' => 'Learners behind schedule', 'name' => 'Learners behind schedule'],
+            ['id' => 'Learners unhappy', 'name' => 'Learners unhappy'],
+            ['id' => 'Client unhappy', 'name' => 'Client unhappy'],
+            ['id' => 'Learners too fast', 'name' => 'Learners too fast'],
+            ['id' => 'Class on track', 'name' => 'Class on track'],
+            ['id' => 'Bad QA report', 'name' => 'Bad QA report'],
+            ['id' => 'Good QA report', 'name' => 'Good QA report'],
+            ['id' => 'Incomplete workbooks', 'name' => 'Incomplete workbooks']
+        ];
+    }
+
+    /**
      * Additional shared methods can be added here
      */
 }

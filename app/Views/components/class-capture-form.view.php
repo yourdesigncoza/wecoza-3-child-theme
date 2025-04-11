@@ -394,17 +394,9 @@
          <div class="col-md-6">
             <label for="class_notes" class="form-label">Class Notes</label>
             <select id="class_notes" name="class_notes[]" class="form-select form-select-sm" size="5" multiple>
-               <option value="Agent Absent">Agent Absent</option>
-               <option value="Client Cancelled">Client Cancelled</option>
-               <option value="Poor attendance">Poor attendance</option>
-               <option value="Learners behind schedule">Learners behind schedule</option>
-               <option value="Learners unhappy">Learners unhappy</option>
-               <option value="Client unhappy">Client unhappy</option>
-               <option value="Learners too fast">Learners too fast</option>
-               <option value="Class on track">Class on track</option>
-               <option value="Bad QA report">Bad QA report</option>
-               <option value="Good QA report">Good QA report</option>
-               <option value="Incomplete workbooks">Incomplete workbooks</option>
+               <?php foreach ($data['class_notes_options'] as $option): ?>
+                  <option value="<?php echo esc_attr($option['id']); ?>"><?php echo esc_html($option['name']); ?></option>
+               <?php endforeach; ?>
             </select>
             <div class="form-text">Select multiple operational notes that apply to this class.</div>
             <div class="invalid-feedback">Please select at least one note.</div>

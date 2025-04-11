@@ -79,6 +79,7 @@ class ClassController {
             'products' => MainController::getProducts(),
             'class_types' => MainController::getClassType(),
             'yes_no_options' => MainController::getYesNoOptions(),
+            'class_notes_options' => MainController::getClassNotesOptions(),
             'redirect_url' => $atts['redirect_url']
         ];
 
