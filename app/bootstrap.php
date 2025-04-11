@@ -66,6 +66,12 @@ function view($name, $data = []) {
     // Extract data to make variables available in view
     extract($data);
 
+    // Make sure view helpers are available
+    $helpers_loader = WECOZA_APP_PATH . '/Helpers/view-helpers-loader.php';
+    if (file_exists($helpers_loader)) {
+        require_once $helpers_loader;
+    }
+
     // Include view file
     include $path;
 
@@ -77,63 +83,8 @@ function view($name, $data = []) {
  * Load view helpers
  */
 function load_view_helpers() {
-    // Include the view helpers file
-    require_once WECOZA_APP_PATH . '/Helpers/ViewHelpers.php';
-
-    // Create function aliases in the global namespace
-    if (!function_exists('select_dropdown')) {
-        function select_dropdown($name, $options, $attributes = [], $selected = '', $empty_label = 'Select') {
-            return \WeCoza\Helpers\select_dropdown($name, $options, $attributes, $selected, $empty_label);
-        }
-    }
-
-    if (!function_exists('select_dropdown_with_optgroups')) {
-        function select_dropdown_with_optgroups($name, $optgroups, $attributes = [], $selected = '', $empty_label = 'Select') {
-            return \WeCoza\Helpers\select_dropdown_with_optgroups($name, $optgroups, $attributes, $selected, $empty_label);
-        }
-    }
-
-    if (!function_exists('form_input')) {
-        function form_input($type, $name, $label, $attributes = [], $value = '', $required = false, $invalid_feedback = 'Please fill out this field.', $valid_feedback = 'Looks good!') {
-            return \WeCoza\Helpers\form_input($type, $name, $label, $attributes, $value, $required, $invalid_feedback, $valid_feedback);
-        }
-    }
-
-    if (!function_exists('form_textarea')) {
-        function form_textarea($name, $label, $attributes = [], $value = '', $required = false, $invalid_feedback = 'Please fill out this field.', $valid_feedback = 'Looks good!') {
-            return \WeCoza\Helpers\form_textarea($name, $label, $attributes, $value, $required, $invalid_feedback, $valid_feedback);
-        }
-    }
-
-    if (!function_exists('form_group')) {
-        function form_group($type, $name, $label, $col_class = 'col-md-4', $attributes = [], $value = '', $required = false, $invalid_feedback = 'Please fill out this field.', $valid_feedback = 'Looks good!') {
-            return \WeCoza\Helpers\form_group($type, $name, $label, $col_class, $attributes, $value, $required, $invalid_feedback, $valid_feedback);
-        }
-    }
-
-    if (!function_exists('form_row')) {
-        function form_row($fields) {
-            return \WeCoza\Helpers\form_row($fields);
-        }
-    }
-
-    if (!function_exists('section_divider')) {
-        function section_divider($classes = '') {
-            return \WeCoza\Helpers\section_divider($classes);
-        }
-    }
-
-    if (!function_exists('section_header')) {
-        function section_header($title, $description = '', $title_tag = 'h5') {
-            return \WeCoza\Helpers\section_header($title, $description, $title_tag);
-        }
-    }
-
-    if (!function_exists('button')) {
-        function button($text, $type = 'button', $style = 'primary', $attributes = []) {
-            return \WeCoza\Helpers\button($text, $type, $style, $attributes);
-        }
-    }
+    // Include the view helpers loader
+    require_once WECOZA_APP_PATH . '/Helpers/view-helpers-loader.php';
 }
 
 /**

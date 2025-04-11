@@ -1,8 +1,55 @@
 <?php
+
 /**
- * Class capture form view
+ * Class Capture Form View
  *
- * @var array $data View data containing clients, sites, agents, supervisors, learners
+ * This view file renders a comprehensive form for creating and managing training classes in the WeCoza system.
+ * It follows the MVC architecture pattern where this file (View) is responsible only for presentation,
+ * while the ClassController handles the business logic and data processing.
+ *
+ * The form includes multiple sections:
+ * - Basic Details: Client and site selection
+ * - Class Schedule Calendar: Visual calendar for scheduling class sessions
+ * - Class Info: Type, start date, subjects
+ * - Date History: Managing stop/restart dates for classes
+ * - Funding & Exam Details: SETA funding and exam information
+ * - Exam Learners: Selection of learners taking exams (conditionally displayed)
+ * - Class Notes & QA: Quality assurance information
+ * - Assignments & Dates: Staff assignments and important dates
+ *
+ * This form uses various view helpers (from app/Helpers/ViewHelpers.php) to generate consistent UI elements:
+ * - select_dropdown(): For dropdown menus
+ * - form_input(): For input fields
+ * - form_textarea(): For textarea fields
+ * - form_row(): For complex form rows
+ * - section_divider(): For visual section separators
+ * - section_header(): For section titles
+ * - button(): For form buttons
+ *
+ * The form includes client-side validation using Bootstrap's validation classes and custom JavaScript.
+ * Server-side validation is handled by the ClassController and ValidationService.
+ *
+ * JavaScript functionality is provided by class-capture.js and class-calendar-init.js, which handle:
+ * - Calendar initialization and event management
+ * - Dynamic form field behavior (conditional fields, multi-select)
+ * - Form submission via AJAX
+ * - Validation feedback
+ *
+ * @var array $data View data passed from ClassController containing:
+ *   - clients: Array of client data with 'id' and 'name' keys
+ *   - sites: Associative array of sites grouped by client ID
+ *   - agents: Array of agent data with 'id' and 'name' keys
+ *   - supervisors: Array of supervisor data with 'id' and 'name' keys
+ *   - learners: Array of learner data with 'id' and 'name' keys
+ *   - setas: Array of SETA data with 'id' and 'name' keys
+ *   - products: Array of product/course data with 'id', 'name', and 'learning_area' keys
+ *   - class_types: Array of class type data with 'id' and 'name' keys
+ *   - yes_no_options: Array of Yes/No options with 'id' and 'name' keys
+ *   - redirect_url: URL to redirect to after successful form submission
+ *
+ * @see \WeCoza\Controllers\ClassController::captureClassShortcode() For the controller method that renders this view
+ * @see \WeCoza\Models\Assessment\ClassModel For the data model that stores class information
+ * @see \WeCoza\Services\Validation\ValidationService For the validation service used to validate form data
  */
 ?>
 <!-- Classes Capture Form -->
@@ -231,6 +278,7 @@
       <div class="row">
          <!-- SETA Funded -->
          <div class="col-md-3">
+            <label for="seta_funded" class="form-label">SETA Funded? <span class="text-danger">*</span></label>
             <?php echo select_dropdown('seta_funded', $data['yes_no_options'], [
                'id' => 'seta_funded',
                'required' => true
@@ -241,6 +289,7 @@
 
          <!-- SETA (conditionally displayed) -->
          <div class="col-md-3" id="seta_container" style="display: none;">
+            <label for="seta_id" class="form-label">SETA <span class="text-danger">*</span></label>
             <?php echo select_dropdown('seta_id', $data['setas'], [
                'id' => 'seta_id'
             ], '', 'Select'); ?>
@@ -250,6 +299,7 @@
 
          <!-- Exam Class -->
          <div class="col-md-3">
+            <label for="exam_class" class="form-label">Exam Class <span class="text-danger">*</span></label>
             <?php echo select_dropdown('exam_class', $data['yes_no_options'], [
                'id' => 'exam_class',
                'required' => true
