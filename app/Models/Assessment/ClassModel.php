@@ -1,13 +1,14 @@
 <?php
 /**
  * ClassModel.php
- * 
+ *
  * Model for class/training session data
  */
 
 namespace WeCoza\Models\Assessment;
 
 use WeCoza\Services\Database\DatabaseService;
+use WeCoza\Services\Validation\ValidationService;
 
 class ClassModel {
     /**
@@ -48,7 +49,7 @@ class ClassModel {
 
     /**
      * Hydrate model with data
-     * 
+     *
      * @param array $data Data to populate model
      */
     public function hydrate($data) {
@@ -62,7 +63,7 @@ class ClassModel {
 
     /**
      * Get class by ID
-     * 
+     *
      * @param int $id Class ID
      * @return ClassModel|null
      */
@@ -70,10 +71,10 @@ class ClassModel {
         try {
             $db = DatabaseService::getInstance();
             $stmt = $db->query("SELECT * FROM wecoza_classes WHERE id = ?", [$id]);
-            
+
             if ($row = $stmt->fetch()) {
                 $class = new self($row);
-                
+
                 // Load related data
                 $class->loadScheduleData();
                 $class->loadStopRestartDates();
@@ -81,10 +82,10 @@ class ClassModel {
                 $class->loadBackupAgents();
                 $class->loadCourses();
                 $class->loadClassNotes();
-                
+
                 return $class;
             }
-            
+
             return null;
         } catch (\Exception $e) {
             error_log('Error fetching class: ' . $e->getMessage());
@@ -94,25 +95,25 @@ class ClassModel {
 
     /**
      * Save class data
-     * 
+     *
      * @return bool Success status
      */
     public function save() {
         try {
             $db = DatabaseService::getInstance();
             $db->beginTransaction();
-            
+
             $now = date('Y-m-d H:i:s');
             $this->setCreatedAt($now);
             $this->setUpdatedAt($now);
-            
+
             // Insert main class record
             $sql = "INSERT INTO wecoza_classes (
                 client_id, site_id, site_address, class_type, class_start_date,
                 seta_funded, seta_id, exam_class, exam_type, qa_visit_dates,
                 class_agent, project_supervisor, delivery_date, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+
             $params = [
                 $this->getClientId(),
                 $this->getSiteId(),
@@ -130,11 +131,11 @@ class ClassModel {
                 $this->getCreatedAt(),
                 $this->getUpdatedAt()
             ];
-            
+
             $db->query($sql, $params);
             $classId = $db->lastInsertId();
             $this->setId($classId);
-            
+
             // Save related data
             $this->saveScheduleData($classId);
             $this->saveStopRestartDates($classId);
@@ -142,7 +143,7 @@ class ClassModel {
             $this->saveBackupAgents($classId);
             $this->saveCourses($classId);
             $this->saveClassNotes($classId);
-            
+
             $db->commit();
             return true;
         } catch (\Exception $e) {
@@ -156,24 +157,24 @@ class ClassModel {
 
     /**
      * Update class data
-     * 
+     *
      * @return bool Success status
      */
     public function update() {
         try {
             $db = DatabaseService::getInstance();
             $db->beginTransaction();
-            
+
             $this->setUpdatedAt(date('Y-m-d H:i:s'));
-            
+
             // Update main class record
             $sql = "UPDATE wecoza_classes SET
-                client_id = ?, site_id = ?, site_address = ?, class_type = ?, 
+                client_id = ?, site_id = ?, site_address = ?, class_type = ?,
                 class_start_date = ?, seta_funded = ?, seta_id = ?, exam_class = ?,
                 exam_type = ?, qa_visit_dates = ?, class_agent = ?, project_supervisor = ?,
                 delivery_date = ?, updated_at = ?
                 WHERE id = ?";
-            
+
             $params = [
                 $this->getClientId(),
                 $this->getSiteId(),
@@ -191,12 +192,12 @@ class ClassModel {
                 $this->getUpdatedAt(),
                 $this->getId()
             ];
-            
+
             $db->query($sql, $params);
-            
+
             // Update related data - first delete existing
             $this->deleteRelatedData();
-            
+
             // Then save new data
             $this->saveScheduleData($this->getId());
             $this->saveStopRestartDates($this->getId());
@@ -204,7 +205,7 @@ class ClassModel {
             $this->saveBackupAgents($this->getId());
             $this->saveCourses($this->getId());
             $this->saveClassNotes($this->getId());
-            
+
             $db->commit();
             return true;
         } catch (\Exception $e) {
@@ -218,20 +219,20 @@ class ClassModel {
 
     /**
      * Delete class
-     * 
+     *
      * @return bool Success status
      */
     public function delete() {
         try {
             $db = DatabaseService::getInstance();
             $db->beginTransaction();
-            
+
             // Delete related data
             $this->deleteRelatedData();
-            
+
             // Delete main class record
             $db->query("DELETE FROM wecoza_classes WHERE id = ?", [$this->getId()]);
-            
+
             $db->commit();
             return true;
         } catch (\Exception $e) {
@@ -249,7 +250,7 @@ class ClassModel {
     private function deleteRelatedData() {
         $db = DatabaseService::getInstance();
         $classId = $this->getId();
-        
+
         $db->query("DELETE FROM wecoza_class_schedule WHERE class_id = ?", [$classId]);
         $db->query("DELETE FROM wecoza_class_dates WHERE class_id = ?", [$classId]);
         $db->query("DELETE FROM wecoza_class_learners WHERE class_id = ?", [$classId]);
@@ -265,7 +266,7 @@ class ClassModel {
         $db = DatabaseService::getInstance();
         $stmt = $db->query("SELECT * FROM wecoza_class_schedule WHERE class_id = ?", [$this->getId()]);
         $scheduleData = [];
-        
+
         while ($row = $stmt->fetch()) {
             $scheduleData[] = [
                 'day' => $row['day'],
@@ -276,26 +277,26 @@ class ClassModel {
                 'type' => $row['type']
             ];
         }
-        
+
         $this->setScheduleData($scheduleData);
     }
 
     /**
      * Save schedule data
-     * 
+     *
      * @param int $classId Class ID
      */
     private function saveScheduleData($classId) {
         $db = DatabaseService::getInstance();
         $scheduleData = $this->getScheduleData();
-        
+
         if (empty($scheduleData)) {
             return;
         }
-        
-        $sql = "INSERT INTO wecoza_class_schedule (class_id, day, date, start_time, end_time, notes, type) 
+
+        $sql = "INSERT INTO wecoza_class_schedule (class_id, day, date, start_time, end_time, notes, type)
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
+
         foreach ($scheduleData as $schedule) {
             $params = [
                 $classId,
@@ -306,7 +307,7 @@ class ClassModel {
                 $schedule['notes'],
                 $schedule['type']
             ];
-            
+
             $db->query($sql, $params);
         }
     }
@@ -319,43 +320,43 @@ class ClassModel {
         $stmt = $db->query("SELECT * FROM wecoza_class_dates WHERE class_id = ?", [$this->getId()]);
         $stopDates = [];
         $restartDates = [];
-        
+
         while ($row = $stmt->fetch()) {
             $stopDates[] = $row['stop_date'];
             $restartDates[] = $row['restart_date'];
         }
-        
+
         $this->setStopDates($stopDates);
         $this->setRestartDates($restartDates);
     }
 
     /**
      * Save stop/restart dates
-     * 
+     *
      * @param int $classId Class ID
      */
     private function saveStopRestartDates($classId) {
         $db = DatabaseService::getInstance();
         $stopDates = $this->getStopDates();
         $restartDates = $this->getRestartDates();
-        
+
         if (empty($stopDates) || empty($restartDates)) {
             return;
         }
-        
+
         $sql = "INSERT INTO wecoza_class_dates (class_id, stop_date, restart_date) VALUES (?, ?, ?)";
-        
+
         for ($i = 0; $i < count($stopDates); $i++) {
             if (empty($stopDates[$i]) || empty($restartDates[$i])) {
                 continue;
             }
-            
+
             $params = [
                 $classId,
                 $stopDates[$i],
                 $restartDates[$i]
             ];
-            
+
             $db->query($sql, $params);
         }
     }
@@ -367,29 +368,29 @@ class ClassModel {
         $db = DatabaseService::getInstance();
         $stmt = $db->query("SELECT learner_id FROM wecoza_class_learners WHERE class_id = ?", [$this->getId()]);
         $learnerIds = [];
-        
+
         while ($row = $stmt->fetch()) {
             $learnerIds[] = $row['learner_id'];
         }
-        
+
         $this->setLearnerIds($learnerIds);
     }
 
     /**
      * Save learners
-     * 
+     *
      * @param int $classId Class ID
      */
     private function saveLearners($classId) {
         $db = DatabaseService::getInstance();
         $learnerIds = $this->getLearnerIds();
-        
+
         if (empty($learnerIds)) {
             return;
         }
-        
+
         $sql = "INSERT INTO wecoza_class_learners (class_id, learner_id) VALUES (?, ?)";
-        
+
         foreach ($learnerIds as $learnerId) {
             $db->query($sql, [$classId, $learnerId]);
         }
@@ -402,29 +403,29 @@ class ClassModel {
         $db = DatabaseService::getInstance();
         $stmt = $db->query("SELECT agent_id FROM wecoza_class_backup_agents WHERE class_id = ?", [$this->getId()]);
         $agentIds = [];
-        
+
         while ($row = $stmt->fetch()) {
             $agentIds[] = $row['agent_id'];
         }
-        
+
         $this->setBackupAgentIds($agentIds);
     }
 
     /**
      * Save backup agents
-     * 
+     *
      * @param int $classId Class ID
      */
     private function saveBackupAgents($classId) {
         $db = DatabaseService::getInstance();
         $agentIds = $this->getBackupAgentIds();
-        
+
         if (empty($agentIds)) {
             return;
         }
-        
+
         $sql = "INSERT INTO wecoza_class_backup_agents (class_id, agent_id) VALUES (?, ?)";
-        
+
         foreach ($agentIds as $agentId) {
             $db->query($sql, [$classId, $agentId]);
         }
@@ -437,29 +438,29 @@ class ClassModel {
         $db = DatabaseService::getInstance();
         $stmt = $db->query("SELECT course_id FROM wecoza_class_courses WHERE class_id = ?", [$this->getId()]);
         $courseIds = [];
-        
+
         while ($row = $stmt->fetch()) {
             $courseIds[] = $row['course_id'];
         }
-        
+
         $this->setCourseIds($courseIds);
     }
 
     /**
      * Save courses
-     * 
+     *
      * @param int $classId Class ID
      */
     private function saveCourses($classId) {
         $db = DatabaseService::getInstance();
         $courseIds = $this->getCourseIds();
-        
+
         if (empty($courseIds)) {
             return;
         }
-        
+
         $sql = "INSERT INTO wecoza_class_courses (class_id, course_id) VALUES (?, ?)";
-        
+
         foreach ($courseIds as $courseId) {
             $db->query($sql, [$classId, $courseId]);
         }
@@ -472,29 +473,29 @@ class ClassModel {
         $db = DatabaseService::getInstance();
         $stmt = $db->query("SELECT note_id FROM wecoza_class_notes WHERE class_id = ?", [$this->getId()]);
         $noteIds = [];
-        
+
         while ($row = $stmt->fetch()) {
             $noteIds[] = $row['note_id'];
         }
-        
+
         $this->setClassNotes($noteIds);
     }
 
     /**
      * Save class notes
-     * 
+     *
      * @param int $classId Class ID
      */
     private function saveClassNotes($classId) {
         $db = DatabaseService::getInstance();
         $noteIds = $this->getClassNotes();
-        
+
         if (empty($noteIds)) {
             return;
         }
-        
+
         $sql = "INSERT INTO wecoza_class_notes (class_id, note_id) VALUES (?, ?)";
-        
+
         foreach ($noteIds as $noteId) {
             $db->query($sql, [$classId, $noteId]);
         }
@@ -706,5 +707,112 @@ class ClassModel {
     public function setUpdatedAt($updatedAt) {
         $this->updatedAt = $updatedAt;
         return $this;
+    }
+
+    /**
+     * Get validation rules for class data
+     *
+     * @return array Validation rules
+     */
+    public static function getValidationRules() {
+        return [
+            'client_id' => [
+                'required' => true,
+                'numeric' => true
+            ],
+            'site_id' => [
+                'required' => true,
+                'numeric' => true
+            ],
+            'class_type' => [
+                'required' => true
+            ],
+            'class_start_date' => [
+                'required' => true,
+                'date' => true
+            ],
+            'course_id' => [
+                'required' => true,
+                'array' => true
+            ],
+            'seta_funded' => [
+                'required' => true,
+                'in_array' => ['Yes', 'No']
+            ],
+            'seta_id' => [
+                'required' => function($value, $data) {
+                    return isset($data['seta_funded']) && $data['seta_funded'] === 'Yes';
+                }
+            ],
+            'exam_class' => [
+                'required' => true,
+                'in_array' => ['Yes', 'No']
+            ],
+            'exam_type' => [
+                'required' => function($value, $data) {
+                    return isset($data['exam_class']) && $data['exam_class'] === 'Yes';
+                }
+            ],
+            'class_agent' => [
+                'required' => true,
+                'numeric' => true
+            ],
+            'project_supervisor' => [
+                'required' => true,
+                'numeric' => true
+            ],
+            'delivery_date' => [
+                'required' => true,
+                'date' => true
+            ],
+            'add_learner' => [
+                'required' => true,
+                'array' => true
+            ],
+            'backup_agent' => [
+                'required' => true,
+                'array' => true
+            ],
+            // Add custom validation for stop/restart dates
+            'stop_dates' => [
+                'custom' => function($value, $data) {
+                    if (!is_array($value)) {
+                        return 'Stop dates must be an array';
+                    }
+
+                    if (isset($data['restart_dates']) && is_array($data['restart_dates'])) {
+                        // Check that each restart date is after its corresponding stop date
+                        foreach ($value as $index => $stopDate) {
+                            if (empty($stopDate)) {
+                                continue;
+                            }
+
+                            if (isset($data['restart_dates'][$index]) && !empty($data['restart_dates'][$index])) {
+                                $stopTimestamp = strtotime($stopDate);
+                                $restartTimestamp = strtotime($data['restart_dates'][$index]);
+
+                                if ($restartTimestamp <= $stopTimestamp) {
+                                    return 'Each restart date must be after its corresponding stop date';
+                                }
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+            ]
+        ];
+    }
+
+    /**
+     * Validate class data
+     *
+     * @param array $data Data to validate
+     * @return ValidationService Validation service with results
+     */
+    public static function validate($data) {
+        $validator = new ValidationService(self::getValidationRules());
+        $validator->validate($data);
+        return $validator;
     }
 }

@@ -43,6 +43,7 @@ class ClassController {
 
         // Custom scripts
         wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
+        wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
 
         // Localize script with AJAX URL and nonce
         wp_localize_script('wecoza-class-js', 'wecozaClass', [
@@ -52,22 +53,7 @@ class ClassController {
             'debug' => true
         ]);
 
-        // Add inline script to initialize calendar when DOM is ready
-        wp_add_inline_script('wecoza-class-js', '
-            jQuery(document).ready(function($) {
-                console.log("DOM ready - checking for calendar");
-                if ($("#class-calendar").length) {
-                    console.log("Calendar container found - initializing");
-                    if (typeof initializeClassCalendar === "function") {
-                        initializeClassCalendar();
-                    } else {
-                        console.error("initializeClassCalendar function not found");
-                    }
-                } else {
-                    console.log("Calendar container not found");
-                }
-            });
-        ', 'after');
+        // Calendar initialization is now handled by class-calendar-init.js
     }
 
     /**
@@ -158,6 +144,17 @@ class ClassController {
 
         // Process form data
         $formData = self::processFormData($_POST);
+
+        // Validate form data
+        $validator = ClassModel::validate($formData);
+        if (!$validator->validate($formData)) {
+            wp_send_json_error([
+                'message' => 'Validation failed. Please check the form for errors.',
+                'errors' => $validator->getErrors(),
+                'error_messages' => $validator->getAllErrorMessages()
+            ]);
+            return;
+        }
 
         // Create or update class
         $class = new ClassModel($formData);
