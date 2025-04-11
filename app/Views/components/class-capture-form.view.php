@@ -61,7 +61,7 @@
          </div>
       </div>
 
-      <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
+      <?php echo section_divider(); ?>
 
       <!-- Day/Time Schedule Section -->
       <div class="mb-3">
@@ -69,19 +69,7 @@
          <p class="text-muted small mb-3">Manage class schedules visually.</p>
 
          <!-- Calendar Container -->
-         <div id="class-calendar" class="mb-3"></div>
-
-         <!-- Hidden initialization script -->
-         <script>
-            jQuery(document).ready(function($) {
-               // Try to initialize calendar after a short delay
-               setTimeout(function() {
-                  if (typeof initializeClassCalendar === 'function') {
-                     initializeClassCalendar();
-                  }
-               }, 500);
-            });
-         </script>
+         <div id="class-calendar" class="mb-3" data-calendar-init="true"></div>
 
          <!-- Event Form Modal -->
          <div class="modal" id="eventModal" tabindex="-1" data-bs-backdrop="static">
@@ -158,7 +146,7 @@
          </div>
       </div>
 
-      <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
+      <?php echo section_divider(); ?>
 
       <!-- ===== Section: Scheduling & Class Info ===== -->
       <div class="row mt-3">
@@ -236,45 +224,36 @@
          </button>
       </div>
 
-      <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
+      <?php echo section_divider(); ?>
 
       <!-- ===== Section: Funding & Exam Details ===== -->
+      <?php echo section_header('Funding & Exam Details'); ?>
       <div class="row">
          <!-- SETA Funded -->
          <div class="col-md-3">
-            <label for="seta_funded" class="form-label">SETA Funded? <span class="text-danger">*</span></label>
-            <select id="seta_funded" name="seta_funded" class="form-select form-select-sm" required>
-               <option value="">Select</option>
-               <?php foreach ($data['yes_no_options'] as $option): ?>
-                  <option value="<?php echo esc_attr($option['id']); ?>"><?php echo esc_html($option['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
+            <?php echo select_dropdown('seta_funded', $data['yes_no_options'], [
+               'id' => 'seta_funded',
+               'required' => true
+            ], '', 'Select'); ?>
             <div class="invalid-feedback">Please select if the class is SETA funded.</div>
             <div class="valid-feedback">Looks good!</div>
          </div>
 
          <!-- SETA (conditionally displayed) -->
          <div class="col-md-3" id="seta_container" style="display: none;">
-            <label for="seta_id" class="form-label">SETA <span class="text-danger">*</span></label>
-            <select id="seta_id" name="seta_id" class="form-select form-select-sm">
-               <option value="">Select</option>
-               <?php foreach ($data['setas'] as $seta): ?>
-                  <option value="<?php echo esc_attr($seta['id']); ?>"><?php echo esc_html($seta['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
+            <?php echo select_dropdown('seta_id', $data['setas'], [
+               'id' => 'seta_id'
+            ], '', 'Select'); ?>
             <div class="invalid-feedback">Please select a SETA.</div>
             <div class="valid-feedback">Looks good!</div>
          </div>
 
          <!-- Exam Class -->
          <div class="col-md-3">
-            <label for="exam_class" class="form-label">Exam Class <span class="text-danger">*</span></label>
-            <select id="exam_class" name="exam_class" class="form-select form-select-sm" required>
-               <option value="">Select</option>
-               <?php foreach ($data['yes_no_options'] as $option): ?>
-                  <option value="<?php echo esc_attr($option['id']); ?>"><?php echo esc_html($option['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
+            <?php echo select_dropdown('exam_class', $data['yes_no_options'], [
+               'id' => 'exam_class',
+               'required' => true
+            ], '', 'Select'); ?>
             <div class="invalid-feedback">Please select if this is an exam class.</div>
             <div class="valid-feedback">Looks good!</div>
          </div>
@@ -282,10 +261,10 @@
          <!-- Exam Type (conditionally displayed) -->
          <div class="col-md-3">
             <div id="exam_type_container" style="display: none;">
-               <label for="exam_type" class="form-label">Exam Type</label>
-               <input type="text" id="exam_type" name="exam_type" class="form-control form-control-sm" placeholder="Enter exam type">
-               <div class="invalid-feedback">Please provide the exam type.</div>
-               <div class="valid-feedback">Looks good!</div>
+               <?php echo form_input('text', 'exam_type', 'Exam Type', [
+                  'id' => 'exam_type',
+                  'placeholder' => 'Enter exam type'
+               ], '', false, 'Please provide the exam type.', 'Looks good!'); ?>
             </div>
          </div>
       </div>
@@ -322,87 +301,97 @@
 
       </div>
 
-      <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
+      <?php echo section_divider(); ?>
+      <?php echo section_header('Class Notes & QA', 'Add quality assurance information for this class.'); ?>
 
-      <!-- ===== Section: Class Notes & QA ===== -->
+      <!-- QA Information -->
       <div class="row">
          <!-- QA Visit Dates -->
          <div class="col-md-6">
-            <label for="qa_visit_dates" class="form-label">QA Visit Dates</label>
-            <textarea id="qa_visit_dates" name="qa_visit_dates" class="form-control form-control-sm" style="height:50px" placeholder="Enter QA visit dates separated by commas"></textarea>
-            <div class="invalid-feedback">Please enter the QA visit dates.</div>
-            <div class="valid-feedback">Looks good!</div>
+            <?php echo form_textarea('qa_visit_dates', 'QA Visit Dates', [
+               'id' => 'qa_visit_dates',
+               'placeholder' => 'Enter QA visit dates separated by commas',
+               'rows' => '2'
+            ], '', false, 'Please enter the QA visit dates.', 'Looks good!'); ?>
          </div>
       </div>
 
       <!-- QA Reports (File Upload) -->
       <div class="row mt-3">
          <div class="col-md-6">
-            <label for="qa_reports" class="form-label">QA Reports</label>
-            <input type="file" id="qa_reports" name="qa_reports[]" class="form-control form-control-sm" accept="application/pdf" multiple>
-            <div class="invalid-feedback">Please upload valid QA reports.</div>
-            <div class="valid-feedback">Looks good!</div>
+            <?php echo form_input('file', 'qa_reports[]', 'QA Reports', [
+               'id' => 'qa_reports',
+               'accept' => 'application/pdf',
+               'multiple' => 'multiple'
+            ], '', false, 'Please upload valid QA reports.', 'Looks good!'); ?>
          </div>
       </div>
 
-      <div class="border-top border-opacity-25 border-3 border-discovery my-5 mx-1"></div>
+      <?php echo section_divider(); ?>
 
       <!-- ===== Section: Assignments & Dates ===== -->
-      <div class="row">
-         <!-- Class Agent -->
-         <div class="col-md-4">
-            <label for="class_agent" class="form-label">Class Agent <span class="text-danger">*</span></label>
-            <select id="class_agent" name="class_agent" class="form-select form-select-sm" required>
-               <option value="">Select</option>
-               <?php foreach ($data['agents'] as $agent): ?>
-                  <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
-            <div class="invalid-feedback">Please select a class agent.</div>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
+      <?php echo section_header('Assignments & Dates', 'Assign staff to this class and set important dates.'); ?>
+      <?php echo form_row([
+         [
+            'type' => 'select',
+            'name' => 'class_agent',
+            'label' => 'Class Agent',
+            'col_class' => 'col-md-4',
+            'attributes' => [
+               'id' => 'class_agent',
+               'options' => $data['agents'],
+               'required' => true
+            ],
+            'invalid_feedback' => 'Please select a class agent.'
+         ],
+         [
+            'type' => 'select',
+            'name' => 'project_supervisor',
+            'label' => 'Project Supervisor',
+            'col_class' => 'col-md-4',
+            'attributes' => [
+               'id' => 'project_supervisor',
+               'options' => $data['supervisors'],
+               'required' => true
+            ],
+            'invalid_feedback' => 'Please select a project supervisor.'
+         ]
+      ]); ?>
 
-         <!-- Project Supervisor -->
-         <div class="col-md-4">
-            <label for="project_supervisor" class="form-label">Project Supervisor <span class="text-danger">*</span></label>
-            <select id="project_supervisor" name="project_supervisor" class="form-select form-select-sm" required>
-               <option value="">Select</option>
-               <?php foreach ($data['supervisors'] as $supervisor): ?>
-                  <option value="<?php echo esc_attr($supervisor['id']); ?>"><?php echo esc_html($supervisor['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
-            <div class="invalid-feedback">Please select a project supervisor.</div>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
-
-      </div>
-
-      <div class="row mt-3">
-         <!-- Delivery Date (Now Required) -->
-         <div class="col-md-4">
-            <label for="delivery_date" class="form-label">SORS/Learnerpacks Delivery Date <span class="text-danger">*</span></label>
-            <input type="date" id="delivery_date" name="delivery_date" class="form-control form-control-sm" required>
-            <div class="invalid-feedback">Please select a delivery date.</div>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
-
-         <!-- Backup Agent (Multi-select) -->
-         <div class="col-md-4">
-            <label for="backup_agent" class="form-label">Backup Agent <span class="text-danger">*</span></label>
-            <select id="backup_agent" name="backup_agent[]" class="form-select form-select-sm" size="2" multiple required>
-               <?php foreach ($data['agents'] as $agent): ?>
-                  <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
-               <?php endforeach; ?>
-            </select>
-            <div class="invalid-feedback">Please select a backup agent.</div>
-            <div class="valid-feedback">Looks good!</div>
-         </div>
-      </div>
+      <?php echo form_row([
+         [
+            'type' => 'date',
+            'name' => 'delivery_date',
+            'label' => 'SORS/Learnerpacks Delivery Date',
+            'col_class' => 'col-md-4',
+            'attributes' => [
+               'id' => 'delivery_date',
+               'required' => true
+            ],
+            'required' => true,
+            'invalid_feedback' => 'Please select a delivery date.'
+         ],
+         [
+            'type' => 'select',
+            'name' => 'backup_agent[]',
+            'label' => 'Backup Agent',
+            'col_class' => 'col-md-4',
+            'attributes' => [
+               'id' => 'backup_agent',
+               'options' => $data['agents'],
+               'multiple' => true,
+               'size' => 2,
+               'required' => true
+            ],
+            'required' => true,
+            'invalid_feedback' => 'Please select a backup agent.'
+         ]
+      ]); ?>
 
       <!-- Submit Button -->
       <div class="row mt-4">
          <div class="col-md-3">
-            <button type="submit" class="btn btn-primary">Add New Class</button>
+            <?php echo button('Add New Class', 'submit', 'primary'); ?>
          </div>
       </div>
    </div>

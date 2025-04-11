@@ -74,11 +74,37 @@ function view($name, $data = []) {
 }
 
 /**
+ * Load view helpers
+ */
+function load_view_helpers() {
+    require_once WECOZA_APP_PATH . '/Helpers/ViewHelpers.php';
+
+    // Make helper functions available in the global namespace
+    foreach (get_defined_functions()['user'] as $function) {
+        $reflection = new \ReflectionFunction($function);
+        if ($reflection->getNamespaceName() === 'WeCoza\Helpers') {
+            $function_name = $reflection->getShortName();
+            if (!function_exists($function_name)) {
+                // Create a global function that calls the namespaced function
+                $namespace = $reflection->getNamespaceName();
+                $callback = "$namespace\\$function_name";
+                $GLOBALS[$function_name] = function() use ($callback) {
+                    return call_user_func_array($callback, func_get_args());
+                };
+            }
+        }
+    }
+}
+
+/**
  * Initialize application
  */
 function init() {
     // Load configuration
     $config = config('app');
+
+    // Load view helpers
+    load_view_helpers();
 
     // Initialize controllers
     if (isset($config['controllers']) && is_array($config['controllers'])) {
