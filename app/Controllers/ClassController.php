@@ -91,6 +91,7 @@ class ClassController {
             'learners' => $this->getLearnersExam(),
             'setas' => MainController::getSeta(),
             'products' => MainController::getProducts(),
+            'class_types' => MainController::getClassType(),
             'redirect_url' => $atts['redirect_url']
         ];
 

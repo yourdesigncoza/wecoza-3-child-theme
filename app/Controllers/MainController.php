@@ -112,6 +112,26 @@ class MainController {
     }
 
     /**
+     * Get all class types
+     *
+     * @return array List of class types
+     */
+    public static function getClassType() {
+        // This would typically come from a database query in the future
+        // For now, returning static data
+        return [
+            ['id' => 'AET', 'name' => 'AET'],
+            ['id' => 'GETC', 'name' => 'GETC'],
+            ['id' => 'Business Admin', 'name' => 'Business Admin'],
+            ['id' => 'Package', 'name' => 'Package'],
+            ['id' => 'Joiner', 'name' => 'Joiner'],
+            ['id' => 'EEP', 'name' => 'EEP'],
+            ['id' => 'Skills Programs', 'name' => 'Skills Programs'],
+            ['id' => 'Amended Senior Certificate', 'name' => 'Amended Senior Certificate']
+        ];
+    }
+
+    /**
      * Additional shared methods can be added here
      */
 }

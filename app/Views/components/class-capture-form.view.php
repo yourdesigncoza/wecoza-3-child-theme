@@ -98,14 +98,9 @@
                            <label class="form-label">Class Type</label>
                            <select class="form-select form-select-sm" id="eventType" required>
                               <option value="">Select</option>
-                              <option value="AET">AET</option>
-                              <option value="GETC">GETC</option>
-                              <option value="Business Admin">Business Admin</option>
-                              <option value="Package">Package</option>
-                              <option value="Joiner">Joiner</option>
-                              <option value="EEP">EEP</option>
-                              <option value="Skills Programs">Skills Programs</option>
-                              <option value="Amended Senior Certificate">Amended Senior Certificate</option>
+                              <?php foreach ($data['class_types'] as $class_type): ?>
+                                 <option value="<?php echo esc_attr($class_type['id']); ?>"><?php echo esc_html($class_type['name']); ?></option>
+                              <?php endforeach; ?>
                            </select>
                            <div class="invalid-feedback">Please select a class type.</div>
                            <div class="valid-feedback">Looks good!</div>
@@ -172,14 +167,9 @@
             <label for="class_type" class="form-label">Class Type <span class="text-danger">*</span></label>
             <select id="class_type" name="class_type" class="form-select form-select-sm" required>
                <option value="">Select</option>
-               <option value="AET">AET</option>
-               <option value="GETC">GETC</option>
-               <option value="Business Admin">Business Admin</option>
-               <option value="Package">Package</option>
-               <option value="Joiner">Joiner</option>
-               <option value="EEP">EEP</option>
-               <option value="Skills Programs">Skills Programs</option>
-               <option value="Amended Senior Certificate">Amended Senior Certificate</option>
+               <?php foreach ($data['class_types'] as $class_type): ?>
+                  <option value="<?php echo esc_attr($class_type['id']); ?>"><?php echo esc_html($class_type['name']); ?></option>
+               <?php endforeach; ?>
             </select>
             <div class="invalid-feedback">Please select the class type.</div>
             <div class="valid-feedback">Looks good!</div>
@@ -251,7 +241,7 @@
       <!-- ===== Section: Funding & Exam Details ===== -->
       <div class="row">
          <!-- SETA Funded -->
-         <div class="col-md-4">
+         <div class="col-md-3">
             <label for="seta_funded" class="form-label">SETA Funded? <span class="text-danger">*</span></label>
             <select id="seta_funded" name="seta_funded" class="form-select form-select-sm" required>
                <option value="">Select</option>
@@ -263,7 +253,7 @@
          </div>
 
          <!-- SETA (conditionally displayed) -->
-         <div class="col-md-4" id="seta_container" style="display: none;">
+         <div class="col-md-3" id="seta_container" style="display: none;">
             <label for="seta_id" class="form-label">SETA <span class="text-danger">*</span></label>
             <select id="seta_id" name="seta_id" class="form-select form-select-sm">
                <option value="">Select</option>
@@ -276,7 +266,7 @@
          </div>
 
          <!-- Exam Class -->
-         <div class="col-md-4">
+         <div class="col-md-3">
             <label for="exam_class" class="form-label">Exam Class <span class="text-danger">*</span></label>
             <select id="exam_class" name="exam_class" class="form-select form-select-sm" required>
                <option value="">Select</option>
@@ -286,17 +276,18 @@
             <div class="invalid-feedback">Please select if this is an exam class.</div>
             <div class="valid-feedback">Looks good!</div>
          </div>
-      </div>
 
-      <!-- Exam Type (conditionally displayed) -->
-      <div class="row mt-3" id="exam_type_container" style="display: none;">
-         <div class="col-md-4">
-            <label for="exam_type" class="form-label">Exam Type</label>
-            <input type="text" id="exam_type" name="exam_type" class="form-control form-control-sm" placeholder="Enter exam type">
-            <div class="invalid-feedback">Please provide the exam type.</div>
-            <div class="valid-feedback">Looks good!</div>
+         <!-- Exam Type (conditionally displayed) -->
+         <div class="col-md-3">
+            <div id="exam_type_container" style="display: none;">
+               <label for="exam_type" class="form-label">Exam Type</label>
+               <input type="text" id="exam_type" name="exam_type" class="form-control form-control-sm" placeholder="Enter exam type">
+               <div class="invalid-feedback">Please provide the exam type.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
          </div>
       </div>
+
 
       <!-- Exam Learners (conditionally displayed) -->
       <div class="row mt-5" id="exam_learners_container" style="display: none;">
