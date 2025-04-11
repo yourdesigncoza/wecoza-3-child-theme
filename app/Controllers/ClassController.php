@@ -92,6 +92,7 @@ class ClassController {
             'setas' => MainController::getSeta(),
             'products' => MainController::getProducts(),
             'class_types' => MainController::getClassType(),
+            'yes_no_options' => MainController::getYesNoOptions(),
             'redirect_url' => $atts['redirect_url']
         ];
 

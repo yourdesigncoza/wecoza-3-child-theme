@@ -245,8 +245,9 @@
             <label for="seta_funded" class="form-label">SETA Funded? <span class="text-danger">*</span></label>
             <select id="seta_funded" name="seta_funded" class="form-select form-select-sm" required>
                <option value="">Select</option>
-               <option value="Yes">Yes</option>
-               <option value="No">No</option>
+               <?php foreach ($data['yes_no_options'] as $option): ?>
+                  <option value="<?php echo esc_attr($option['id']); ?>"><?php echo esc_html($option['name']); ?></option>
+               <?php endforeach; ?>
             </select>
             <div class="invalid-feedback">Please select if the class is SETA funded.</div>
             <div class="valid-feedback">Looks good!</div>
@@ -270,8 +271,9 @@
             <label for="exam_class" class="form-label">Exam Class <span class="text-danger">*</span></label>
             <select id="exam_class" name="exam_class" class="form-select form-select-sm" required>
                <option value="">Select</option>
-               <option value="Yes">Yes</option>
-               <option value="No">No</option>
+               <?php foreach ($data['yes_no_options'] as $option): ?>
+                  <option value="<?php echo esc_attr($option['id']); ?>"><?php echo esc_html($option['name']); ?></option>
+               <?php endforeach; ?>
             </select>
             <div class="invalid-feedback">Please select if this is an exam class.</div>
             <div class="valid-feedback">Looks good!</div>

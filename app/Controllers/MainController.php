@@ -132,6 +132,18 @@ class MainController {
     }
 
     /**
+     * Get Yes/No options
+     *
+     * @return array List of Yes/No options
+     */
+    public static function getYesNoOptions() {
+        return [
+            ['id' => 'Yes', 'name' => 'Yes'],
+            ['id' => 'No', 'name' => 'No']
+        ];
+    }
+
+    /**
      * Additional shared methods can be added here
      */
 }
