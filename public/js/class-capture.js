@@ -40,8 +40,10 @@ function initializeClassCalendar() {
      * Initialize the class capture form
      */
     window.initClassCaptureForm = function() {
-        // Initialize the calendar
-        initializeCalendar();
+        // Initialize the calendar if the container has the data-calendar-init attribute
+        if ($('#class-calendar[data-calendar-init="true"]').length) {
+            initializeCalendar();
+        }
 
         // Initialize the site address lookup
         initializeSiteAddressLookup();
@@ -54,6 +56,9 @@ function initializeClassCalendar() {
 
         // Initialize the date history functionality
         initializeDateHistory();
+
+        // Initialize the QA visit dates functionality
+        initializeQAVisits();
 
         // Initialize form submission
         initializeFormSubmission();
@@ -767,6 +772,91 @@ function initializeClassCalendar() {
     }
 
     /**
+     * Initialize the QA visit dates functionality
+     */
+    function initializeQAVisits() {
+        // References to the QA visit template & container
+        const $qaVisitTemplate = $('#qa-visit-row-template');
+        const $qaVisitsContainer = $('#qa-visits-container');
+
+        // Function to validate QA visit date and report
+        function validateQAVisit($row) {
+            const $visitDate = $row.find('input[name="qa_visit_dates[]"]');
+            const $reportFile = $row.find('input[name="qa_reports[]"]');
+
+            const visitDateValue = $visitDate.val();
+            const reportFileValue = $reportFile.val();
+
+            let isValid = true;
+
+            // Validate date
+            if (!visitDateValue) {
+                $visitDate.addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $visitDate.addClass('is-valid').removeClass('is-invalid');
+            }
+
+            // Validate report file
+            if (!reportFileValue) {
+                $reportFile.addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $reportFile.addClass('is-valid').removeClass('is-invalid');
+            }
+
+            return isValid;
+        }
+
+        // Function to add a new QA visit row
+        function addQAVisitRow() {
+            // Clone the template
+            let $newRow = $qaVisitTemplate.clone(true);
+
+            // Make it visible & remove the template ID
+            $newRow.removeClass('d-none').removeAttr('id');
+
+            // Clear any existing values
+            $newRow.find('input[name="qa_visit_dates[]"]').val('');
+            $newRow.find('input[name="qa_reports[]"]').val('');
+
+            // Attach remove-row handler
+            $newRow.find('.remove-qa-visit-btn').on('click', function() {
+                $(this).closest('.qa-visit-row').remove();
+            });
+
+            // Attach validation handlers
+            $newRow.find('input[name="qa_visit_dates[]"], input[name="qa_reports[]"]').on('change', function() {
+                validateQAVisit($(this).closest('.qa-visit-row'));
+            });
+
+            // Append the new row to the container
+            $qaVisitsContainer.append($newRow);
+        }
+
+        // Click handler to add new QA visit rows
+        $('#add-qa-visit-btn').on('click', function() {
+            addQAVisitRow();
+        });
+
+        // Function to validate all QA visits
+        window.validateAllQAVisits = function() {
+            let allValid = true;
+            $('.qa-visit-row:not(#qa-visit-row-template)').each(function() {
+                if (!validateQAVisit($(this))) {
+                    allValid = false;
+                }
+            });
+            return allValid;
+        };
+
+        // Add an initial row if container is empty
+        if ($qaVisitsContainer.children().length === 0) {
+            addQAVisitRow();
+        }
+    }
+
+    /**
      * Initialize form submission
      */
     function initializeFormSubmission() {
@@ -789,7 +879,13 @@ function initializeClassCalendar() {
                             dateHistoryValid = validateAllDatePairs();
                         }
 
-                        if (!form.checkValidity() || !dateHistoryValid) {
+                        // Add custom validation for QA visits
+                        let qaVisitsValid = true;
+                        if (typeof validateAllQAVisits === 'function') {
+                            qaVisitsValid = validateAllQAVisits();
+                        }
+
+                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid) {
                             event.stopPropagation();
                             form.classList.add('was-validated');
 
@@ -799,6 +895,15 @@ function initializeClassCalendar() {
                                 // Scroll to the date history section
                                 $('html, body').animate({
                                     scrollTop: $('#date-history-container').offset().top - 100
+                                }, 500);
+                            }
+
+                            // Show error message if QA visits validation failed
+                            if (!qaVisitsValid) {
+                                $('#form-messages').html('<div class="alert alert-danger">Please ensure all QA visit dates have corresponding reports uploaded.</div>');
+                                // Scroll to the QA visits section
+                                $('html, body').animate({
+                                    scrollTop: $('#qa-visits-container').offset().top - 100
                                 }, 500);
                             }
                         } else {
@@ -908,6 +1013,11 @@ function initializeClassCalendar() {
                     } else {
                         // Show error message
                         $('#form-messages').html('<div class="alert alert-danger">' + response.data.message + '</div>');
+
+                        // Handle validation errors
+                        if (response.data && response.data.errors) {
+                            handleValidationErrors(response.data.errors);
+                        }
                     }
                 },
                 error: function() {
@@ -920,6 +1030,59 @@ function initializeClassCalendar() {
                 }
             });
         }
+    }
+
+    /**
+     * Handle validation errors from the server
+     *
+     * @param {Object} errors Validation errors
+     */
+    function handleValidationErrors(errors) {
+        // Reset all validation states
+        $('.is-invalid').removeClass('is-invalid');
+        $('.invalid-feedback').hide();
+
+        // Add form validation class
+        $('#classes-form').addClass('was-validated');
+
+        // Process each field with errors
+        for (const field in errors) {
+            const fieldSelector = '#' + field;
+            const fieldElement = $(fieldSelector);
+
+            if (fieldElement.length) {
+                // Mark the field as invalid
+                fieldElement.addClass('is-invalid');
+
+                // Find or create feedback element
+                let feedbackElement = fieldElement.next('.invalid-feedback');
+                if (!feedbackElement.length) {
+                    feedbackElement = $('<div class="invalid-feedback"></div>');
+                    fieldElement.after(feedbackElement);
+                }
+
+                // Set the error message
+                feedbackElement.text(errors[field][0]).show();
+
+                // Scroll to the first error field
+                if (field === Object.keys(errors)[0]) {
+                    $('html, body').animate({
+                        scrollTop: fieldElement.offset().top - 100
+                    }, 500);
+                }
+            }
+        }
+
+        // Show a summary of errors at the top
+        let errorSummary = '<div class="alert alert-danger"><strong>Please correct the following errors:</strong><ul>';
+        for (const field in errors) {
+            errors[field].forEach(error => {
+                errorSummary += '<li>' + error + '</li>';
+            });
+        }
+        errorSummary += '</ul></div>';
+
+        $('#form-messages').html(errorSummary);
     }
 
     // Initialize when document is ready

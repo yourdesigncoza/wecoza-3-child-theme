@@ -352,29 +352,69 @@
       </div>
 
       <?php echo section_divider(); ?>
-      <?php echo section_header('Class Notes & QA', 'Add quality assurance information for this class.'); ?>
+      <?php echo section_header('Class Notes & QA', 'Add operational notes and quality assurance information for this class.'); ?>
 
-      <!-- QA Information -->
+      <!-- Class Notes & QA Information -->
       <div class="row">
-         <!-- QA Visit Dates -->
+         <!-- Class Notes (Multi-select) -->
          <div class="col-md-6">
-            <?php echo form_textarea('qa_visit_dates', 'QA Visit Dates', [
-               'id' => 'qa_visit_dates',
-               'placeholder' => 'Enter QA visit dates separated by commas',
-               'rows' => '2'
-            ], '', false, 'Please enter the QA visit dates.', 'Looks good!'); ?>
+            <label for="class_notes" class="form-label">Class Notes</label>
+            <select id="class_notes" name="class_notes[]" class="form-select form-select-sm" size="5" multiple>
+               <option value="Agent Absent">Agent Absent</option>
+               <option value="Client Cancelled">Client Cancelled</option>
+               <option value="Poor attendance">Poor attendance</option>
+               <option value="Learners behind schedule">Learners behind schedule</option>
+               <option value="Learners unhappy">Learners unhappy</option>
+               <option value="Client unhappy">Client unhappy</option>
+               <option value="Learners too fast">Learners too fast</option>
+               <option value="Class on track">Class on track</option>
+               <option value="Bad QA report">Bad QA report</option>
+               <option value="Good QA report">Good QA report</option>
+               <option value="Incomplete workbooks">Incomplete workbooks</option>
+            </select>
+            <div class="form-text">Select multiple operational notes that apply to this class.</div>
+            <div class="invalid-feedback">Please select at least one note.</div>
+            <div class="valid-feedback">Looks good!</div>
          </div>
       </div>
 
-      <!-- QA Reports (File Upload) -->
-      <div class="row mt-3">
-         <div class="col-md-6">
-            <?php echo form_input('file', 'qa_reports[]', 'QA Reports', [
-               'id' => 'qa_reports',
-               'accept' => 'application/pdf',
-               'multiple' => 'multiple'
-            ], '', false, 'Please upload valid QA reports.', 'Looks good!'); ?>
+      <!-- QA Visit Dates and Reports Section -->
+      <div class="mt-4">
+         <h6 class="mb-3">QA Visit Dates & Reports</h6>
+         <p class="text-muted small mb-3">Add QA visit dates and upload corresponding reports for each visit.</p>
+
+         <!-- Container for all QA visit date rows -->
+         <div id="qa-visits-container"></div>
+
+         <!-- Hidden Template Row (initially d-none) -->
+         <div class="row qa-visit-row d-none" id="qa-visit-row-template">
+            <!-- Visit Date -->
+            <div class="col-md-4 mb-2">
+               <label class="form-label">Visit Date</label>
+               <input type="date" name="qa_visit_dates[]" class="form-control form-control-sm">
+               <div class="invalid-feedback">Please select a valid date.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Report Upload -->
+            <div class="col-md-6 mb-2">
+               <label class="form-label">QA Report</label>
+               <input type="file" name="qa_reports[]" class="form-control form-control-sm" accept="application/pdf">
+               <div class="invalid-feedback">Please upload a report for this visit.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Remove Button -->
+            <div class="col-md-2 mb-2">
+               <label class="form-label invisible">&nbsp;</label>
+               <button type="button" class="btn btn-outline-danger btn-sm remove-qa-visit-btn form-control date-remove-btn">Remove</button>
+            </div>
          </div>
+
+         <!-- Add Row Button -->
+         <button type="button" class="btn btn-outline-primary btn-sm" id="add-qa-visit-btn">
+         + Add QA Visit Date
+         </button>
       </div>
 
       <?php echo section_divider(); ?>
