@@ -2162,7 +2162,7 @@ code {
 #saveEvent {
    background-color: #f3f0ff;
    border-color: #e5e0ff;
-   color: #333;
+   color: #fff;
 }
 
 #saveEvent:hover {
