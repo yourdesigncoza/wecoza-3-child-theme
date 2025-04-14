@@ -44,6 +44,7 @@ class ClassController {
         // Custom scripts
         wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
         wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
+        wp_enqueue_script('wecoza-validation-js', WECOZA_CHILD_URL . '/public/js/class-validation.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
 
         // Localize script with AJAX URL and nonce
         wp_localize_script('wecoza-class-js', 'wecozaClass', [

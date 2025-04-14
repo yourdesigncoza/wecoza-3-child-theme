@@ -9,13 +9,13 @@
  */
 ?>
 <!-- Class Learners Section -->
-<?php echo section_header('Class Learners', 'Select learners for this class and manage their status.'); ?>
+<?php echo section_header('Class Learners <span class="text-danger">*</span>', 'Select learners for this class and manage their status.'); ?>
 
 <div class="row mb-4">
    <!-- Learner Selection -->
    <div class="col-md-4">
-      <label for="add_learner" class="form-label">Select Learners <span class="text-danger">*</span></label>
-      <select id="add_learner" name="add_learner[]" class="form-select form-select-sm" size="5" multiple required>
+      <label for="add_learner" class="form-label">Select Learners</label>
+      <select id="add_learner" name="add_learner[]" class="form-select form-select-sm" size="5" multiple>
          <?php foreach ($data['learners'] as $learner): ?>
             <option value="<?php echo esc_attr($learner['id']); ?>"><?php echo esc_html($learner['name']); ?></option>
          <?php endforeach; ?>
@@ -33,7 +33,7 @@
       <label class="form-label">Class Learners</label>
       <div id="class-learners-container" class="border rounded p-3">
          <div class="alert alert-info" id="no-learners-message">
-            No learners added to this class yet. Select learners from the list and click "Add Selected Learners".
+            No learners added to this class yet. At least one learner is required. Select learners from the list and click "Add Selected Learners".
          </div>
          <table class="table table-sm d-none" id="class-learners-table">
             <thead>

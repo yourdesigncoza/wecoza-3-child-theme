@@ -24,13 +24,13 @@
 - [x] Update main view to include all partials
 
 ### 3. JavaScript Improvements
-- [ ] Move all inline JavaScript to external files
-- [ ] Add data attributes for JavaScript hooks
+- [x] Add data attributes for JavaScript hooks (not necessary - existing attributes work well)
+- [x] Move all inline JavaScript to external files (partially completed - validation code moved)
 - [ ] Ensure calendar initialization happens only when tab is visible
 - [ ] Improve event handling for dynamic form elements
 
 ### 4. Validation Improvements
-- [ ] Move client-side validation logic to dedicated JS file
+- [x] Move client-side validation logic to dedicated JS file
 - [ ] Ensure server-side validation in ValidationService matches client-side
 - [ ] Implement consistent validation feedback patterns
 - [ ] Add field-specific validation rules in the controller
@@ -81,3 +81,10 @@
 - ✅ Create partial view for Class Notes & QA section
 - ✅ Create partial view for Assignments & Dates section
 - ✅ Update main view to include all partials
+
+### 3. JavaScript Improvements
+- ✅ Add data attributes for JavaScript hooks (not necessary - existing attributes work well)
+- ✅ Move all inline JavaScript to external files (partially completed - validation code moved)
+
+### 4. Validation Improvements
+- ✅ Move client-side validation logic to dedicated JS file

@@ -1257,7 +1257,24 @@ function initializeClassCalendar() {
                             takeoverDatesValid = validateAllTakeoverDates();
                         }
 
-                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid || !takeoverDatesValid) {
+                        // Add custom validation for class learners
+                        let classLearnersValid = true;
+                        const classLearnersData = $('#class_learners_data').val();
+                        const $classLearnersContainer = $('#class-learners-container');
+                        const $noLearnersMessage = $('#no-learners-message');
+
+                        if (!classLearnersData || classLearnersData === '[]') {
+                            classLearnersValid = false;
+                            // Add validation styling
+                            $classLearnersContainer.addClass('border-danger');
+                            $noLearnersMessage.removeClass('alert-info').addClass('alert-danger');
+                        } else {
+                            // Remove validation styling
+                            $classLearnersContainer.removeClass('border-danger');
+                            $noLearnersMessage.removeClass('alert-danger').addClass('alert-info');
+                        }
+
+                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid || !takeoverDatesValid || !classLearnersValid) {
                             event.stopPropagation();
                             form.classList.add('was-validated');
 
@@ -1270,21 +1287,20 @@ function initializeClassCalendar() {
                                 }, 500);
                             }
 
-                            // Show error message if QA visits validation failed
-                            if (!qaVisitsValid) {
-                                $('#form-messages').html('<div class="alert alert-danger">Please ensure all QA visit dates have corresponding reports uploaded.</div>');
-                                // Scroll to the QA visits section
-                                $('html, body').animate({
-                                    scrollTop: $('#qa-visits-container').offset().top - 100
-                                }, 500);
-                            }
-
                             // Show error message if takeover dates validation failed
                             if (!takeoverDatesValid) {
                                 $('#form-messages').html('<div class="alert alert-danger">Please ensure all agent takeover dates are after the initial agent start date.</div>');
                                 // Scroll to the agent replacements section
                                 $('html, body').animate({
                                     scrollTop: $('#agent-replacements-container').offset().top - 100
+                                }, 500);
+                            }
+
+                            // Scroll to the class learners section if validation failed
+                            if (!classLearnersValid) {
+                                // Scroll to the class learners section
+                                $('html, body').animate({
+                                    scrollTop: $('#class-learners-container').offset().top - 100
                                 }, 500);
                             }
                         } else {
