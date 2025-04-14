@@ -31,7 +31,7 @@ mkdir -p "$PACKAGE_DIR/app/Models/Learner"
 mkdir -p "$PACKAGE_DIR/app/Helpers"
 mkdir -p "$PACKAGE_DIR/app/Services/Database"
 mkdir -p "$PACKAGE_DIR/app/Services/Validation"
-mkdir -p "$PACKAGE_DIR/app/Views/components"
+mkdir -p "$PACKAGE_DIR/app/Views/components/class-capture-partials"
 mkdir -p "$PACKAGE_DIR/app/Views/learner"
 
 mkdir -p "$PACKAGE_DIR/assets/agents/js"
@@ -46,7 +46,10 @@ mkdir -p "$PACKAGE_DIR/includes/functions"
 mkdir -p "$PACKAGE_DIR/includes/js"
 mkdir -p "$PACKAGE_DIR/includes/shortcodes"
 
-mkdir -p "$PACKAGE_DIR/public/js"
+mkdir -p "$PACKAGE_DIR/public/js/components"
+mkdir -p "$PACKAGE_DIR/public/js/validation"
+mkdir -p "$PACKAGE_DIR/public/css"
+mkdir -p "$PACKAGE_DIR/public/assets"
 mkdir -p "$PACKAGE_DIR/templates"
 mkdir -p "$PACKAGE_DIR/config"
 
@@ -60,6 +63,7 @@ cp app/Helpers/*.php "$PACKAGE_DIR/app/Helpers/"
 cp app/Services/Database/*.php "$PACKAGE_DIR/app/Services/Database/"
 cp app/Services/Validation/*.php "$PACKAGE_DIR/app/Services/Validation/"
 cp app/Views/components/*.php "$PACKAGE_DIR/app/Views/components/"
+cp app/Views/components/class-capture-partials/*.php "$PACKAGE_DIR/app/Views/components/class-capture-partials/"
 cp app/Views/learner/*.php "$PACKAGE_DIR/app/Views/learner/"
 
 # Copy assets
@@ -84,6 +88,23 @@ cp includes/*.php "$PACKAGE_DIR/includes/"
 # Copy public assets
 echo "Copying public assets..."
 cp public/js/*.js "$PACKAGE_DIR/public/js/"
+
+# Copy subdirectory files if they exist
+if [ "$(ls -A public/js/components 2>/dev/null)" ]; then
+    cp public/js/components/*.js "$PACKAGE_DIR/public/js/components/"
+fi
+
+if [ "$(ls -A public/js/validation 2>/dev/null)" ]; then
+    cp public/js/validation/*.js "$PACKAGE_DIR/public/js/validation/"
+fi
+
+if [ "$(ls -A public/css 2>/dev/null)" ]; then
+    cp public/css/*.css "$PACKAGE_DIR/public/css/"
+fi
+
+if [ "$(ls -A public/assets 2>/dev/null)" ]; then
+    cp -r public/assets/* "$PACKAGE_DIR/public/assets/"
+fi
 
 # Copy templates
 echo "Copying templates..."
