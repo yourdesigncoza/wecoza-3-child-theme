@@ -25,12 +25,9 @@
 
 ### 3. JavaScript Improvements
 - [x] Add data attributes for JavaScript hooks (not necessary - existing attributes work well)
-- [x] Move all inline JavaScript to external files (partially completed - validation code moved)
-- [ ] Ensure calendar initialization happens only when tab is visible
-- [ ] Improve event handling for dynamic form elements
 
 ### 4. Validation Improvements
-- [x] Move client-side validation logic to dedicated JS file
+- [ ] Move client-side validation logic to dedicated JS file
 - [ ] Ensure server-side validation in ValidationService matches client-side
 - [ ] Implement consistent validation feedback patterns
 - [ ] Add field-specific validation rules in the controller
@@ -84,7 +81,3 @@
 
 ### 3. JavaScript Improvements
 - ✅ Add data attributes for JavaScript hooks (not necessary - existing attributes work well)
-- ✅ Move all inline JavaScript to external files (partially completed - validation code moved)
-
-### 4. Validation Improvements
-- ✅ Move client-side validation logic to dedicated JS file
