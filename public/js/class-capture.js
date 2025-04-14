@@ -600,99 +600,178 @@ function initializeClassCalendar() {
      * Initialize the exam type toggle and exam learners functionality
      */
     function initializeExamTypeToggle() {
+        // References to DOM elements
+        const $examTypeContainer = $('#exam_type_container');
+        const $examLearnersContainer = $('#exam_learners_container');
+        const $examLearnerSelect = $('#exam_learner_select');
+        const $addSelectedExamLearnersBtn = $('#add-selected-exam-learners-btn');
+        const $examLearnersTable = $('#exam-learners-table');
+        const $examLearnersTbody = $('#exam-learners-tbody');
+        const $noExamLearnersMessage = $('#no-exam-learners-message');
+        const $examLearnersData = $('#exam_learners');
+
+        // Array to store exam learner data
+        let examLearners = [];
+
         // Handle exam class selection change
         document.getElementById('exam_class').addEventListener('change', function() {
-            var examTypeContainer = document.getElementById('exam_type_container');
-            var examLearnersContainer = document.getElementById('exam_learners_container');
-
             if (this.value === 'Yes') {
                 // Show exam type field and make it required
-                examTypeContainer.style.display = 'block';
+                $examTypeContainer.show();
                 document.getElementById('exam_type').setAttribute('required', 'required');
 
                 // Show exam learners container
-                examLearnersContainer.style.display = 'block';
+                $examLearnersContainer.show();
 
-                // Update the exam learners list based on currently selected learners
-                updateExamLearnersList();
+                // Update the exam learner select options based on class learners
+                updateExamLearnerOptions();
             } else {
                 // Hide exam type field and remove required attribute
-                examTypeContainer.style.display = 'none';
+                $examTypeContainer.hide();
                 document.getElementById('exam_type').removeAttribute('required');
 
                 // Hide exam learners container
-                examLearnersContainer.style.display = 'none';
+                $examLearnersContainer.hide();
+
+                // Clear exam learners data
+                examLearners = [];
+                updateExamLearnersData();
             }
         });
 
-        // Listen for changes to the learner selection
-        $('#add_learner').on('change', function() {
-            // Only update if exam class is Yes
-            if ($('#exam_class').val() === 'Yes') {
-                updateExamLearnersList();
+        // Function to update the exam learner select options based on class learners
+        function updateExamLearnerOptions() {
+            // Get the current class learners
+            const classLearnersData = JSON.parse($('#class_learners_data').val() || '[]');
+
+            // Clear the current options
+            $examLearnerSelect.empty();
+
+            // Add options for each class learner
+            classLearnersData.forEach(function(learner) {
+                // Skip learners that are already in the exam learners list
+                if (!examLearners.some(el => el.id === learner.id)) {
+                    $examLearnerSelect.append(`<option value="${learner.id}">${learner.name}</option>`);
+                }
+            });
+        }
+
+        // Function to add an exam learner to the table
+        function addExamLearnerToTable(learnerId, learnerName) {
+            // Check if learner already exists in the table
+            if (examLearners.some(learner => learner.id === learnerId)) {
+                return false; // Learner already exists
             }
-        });
 
-        // Function to update the exam learners list
-        function updateExamLearnersList() {
-            var selectedLearners = $('#add_learner').val() || [];
-            var $examLearnersList = $('#exam-learners-list');
-            var examLearnersData = [];
+            // Add learner to the array
+            examLearners.push({
+                id: learnerId,
+                name: learnerName,
+                takes_exam: true
+            });
 
-            // Clear the current list
-            $examLearnersList.empty();
+            // Create table row
+            const $row = $(`
+                <tr data-learner-id="${learnerId}">
+                    <td>${learnerName}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-exam-learner-btn" data-learner-id="${learnerId}">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+            `);
 
-            // If no learners selected, show info message
-            if (selectedLearners.length === 0) {
-                $examLearnersList.html('<div class="alert alert-info">Please select learners in the "Add Learner" field below first. The list of selected learners will appear here.</div>');
+            // Add row to table
+            $examLearnersTbody.append($row);
+
+            // Show table if it was hidden
+            if (examLearners.length > 0) {
+                $examLearnersTable.removeClass('d-none');
+                $noExamLearnersMessage.addClass('d-none');
+            }
+
+            // Update hidden field with JSON data
+            updateExamLearnersData();
+
+            return true;
+        }
+
+        // Function to remove an exam learner from the table
+        function removeExamLearnerFromTable(learnerId) {
+            // Remove from array
+            examLearners = examLearners.filter(learner => learner.id !== learnerId);
+
+            // Remove row from table
+            $(`tr[data-learner-id="${learnerId}"]`).remove();
+
+            // Show message if no learners left
+            if (examLearners.length === 0) {
+                $examLearnersTable.addClass('d-none');
+                $noExamLearnersMessage.removeClass('d-none');
+            }
+
+            // Update hidden field with JSON data
+            updateExamLearnersData();
+
+            // Add the learner back to the select options
+            const classLearnersData = JSON.parse($('#class_learners_data').val() || '[]');
+            const learner = classLearnersData.find(l => l.id === learnerId);
+            if (learner) {
+                $examLearnerSelect.append(`<option value="${learner.id}">${learner.name}</option>`);
+            }
+        }
+
+        // Function to update the hidden field with exam learner data
+        function updateExamLearnersData() {
+            $examLearnersData.val(JSON.stringify(examLearners));
+        }
+
+        // Event handler for adding selected exam learners
+        $addSelectedExamLearnersBtn.on('click', function() {
+            const selectedOptions = $examLearnerSelect.find('option:selected');
+
+            if (selectedOptions.length === 0) {
+                alert('Please select at least one learner to add for exams.');
                 return;
             }
 
-            // Create a checkbox list of selected learners
-            var html = '<div class="row">';
+            let addedCount = 0;
 
-            // Get the selected learner names and IDs
-            selectedLearners.forEach(function(learnerId) {
-                var learnerName = $('#add_learner option[value="' + learnerId + '"]').text();
+            selectedOptions.each(function() {
+                const learnerId = $(this).val();
+                const learnerName = $(this).text();
 
-                html += '<div class="col-md-4 mb-2">' +
-                        '<div class="form-check">' +
-                        '<input class="form-check-input exam-learner-checkbox" type="checkbox" id="exam_learner_' + learnerId + '" ' +
-                        'data-learner-id="' + learnerId + '" checked>' +
-                        '<label class="form-check-label" for="exam_learner_' + learnerId + '">' + learnerName + '</label>' +
-                        '</div>' +
-                        '</div>';
-
-                // Add to the data array (all checked by default)
-                examLearnersData.push({
-                    id: learnerId,
-                    name: learnerName,
-                    takes_exam: true
-                });
+                if (addExamLearnerToTable(learnerId, learnerName)) {
+                    addedCount++;
+                    // Remove from select options
+                    $(this).remove();
+                }
             });
 
-            html += '</div>';
-            $examLearnersList.html(html);
+            // Clear selection
+            $examLearnerSelect.val([]);
 
-            // Update the hidden field with the JSON data
-            $('#exam_learners').val(JSON.stringify(examLearnersData));
+            if (addedCount > 0) {
+                const message = addedCount === 1 ? '1 learner added for exams.' : `${addedCount} learners added for exams.`;
+                alert(message);
+            } else {
+                alert('No new exam learners added. All selected learners are already taking exams.');
+            }
+        });
 
-            // Add event listeners to checkboxes
-            $('.exam-learner-checkbox').on('change', function() {
-                var learnerId = $(this).data('learner-id');
-                var isChecked = $(this).prop('checked');
+        // Event delegation for remove buttons
+        $examLearnersTbody.on('click', '.remove-exam-learner-btn', function() {
+            const learnerId = $(this).data('learner-id');
+            removeExamLearnerFromTable(learnerId);
+        });
 
-                // Update the data array
-                examLearnersData.forEach(function(learner) {
-                    if (learner.id == learnerId) {
-                        learner.takes_exam = isChecked;
-                    }
-                });
-
-                // Update the hidden field
-                $('#exam_learners').val(JSON.stringify(examLearnersData));
-            });
-        }
+        // Listen for changes to the class learners data
+        $(document).on('classLearnersUpdated', function() {
+            if ($('#exam_class').val() === 'Yes') {
+                updateExamLearnerOptions();
+            }
+        });
     }
 
     /**
@@ -797,16 +876,13 @@ function initializeClassCalendar() {
 
         // Status options for learners
         const learnerStatusOptions = [
-            'Active',
-            'Inactive',
-            'Completed',
-            'Dropped Out',
-            'On Hold',
+            'Host Company Learner',
+            'Walk-in Learner',
             'Transferred'
         ];
 
         // Function to generate status dropdown
-        function generateStatusDropdown(learnerId, currentStatus = 'Active') {
+        function generateStatusDropdown(learnerId, currentStatus = 'Host Company Learner') {
             let html = `<select class="form-select form-select-sm learner-status" data-learner-id="${learnerId}">`;
 
             learnerStatusOptions.forEach(status => {
@@ -881,6 +957,9 @@ function initializeClassCalendar() {
         // Function to update the hidden field with learner data
         function updateClassLearnersData() {
             $classLearnersData.val(JSON.stringify(classLearners));
+
+            // Trigger an event to notify other components that class learners have been updated
+            $(document).trigger('classLearnersUpdated');
         }
 
         // Event handler for adding selected learners

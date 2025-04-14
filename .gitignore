@@ -31,3 +31,6 @@ Thumbs.db
 
 # Compiled assets
 assets/dist/
+
+# Package files
+*.zip
