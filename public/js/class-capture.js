@@ -752,10 +752,7 @@ function initializeClassCalendar() {
             // Clear selection
             $examLearnerSelect.val([]);
 
-            if (addedCount > 0) {
-                const message = addedCount === 1 ? '1 learner added for exams.' : `${addedCount} learners added for exams.`;
-                alert(message);
-            } else {
+            if (addedCount === 0) {
                 alert('No new exam learners added. All selected learners are already taking exams.');
             }
         });
@@ -985,11 +982,8 @@ function initializeClassCalendar() {
             // Clear selection
             $addLearnerSelect.val([]);
 
-            if (addedCount > 0) {
-                const message = addedCount === 1 ? '1 learner added.' : `${addedCount} learners added.`;
-                alert(message);
-            } else {
-                alert('No new learners added. All selected learners are already in the class.');
+            if (addedCount === 0) {
+                alert('No new exam learners added. All selected learners are already taking exams.');
             }
         });
 
