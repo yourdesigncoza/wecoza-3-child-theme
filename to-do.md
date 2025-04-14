@@ -12,16 +12,16 @@
 - [ ] Convert all remaining form elements to use appropriate helpers
 
 ### 2. Create Partial Views
-- [ ] Create partial view for Basic Details section
-- [ ] Create partial view for Class Schedule Calendar section
-- [ ] Create partial view for Class Info section
-- [ ] Create partial view for Date History section
-- [ ] Create partial view for Funding & Exam Details section
-- [ ] Create partial view for Class Learners section
-- [ ] Create partial view for Exam Learners section
-- [ ] Create partial view for Class Notes & QA section
-- [ ] Create partial view for Assignments & Dates section
-- [ ] Update main view to include all partials
+- [x] Create partial view for Basic Details section
+- [x] Create partial view for Class Schedule Calendar section
+- [x] Create partial view for Class Info section
+- [x] Create partial view for Date History section
+- [x] Create partial view for Funding & Exam Details section
+- [x] Create partial view for Class Learners section
+- [x] Create partial view for Exam Learners section
+- [x] Create partial view for Class Notes & QA section
+- [x] Create partial view for Assignments & Dates section
+- [x] Update main view to include all partials
 
 ### 3. JavaScript Improvements
 - [ ] Move all inline JavaScript to external files
@@ -69,3 +69,15 @@
 - ✅ Add text-white class to Save Event button for consistent button styling
 - ✅ Add proper form label to Class Subjects dropdown
 - ✅ Add proper form label to Initial Class Agent dropdown
+
+### 2. Create Partial Views
+- ✅ Create partial view for Basic Details section
+- ✅ Create partial view for Class Schedule Calendar section
+- ✅ Create partial view for Class Info section
+- ✅ Create partial view for Date History section
+- ✅ Create partial view for Funding & Exam Details section
+- ✅ Create partial view for Class Learners section
+- ✅ Create partial view for Exam Learners section
+- ✅ Create partial view for Class Notes & QA section
+- ✅ Create partial view for Assignments & Dates section
+- ✅ Update main view to include all partials
