@@ -19,6 +19,8 @@ class ClassController {
         add_action('init', [$this, 'registerShortcodes']);
         add_action('wp_ajax_save_class', [$this, 'saveClassAjax']);
         add_action('wp_ajax_nopriv_save_class', [$this, 'saveClassAjax']);
+        add_action('wp_ajax_check_class_conflicts', [$this, 'checkClassConflictsAjax']);
+        add_action('wp_ajax_nopriv_check_class_conflicts', [$this, 'checkClassConflictsAjax']);
 
         // Enqueue necessary scripts and styles
         add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
@@ -41,16 +43,24 @@ class ClassController {
         wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css');
         wp_enqueue_script('fullcalendar-js', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js', ['jquery'], null, true);
 
+        // Bootstrap Icons
+        wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
+
+        // Custom CSS
+        wp_enqueue_style('wecoza-custom-css', WECOZA_CHILD_URL . '/public/css/ydcoza-styles.css', [], WECOZA_PLUGIN_VERSION);
+
         // Custom scripts
         wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
         wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
+        wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
 
         // Localize script with AJAX URL and nonce
         wp_localize_script('wecoza-class-js', 'wecozaClass', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('wecoza_class_nonce'),
             'siteAddresses' => self::getSiteAddresses(),
-            'debug' => true
+            'debug' => true,
+            'conflictCheckEnabled' => true
         ]);
 
         // Calendar initialization is now handled by class-calendar-init.js
@@ -210,7 +220,20 @@ class ClassController {
 
         // Schedule data
         $processed['scheduleData'] = [];
-        if (isset($data['schedule_day']) && is_array($data['schedule_day'])) {
+
+        // Handle new schedule form data
+        if (isset($data['schedule_data']) && is_array($data['schedule_data'])) {
+            // Store the schedule pattern data
+            $processed['schedulePattern'] = $data['schedule_data'];
+
+            // Generate schedule data based on pattern
+            $scheduleData = self::generateScheduleData($data['schedule_data']);
+            if (!empty($scheduleData)) {
+                $processed['scheduleData'] = $scheduleData;
+            }
+        }
+        // Legacy format support
+        else if (isset($data['schedule_day']) && is_array($data['schedule_day'])) {
             $count = count($data['schedule_day']);
             for ($i = 0; $i < $count; $i++) {
                 $processed['scheduleData'][] = [
@@ -400,5 +423,393 @@ class ClassController {
         // This would typically come from a database query
         // For now, returning an empty array
         return [];
+    }
+
+    /**
+     * Generate schedule data based on pattern
+     *
+     * @param array $scheduleData Schedule pattern data
+     * @return array Generated schedule data
+     */
+    private static function generateScheduleData($scheduleData) {
+        $result = [];
+
+        // Extract schedule pattern data
+        $pattern = isset($scheduleData['pattern']) ? $scheduleData['pattern'] : '';
+        $day = isset($scheduleData['day']) ? $scheduleData['day'] : '';
+        $dayOfMonth = isset($scheduleData['day_of_month']) ? $scheduleData['day_of_month'] : '';
+        $startTime = isset($scheduleData['start_time']) ? $scheduleData['start_time'] : '';
+        $endTime = isset($scheduleData['end_time']) ? $scheduleData['end_time'] : '';
+        $startDate = isset($scheduleData['start_date']) ? $scheduleData['start_date'] : '';
+        $endDate = isset($scheduleData['end_date']) ? $scheduleData['end_date'] : '';
+
+        // Extract exception dates
+        $exceptionDates = [];
+        if (isset($scheduleData['exception_dates'])) {
+            // Handle JSON string
+            if (is_string($scheduleData['exception_dates'])) {
+                $decoded = json_decode($scheduleData['exception_dates'], true);
+                if (is_array($decoded)) {
+                    foreach ($decoded as $exception) {
+                        if (isset($exception['date'])) {
+                            $exceptionDates[] = $exception['date'];
+                        }
+                    }
+                }
+            }
+            // Handle array
+            else if (is_array($scheduleData['exception_dates'])) {
+                foreach ($scheduleData['exception_dates'] as $exception) {
+                    if (isset($exception['date'])) {
+                        $exceptionDates[] = $exception['date'];
+                    }
+                }
+            }
+        }
+
+        // If we don't have required data, return empty array
+        if (empty($pattern) || empty($startDate) || empty($startTime) || empty($endTime)) {
+            return $result;
+        }
+
+        // Set end date to 3 months from start date if not provided
+        if (empty($endDate)) {
+            $date = new \DateTime($startDate);
+            $date->modify('+3 months');
+            $endDate = $date->format('Y-m-d');
+        }
+
+        // Generate events based on pattern
+        $start = new \DateTime($startDate);
+        $end = new \DateTime($endDate);
+
+        // Weekly pattern
+        if ($pattern === 'weekly' && !empty($day)) {
+            $dayIndex = self::getDayIndex($day);
+
+            // Set start date to the first occurrence of the selected day
+            $current = clone $start;
+            while ($current->format('w') != $dayIndex) {
+                $current->modify('+1 day');
+            }
+
+            // Generate events for each week
+            while ($current <= $end) {
+                $dateStr = $current->format('Y-m-d');
+
+                // Skip exception dates
+                if (!in_array($dateStr, $exceptionDates)) {
+                    $result[] = [
+                        'day' => $day,
+                        'date' => $dateStr,
+                        'start_time' => $startTime,
+                        'end_time' => $endTime,
+                        'notes' => '',
+                        'type' => 'class'
+                    ];
+                }
+
+                // Move to next week
+                $current->modify('+7 days');
+            }
+        }
+
+        // Bi-weekly pattern
+        else if ($pattern === 'biweekly' && !empty($day)) {
+            $dayIndex = self::getDayIndex($day);
+
+            // Set start date to the first occurrence of the selected day
+            $current = clone $start;
+            while ($current->format('w') != $dayIndex) {
+                $current->modify('+1 day');
+            }
+
+            // Generate events for every other week
+            while ($current <= $end) {
+                $dateStr = $current->format('Y-m-d');
+
+                // Skip exception dates
+                if (!in_array($dateStr, $exceptionDates)) {
+                    $result[] = [
+                        'day' => $day,
+                        'date' => $dateStr,
+                        'start_time' => $startTime,
+                        'end_time' => $endTime,
+                        'notes' => '',
+                        'type' => 'class'
+                    ];
+                }
+
+                // Move to next bi-week
+                $current->modify('+14 days');
+            }
+        }
+
+        // Monthly pattern
+        else if ($pattern === 'monthly' && !empty($dayOfMonth)) {
+            // Generate events for each month
+            $current = clone $start;
+
+            while ($current <= $end) {
+                $dateToUse = clone $current;
+
+                if ($dayOfMonth === 'last') {
+                    // Set to last day of the month
+                    $dateToUse->modify('last day of this month');
+                } else {
+                    // Set to specific day of month
+                    $dateToUse->setDate(
+                        $dateToUse->format('Y'),
+                        $dateToUse->format('m'),
+                        intval($dayOfMonth)
+                    );
+
+                    // If day is beyond the end of the month, move to next month
+                    if ($dateToUse->format('m') != $current->format('m')) {
+                        $current->modify('first day of next month');
+                        continue;
+                    }
+                }
+
+                $dateStr = $dateToUse->format('Y-m-d');
+
+                // Skip exception dates
+                if (!in_array($dateStr, $exceptionDates)) {
+                    $result[] = [
+                        'day' => $dateToUse->format('l'),
+                        'date' => $dateStr,
+                        'start_time' => $startTime,
+                        'end_time' => $endTime,
+                        'notes' => '',
+                        'type' => 'class'
+                    ];
+                }
+
+                // Move to next month
+                $current->modify('first day of next month');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get day index from day name
+     *
+     * @param string $dayName Day name (e.g., 'Monday')
+     * @return int Day index (0 = Sunday, 1 = Monday, etc.)
+     */
+    private static function getDayIndex($dayName) {
+        $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return array_search($dayName, $days);
+    }
+    /**
+     * Handle AJAX request to check for class conflicts
+     */
+    public function checkClassConflictsAjax() {
+        // Check nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
+            wp_send_json_error(['message' => 'Security check failed.']);
+            return;
+        }
+
+        // Get schedule data from request
+        $scheduleData = isset($_POST['schedule_data']) ? json_decode(stripslashes($_POST['schedule_data']), true) : [];
+        $classId = isset($_POST['class_id']) ? intval($_POST['class_id']) : null;
+        $agentId = isset($_POST['agent_id']) ? intval($_POST['agent_id']) : null;
+        $learnerIds = isset($_POST['learner_ids']) ? json_decode(stripslashes($_POST['learner_ids']), true) : [];
+
+        // Check for conflicts
+        $conflicts = $this->checkClassConflicts($scheduleData, $classId, $agentId, $learnerIds);
+
+        if (empty($conflicts)) {
+            wp_send_json_success(['message' => 'No conflicts found.']);
+        } else {
+            wp_send_json_success([
+                'message' => 'Potential conflicts detected.',
+                'conflicts' => $conflicts
+            ]);
+        }
+    }
+
+    /**
+     * Check for class conflicts
+     *
+     * @param array $scheduleData Schedule data to check
+     * @param int|null $classId Current class ID (to exclude from conflict check)
+     * @param int|null $agentId Agent ID to check for conflicts
+     * @param array $learnerIds Learner IDs to check for conflicts
+     * @return array List of conflicts
+     */
+    private function checkClassConflicts($scheduleData, $classId = null, $agentId = null, $learnerIds = []) {
+        $conflicts = [];
+
+        // If no schedule data, return empty conflicts
+        if (empty($scheduleData)) {
+            return $conflicts;
+        }
+
+        try {
+            // Get database service
+            $db = \WeCoza\Services\Database\DatabaseService::getInstance();
+
+            // Process each schedule item
+            foreach ($scheduleData as $schedule) {
+                // Skip if missing required data
+                if (!isset($schedule['date']) || !isset($schedule['start_time']) || !isset($schedule['end_time'])) {
+                    continue;
+                }
+
+                $date = $schedule['date'];
+                $startTime = $schedule['start_time'];
+                $endTime = $schedule['end_time'];
+
+                // Check for agent conflicts
+                if ($agentId) {
+                    $agentConflicts = $this->checkAgentConflicts($db, $date, $startTime, $endTime, $agentId, $classId);
+                    if (!empty($agentConflicts)) {
+                        $conflicts['agent'][] = [
+                            'date' => $date,
+                            'start_time' => $startTime,
+                            'end_time' => $endTime,
+                            'conflicts' => $agentConflicts
+                        ];
+                    }
+                }
+
+                // Check for learner conflicts
+                if (!empty($learnerIds)) {
+                    $learnerConflicts = $this->checkLearnerConflicts($db, $date, $startTime, $endTime, $learnerIds, $classId);
+                    if (!empty($learnerConflicts)) {
+                        $conflicts['learner'][] = [
+                            'date' => $date,
+                            'start_time' => $startTime,
+                            'end_time' => $endTime,
+                            'conflicts' => $learnerConflicts
+                        ];
+                    }
+                }
+            }
+
+            return $conflicts;
+        } catch (\Exception $e) {
+            error_log('Error checking class conflicts: ' . $e->getMessage());
+            return ['error' => 'An error occurred while checking for conflicts.'];
+        }
+    }
+
+    /**
+     * Check for agent conflicts
+     *
+     * @param \WeCoza\Services\Database\DatabaseService $db Database service
+     * @param string $date Date to check
+     * @param string $startTime Start time to check
+     * @param string $endTime End time to check
+     * @param int $agentId Agent ID to check
+     * @param int|null $excludeClassId Class ID to exclude from check
+     * @return array List of conflicting classes
+     */
+    private function checkAgentConflicts($db, $date, $startTime, $endTime, $agentId, $excludeClassId = null) {
+        $conflicts = [];
+
+        try {
+            // Query for classes where this agent is assigned on the same date with overlapping times
+            $sql = "SELECT c.id, c.class_type, cs.start_time, cs.end_time
+                    FROM wecoza_classes c
+                    JOIN wecoza_class_schedule cs ON c.id = cs.class_id
+                    WHERE c.class_agent = ?
+                    AND cs.date = ?
+                    AND (
+                        (cs.start_time <= ? AND cs.end_time > ?) OR
+                        (cs.start_time < ? AND cs.end_time >= ?) OR
+                        (cs.start_time >= ? AND cs.end_time <= ?)
+                    )";
+
+            $params = [$agentId, $date, $endTime, $startTime, $endTime, $startTime, $startTime, $endTime];
+
+            // Exclude current class if provided
+            if ($excludeClassId) {
+                $sql .= " AND c.id != ?";
+                $params[] = $excludeClassId;
+            }
+
+            $stmt = $db->query($sql, $params);
+
+            while ($row = $stmt->fetch()) {
+                $conflicts[] = [
+                    'class_id' => $row['id'],
+                    'class_type' => $row['class_type'],
+                    'start_time' => $row['start_time'],
+                    'end_time' => $row['end_time']
+                ];
+            }
+
+            return $conflicts;
+        } catch (\Exception $e) {
+            error_log('Error checking agent conflicts: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Check for learner conflicts
+     *
+     * @param \WeCoza\Services\Database\DatabaseService $db Database service
+     * @param string $date Date to check
+     * @param string $startTime Start time to check
+     * @param string $endTime End time to check
+     * @param array $learnerIds Learner IDs to check
+     * @param int|null $excludeClassId Class ID to exclude from check
+     * @return array List of conflicting classes by learner
+     */
+    private function checkLearnerConflicts($db, $date, $startTime, $endTime, $learnerIds, $excludeClassId = null) {
+        $conflicts = [];
+
+        try {
+            // For each learner, check for conflicts
+            foreach ($learnerIds as $learnerId) {
+                // Query for classes where this learner is assigned on the same date with overlapping times
+                $sql = "SELECT c.id, c.class_type, cs.start_time, cs.end_time
+                        FROM wecoza_classes c
+                        JOIN wecoza_class_schedule cs ON c.id = cs.class_id
+                        JOIN wecoza_class_learners cl ON c.id = cl.class_id
+                        WHERE cl.learner_id = ?
+                        AND cs.date = ?
+                        AND (
+                            (cs.start_time <= ? AND cs.end_time > ?) OR
+                            (cs.start_time < ? AND cs.end_time >= ?) OR
+                            (cs.start_time >= ? AND cs.end_time <= ?)
+                        )";
+
+                $params = [$learnerId, $date, $endTime, $startTime, $endTime, $startTime, $startTime, $endTime];
+
+                // Exclude current class if provided
+                if ($excludeClassId) {
+                    $sql .= " AND c.id != ?";
+                    $params[] = $excludeClassId;
+                }
+
+                $stmt = $db->query($sql, $params);
+
+                $learnerConflicts = [];
+                while ($row = $stmt->fetch()) {
+                    $learnerConflicts[] = [
+                        'class_id' => $row['id'],
+                        'class_type' => $row['class_type'],
+                        'start_time' => $row['start_time'],
+                        'end_time' => $row['end_time']
+                    ];
+                }
+
+                if (!empty($learnerConflicts)) {
+                    $conflicts[$learnerId] = $learnerConflicts;
+                }
+            }
+
+            return $conflicts;
+        } catch (\Exception $e) {
+            error_log('Error checking learner conflicts: ' . $e->getMessage());
+            return [];
+        }
     }
 }

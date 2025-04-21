@@ -6,9 +6,109 @@
 var calendar;
 var calendarInitialized = false;
 
+/**
+ * Helper function to get day index from day name
+ * @param {string} dayName - The name of the day (e.g., 'Monday')
+ * @returns {number} - The index of the day (0-6, where 0 is Sunday)
+ */
+function getDayIndex(dayName) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days.indexOf(dayName);
+}
+
+/**
+ * Helper function to get day of week from date
+ * @param {Date} date - The date object
+ * @returns {string} - The name of the day
+ */
+function getDayOfWeek(date) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[date.getDay()];
+}
+
+/**
+ * Helper function to format date as YYYY-MM-DD
+ * @param {Date} date - The date object
+ * @returns {string} - The formatted date string
+ */
+function formatDate(date) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+/**
+ * Helper function to format time in 12-hour format
+ * @param {Date|number} dateOrHour - Either a Date object or an hour (0-23)
+ * @param {number} [minute] - The minute (0-59), only used if dateOrHour is a number
+ * @returns {string} - The formatted time string (e.g., "6:30 AM")
+ */
+function formatTime(dateOrHour, minute) {
+    let hours, minutes;
+
+    if (dateOrHour instanceof Date) {
+        // If a Date object is passed
+        hours = dateOrHour.getHours();
+        minutes = dateOrHour.getMinutes();
+    } else {
+        // If hour and minute are passed separately
+        hours = dateOrHour;
+        minutes = minute;
+    }
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hour12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+    const minuteStr = minutes < 10 ? '0' + minutes : minutes;
+
+    return hour12 + ':' + minuteStr + ' ' + ampm;
+}
+
 // Make the initialization function globally available
 function initializeClassCalendar() {
     console.log('Manual calendar initialization triggered');
+}
+
+/**
+ * Show a custom alert dialog instead of using the browser's native alert
+ * @param {string} message - The message to display
+ */
+function showCustomAlert(message) {
+    // Create the modal HTML if it doesn't exist
+    if ($('#custom-alert-modal').length === 0) {
+        const modalHTML = `
+            <div class="modal fade" id="custom-alert-modal" tabindex="-1" aria-labelledby="custom-alert-modal-label" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="custom-alert-modal-label">localhost says</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="custom-alert-message">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        $('body').append(modalHTML);
+    }
+
+    // Set the message and show the modal
+    $('#custom-alert-message').text(message);
+    const modal = new bootstrap.Modal(document.getElementById('custom-alert-modal'));
+    modal.show();
+}
+
+// Initialize calendar when it's in a tab
+(function() {
     if (jQuery('#class-calendar').length) {
         setTimeout(function() {
             if (typeof initializeCalendarInTab === 'function') {
@@ -28,7 +128,7 @@ function initializeClassCalendar() {
     } else {
         console.log('Calendar container not found');
     }
-}
+})();
 
 (function($) {
     'use strict';
@@ -47,6 +147,9 @@ function initializeClassCalendar() {
 
         // Initialize the site address lookup
         initializeSiteAddressLookup();
+
+        // Initialize day of week restriction for start date
+        initializeDayOfWeekRestriction();
 
         // Initialize the exam type toggle
         initializeExamTypeToggle();
@@ -89,14 +192,7 @@ function initializeClassCalendar() {
             return optionsHTML;
         }
 
-        // 2. Helper function to format times in 12-hour format
-        function formatTime(hour24, minute) {
-            let period = (hour24 < 12) ? 'AM' : 'PM';
-            let hour12 = hour24 % 12;
-            hour12 = (hour12 === 0) ? 12 : hour12; // 0 => 12 AM
-            let minuteStr = minute < 10 ? '0' + minute : minute;
-            return hour12 + ':' + minuteStr + ' ' + period;
-        }
+        // 2. Use the global formatTime function
 
         // 3. Helper function to convert 12-hour format to 24-hour format
         function convertTo24Hour(time12h) {
@@ -114,24 +210,9 @@ function initializeClassCalendar() {
             return `${hours}:${minutes}`;
         }
 
-        // 4. Helper function to get day of week from date
-        function getDayOfWeek(date) {
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            return days[date.getDay()];
-        }
+        // 4. Use the global getDayOfWeek function
 
-        // 5. Helper function to format date as YYYY-MM-DD
-        function formatDate(date) {
-            const d = new Date(date);
-            let month = '' + (d.getMonth() + 1);
-            let day = '' + d.getDate();
-            const year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('-');
-        }
+        // 5. Use the global formatDate function
 
         // 6. Helper function to combine date and time
         function combineDateTime(dateStr, timeStr) {
@@ -540,6 +621,68 @@ function initializeClassCalendar() {
     }
 
     /**
+     * Initialize day of week restriction for start date
+     */
+    function initializeDayOfWeekRestriction() {
+        const $scheduleDay = $('#schedule_day');
+        const $startDate = $('#schedule_start_date');
+
+        // Function to restrict start date based on selected day
+        function restrictStartDateByDay() {
+            const selectedDay = $scheduleDay.val();
+
+            if (selectedDay && $scheduleDay.is(':visible')) {
+                // Get the current date value
+                const currentDate = $startDate.val();
+
+                if (currentDate) {
+                    const date = new Date(currentDate);
+                    const dayIndex = getDayIndex(selectedDay);
+
+                    // If the current date is not the selected day, find the next occurrence
+                    if (date.getDay() !== dayIndex) {
+                        // Find the next occurrence of the selected day
+                        while (date.getDay() !== dayIndex) {
+                            date.setDate(date.getDate() + 1);
+                        }
+
+                        // Update the start date
+                        $startDate.val(date.toISOString().split('T')[0]);
+                    }
+                }
+            }
+        }
+
+        // Apply restriction when day changes
+        $scheduleDay.on('change', function() {
+            restrictStartDateByDay();
+        });
+
+        // Apply restriction when date changes
+        $startDate.on('change', function() {
+            const selectedDay = $scheduleDay.val();
+
+            if (selectedDay && $scheduleDay.is(':visible')) {
+                const date = new Date($(this).val());
+                const dayIndex = getDayIndex(selectedDay);
+
+                if (date.getDay() !== dayIndex) {
+                    // Find the next occurrence of the selected day
+                    while (date.getDay() !== dayIndex) {
+                        date.setDate(date.getDate() + 1);
+                    }
+
+                    // Update the start date
+                    $(this).val(date.toISOString().split('T')[0]);
+                }
+            }
+        });
+
+        // Initial check
+        restrictStartDateByDay();
+    }
+
+    /**
      * Initialize the site address lookup
      */
     function initializeSiteAddressLookup() {
@@ -625,6 +768,11 @@ function initializeClassCalendar() {
 
                 // Update the exam learner select options based on class learners
                 updateExamLearnerOptions();
+
+                // Validate exam learners immediately
+                if (typeof validateExamLearners === 'function') {
+                    validateExamLearners();
+                }
             } else {
                 // Hide exam type field and remove required attribute
                 $examTypeContainer.hide();
@@ -636,6 +784,10 @@ function initializeClassCalendar() {
                 // Clear exam learners data
                 examLearners = [];
                 updateExamLearnersData();
+
+                // Remove any validation styling
+                $('#exam_learners_container').removeClass('border-danger');
+                $('#no-exam-learners-message').removeClass('alert-danger').addClass('alert-info');
             }
         });
 
@@ -724,7 +876,35 @@ function initializeClassCalendar() {
 
         // Function to update the hidden field with exam learner data
         function updateExamLearnersData() {
-            $examLearnersData.val(JSON.stringify(examLearners));
+            // Log for debugging
+            console.log('Updating exam learners data:', examLearners);
+
+            // Stringify the exam learners array and store in hidden field
+            const jsonData = JSON.stringify(examLearners);
+            $examLearnersData.val(jsonData);
+
+            // Log the JSON data for debugging
+            console.log('Exam learners JSON:', jsonData);
+
+            // Update the exam learner count hidden input if it exists
+            if ($('#exam_learner_count').length) {
+                $('#exam_learner_count').val(examLearners.length);
+                console.log('Updated existing exam learner count:', examLearners.length);
+            } else {
+                // Create a hidden input for exam learner count if it doesn't exist
+                $('<input>').attr({
+                    type: 'hidden',
+                    id: 'exam_learner_count',
+                    name: 'exam_learner_count',
+                    value: examLearners.length
+                }).appendTo('#classes-form');
+                console.log('Created new exam learner count field:', examLearners.length);
+            }
+
+            // Immediately validate the exam learner section if exam class is Yes
+            if ($('#exam_class').val() === 'Yes' && typeof validateExamLearners === 'function') {
+                validateExamLearners();
+            }
         }
 
         // Event handler for adding selected exam learners
@@ -769,6 +949,42 @@ function initializeClassCalendar() {
                 updateExamLearnerOptions();
             }
         });
+
+        // Function to validate exam learners
+        window.validateExamLearners = function() {
+            console.log('Validating exam learners...');
+
+            // Only validate if exam class is Yes
+            if ($('#exam_class').val() !== 'Yes') {
+                console.log('Exam class is not Yes, skipping validation');
+                return true;
+            }
+
+            const examLearnersData = $('#exam_learners').val();
+            const examLearnerCount = parseInt($('#exam_learner_count').val() || '0');
+            const $examLearnersContainer = $('#exam_learners_container');
+            const $noExamLearnersMessage = $('#no-exam-learners-message');
+
+            console.log('Exam learners data:', examLearnersData);
+            console.log('Exam learner count:', examLearnerCount);
+
+            let examLearnersValid = true;
+
+            if ((!examLearnersData || examLearnersData === '[]') && examLearnerCount === 0) {
+                examLearnersValid = false;
+                // Add validation styling
+                $examLearnersContainer.addClass('border-danger');
+                $noExamLearnersMessage.removeClass('alert-info').addClass('alert-danger');
+                console.log('Exam learners validation failed');
+            } else {
+                // Remove validation styling
+                $examLearnersContainer.removeClass('border-danger');
+                $noExamLearnersMessage.removeClass('alert-danger').addClass('alert-info');
+                console.log('Exam learners validation passed');
+            }
+
+            return examLearnersValid;
+        };
     }
 
     /**
@@ -953,7 +1169,33 @@ function initializeClassCalendar() {
 
         // Function to update the hidden field with learner data
         function updateClassLearnersData() {
-            $classLearnersData.val(JSON.stringify(classLearners));
+            // Log for debugging
+            console.log('Updating class learners data:', classLearners);
+
+            // Stringify the learners array and store in hidden field
+            const jsonData = JSON.stringify(classLearners);
+            $classLearnersData.val(jsonData);
+
+            // Log the JSON data for debugging
+            console.log('Class learners JSON:', jsonData);
+
+            // Update the learner count hidden input if it exists
+            if ($('#learner_count').length) {
+                $('#learner_count').val(classLearners.length);
+                console.log('Updated existing learner count:', classLearners.length);
+            } else {
+                // Create a hidden input for learner count if it doesn't exist
+                $('<input>').attr({
+                    type: 'hidden',
+                    id: 'learner_count',
+                    name: 'learner_count',
+                    value: classLearners.length
+                }).appendTo('#classes-form');
+                console.log('Created new learner count field:', classLearners.length);
+            }
+
+            // Immediately validate the learner section
+            validateClassLearners();
 
             // Trigger an event to notify other components that class learners have been updated
             $(document).trigger('classLearnersUpdated');
@@ -961,30 +1203,47 @@ function initializeClassCalendar() {
 
         // Event handler for adding selected learners
         $addSelectedLearnersBtn.on('click', function() {
+            // Get all selected options
             const selectedOptions = $addLearnerSelect.find('option:selected');
+            console.log('Selected options:', selectedOptions.length);
 
+            // Check if any learners are selected
             if (selectedOptions.length === 0) {
-                alert('Please select at least one learner to add.');
+                // Show a custom modal dialog instead of an alert
+                showCustomAlert('Please select at least one learner to add.');
                 return;
             }
 
             let addedCount = 0;
+            let alreadyAddedLearners = [];
 
+            // Process each selected learner
             selectedOptions.each(function() {
                 const learnerId = $(this).val();
                 const learnerName = $(this).text();
 
+                // Try to add the learner to the table
                 if (addLearnerToTable(learnerId, learnerName)) {
                     addedCount++;
+                } else {
+                    // Keep track of learners that were already added
+                    alreadyAddedLearners.push(learnerName);
                 }
             });
 
-            // Clear selection
+            // Clear the selection
             $addLearnerSelect.val([]);
 
-            if (addedCount === 0) {
-                alert('No new exam learners added. All selected learners are already taking exams.');
+            // Show appropriate message based on results
+            if (addedCount === 0 && alreadyAddedLearners.length > 0) {
+                showCustomAlert('No new learners added. All selected learners are already in the class.');
+            } else if (addedCount > 0 && alreadyAddedLearners.length > 0) {
+                // Some learners were added, some were already in the class
+                const message = `Added ${addedCount} learner(s). ${alreadyAddedLearners.length} learner(s) were already in the class.`;
+                // No need to show an alert for partial success
+                console.log(message);
             }
+            // No alert needed for complete success
         });
 
         // Event delegation for remove buttons
@@ -1005,6 +1264,36 @@ function initializeClassCalendar() {
                 updateClassLearnersData();
             }
         });
+
+        // Function to validate class learners
+        window.validateClassLearners = function() {
+            console.log('Validating class learners...');
+
+            const classLearnersData = $('#class_learners_data').val();
+            const learnerCount = parseInt($('#learner_count').val() || '0');
+            const $classLearnersContainer = $('#class-learners-container');
+            const $noLearnersMessage = $('#no-learners-message');
+
+            console.log('Class learners data:', classLearnersData);
+            console.log('Learner count:', learnerCount);
+
+            let classLearnersValid = true;
+
+            if ((!classLearnersData || classLearnersData === '[]') && learnerCount === 0) {
+                classLearnersValid = false;
+                // Add validation styling
+                $classLearnersContainer.addClass('border-danger');
+                $noLearnersMessage.removeClass('alert-info').addClass('alert-danger');
+                console.log('Class learners validation failed');
+            } else {
+                // Remove validation styling
+                $classLearnersContainer.removeClass('border-danger');
+                $noLearnersMessage.removeClass('alert-danger').addClass('alert-info');
+                console.log('Class learners validation passed');
+            }
+
+            return classLearnersValid;
+        };
     }
 
     /**
@@ -1100,6 +1389,35 @@ function initializeClassCalendar() {
         const $backupAgentTemplate = $('#backup-agent-row-template');
         const $backupAgentsContainer = $('#backup-agents-container');
 
+        // Function to validate backup agent
+        function validateBackupAgent($row) {
+            const $backupAgent = $row.find('select[name="backup_agent_ids[]"]');
+            const $backupDate = $row.find('input[name="backup_agent_dates[]"]');
+
+            const backupAgentValue = $backupAgent.val();
+            const backupDateValue = $backupDate.val();
+
+            let isValid = true;
+
+            // Validate agent selection
+            if (!backupAgentValue) {
+                $backupAgent.addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $backupAgent.addClass('is-valid').removeClass('is-invalid');
+            }
+
+            // Validate date
+            if (!backupDateValue) {
+                $backupDate.addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $backupDate.addClass('is-valid').removeClass('is-invalid');
+            }
+
+            return isValid;
+        }
+
         // Function to add a new backup agent row
         function addBackupAgentRow() {
             // Clone the template
@@ -1117,6 +1435,11 @@ function initializeClassCalendar() {
                 $(this).closest('.backup-agent-row').remove();
             });
 
+            // Attach validation handlers
+            $newRow.find('select[name="backup_agent_ids[]"], input[name="backup_agent_dates[]"]').on('change', function() {
+                validateBackupAgent($(this).closest('.backup-agent-row'));
+            });
+
             // Append the new row to the container
             $backupAgentsContainer.append($newRow);
         }
@@ -1125,6 +1448,17 @@ function initializeClassCalendar() {
         $('#add-backup-agent-btn').on('click', function() {
             addBackupAgentRow();
         });
+
+        // Function to validate all backup agents
+        window.validateAllBackupAgents = function() {
+            let allValid = true;
+            $('.backup-agent-row:not(#backup-agent-row-template)').each(function() {
+                if (!validateBackupAgent($(this))) {
+                    allValid = false;
+                }
+            });
+            return allValid;
+        };
 
         // Add an initial row if container is empty
         if ($backupAgentsContainer.children().length === 0) {
@@ -1223,6 +1557,132 @@ function initializeClassCalendar() {
     }
 
     /**
+     * Check for class schedule conflicts
+     */
+    function checkClassConflicts(callback) {
+        // Skip if conflict checking is disabled
+        if (!wecozaClass.conflictCheckEnabled) {
+            if (typeof callback === 'function') {
+                callback(null);
+            }
+            return;
+        }
+
+        // Get schedule data from calendar
+        const events = calendar ? calendar.getEvents() : [];
+        if (!events.length) {
+            if (typeof callback === 'function') {
+                callback(null);
+            }
+            return;
+        }
+
+        // Format schedule data for the server
+        const scheduleData = events.map(function(event) {
+            if (!event.start || !event.end) {
+                return null;
+            }
+
+            return {
+                date: formatDate(event.start),
+                start_time: formatTime(event.start),
+                end_time: formatTime(event.end),
+                type: event.extendedProps && event.extendedProps.type ? event.extendedProps.type : 'class'
+            };
+        }).filter(Boolean); // Remove null entries
+
+        // Get class ID if editing an existing class
+        const classId = $('#class_id').val() !== 'auto-generated' ? $('#class_id').val() : null;
+
+        // Get agent ID
+        const agentId = $('#class_agent').val();
+
+        // Get learner IDs
+        const classLearnersData = $('#class_learners_data').val();
+        const learnerIds = classLearnersData ? JSON.parse(classLearnersData).map(learner => learner.id) : [];
+
+        // Send AJAX request to check for conflicts
+        $.ajax({
+            url: wecozaClass.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'check_class_conflicts',
+                nonce: wecozaClass.nonce,
+                schedule_data: JSON.stringify(scheduleData),
+                class_id: classId,
+                agent_id: agentId,
+                learner_ids: JSON.stringify(learnerIds)
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (response.data.conflicts) {
+                        // Process conflicts
+                        if (typeof callback === 'function') {
+                            callback(response.data.conflicts);
+                        }
+                    } else {
+                        // No conflicts
+                        if (typeof callback === 'function') {
+                            callback(null);
+                        }
+                    }
+                } else {
+                    console.error('Error checking conflicts:', response.data.message);
+                    if (typeof callback === 'function') {
+                        callback(null);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error checking conflicts:', error);
+                if (typeof callback === 'function') {
+                    callback(null);
+                }
+            }
+        });
+    }
+
+    /**
+     * Display conflict warnings to the user
+     */
+    function displayConflictWarnings(conflicts) {
+        if (!conflicts) {
+            return;
+        }
+
+        let warningHtml = '<div class="alert alert-warning"><strong>Potential Schedule Conflicts Detected:</strong><ul>';
+
+        // Process agent conflicts
+        if (conflicts.agent && conflicts.agent.length > 0) {
+            warningHtml += '<li><strong>Agent Conflicts:</strong><ul>';
+            conflicts.agent.forEach(function(conflict) {
+                warningHtml += `<li>On ${conflict.date} from ${conflict.start_time} to ${conflict.end_time}, the selected agent has ${conflict.conflicts.length} other class(es) scheduled.</li>`;
+            });
+            warningHtml += '</ul></li>';
+        }
+
+        // Process learner conflicts
+        if (conflicts.learner && conflicts.learner.length > 0) {
+            warningHtml += '<li><strong>Learner Conflicts:</strong><ul>';
+            conflicts.learner.forEach(function(conflict) {
+                const learnersWithConflicts = Object.keys(conflict.conflicts).length;
+                warningHtml += `<li>On ${conflict.date} from ${conflict.start_time} to ${conflict.end_time}, ${learnersWithConflicts} learner(s) have other classes scheduled.</li>`;
+            });
+            warningHtml += '</ul></li>';
+        }
+
+        warningHtml += '</ul><p>You can still save this class, but please review the schedule to avoid conflicts.</p></div>';
+
+        // Display the warning at the top of the form
+        $('#form-messages').html(warningHtml);
+
+        // Scroll to the warning
+        $('html, body').animate({
+            scrollTop: $('#form-messages').offset().top - 100
+        }, 500);
+    }
+
+    /**
      * Initialize form submission
      */
     function initializeFormSubmission() {
@@ -1235,6 +1695,9 @@ function initializeClassCalendar() {
                     form.addEventListener('submit', function (event) {
                         // Prevent default form submission
                         event.preventDefault();
+
+                        // Reset validation state
+                        resetValidationState();
 
                         // Update calendar data before validation
                         updateHiddenFields();
@@ -1257,55 +1720,119 @@ function initializeClassCalendar() {
                             takeoverDatesValid = validateAllTakeoverDates();
                         }
 
-                        // Add custom validation for class learners
-                        let classLearnersValid = true;
-                        const classLearnersData = $('#class_learners_data').val();
-                        const $classLearnersContainer = $('#class-learners-container');
-                        const $noLearnersMessage = $('#no-learners-message');
-
-                        if (!classLearnersData || classLearnersData === '[]') {
-                            classLearnersValid = false;
-                            // Add validation styling
-                            $classLearnersContainer.addClass('border-danger');
-                            $noLearnersMessage.removeClass('alert-info').addClass('alert-danger');
-                        } else {
-                            // Remove validation styling
-                            $classLearnersContainer.removeClass('border-danger');
-                            $noLearnersMessage.removeClass('alert-danger').addClass('alert-info');
+                        // Add custom validation for backup agents
+                        let backupAgentsValid = true;
+                        if (typeof validateAllBackupAgents === 'function') {
+                            backupAgentsValid = validateAllBackupAgents();
                         }
 
-                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid || !takeoverDatesValid || !classLearnersValid) {
+                        // Add custom validation for class learners
+                        let classLearnersValid = true;
+                        if (typeof validateClassLearners === 'function') {
+                            classLearnersValid = validateClassLearners();
+                        }
+
+                        // Add custom validation for exam learners if exam class is Yes
+                        let examLearnersValid = true;
+                        if ($('#exam_class').val() === 'Yes' && typeof validateExamLearners === 'function') {
+                            examLearnersValid = validateExamLearners();
+                        }
+
+                        if (!form.checkValidity() || !dateHistoryValid || !qaVisitsValid || !takeoverDatesValid || !backupAgentsValid || !classLearnersValid || !examLearnersValid) {
                             event.stopPropagation();
                             form.classList.add('was-validated');
 
-                            // Show error message if date validation failed
+                            // Collect all validation errors
+                            const validationErrors = [];
+
+                            // Check for required fields that are missing
+                            $(form).find(':required').each(function() {
+                                if (!this.validity.valid) {
+                                    const fieldName = $(this).prev('label').text().trim().replace(' *', '') || $(this).attr('name');
+                                    validationErrors.push(`The ${fieldName} field is required.`);
+                                }
+                            });
+
+                            // Add custom validation errors
                             if (!dateHistoryValid) {
-                                $('#form-messages').html('<div class="alert alert-danger">Please ensure all restart dates are after their corresponding stop dates.</div>');
-                                // Scroll to the date history section
-                                $('html, body').animate({
-                                    scrollTop: $('#date-history-container').offset().top - 100
-                                }, 500);
+                                validationErrors.push('Please ensure all restart dates are after their corresponding stop dates.');
                             }
 
-                            // Show error message if takeover dates validation failed
                             if (!takeoverDatesValid) {
-                                $('#form-messages').html('<div class="alert alert-danger">Please ensure all agent takeover dates are after the initial agent start date.</div>');
-                                // Scroll to the agent replacements section
-                                $('html, body').animate({
-                                    scrollTop: $('#agent-replacements-container').offset().top - 100
-                                }, 500);
+                                validationErrors.push('Please ensure all agent takeover dates are after the initial agent start date.');
                             }
 
-                            // Scroll to the class learners section if validation failed
                             if (!classLearnersValid) {
-                                // Scroll to the class learners section
+                                validationErrors.push('Please add at least one class learner.');
+                            }
+
+                            if (!examLearnersValid && $('#exam_class').val() === 'Yes') {
+                                validationErrors.push('Please add at least one exam learner.');
+                            }
+
+                            if (!qaVisitsValid) {
+                                validationErrors.push('Please ensure all QA visit dates have associated reports.');
+                            }
+
+                            if (!backupAgentsValid) {
+                                validationErrors.push('Please ensure all backup agents have both an agent selected and a date.');
+                            }
+
+                            // Show error summary
+                            if (validationErrors.length > 0) {
+                                let errorHtml = '<div class="alert alert-danger"><strong>Please correct the following errors:</strong><ul>';
+                                validationErrors.forEach(error => {
+                                    errorHtml += `<li>${error}</li>`;
+                                });
+                                errorHtml += '</ul></div>';
+                                $('#form-messages').html(errorHtml);
+                            }
+
+                            // Determine which section to scroll to
+                            let scrollTarget = null;
+
+                            // Find the first invalid field
+                            const $firstInvalid = $(form).find('.is-invalid').first();
+                            if ($firstInvalid.length) {
+                                scrollTarget = $firstInvalid;
+                            } else if (!dateHistoryValid) {
+                                scrollTarget = $('#date-history-container');
+                            } else if (!takeoverDatesValid) {
+                                scrollTarget = $('#agent-replacements-container');
+                            } else if (!classLearnersValid) {
+                                scrollTarget = $('#class-learners-container');
+                            } else if (!examLearnersValid && $('#exam_class').val() === 'Yes') {
+                                scrollTarget = $('#exam_learners_container');
+                            } else if (!backupAgentsValid) {
+                                scrollTarget = $('#backup-agents-container');
+                            }
+
+                            // Scroll to the appropriate section
+                            if (scrollTarget) {
                                 $('html, body').animate({
-                                    scrollTop: $('#class-learners-container').offset().top - 100
+                                    scrollTop: scrollTarget.offset().top - 100
                                 }, 500);
                             }
                         } else {
-                            // Form is valid, submit via AJAX
-                            submitFormViaAjax(form);
+                            // Form is valid, check for conflicts before submitting
+                            checkClassConflicts(function(conflicts) {
+                                if (conflicts) {
+                                    // Display conflict warnings
+                                    displayConflictWarnings(conflicts);
+
+                                    // Ask user if they want to proceed
+                                    if (confirm('Schedule conflicts were detected. Do you still want to save this class?')) {
+                                        submitFormViaAjax(form);
+                                    } else {
+                                        // Reset button state if user cancels
+                                        const submitBtn = $(form).find('button[type="submit"]');
+                                        submitBtn.prop('disabled', false);
+                                    }
+                                } else {
+                                    // No conflicts, proceed with submission
+                                    submitFormViaAjax(form);
+                                }
+                            });
                         }
                     }, false)
                 })
@@ -1350,34 +1877,11 @@ function initializeClassCalendar() {
             }
         }
 
-        // Helper function to format date
-        function formatDate(date) {
-            const d = new Date(date);
-            let month = '' + (d.getMonth() + 1);
-            let day = '' + d.getDate();
-            const year = d.getFullYear();
+        // Use the global formatDate function
 
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
+        // Use the global getDayOfWeek function
 
-            return [year, month, day].join('-');
-        }
-
-        // Helper function to get day of week
-        function getDayOfWeek(date) {
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            return days[date.getDay()];
-        }
-
-        // Helper function to format time
-        function formatTime(date) {
-            const hours = date.getHours();
-            const minutes = date.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const hour12 = hours % 12 || 12;
-            const minuteStr = minutes < 10 ? '0' + minutes : minutes;
-            return `${hour12}:${minuteStr} ${ampm}`;
-        }
+        // Use the global formatTime function
 
         // Function to submit form via AJAX
         function submitFormViaAjax(form) {
@@ -1430,14 +1934,38 @@ function initializeClassCalendar() {
     }
 
     /**
+     * Reset all validation states
+     */
+    function resetValidationState() {
+        // Clear all validation classes
+        $('.is-invalid').removeClass('is-invalid');
+        $('.is-valid').removeClass('is-valid');
+        $('.invalid-feedback').hide();
+        $('.valid-feedback').hide();
+
+        // Reset form validation class
+        $('#classes-form').removeClass('was-validated');
+
+        // Reset border styling
+        $('#class-learners-container').removeClass('border-danger');
+        $('#exam_learners_container').removeClass('border-danger');
+
+        // Reset alert styling
+        $('#no-learners-message').removeClass('alert-danger').addClass('alert-info');
+        $('#no-exam-learners-message').removeClass('alert-danger').addClass('alert-info');
+
+        // Clear error messages
+        $('#form-messages').empty();
+    }
+
+    /**
      * Handle validation errors from the server
      *
      * @param {Object} errors Validation errors
      */
     function handleValidationErrors(errors) {
         // Reset all validation states
-        $('.is-invalid').removeClass('is-invalid');
-        $('.invalid-feedback').hide();
+        resetValidationState();
 
         // Add form validation class
         $('#classes-form').addClass('was-validated');

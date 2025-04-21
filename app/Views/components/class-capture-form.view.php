@@ -65,13 +65,14 @@
 
       <?php echo section_divider(); ?>
 
-      <!-- Day/Time Schedule Section -->
-      <?php include_once('class-capture-partials/class-schedule-calendar.php'); ?>
-
-      <?php echo section_divider(); ?>
-
       <!-- ===== Section: Scheduling & Class Info ===== -->
       <?php include_once('class-capture-partials/class-info.php'); ?>
+
+      <!-- Class Schedule Form Section -->
+      <?php include_once('class-capture-partials/class-schedule-form.php'); ?>
+
+      <!-- Calendar Reference View (hidden by default) -->
+      <?php include_once('class-capture-partials/class-schedule-calendar.php'); ?>
 
       <!-- Class Date History Section -->
       <?php include_once('class-capture-partials/date-history.php'); ?>

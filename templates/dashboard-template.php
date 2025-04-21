@@ -237,7 +237,7 @@ $return .= '<div class="container mt-4 ms-0"><div class="row">
     </div>
   </div>
 </div>
-   <gradio-app src="https://laudes-ai-eee-sql-gen.hf.space"></gradio-app>
+   <!-- <gradio-app src="https://laudes-ai-eee-sql-gen.hf.space"></gradio-app> -->
 </div>
          </div></div>';
 $return .= '</div>';
