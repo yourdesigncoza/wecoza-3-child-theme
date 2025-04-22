@@ -9,6 +9,7 @@ namespace WeCoza\Controllers;
 
 use WeCoza\Models\Assessment\ClassModel;
 use WeCoza\Controllers\MainController;
+use WeCoza\Services\Export\CalendarExportService;
 
 class ClassController {
     /**
@@ -21,6 +22,8 @@ class ClassController {
         add_action('wp_ajax_nopriv_save_class', [$this, 'saveClassAjax']);
         add_action('wp_ajax_check_class_conflicts', [$this, 'checkClassConflictsAjax']);
         add_action('wp_ajax_nopriv_check_class_conflicts', [$this, 'checkClassConflictsAjax']);
+        add_action('wp_ajax_export_calendar', [$this, 'exportCalendarAjax']);
+        add_action('wp_ajax_nopriv_export_calendar', [$this, 'exportCalendarAjax']);
 
         // Enqueue necessary scripts and styles
         add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
@@ -53,6 +56,7 @@ class ClassController {
         wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
         wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
         wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
+        wp_enqueue_script('wecoza-calendar-export-js', WECOZA_CHILD_URL . '/public/js/calendar-export.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
 
         // Localize script with AJAX URL and nonce
         wp_localize_script('wecoza-class-js', 'wecozaClass', [
@@ -811,5 +815,30 @@ class ClassController {
             error_log('Error checking learner conflicts: ' . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Handle AJAX request to export calendar data
+     */
+    public function exportCalendarAjax() {
+        // Check nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
+            wp_send_json_error(['message' => 'Security check failed.']);
+            return;
+        }
+
+        // Get class IDs from request
+        $classIds = isset($_POST['class_ids']) ? json_decode(stripslashes($_POST['class_ids']), true) : [];
+
+        // Generate iCalendar content
+        $icalContent = CalendarExportService::generateICalendar($classIds);
+
+        // Set headers for file download
+        header('Content-Type: text/calendar; charset=utf-8');
+        header('Content-Disposition: attachment; filename="wecoza-classes.ics"');
+
+        // Output the iCalendar content
+        echo $icalContent;
+        exit;
     }
 }
