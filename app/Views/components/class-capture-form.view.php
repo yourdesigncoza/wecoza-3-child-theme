@@ -71,14 +71,11 @@
       <!-- Class Schedule Form Section -->
       <?php include_once('class-capture-partials/class-schedule-form.php'); ?>
 
-      <!-- Calendar Reference View (hidden by default) -->
-      <?php include_once('class-capture-partials/class-schedule-calendar.php'); ?>
-
-      <!-- Calendar Export Options -->
-      <?php include_once('class-capture-partials/export-options.php'); ?>
-
       <!-- Class Date History Section -->
       <?php include_once('class-capture-partials/date-history.php'); ?>
+
+      <!-- Calendar Reference View (hidden by default) -->
+      <?php include_once('class-capture-partials/class-schedule-calendar.php'); ?>
 
       <?php echo section_divider(); ?>
 

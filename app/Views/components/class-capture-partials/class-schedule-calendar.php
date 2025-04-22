@@ -40,4 +40,21 @@
          <small>Exception Date</small>
       </div>
    </div>
+
+   <!-- Calendar Export Options -->
+   <div class="export-options mb-3">
+      <h6 class="mb-2">Export Options</h6>
+      <p class="text-muted small mb-2">Export your class schedule to use in external calendar applications.</p>
+
+      <div class="row">
+         <div class="col-md-6">
+            <button type="button" id="export-calendar-btn" class="btn btn-primary btn-sm">
+               <i class="bi bi-calendar-event me-2"></i>Export to Google Calendar
+            </button>
+            <div class="form-text mt-2">
+               Exports all classes as iCalendar (.ics) file that can be imported into Google Calendar and other calendar applications.
+            </div>
+         </div>
+      </div>
+   </div>
 </div>

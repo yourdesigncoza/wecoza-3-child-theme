@@ -7,9 +7,9 @@
 | 💡 Ideas      |   1   |
 | 📥 Backlog    |   1   |
 | 📝 Todo       |   2   |
-| 🚧 In Progress|   0   |
+| 🚧 In Progress|   1   |
 | 🔍 In Review  |   0   |
-| ✅ Done       |  14   |
+| ✅ Done       |  13   |
 | ❌ Cancelled  |   5   |
 | **Total**     | **23** |
 
@@ -66,7 +66,12 @@
 <details>
 <summary>🚧 In Progress</summary>
 
-_No tasks_
+- [ ] **WEC-28 – Calendar Export Integration** _(Priority: Medium)_
+    - Description: Add functionality to export class schedules to external calendar applications.
+      Proposed Solution: Implement iCalendar (.ics) export functionality for bulk export of class schedules with Google Calendar compatibility.
+    - Subtasks:
+        1. Move the Calendar Export button & description to within the "View Calendar" section, so export feature is only visible when you view calendar
+        2. Move the calendar to below the "Class Date History" section
 
 </details>
 
@@ -79,10 +84,6 @@ _No tasks_
 
 <details>
 <summary>✅ Done</summary>
-
-- [ ] **WEC-28 – Calendar Export Integration** _(Priority: Medium)_
-    - Description: Add functionality to export class schedules to external calendar applications.
-      Proposed Solution: Implement iCalendar (.ics) export functionality for bulk export of class schedules with Google Calendar compatibility.
 
 - [ ] **WEC-27 – Class Conflict Detection** _(Priority: Urgent)_
     - Description: Implement a system to detect and warn about potential conflicts when scheduling classes.
