@@ -106,13 +106,8 @@ function init() {
         }
     }
 
-    // Add AJAX handlers
-    add_action('wp_ajax_wecoza_save_learner', 'WeCoza\\Controllers\\LearnerController::saveAjax');
-    add_action('wp_ajax_nopriv_wecoza_save_learner', 'WeCoza\\Controllers\\LearnerController::saveAjax');
-
-    // Class AJAX handlers
-    add_action('wp_ajax_save_class', 'WeCoza\\Controllers\\ClassController::saveClassAjax');
-    add_action('wp_ajax_nopriv_save_class', 'WeCoza\\Controllers\\ClassController::saveClassAjax');
+    // Load AJAX handlers
+    require_once WECOZA_APP_PATH . '/ajax-handlers.php';
 }
 
 // Initialize the application

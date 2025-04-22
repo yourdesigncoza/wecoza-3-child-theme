@@ -62,5 +62,6 @@ return [
         'WeCoza\\Controllers\\ClientController',
         'WeCoza\\Controllers\\AssessmentController',
         'WeCoza\\Controllers\\ClassController',
+        'WeCoza\\Controllers\\ClassTypesController',
     ],
 ];

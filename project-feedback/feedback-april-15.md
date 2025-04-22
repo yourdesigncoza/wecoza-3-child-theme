@@ -70,64 +70,65 @@ But I think at that point it won't be better if we make a split between new clas
 
 **Summary:**  
 - Multiple program categories with predefined durations:  
-  - **AET Communication & Numeracy** levels 1–4 (each 120 hrs)  
-  - **GETC AET** level 4 modules (Communication 120 hrs; Numeracy 120 hrs; Life Orientation 90 hrs; Human & Social Sciences 80 hrs; EMS 94 hrs; Natural Sciences 60 hrs; SMME 60 hrs)  
-  - **REALLL** Communication 160 hrs; Numeracy 160 hrs; Finance 40 hrs  
-  - **Business Admin** (NQF 2–4) with varying LP modules (20–104 hrs each)  
+  - **AET Communication & Numeracy** levels 1–4 (each 120 hrs)  
+  - **GETC AET** level 4 modules (Communication 120 hrs; Numeracy 120 hrs; Life Orientation 90 hrs; Human & Social Sciences 80 hrs; EMS 94 hrs; Natural Sciences 60 hrs; SMME 60 hrs)  
+  - **REALLL** Communication 160 hrs; Numeracy 160 hrs; Finance 40 hrs  
+  - **Business Admin** (NQF 2–4) with varying LP modules (20–104 hrs each)  
   - **Skill Packages** (Walk, Hexa, Run) not yet automated  
-  - **Soft Skill Courses** (e.g., Intro to Computers 20 hrs; Email Etiquette 6 hrs; Time Management 12 hrs; Supervisory Skills 40 hrs; EEP series 40 hrs each) :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
+  - **Soft Skill Courses** (e.g., Intro to Computers 20 hrs; Email Etiquette 6 hrs; Time Management 12 hrs; Supervisory Skills 40 hrs; EEP series 40 hrs each) 
 
 **Full Table:**  
+
 | Class Type                        | Level/Module                                         | Code    | Duration (Hours) |
 |-----------------------------------|------------------------------------------------------|---------|------------------|
-| AET Communication                 | level 1 Basic                                        | CL1B    | 120              |
-| AET Communication                 | level 1                                              | CL1     | 120              |
-| AET Communication                 | level 2                                              | CL2     | 120              |
-| AET Communication                 | level 3                                              | CL3     | 120              |
-| AET Communication                 | level 4                                              | CL4     | 120              |
-| AET Numeracy                      | level 1 Basic                                        | NL1B    | 120              |
-| AET Numeracy                      | level 1                                              | NL1     | 120              |
-| AET Numeracy                      | level 2                                              | NL2     | 120              |
-| AET Numeracy                      | level 3                                              | NL3     | 120              |
-| AET Numeracy                      | level 4                                              | NL4     | 120              |
-| GETC: AET                         | level 4 Communication                                | CL4     | 120              |
-| GETC: AET                         | level 4 Numeracy                                     | NL4     | 120              |
-| GETC: AET                         | level 4 Life Orientation                             | LO4     | 90               |
-| GETC: AET                         | level 4 Human & Social Sciences                      | HSS4    | 80               |
-| GETC: AET                         | level 4 Economic & Management Sciences               | EMS4    | 94               |
-| GETC: AET                         | level 4 Natural Sciences                             | NS4     | 60               |
-| GETC: AET                         | level 4 Small Micro Medium Enterprises               | SMME4   | 60               |
+| AET Communication                 | level 1 Basic                                        | CL1B    | 120              |
+| AET Communication                 | level 1                                              | CL1     | 120              |
+| AET Communication                 | level 2                                              | CL2     | 120              |
+| AET Communication                 | level 3                                              | CL3     | 120              |
+| AET Communication                 | level 4                                              | CL4     | 120              |
+| AET Numeracy                      | level 1 Basic                                        | NL1B    | 120              |
+| AET Numeracy                      | level 1                                              | NL1     | 120              |
+| AET Numeracy                      | level 2                                              | NL2     | 120              |
+| AET Numeracy                      | level 3                                              | NL3     | 120              |
+| AET Numeracy                      | level 4                                              | NL4     | 120              |
+| GETC: AET                         | level 4 Communication                                | CL4     | 120              |
+| GETC: AET                         | level 4 Numeracy                                     | NL4     | 120              |
+| GETC: AET                         | level 4 Life Orientation                             | LO4     | 90               |
+| GETC: AET                         | level 4 Human & Social Sciences                      | HSS4    | 80               |
+| GETC: AET                         | level 4 Economic & Management Sciences               | EMS4    | 94               |
+| GETC: AET                         | level 4 Natural Sciences                             | NS4     | 60               |
+| GETC: AET                         | level 4 Small Micro Medium Enterprises               | SMME4   | 60               |
 | REALLL                            | Communication                                        | RLC     | 160              |
 | REALLL                            | Numeracy                                             | RLN     | 160              |
 | REALLL                            | Finance                                              | RLF     | 40               |
-| Business Admin (NQF 2)           | LP9                                                  | BA2LP9  | 80               |
-| Business Admin (NQF 2)           | LP10                                                 | BA2LP10 | 64               |
-| Business Admin (NQF 2)           | LP1                                                  | BA2LP1  | 72               |
-| Business Admin (NQF 2)           | LP2                                                  | BA2LP2  | 56               |
-| Business Admin (NQF 2)           | LP3                                                  | BA2LP3  | 40               |
-| Business Admin (NQF 2)           | LP4                                                  | BA2LP4  | 20               |
-| Business Admin (NQF 2)           | LP5                                                  | BA2LP5  | 56               |
-| Business Admin (NQF 2)           | LP6                                                  | BA2LP6  | 60               |
-| Business Admin (NQF 2)           | LP7                                                  | BA2LP7  | 40               |
-| Business Admin (NQF 2)           | LP8                                                  | BA2LP8  | 32               |
-| Business Admin (NQF 3)           | LP2                                                  | BA3LP2  | 52               |
-| Business Admin (NQF 3)           | LP4                                                  | BA3LP4  | 40               |
-| Business Admin (NQF 3)           | LP5                                                  | BA3LP5  | 36               |
-| Business Admin (NQF 3)           | LP6                                                  | BA3LP6  | 44               |
-| Business Admin (NQF 3)           | LP1                                                  | BA3LP1  | 60               |
-| Business Admin (NQF 3)           | LP7                                                  | BA3LP7  | 40               |
-| Business Admin (NQF 3)           | LP8                                                  | BA3LP8  | 44               |
-| Business Admin (NQF 3)           | LP9                                                  | BA3LP9  | 28               |
-| Business Admin (NQF 3)           | LP10                                                 | BA3LP10 | 48               |
-| Business Admin (NQF 3)           | LP11                                                 | BA3LP11 | 36               |
-| Business Admin (NQF 3)           | LP3                                                  | BA3LP3  | 44               |
-| Business Admin (NQF 4)           | LP2                                                  | BA4LP2  | 104              |
-| Business Admin (NQF 4)           | LP3                                                  | BA4LP3  | 80               |
-| Business Admin (NQF 4)           | LP4                                                  | BA4LP4  | 64               |
-| Business Admin (NQF 4)           | LP1                                                  | BA4LP1  | 88               |
-| Business Admin (NQF 4)           | LP6                                                  | BA4LP6  | 84               |
-| Business Admin (NQF 4)           | LP5                                                  | BA4LP5  | 76               |
-| Business Admin (NQF 4)           | LP7                                                  | BA4LP7  | 88               |
+| Business Admin (NQF 2)           | LP9                                                  | BA2LP9  | 80               |
+| Business Admin (NQF 2)           | LP10                                                 | BA2LP10 | 64               |
+| Business Admin (NQF 2)           | LP1                                                  | BA2LP1  | 72               |
+| Business Admin (NQF 2)           | LP2                                                  | BA2LP2  | 56               |
+| Business Admin (NQF 2)           | LP3                                                  | BA2LP3  | 40               |
+| Business Admin (NQF 2)           | LP4                                                  | BA2LP4  | 20               |
+| Business Admin (NQF 2)           | LP5                                                  | BA2LP5  | 56               |
+| Business Admin (NQF 2)           | LP6                                                  | BA2LP6  | 60               |
+| Business Admin (NQF 2)           | LP7                                                  | BA2LP7  | 40               |
+| Business Admin (NQF 2)           | LP8                                                  | BA2LP8  | 32               |
+| Business Admin (NQF 3)           | LP2                                                  | BA3LP2  | 52               |
+| Business Admin (NQF 3)           | LP4                                                  | BA3LP4  | 40               |
+| Business Admin (NQF 3)           | LP5                                                  | BA3LP5  | 36               |
+| Business Admin (NQF 3)           | LP6                                                  | BA3LP6  | 44               |
+| Business Admin (NQF 3)           | LP1                                                  | BA3LP1  | 60               |
+| Business Admin (NQF 3)           | LP7                                                  | BA3LP7  | 40               |
+| Business Admin (NQF 3)           | LP8                                                  | BA3LP8  | 44               |
+| Business Admin (NQF 3)           | LP9                                                  | BA3LP9  | 28               |
+| Business Admin (NQF 3)           | LP10                                                 | BA3LP10 | 48               |
+| Business Admin (NQF 3)           | LP11                                                 | BA3LP11 | 36               |
+| Business Admin (NQF 3)           | LP3                                                  | BA3LP3  | 44               |
+| Business Admin (NQF 4)           | LP2                                                  | BA4LP2  | 104              |
+| Business Admin (NQF 4)           | LP3                                                  | BA4LP3  | 80               |
+| Business Admin (NQF 4)           | LP4                                                  | BA4LP4  | 64               |
+| Business Admin (NQF 4)           | LP1                                                  | BA4LP1  | 88               |
+| Business Admin (NQF 4)           | LP6                                                  | BA4LP6  | 84               |
+| Business Admin (NQF 4)           | LP5                                                  | BA4LP5  | 76               |
+| Business Admin (NQF 4)           | LP7                                                  | BA4LP7  | 88               |
 | Walk Package                      | Contains all modules/levels (not automated yet)      | –       | –                |
 | Hexa Package                      | Contains all modules/levels (not automated yet)      | –       | –                |
 | Run Package                       | Contains all modules/levels (not automated yet)      | –       | –                |
@@ -140,7 +141,7 @@ But I think at that point it won't be better if we make a split between new clas
 | EEP Workplace Intelligence        | EEPWI                                                | –       | 40               |
 | EEP Emotional Intelligence        | EEPEI                                                | –       | 40               |
 | EEP Business Intelligence         | EEPBI                                                | –       | 40               |
-:contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3}
+
 
 ---
 
@@ -148,7 +149,7 @@ But I think at that point it won't be better if we make a split between new clas
 
 **Summary:**  
 - **New Class** workflow fields: client/site, class type, invoicing method, schedule (start/stop), SETA-funded/exam selection, learner loading, exam-learner assignment, agent assignment (with order number).  
-- **Class Management** functions: notes & QA, agent replacement, backup agent. :contentReference[oaicite:4]{index=4}&#8203;:contentReference[oaicite:5]{index=5}
+- **Class Management** functions: notes & QA, agent replacement, backup agent. 
 
 **Full Tables:**  
 
@@ -157,7 +158,7 @@ But I think at that point it won't be better if we make a split between new clas
 |------|--------------------------------------------------------|
 | 1    | Client Name / Site Name                                |
 | 2    | Class Type                                             |
-| 3    | Invoice Method (dropdown: Monthly Hours / Hexa / Walk / Run / Upfront / Tranches / Joiner Fee 1–3) |
+| 3    | Invoice Method (dropdown: Monthly Hours / Hexa / Walk / Run / Upfront / Tranches / Joiner Fee 1–3) |
 | 4    | Class Schedule (Start & Stop dates)                    |
 | 5    | SETA Funded & Exam (conditional dropdown for AET Comm, AET Num, GETC AET) |
 | 6    | Load Learners                                          |
@@ -165,7 +166,7 @@ But I think at that point it won't be better if we make a split between new clas
 | 8    | Assign Class Agent (requires agent order number)       |
 |      | *Agent order-generation logic to be defined*           |
 |      |                                                        |
-:contentReference[oaicite:6]{index=6}&#8203;:contentReference[oaicite:7]{index=7}
+
 
 ### Class Management  
 | Function           |
@@ -173,7 +174,7 @@ But I think at that point it won't be better if we make a split between new clas
 | Class Notes & QA   |
 | Agent Replacement  |
 | Backup Agent       |
-:contentReference[oaicite:8]{index=8}&#8203;:contentReference[oaicite:9]{index=9}
+
 
 ---
 
@@ -181,7 +182,7 @@ But I think at that point it won't be better if we make a split between new clas
 
 **Summary:**  
 - **Class Creation Events:** automatable start/stop dates, material delivery scheduling, alternate options (e.g. every second week or last Saturday).  
-- **Class Management Events:** handling agent absences, cancellations, date amendments, exam dates, material pickups, mock exams, SBA task/submission dates. :contentReference[oaicite:10]{index=10}&#8203;:contentReference[oaicite:11]{index=11}
+- **Class Management Events:** handling agent absences, cancellations, date amendments, exam dates, material pickups, mock exams, SBA task/submission dates. 
 
 **Full Tables:**  
 
@@ -192,7 +193,7 @@ But I think at that point it won't be better if we make a split between new clas
 | Stop Date               | Automated with override option         |
 | Material Delivery Dates |                                        |
 | Alternate Options       | Every second week / last Saturday      |
-:contentReference[oaicite:12]{index=12}&#8203;:contentReference[oaicite:13]{index=13}
+
 
 ### Class Management Events  
 | Event                     | Comment                             |
@@ -205,14 +206,14 @@ But I think at that point it won't be better if we make a split between new clas
 | Mock Exam Dates           |                                     |
 | SBA Task Dates            |                                     |
 | SBA Submission Dates      |                                     |
-:contentReference[oaicite:14]{index=14}&#8203;:contentReference[oaicite:15]{index=15}
+
 
 ---
 
 ## Learners
 
 **Summary:**  
-- Pulls learner list from client; assigns level/module per learner; tracks status (CIC = Currently in Class; RBE = Removed by Employer; DRO = Drop Out); supports action dropdowns (e.g., remove). :contentReference[oaicite:16]{index=16}&#8203;:contentReference[oaicite:17]{index=17}
+- Pulls learner list from client; assigns level/module per learner; tracks status (CIC = Currently in Class; RBE = Removed by Employer; DRO = Drop Out); supports action dropdowns (e.g., remove). 
 
 **Full Table:**  
 | Field                | Description                                                                                               |
@@ -222,27 +223,27 @@ But I think at that point it won't be better if we make a split between new clas
 | Status               | CIC (Currently in Class), RBE (Removed by Employer), DRO (Drop Out)                                       |
 | Current Level        | Assigned level/module (dropdown dependent on selected class type)                                         |
 | Actions              | Remove (via dropdown)                                                                                     |
-:contentReference[oaicite:18]{index=18}&#8203;:contentReference[oaicite:19]{index=19}
+
 
 ---
 
-## Full Meeting Transcript
+## WhatsApp Feedback
 
-Below is the complete transcript from our April 15 meeting. :contentReference[oaicite:20]{index=20}&#8203;:contentReference[oaicite:21]{index=21}
+Below is the complete transcript from our April 15 meeting. 
 
 > Hi Johnny, I sent you an email about the Wecoza notes and the goodies that I looked at and that we talked about this morning. I'm going to briefly explain it to you today, because I have also briefly settled it in the email that you will be able to understand when you look at it. I sent you an attachment that says Class Types and Durations.  
 > On your Class Types drop-down you have all the Class Types that you can insert. And then there are levels and modules for each Class Type. I think the Class Subject tab that you already have, the drop-down, is a good place to take us out.  
-> Then I think under the learner, if you now choose Class Type 80 Communication, then when you choose the learner line, the level that it will start at, then you don’t have to have any drop‑downs of any specific Class Type to choose from. Because we will eventually have the same problems here, as we did in the original Wecoza note. If we make it all fixed, and we have a learner with something else there, then you can’t change it again.  
+> Then I think under the learner, if you now choose Class Type 80 Communication, then when you choose the learner line, the level that it will start at, then you don’t have to have any drop‑downs of any specific Class Type to choose from. Because we will eventually have the same problems here, as we did in the original Wecoza note. If we make it all fixed, and we have a learner with something else there, then you can’t change it again.  
 > I don’t just want to stay with one subject for your class. I want you to choose one per learner. We can choose this class type, and then choose this learner level or module that you are working on.  
 > Then we also choose a specific subject for the class. I hope that makes sense. I just put the code in there.  
 > You can use it if you want to work on the code. It doesn’t make a big deal. I think it will be easier than this learner view to work on the code, and not the whole description.  
-> Then I put in the origin. My idea behind it, and you can still think a little whether it will work, My idea behind it is, If you choose the class type, and we say this is an IIT Communication, then we automatically know that this is a 120‑hour‑long project. Because they will do it on a lead‑in level.  
-> A reschedule automatically, if you put in the start date, and the time of the class, it will work automatically. If you say, it starts today, and is every Tuesday, 12 to 3. So it’s a 3‑hour day. It will sit on the schedule for 3 hours every Tuesday, until it reaches 120 hours.  
-> Then it maps out the whole schedule, from start to finish, then 120 hours, and it automatically gives you your stop time. So you don’t have to put in a stop time. My idea behind this is to say, if we reschedule according to this time, according to the class type that you put in, then it’s already automated.  
+> Then I put in the origin. My idea behind it, and you can still think a little whether it will work, My idea behind it is, If you choose the class type, and we say this is an IIT Communication, then we automatically know that this is a 120‑hour‑long project. Because they will do it on a lead‑in level.  
+> A reschedule automatically, if you put in the start date, and the time of the class, it will work automatically. If you say, it starts today, and is every Tuesday, 12 to 3. So it’s a 3‑hour day. It will sit on the schedule for 3 hours every Tuesday, until it reaches 120 hours.  
+> Then it maps out the whole schedule, from start to finish, then 120 hours, and it automatically gives you your stop time. So you don’t have to put in a stop time. My idea behind this is to say, if we reschedule according to this time, according to the class type that you put in, then it’s already automated.  
 > I don’t think it’s possible to put in automated routers. Obviously, I think there can be routers that come up, that already clash with the automation, if it doesn’t work itself, but I think we can deal with that. I said, I think there should be an override.  
 > It automatically follows this time, but if there should be something else, or if you need to change something, you can manually update that. But I hope that makes sense. Obviously, someone still has to talk to us, which I don’t know yet, how we’re going to work it in, and where it’s going to fit, whether it comes to the class, or whether it comes to Anastar, or whether it comes later on.  
-> It’s obviously the progression from one level of module to the other. So, if I now, if I admin the business and give it to someone, for example, you’ll see the following order, it’s not 100% not like, for example, if I give it to someone, it starts with LP19 and then 1.2. That’s exactly the order that we’re doing. So that’s the order that has to run fast.  
-> So, for example, if you, for example, if you’re doing business admin in class 2, then our learners are going to start on LP9. And it’s going to run fast for 80 hours, and then it automatically has to switch to the next module for 64 hours. And so it has to start automatically until the whole thing is done, because it’s one program.  
+> It’s obviously the progression from one level of module to the other. So, if I now, if I admin the business and give it to someone, for example, you’ll see the following order, it’s not 100% not like, for example, if I give it to someone, it starts with LP19 and then 1.2. That’s exactly the order that we’re doing. So that’s the order that has to run fast.  
+> So, for example, if you, for example, if you’re doing business admin in class 2, then our learners are going to start on LP9. And it’s going to run fast for 80 hours, and then it automatically has to switch to the next module for 64 hours. And so it has to start automatically until the whole thing is done, because it’s one program.  
 > But, my issue comes from the learners, for example, who are just starting out, and it’s going to take an hour or two. Let’s still, if you want the progression to the next module to be automatic, but it also has to be somewhat manual, it wouldn’t run fast according to the schedule. My idea was that it was originally when the portfolio comes in and we scan it in.  
 > As soon as you scan it in, it automatically goes to the next module. But I think that’s something we need to talk about, because I don’t know where it’s going to fit into the process, that part. Then, so that’s that attachment.  
 > You’ll see that I have it in class type of work package, excel package, run package. Those are packages that do almost anything in a package. It’s not specifically limited to a certain package or anything.  

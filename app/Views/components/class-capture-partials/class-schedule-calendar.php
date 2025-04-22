@@ -8,8 +8,16 @@
  * @var array $data View data passed from ClassController
  */
 ?>
+   <!-- View Calendar Button -->
+   <div class="mt-4">
+      <button type="button" class="btn btn-outline-secondary mt-5" id="view-calendar-btn">
+         <i class="bi bi-calendar3"></i> View Calendar
+      </button>
+      <small class="text-muted ms-2">Click to view a visual representation of the schedule</small>
+   </div>
 <!-- Calendar Reference View (hidden by default) -->
 <div class="mb-3 d-none" id="calendar-reference-container">
+   
    <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="mb-0">Class Schedule Calendar</h5>
       <button type="button" class="btn btn-sm btn-outline-secondary" id="hide-calendar-btn">

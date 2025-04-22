@@ -176,16 +176,9 @@
       </button>
    </div>
 
-   <!-- View Calendar Button -->
-   <div class="mt-4">
-      <button type="button" class="btn btn-outline-secondary" id="view-calendar-btn">
-         <i class="bi bi-calendar3"></i> View Calendar
-      </button>
-      <small class="text-muted ms-2">Click to view a visual representation of the schedule</small>
-   </div>
-
    <!-- Hidden inputs to store schedule data in the format expected by the backend -->
    <div id="schedule-data-container">
       <!-- These will be populated dynamically via JavaScript -->
    </div>
+
 </div>

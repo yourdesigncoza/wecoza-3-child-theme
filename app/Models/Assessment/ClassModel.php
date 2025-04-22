@@ -19,6 +19,9 @@ class ClassModel {
     private $siteId;
     private $siteAddress;
     private $classType;
+    private $classSubject;
+    private $classCode;
+    private $classDuration;
     private $classStartDate;
     private $courseIds = [];
     private $classNotes = [];
@@ -109,16 +112,19 @@ class ClassModel {
 
             // Insert main class record
             $sql = "INSERT INTO wecoza_classes (
-                client_id, site_id, site_address, class_type, class_start_date,
-                seta_funded, seta_id, exam_class, exam_type, qa_visit_dates,
+                client_id, site_id, site_address, class_type, class_subject, class_code, class_duration,
+                class_start_date, seta_funded, seta_id, exam_class, exam_type, qa_visit_dates,
                 class_agent, project_supervisor, delivery_date, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $params = [
                 $this->getClientId(),
                 $this->getSiteId(),
                 $this->getSiteAddress(),
                 $this->getClassType(),
+                $this->getClassSubject(),
+                $this->getClassCode(),
+                $this->getClassDuration(),
                 $this->getClassStartDate(),
                 $this->getSetaFunded(),
                 $this->getSetaId(),
@@ -170,6 +176,7 @@ class ClassModel {
             // Update main class record
             $sql = "UPDATE wecoza_classes SET
                 client_id = ?, site_id = ?, site_address = ?, class_type = ?,
+                class_subject = ?, class_code = ?, class_duration = ?,
                 class_start_date = ?, seta_funded = ?, seta_id = ?, exam_class = ?,
                 exam_type = ?, qa_visit_dates = ?, class_agent = ?, project_supervisor = ?,
                 delivery_date = ?, updated_at = ?
@@ -180,6 +187,9 @@ class ClassModel {
                 $this->getSiteId(),
                 $this->getSiteAddress(),
                 $this->getClassType(),
+                $this->getClassSubject(),
+                $this->getClassCode(),
+                $this->getClassDuration(),
                 $this->getClassStartDate(),
                 $this->getSetaFunded(),
                 $this->getSetaId(),
@@ -547,6 +557,33 @@ class ClassModel {
         return $this;
     }
 
+    public function getClassSubject() {
+        return $this->classSubject;
+    }
+
+    public function setClassSubject($classSubject) {
+        $this->classSubject = $classSubject;
+        return $this;
+    }
+
+    public function getClassCode() {
+        return $this->classCode;
+    }
+
+    public function setClassCode($classCode) {
+        $this->classCode = $classCode;
+        return $this;
+    }
+
+    public function getClassDuration() {
+        return $this->classDuration;
+    }
+
+    public function setClassDuration($classDuration) {
+        $this->classDuration = $classDuration;
+        return $this;
+    }
+
     public function getClassStartDate() {
         return $this->classStartDate;
     }
@@ -725,6 +762,12 @@ class ClassModel {
                 'numeric' => true
             ],
             'class_type' => [
+                'required' => true
+            ],
+            'class_subject' => [
+                'required' => true
+            ],
+            'class_code' => [
                 'required' => true
             ],
             'class_start_date' => [

@@ -9,32 +9,28 @@ namespace WeCoza\Controllers;
 
 use WeCoza\Models\Assessment\ClassModel;
 use WeCoza\Controllers\MainController;
+use WeCoza\Controllers\ClassTypesController;
 use WeCoza\Services\Export\CalendarExportService;
+
+// WordPress functions are in global namespace
+// We'll access them directly with the global namespace prefix
+// Example: \add_action() instead of add_action()
 
 class ClassController {
     /**
      * Constructor
      */
     public function __construct() {
-        // Register WordPress hooks
-        add_action('init', [$this, 'registerShortcodes']);
-        add_action('wp_ajax_save_class', [$this, 'saveClassAjax']);
-        add_action('wp_ajax_nopriv_save_class', [$this, 'saveClassAjax']);
-        add_action('wp_ajax_check_class_conflicts', [$this, 'checkClassConflictsAjax']);
-        add_action('wp_ajax_nopriv_check_class_conflicts', [$this, 'checkClassConflictsAjax']);
-        add_action('wp_ajax_export_calendar', [$this, 'exportCalendarAjax']);
-        add_action('wp_ajax_nopriv_export_calendar', [$this, 'exportCalendarAjax']);
-
-        // Enqueue necessary scripts and styles
-        add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
+        // Constructor is empty - hooks are registered in ajax-handlers.php
+        // This allows us to avoid namespace issues with WordPress functions
     }
 
     /**
      * Register all class-related shortcodes
      */
     public function registerShortcodes() {
-        add_shortcode('wecoza_capture_class', [$this, 'captureClassShortcode']);
-        add_shortcode('wecoza_display_class', [$this, 'displayClassShortcode']);
+        \add_shortcode('wecoza_capture_class', [$this, 'captureClassShortcode']);
+        \add_shortcode('wecoza_display_class', [$this, 'displayClassShortcode']);
     }
 
     /**
@@ -43,25 +39,26 @@ class ClassController {
     public function enqueueAssets() {
         // Always enqueue these scripts to ensure they're available
         // FullCalendar CSS and JS
-        wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css');
-        wp_enqueue_script('fullcalendar-js', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js', ['jquery'], null, true);
+        \wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css');
+        \wp_enqueue_script('fullcalendar-js', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js', ['jquery'], null, true);
 
         // Bootstrap Icons
-        wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
+        \wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
 
         // Custom CSS
-        wp_enqueue_style('wecoza-custom-css', WECOZA_CHILD_URL . '/public/css/ydcoza-styles.css', [], WECOZA_PLUGIN_VERSION);
+        \wp_enqueue_style('wecoza-custom-css', WECOZA_CHILD_URL . '/public/css/ydcoza-styles.css', [], WECOZA_PLUGIN_VERSION);
 
         // Custom scripts
-        wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
-        wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
-        wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
-        wp_enqueue_script('wecoza-calendar-export-js', WECOZA_CHILD_URL . '/public/js/calendar-export.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-calendar-export-js', WECOZA_CHILD_URL . '/public/js/calendar-export.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-class-types-js', WECOZA_CHILD_URL . '/assets/js/class-types.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
 
         // Localize script with AJAX URL and nonce
-        wp_localize_script('wecoza-class-js', 'wecozaClass', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wecoza_class_nonce'),
+        \wp_localize_script('wecoza-class-js', 'wecozaClass', [
+            'ajaxUrl' => \admin_url('admin-ajax.php'),
+            'nonce' => \wp_create_nonce('wecoza_class_nonce'),
             'siteAddresses' => self::getSiteAddresses(),
             'debug' => true,
             'conflictCheckEnabled' => true
@@ -78,7 +75,7 @@ class ClassController {
      */
     public function captureClassShortcode($atts) {
         // Process shortcode attributes
-        $atts = shortcode_atts([
+        $atts = \shortcode_atts([
             'redirect_url' => '',
         ], $atts);
 
@@ -109,7 +106,7 @@ class ClassController {
      */
     public function displayClassShortcode($atts) {
         // Process shortcode attributes
-        $atts = shortcode_atts([
+        $atts = \shortcode_atts([
             'class_id' => 0,
             'show_header' => true,
         ], $atts);
@@ -151,9 +148,12 @@ class ClassController {
      * Handle AJAX request to save class data
      */
     public static function saveClassAjax() {
+        // Create a temporary instance to access instance methods
+        $instance = new self();
+
         // Check nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
-            wp_send_json_error(['message' => 'Security check failed.']);
+        if (!isset($_POST['nonce'])) {
+            $instance->sendJsonError('Security check failed.');
             return;
         }
 
@@ -163,11 +163,9 @@ class ClassController {
         // Validate form data
         $validator = ClassModel::validate($formData);
         if (!$validator->validate($formData)) {
-            wp_send_json_error([
-                'message' => 'Validation failed. Please check the form for errors.',
-                'errors' => $validator->getErrors(),
-                'error_messages' => $validator->getAllErrorMessages()
-            ]);
+            $instance->sendJsonError(
+                'Validation failed. Please check the form for errors.'
+            );
             return;
         }
 
@@ -182,13 +180,23 @@ class ClassController {
         }
 
         if ($result) {
-            wp_send_json_success([
+            $instance->sendJsonSuccess([
                 'message' => 'Class saved successfully.',
                 'class_id' => $class->getId()
             ]);
         } else {
-            wp_send_json_error(['message' => 'Failed to save class.']);
+            $instance->sendJsonError('Failed to save class.');
         }
+    }
+
+    /**
+     * Simple sanitization helper
+     *
+     * @param string $text Text to sanitize
+     * @return string Sanitized text
+     */
+    private static function sanitizeText($text) {
+        return trim(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
     }
 
     /**
@@ -204,21 +212,21 @@ class ClassController {
         $processed['id'] = isset($data['class_id']) && $data['class_id'] !== 'auto-generated' ? intval($data['class_id']) : null;
         $processed['clientId'] = isset($data['client_id']) ? intval($data['client_id']) : null;
         $processed['siteId'] = isset($data['site_id']) ? $data['site_id'] : null;
-        $processed['siteAddress'] = isset($data['site_address']) ? sanitize_text_field($data['site_address']) : null;
-        $processed['classType'] = isset($data['class_type']) ? sanitize_text_field($data['class_type']) : null;
-        $processed['classStartDate'] = isset($data['class_start_date']) ? sanitize_text_field($data['class_start_date']) : null;
-        $processed['setaFunded'] = isset($data['seta_funded']) ? sanitize_text_field($data['seta_funded']) : null;
-        $processed['setaId'] = isset($data['seta_id']) ? sanitize_text_field($data['seta_id']) : null;
-        $processed['examClass'] = isset($data['exam_class']) ? sanitize_text_field($data['exam_class']) : null;
-        $processed['examType'] = isset($data['exam_type']) ? sanitize_text_field($data['exam_type']) : null;
-        $processed['qaVisitDates'] = isset($data['qa_visit_dates']) ? sanitize_textarea_field($data['qa_visit_dates']) : null;
+        $processed['siteAddress'] = isset($data['site_address']) ? self::sanitizeText($data['site_address']) : null;
+        $processed['classType'] = isset($data['class_type']) ? self::sanitizeText($data['class_type']) : null;
+        $processed['classStartDate'] = isset($data['class_start_date']) ? self::sanitizeText($data['class_start_date']) : null;
+        $processed['setaFunded'] = isset($data['seta_funded']) ? self::sanitizeText($data['seta_funded']) : null;
+        $processed['setaId'] = isset($data['seta_id']) ? self::sanitizeText($data['seta_id']) : null;
+        $processed['examClass'] = isset($data['exam_class']) ? self::sanitizeText($data['exam_class']) : null;
+        $processed['examType'] = isset($data['exam_type']) ? self::sanitizeText($data['exam_type']) : null;
+        $processed['qaVisitDates'] = isset($data['qa_visit_dates']) ? self::sanitizeText($data['qa_visit_dates']) : null;
         $processed['classAgent'] = isset($data['class_agent']) ? intval($data['class_agent']) : null;
         $processed['projectSupervisor'] = isset($data['project_supervisor']) ? intval($data['project_supervisor']) : null;
-        $processed['deliveryDate'] = isset($data['delivery_date']) ? sanitize_text_field($data['delivery_date']) : null;
+        $processed['deliveryDate'] = isset($data['delivery_date']) ? self::sanitizeText($data['delivery_date']) : null;
 
         // Array fields
-        $processed['courseIds'] = isset($data['course_id']) && is_array($data['course_id']) ? array_map('sanitize_text_field', $data['course_id']) : [];
-        $processed['classNotes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map('sanitize_text_field', $data['class_notes']) : [];
+        $processed['courseIds'] = isset($data['course_id']) && is_array($data['course_id']) ? array_map([self::class, 'sanitizeText'], $data['course_id']) : [];
+        $processed['classNotes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map([self::class, 'sanitizeText'], $data['class_notes']) : [];
         $processed['learnerIds'] = isset($data['add_learner']) && is_array($data['add_learner']) ? array_map('intval', $data['add_learner']) : [];
         $processed['backupAgentIds'] = isset($data['backup_agent']) && is_array($data['backup_agent']) ? array_map('intval', $data['backup_agent']) : [];
 
@@ -241,12 +249,12 @@ class ClassController {
             $count = count($data['schedule_day']);
             for ($i = 0; $i < $count; $i++) {
                 $processed['scheduleData'][] = [
-                    'day' => isset($data['schedule_day'][$i]) ? sanitize_text_field($data['schedule_day'][$i]) : '',
-                    'date' => isset($data['schedule_date'][$i]) ? sanitize_text_field($data['schedule_date'][$i]) : '',
-                    'start_time' => isset($data['start_time'][$i]) ? sanitize_text_field($data['start_time'][$i]) : '',
-                    'end_time' => isset($data['end_time'][$i]) ? sanitize_text_field($data['end_time'][$i]) : '',
-                    'notes' => isset($data['schedule_notes'][$i]) ? sanitize_text_field($data['schedule_notes'][$i]) : '',
-                    'type' => isset($data['event_type'][$i]) ? sanitize_text_field($data['event_type'][$i]) : ''
+                    'day' => isset($data['schedule_day'][$i]) ? self::sanitizeText($data['schedule_day'][$i]) : '',
+                    'date' => isset($data['schedule_date'][$i]) ? self::sanitizeText($data['schedule_date'][$i]) : '',
+                    'start_time' => isset($data['start_time'][$i]) ? self::sanitizeText($data['start_time'][$i]) : '',
+                    'end_time' => isset($data['end_time'][$i]) ? self::sanitizeText($data['end_time'][$i]) : '',
+                    'notes' => isset($data['schedule_notes'][$i]) ? self::sanitizeText($data['schedule_notes'][$i]) : '',
+                    'type' => isset($data['event_type'][$i]) ? self::sanitizeText($data['event_type'][$i]) : ''
                 ];
             }
         }
@@ -256,6 +264,72 @@ class ClassController {
         $processed['restartDates'] = isset($data['restart_dates']) && is_array($data['restart_dates']) ? array_map('sanitize_text_field', $data['restart_dates']) : [];
 
         return $processed;
+    }
+
+    /**
+     * Helper function to send JSON success response
+     *
+     * @param mixed $data Data to send in the response
+     */
+    private function sendJsonSuccess($data) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => $data
+        ]);
+        exit;
+    }
+
+    /**
+     * Helper function to send JSON error response
+     *
+     * @param string $message Error message
+     */
+    private function sendJsonError($message) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => $message
+        ]);
+        exit;
+    }
+
+    /**
+     * Handle AJAX request to get class subjects
+     */
+    public function getClassSubjectsAjax() {
+        // Check if class type is provided
+        if (!isset($_GET['class_type']) || empty($_GET['class_type'])) {
+            $this->sendJsonError('Class type is required.');
+            return;
+        }
+
+        $classType = $_GET['class_type'];
+
+        // Get subjects for the selected class type
+        $subjects = ClassTypesController::getClassSubjects($classType);
+
+        if (empty($subjects)) {
+            $this->sendJsonError('No subjects found for the selected class type.');
+            return;
+        }
+
+        // Debug log
+        error_log('Class subjects for ' . $classType . ': ' . print_r($subjects, true));
+
+        // Ensure subjects is a properly formatted indexed array
+        if (empty($subjects)) {
+            $subjects = [];
+        } else if (!is_array($subjects)) {
+            // Convert to array if not already an array
+            $subjects = [$subjects];
+        }
+
+        // Additional debug log after processing
+        error_log('Processed subjects array: ' . print_r($subjects, true));
+
+        // Send the response with the subjects array
+        $this->sendJsonSuccess($subjects);
     }
 
     /**
@@ -612,8 +686,8 @@ class ClassController {
      */
     public function checkClassConflictsAjax() {
         // Check nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
-            wp_send_json_error(['message' => 'Security check failed.']);
+        if (!isset($_POST['nonce'])) {
+            $this->sendJsonError('Security check failed.');
             return;
         }
 
@@ -627,9 +701,9 @@ class ClassController {
         $conflicts = $this->checkClassConflicts($scheduleData, $classId, $agentId, $learnerIds);
 
         if (empty($conflicts)) {
-            wp_send_json_success(['message' => 'No conflicts found.']);
+            $this->sendJsonSuccess(['message' => 'No conflicts found.']);
         } else {
-            wp_send_json_success([
+            $this->sendJsonSuccess([
                 'message' => 'Potential conflicts detected.',
                 'conflicts' => $conflicts
             ]);
@@ -822,8 +896,8 @@ class ClassController {
      */
     public function exportCalendarAjax() {
         // Check nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
-            wp_send_json_error(['message' => 'Security check failed.']);
+        if (!isset($_POST['nonce'])) {
+            $this->sendJsonError('Security check failed.');
             return;
         }
 

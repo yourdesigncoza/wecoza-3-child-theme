@@ -1094,6 +1094,73 @@ function showCustomAlert(message) {
             'Transferred'
         ];
 
+        // Get class subjects for level assignment
+        let classSubjects = [];
+
+        // Function to update class subjects when class type changes
+        function updateClassSubjects() {
+            const classType = $('#class_type').val();
+            const classSubject = $('#class_subject').val();
+
+            if (classType && classSubject) {
+                // Get subjects for the selected class type from the ClassTypesController
+                $.ajax({
+                    url: wecozaClass.ajaxUrl,
+                    type: 'GET',
+                    data: {
+                        action: 'get_class_subjects',
+                        class_type: classType
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            classSubjects = response.data;
+                            // Update existing learner level dropdowns
+                            updateLearnerLevelDropdowns();
+                        }
+                    },
+                    error: function() {
+                        console.error('Failed to fetch class subjects');
+                    }
+                });
+            }
+        }
+
+        // Listen for class type and subject changes
+        $('#class_type, #class_subject').on('change', updateClassSubjects);
+
+        // Function to update all learner level dropdowns
+        function updateLearnerLevelDropdowns() {
+            $('.learner-level').each(function() {
+                const learnerId = $(this).data('learner-id');
+                const currentLevel = $(this).val();
+
+                // Rebuild the dropdown with updated subjects
+                $(this).html(generateLevelOptions(currentLevel));
+            });
+        }
+
+        // Function to generate level options dropdown
+        function generateLevelOptions(currentLevel = '') {
+            let html = '<option value="">Select Level</option>';
+
+            if (classSubjects.length > 0) {
+                classSubjects.forEach(subject => {
+                    const selected = subject.id === currentLevel ? 'selected' : '';
+                    html += `<option value="${subject.id}" ${selected}>${subject.name}</option>`;
+                });
+            }
+
+            return html;
+        }
+
+        // Function to generate level dropdown
+        function generateLevelDropdown(learnerId, currentLevel = '') {
+            let html = `<select class="form-select form-select-sm learner-level" data-learner-id="${learnerId}">`;
+            html += generateLevelOptions(currentLevel);
+            html += '</select>';
+            return html;
+        }
+
         // Function to generate status dropdown
         function generateStatusDropdown(learnerId, currentStatus = 'Host Company Learner') {
             let html = `<select class="form-select form-select-sm learner-status" data-learner-id="${learnerId}">`;
@@ -1108,7 +1175,7 @@ function showCustomAlert(message) {
         }
 
         // Function to add a learner to the table
-        function addLearnerToTable(learnerId, learnerName, status = 'Active') {
+        function addLearnerToTable(learnerId, learnerName, status = 'Host Company Learner', level = '') {
             // Check if learner already exists in the table
             if (classLearners.some(learner => learner.id === learnerId)) {
                 return false; // Learner already exists
@@ -1118,13 +1185,15 @@ function showCustomAlert(message) {
             classLearners.push({
                 id: learnerId,
                 name: learnerName,
-                status: status
+                status: status,
+                level: level
             });
 
             // Create table row
             const $row = $(`
                 <tr data-learner-id="${learnerId}">
                     <td>${learnerName}</td>
+                    <td>${generateLevelDropdown(learnerId, level)}</td>
                     <td>${generateStatusDropdown(learnerId, status)}</td>
                     <td>
                         <button type="button" class="btn btn-outline-danger btn-sm remove-learner-btn" data-learner-id="${learnerId}">
@@ -1261,6 +1330,19 @@ function showCustomAlert(message) {
             const learner = classLearners.find(l => l.id === learnerId);
             if (learner) {
                 learner.status = newStatus;
+                updateClassLearnersData();
+            }
+        });
+
+        // Event delegation for level changes
+        $classLearnersTbody.on('change', '.learner-level', function() {
+            const learnerId = $(this).data('learner-id');
+            const newLevel = $(this).val();
+
+            // Update level in the array
+            const learner = classLearners.find(l => l.id === learnerId);
+            if (learner) {
+                learner.level = newLevel;
                 updateClassLearnersData();
             }
         });

@@ -124,6 +124,9 @@ function load_required_files() {
 
     // Load MVC bootstrap file
     require_once WECOZA_CHILD_DIR . '/app/bootstrap.php';
+
+    // Run database migrations
+    require_once WECOZA_CHILD_DIR . '/includes/db/migrations/add-class-subject-fields.php';
 }
 load_required_files(); // Load required files
 
