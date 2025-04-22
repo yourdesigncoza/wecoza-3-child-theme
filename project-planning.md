@@ -2,76 +2,86 @@
 
 ## Overview
 
-| Status        | Count |
-|---------------|:-----:|
-| 💡 Ideas      |   1   |
-| 📥 Backlog    |   1   |
-| 📝 Todo       |   2   |
-| 🚧 In Progress|   1   |
-| 🔍 In Review  |   0   |
-| ✅ Done       |  13   |
-| ❌ Cancelled  |   5   |
-| **Total**     | **23** |
+| Status         | Count |
+|----------------|:-----:|
+| 💡 Ideas       |   1   |
+| 📥 Backlog     |   0   |
+| 📝 Todo        |   2   |
+| 🚧 In Progress |   1   |
+| 🔍 In Review   |   0   |
+| ✅ Done        |  15   |
+| ❌ Cancelled   |   5   |
+| **Total**      | **24** |
 
-<details> <summary>📖 Shortcode Options Reference (click to expand)</summary>
+<details>
+<summary>📖 Shortcode Options Reference (click to expand)</summary>
+
 ## Shortcode Options Reference
 
-| Field / Command      | Purpose                                           | Accepted Values / Format                                                      |
-|----------------------|---------------------------------------------------|--------------------------------------------------------------------------------|
-| `(TK)`               | File reference – targets **project‑planning.md**  | —                                                                              |
-| **Task IDs**         | Specify which task(s) to act on                   | One or more comma‑separated IDs, e.g. `WEC‑30` or `WEC‑30,WEC‑28`              |
-| `status=`            | Change a task’s status                            | `Ideas` · `Backlog` · `Todo` · `InProgress` · `InReview` · `Done` · `Cancelled` |
-| `priority=`          | Set a task’s priority                             | `Urgent` · `High` · `Medium` · `Low` · `None`                                   |
-| `labels=`            | (Over)write a task’s labels                       | Comma‑separated labels, e.g. `Bug,Feature,UX`                                  |
-| `comment=`           | Append a comment or summary                       | Freeform string (in quotes if it contains spaces)                             |
-| `add-subtask=`       | Add a new sub‑task under the task                  | Sub‑task description                                                           |
-| `screenshot=`        | Attach an image URL                               | Any valid URL                                                                  |
-| `(new <ID>)`         | Create a brand‑new task with the next sequential ID | e.g. `(TK)(new WEC‑23) title="..." status=Ideas priority=Medium`              |
-| `delete`             | Remove the specified task(s)                      | —                                                                              |
-| `(overview)`         | Emit the status‑count summary table               | —                                                                              |
-</details>
+### File References
+- `(TK)` – Targets this file (`project-planning.md`)
+- `(TK)(WEC-XX)` – Targets one or more specific tasks
 
+### Task Operations
+- **Move status:**
+  `(TK)(WEC-XX) status=Ideas|Backlog|Todo|InProgress|InReview|Done|Cancelled`
+- **Set priority:**
+  `(TK)(WEC-XX) priority=Urgent|High|Medium|Low|None`
+- **Labels:**
+  `(TK)(WEC-XX) labels=Bug,Feature,UX`
+- **Comment:**
+  `(TK)(WEC-XX) comment="Your comment here"`
+- **Add subtask:**
+  `(TK)(WEC-XX) add-subtask="Describe subtask"`
+- **Screenshot:**
+  `(TK)(WEC-XX) screenshot="https://…/image.png"`
+- **New task:**
+  `(TK)(new WEC-YY) title="…" status=Ideas priority=Medium labels=…`
+- **Delete:**
+  `(TK)(WEC-XX) delete`
+- **Overview:**
+  `(TK)(overview)`
+
+</details>
 
 <details>
 <summary>💡 Ideas</summary>
 
-- [ ] **WEC-18 – Batch Learner Management** _(Priority: High)_
-    - Description: Allow users to add multiple learners at once from a pre-defined list or template.
-      Proposed solution: Add a “Select All” option and batch processing.
-
-
+- [ ] WEC-18 – Batch Learner Management _(High)_
+  - Description: Allow users to add multiple learners at once from a pre-defined list or template.
+    Proposed solution: Add a “Select All” option and batch processing.
 
 </details>
 
 <details>
 <summary>📥 Backlog</summary>
 
-- [ ] **WEC-32 – Verification issue** _(Priority: Urgent)_
-    - Description: ![image.png](https://uploads.linear.app/650f44…4277b7d4-59c7-4238-8b9d-0f3174f24547)
-      Under Class Learners section, when I “Select Learners” and add at least one learner, even though I have selected several.
+_No tasks_
 
 </details>
 
 <details>
 <summary>📝 Todo</summary>
 
-- [ ] **WEC-25 – Drag-and-Drop Exception Date Management** _(Priority: Medium)_
-    - Description: Allow users to add exception dates by clicking directly on the calendar rather than using the full form.
+- [ ] WEC-25 – Drag‑and‑Drop Exception Date Management _(Medium)_
+  - Description: Allow users to add exception dates by clicking directly on the calendar rather than using the full form.
 
-- [ ] **WEC-31 – Stepped Workflow for Classes** _(Priority: No priority)_
-    - Description: Instead of displaying the whole (full) form, break it into steps for better UX.
+- [ ] WEC-31 – Stepped Workflow for Classes _(None)_
+  - Description: Instead of displaying the whole (full) form, break it into steps for better UX.
 
 </details>
 
 <details>
 <summary>🚧 In Progress</summary>
 
-- [ ] **WEC-28 – Calendar Export Integration** _(Priority: Medium)_
-    - Description: Add functionality to export class schedules to external calendar applications.
-      Proposed Solution: Implement iCalendar (.ics) export functionality for bulk export of class schedules with Google Calendar compatibility.
-    - Subtasks:
-        1. Move the Calendar Export button & description to within the "View Calendar" section, so export feature is only visible when you view calendar
-        2. Move the calendar to below the "Class Date History" section
+
+
+- [ ] WEC-28 – Calendar Export Integration _(Medium)_
+  - Description: Add functionality to export class schedules to external calendar applications.
+    Proposed Solution: Implement iCalendar (.ics) export for bulk schedule export.
+  - Sub‑tasks:
+    - [ ] WEC-28-1: Move the export button into “View Calendar” section
+    - [ ] WEC-28-2: Relocate calendar below “Class Date History”
 
 </details>
 
@@ -85,68 +95,79 @@ _No tasks_
 <details>
 <summary>✅ Done</summary>
 
-- [ ] **WEC-27 – Class Conflict Detection** _(Priority: Urgent)_
-    - Description: Implement a system to detect and warn about potential conflicts when scheduling classes.
-      Proposed Solution: Add conflict‑detection logic that checks for overlapping schedules with the same learners, agents, or resources.
+- [x] WEC-33 – Class Types & Durations Integration _(High)_
+  - Description: Rework how we integrate Class Types & Durations in the system.
+    Implemented a more flexible and maintainable approach for managing class types and their associated durations, ensuring proper calculation of schedule hours and end dates.
+  - Completed by creating ClassTypesController and implementing two-level selection system with automatic duration calculation.
 
-- [ ] **WEC-21 – Verification issue** _(Priority: Urgent)_
-    - Description: ![image.png](https://uploads.linear.app/650f44…0f3174f24547)
-      Under Class Learners section, when I “Select Learners” nothing happens even though learners are selected.
+- [x] WEC-32 – Verification issue _(Urgent)_
+  - Description: ![image.png](https://uploads.linear.app/…4277b7d4-59c7-4238-8b9d-0f3174f24547)
+    Under Class Learners, “Select Learners” doesn’t register selections.
+  - Fixed by correcting the learner-selection logic in `class-learners.php`.
 
-- [ ] **WEC-17 – Improved Calendar Visualization** _(Priority: High)_
-    - Description: Enhance the calendar visualization with better visual indicators and responsive layout.
+- [x] WEC-27 – Class Conflict Detection _(Urgent)_
+  - Description: Detect and warn about potential conflicts when scheduling classes.
+  - Fixed by adding conflict‑detection logic to check overlapping schedules.
 
-- [ ] **WEC-19 – Advanced Validation Feedback** _(Priority: Urgent)_
-    - Description: Provide more detailed and user‑friendly validation error messages with clear visual cues.
+- [x] WEC-21 – Verification issue _(Urgent)_
+  - Description: ![image.png](https://uploads.linear.app/…0f3174f24547)
+    “Select Learners” still shows no response.
+  - Fixed by ensuring the update function fires correctly.
 
-- [ ] **WEC-11 – Exception Dates Recalculation** _(Priority: High)_
-    - Description: When exception dates are added or removed, the system correctly recalculates recurring schedules.
+- [x] WEC-17 – Improved Calendar Visualization _(High)_
+  - Description: Enhance calendar visuals with distinct styling and hover states.
 
-- [ ] **WEC-24 – This solution makes no sense, as we need to find a way to view attachments and use it inside of “Augment” not the actual WP project** _(Priority: Urgent)_
-    - Description: ## Problem
-      We need a way to view Linear attachments directly from Augment, not the WP dashboard, and leverage a set of tools for that.
+- [x] WEC-19 – Advanced Validation Feedback _(Urgent)_
+  - Description: Provide more detailed, user‑friendly validation messages.
 
-- [ ] **WEC-23 – Page SC** _(Priority: No priority)_
-    - Description: ![Screenshot from 2025-04-21 18-03-39.png](https://uploads.linear.app/…)
-      Summary of changes in the Page SC component.
+- [x] WEC-11 – Exception Dates Recalculation _(High)_
+  - Description: Recalculate recurring schedules when exception dates change.
 
-- [ ] **WEC-20 – Verification issue** _(Priority: Urgent)_
-    - Description: ![image.png](https://uploads.linear.app/650f44…0f3174f24547)
-      Under Class Learners section, the update function was not firing correctly.
+- [x] WEC-24 – View attachments in Augment _(Urgent)_
+  - Description: Need to view Linear attachments from Augment, not WP.
+  - Fixed by integrating Augment tools for attachment preview.
 
-- [ ] **WEC-15 – Form Validation on Submit** _(Priority: High)_
-    - Description: Form validation may still show errors for fields that are actually valid.
+- [x] WEC-23 – Page SC _(None)_
+  - Description: ![Screenshot](https://uploads.linear.app/…)
+    Updated summary of changes in the Page SC component.
 
-- [ ] **WEC-14 – Calendar Text Readability** _(Priority: High)_
-    - Description: Text on calendar entries is difficult to read due to poor contrast; fixed by ensuring white text on colored backgrounds.
+- [x] WEC-20 – Verification issue _(Urgent)_
+  - Description: ![image.png](https://uploads.linear.app/…0f3174f24547)
+    Update function wasn’t firing in Class Learners.
 
-- [ ] **WEC-13 – Exam Learners Selection Issues** _(Priority: Urgent)_
-    - Description: Similar to the class‑learners issue, users receive error notifications about incomplete exam learner selection even when learners are selected.
+- [x] WEC-15 – Form Validation on Submit _(High)_
+  - Description: Fixed validation logic to correctly recognize completed fields.
 
-- [ ] **WEC-12 – Class Learners Selection Issues** _(Priority: Urgent)_
-    - Description: Users receive error notifications about incomplete learner selection even when learners have been added.
+- [x] WEC-14 – Calendar Text Readability _(High)_
+  - Description: Ensured white text on events to improve contrast.
 
-- [ ] **WEC-10 – Day of Week Restriction** _(Priority: Urgent)_
-    - Description: When a day of the week is selected (e.g., Tuesday), ensure consistency between the selected day and the actual date.
+- [x] WEC-13 – Exam Learners Selection Issues _(Urgent)_
+  - Description: Fixed exam learner count logic to clear validation errors.
+
+- [x] WEC-12 – Class Learners Selection Issues _(Urgent)_
+  - Description: Added hidden fields and updated logic to clear stale errors.
+
+- [x] WEC-10 – Day of Week Restriction _(Urgent)_
+  - Description: Implemented day‑of‑week consistency checks.
 
 </details>
 
 <details>
 <summary>❌ Cancelled</summary>
 
-- [ ] **WEC-16 – Calendar Initialization in Tabs** _(Priority: High)_
-    - Description: Calendar may not initialize properly when switching tabs.
+- [ ] WEC-16 – Calendar Initialization in Tabs _(High)_
+  - Description: Calendar may not initialize properly when switching tabs.
 
-- [ ] **WEC-22 – Calendar Initialization in Tabs** _(Priority: High)_
-    - Description: The calendar doesn’t initialize properly when embedded in certain contexts.
+- [ ] WEC-22 – Calendar Initialization in Tabs _(High)_
+  - Description: Calendar doesn’t initialize correctly when embedded.
 
-- [ ] **WEC-26 – Recurring Schedule Templates** _(Priority: High)_
-    - Description: Allow users to save and reuse common recurring schedule templates.
+- [ ] WEC-26 – Recurring Schedule Templates _(High)_
+  - Description: Allow saving and reusing recurring schedule templates.
 
-- [ ] **WEC-29 – Multi-View Calendar Options** _(Priority: High)_
-    - Description: Enhance the calendar with additional view options (day, week, month).
+- [ ] WEC-29 – Multi‑View Calendar Options _(High)_
+  - Description: Add day/week/month view options to calendar.
 
-- [ ] **WEC-30 – Bulk Class Operations** _(Priority: High)_
-    - Description: Add functionality for performing operations on multiple classes at once.
+- [ ] WEC-30 – Bulk Class Operations _(High)_
+  - Description: Perform operations on multiple classes at once.
 
 </details>
