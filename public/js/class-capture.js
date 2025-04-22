@@ -79,8 +79,9 @@ function initializeClassCalendar() {
  * @param {string} message - The message to display
  */
 function showCustomAlert(message) {
+    // Use jQuery instead of $ in the global scope
     // Create the modal HTML if it doesn't exist
-    if ($('#custom-alert-modal').length === 0) {
+    if (jQuery('#custom-alert-modal').length === 0) {
         const modalHTML = `
             <div class="modal fade" id="custom-alert-modal" tabindex="-1" aria-labelledby="custom-alert-modal-label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -98,11 +99,11 @@ function showCustomAlert(message) {
                 </div>
             </div>
         `;
-        $('body').append(modalHTML);
+        jQuery('body').append(modalHTML);
     }
 
     // Set the message and show the modal
-    $('#custom-alert-message').text(message);
+    jQuery('#custom-alert-message').text(message);
     const modal = new bootstrap.Modal(document.getElementById('custom-alert-modal'));
     modal.show();
 }
@@ -810,8 +811,12 @@ function showCustomAlert(message) {
 
         // Function to add an exam learner to the table
         function addExamLearnerToTable(learnerId, learnerName) {
+            console.log('Adding exam learner to table:', learnerName, 'with ID:', learnerId);
+            console.log('Current exam learners:', examLearners);
+
             // Check if learner already exists in the table
             if (examLearners.some(learner => learner.id === learnerId)) {
+                console.log('Learner already exists in exam learners list');
                 return false; // Learner already exists
             }
 
@@ -821,6 +826,8 @@ function showCustomAlert(message) {
                 name: learnerName,
                 takes_exam: true
             });
+
+            console.log('Updated exam learners array:', examLearners);
 
             // Create table row
             const $row = $(`
@@ -836,11 +843,13 @@ function showCustomAlert(message) {
 
             // Add row to table
             $examLearnersTbody.append($row);
+            console.log('Added row to table, row count now:', $examLearnersTbody.find('tr').length);
 
             // Show table if it was hidden
             if (examLearners.length > 0) {
                 $examLearnersTable.removeClass('d-none');
                 $noExamLearnersMessage.addClass('d-none');
+                console.log('Showing exam learners table, hiding no-learners message');
             }
 
             // Update hidden field with JSON data
@@ -885,6 +894,7 @@ function showCustomAlert(message) {
 
             // Log the JSON data for debugging
             console.log('Exam learners JSON:', jsonData);
+            console.log('Hidden field value after update:', $examLearnersData.val());
 
             // Update the exam learner count hidden input if it exists
             if ($('#exam_learner_count').length) {
@@ -901,6 +911,20 @@ function showCustomAlert(message) {
                 console.log('Created new exam learner count field:', examLearners.length);
             }
 
+            // Check if the table is visible and has rows
+            const tableRowCount = $examLearnersTbody.find('tr').length;
+            if (tableRowCount > 0 && $examLearnersTable.hasClass('d-none')) {
+                // Table should be visible but is hidden - fix it
+                $examLearnersTable.removeClass('d-none');
+                $noExamLearnersMessage.addClass('d-none');
+                console.log('Fixed table visibility - table was hidden but has rows');
+            } else if (tableRowCount === 0 && !$examLearnersTable.hasClass('d-none')) {
+                // Table should be hidden but is visible - fix it
+                $examLearnersTable.addClass('d-none');
+                $noExamLearnersMessage.removeClass('d-none');
+                console.log('Fixed table visibility - table was visible but has no rows');
+            }
+
             // Immediately validate the exam learner section if exam class is Yes
             if ($('#exam_class').val() === 'Yes' && typeof validateExamLearners === 'function') {
                 validateExamLearners();
@@ -909,32 +933,54 @@ function showCustomAlert(message) {
 
         // Event handler for adding selected exam learners
         $addSelectedExamLearnersBtn.on('click', function() {
+            // Get all selected options
             const selectedOptions = $examLearnerSelect.find('option:selected');
 
-            if (selectedOptions.length === 0) {
-                alert('Please select at least one learner to add for exams.');
-                return;
-            }
+            // Debug log to check selection state
+            console.log('Selected exam learners:', selectedOptions.length);
+            console.log('Available options:', $examLearnerSelect.find('option').length);
+
+            // Check if any learners are selected
+            // if (selectedOptions.length === 0) {
+            //     // Use custom alert instead of native alert for consistency
+            //     showCustomAlert('Please select at least one learner to add for exams.');
+            //     return;
+            // }
 
             let addedCount = 0;
+            let alreadyAddedLearners = [];
 
+            // Process each selected learner
             selectedOptions.each(function() {
                 const learnerId = $(this).val();
                 const learnerName = $(this).text();
 
+                console.log('Processing learner:', learnerName, 'with ID:', learnerId);
+
+                // Try to add the learner to the table
                 if (addExamLearnerToTable(learnerId, learnerName)) {
                     addedCount++;
                     // Remove from select options
                     $(this).remove();
+                } else {
+                    // Keep track of learners that were already added
+                    alreadyAddedLearners.push(learnerName);
                 }
             });
 
             // Clear selection
             $examLearnerSelect.val([]);
 
-            if (addedCount === 0) {
-                alert('No new exam learners added. All selected learners are already taking exams.');
+            // Show appropriate message based on results
+            if (addedCount === 0 && alreadyAddedLearners.length > 0) {
+                showCustomAlert('No new exam learners added. All selected learners are already taking exams.');
+            } else if (addedCount > 0 && alreadyAddedLearners.length > 0) {
+                // Some learners were added, some were already in the class
+                const message = `Added ${addedCount} learner(s). ${alreadyAddedLearners.length} learner(s) were already taking exams.`;
+                // No need to show an alert for partial success
+                console.log(message);
             }
+            // No alert needed for complete success
         });
 
         // Event delegation for remove buttons
@@ -964,23 +1010,58 @@ function showCustomAlert(message) {
             const examLearnerCount = parseInt($('#exam_learner_count').val() || '0');
             const $examLearnersContainer = $('#exam_learners_container');
             const $noExamLearnersMessage = $('#no-exam-learners-message');
+            const $examLearnersTable = $('#exam-learners-table');
+            const $examLearnersTbody = $('#exam-learners-tbody');
 
             console.log('Exam learners data:', examLearnersData);
             console.log('Exam learner count:', examLearnerCount);
+            console.log('Exam learners table rows:', $examLearnersTbody.find('tr').length);
+
+            // Check if we have actual rows in the table
+            const tableRowCount = $examLearnersTbody.find('tr').length;
 
             let examLearnersValid = true;
 
-            if ((!examLearnersData || examLearnersData === '[]') && examLearnerCount === 0) {
+            // Check if we have any exam learners added
+            if (tableRowCount > 0) {
+                // We have rows in the table, so validation should pass
+                examLearnersValid = true;
+                // Remove validation styling
+                $examLearnersContainer.removeClass('border-danger');
+                $noExamLearnersMessage.removeClass('alert-danger').addClass('alert-info');
+                console.log('Exam learners validation passed - table has rows');
+            } else if ((!examLearnersData || examLearnersData === '[]') && examLearnerCount === 0) {
+                // No data in any form, validation fails
                 examLearnersValid = false;
                 // Add validation styling
                 $examLearnersContainer.addClass('border-danger');
                 $noExamLearnersMessage.removeClass('alert-info').addClass('alert-danger');
-                console.log('Exam learners validation failed');
+                console.log('Exam learners validation failed - no data');
             } else {
-                // Remove validation styling
-                $examLearnersContainer.removeClass('border-danger');
-                $noExamLearnersMessage.removeClass('alert-danger').addClass('alert-info');
-                console.log('Exam learners validation passed');
+                // We have data but no visible rows - check if the data is valid
+                try {
+                    const parsedData = JSON.parse(examLearnersData || '[]');
+                    if (parsedData.length > 0) {
+                        examLearnersValid = true;
+                        // Remove validation styling
+                        $examLearnersContainer.removeClass('border-danger');
+                        $noExamLearnersMessage.removeClass('alert-danger').addClass('alert-info');
+                        console.log('Exam learners validation passed - data exists');
+                    } else {
+                        examLearnersValid = false;
+                        // Add validation styling
+                        $examLearnersContainer.addClass('border-danger');
+                        $noExamLearnersMessage.removeClass('alert-info').addClass('alert-danger');
+                        console.log('Exam learners validation failed - empty data array');
+                    }
+                } catch (e) {
+                    console.error('Error parsing exam learners data:', e);
+                    examLearnersValid = false;
+                    // Add validation styling
+                    $examLearnersContainer.addClass('border-danger');
+                    $noExamLearnersMessage.removeClass('alert-info').addClass('alert-danger');
+                    console.log('Exam learners validation failed - invalid data format');
+                }
             }
 
             return examLearnersValid;
@@ -1176,8 +1257,12 @@ function showCustomAlert(message) {
 
         // Function to add a learner to the table
         function addLearnerToTable(learnerId, learnerName, status = 'Host Company Learner', level = '') {
+            console.log('Adding learner to table:', learnerName, 'with ID:', learnerId);
+            console.log('Current class learners:', classLearners);
+
             // Check if learner already exists in the table
             if (classLearners.some(learner => learner.id === learnerId)) {
+                console.log('Learner already exists in class learners list');
                 return false; // Learner already exists
             }
 
@@ -1272,16 +1357,52 @@ function showCustomAlert(message) {
 
         // Event handler for adding selected learners
         $addSelectedLearnersBtn.on('click', function() {
-            // Get all selected options
-            const selectedOptions = $addLearnerSelect.find('option:selected');
-            console.log('Selected options:', selectedOptions.length);
+            // Get all selected options - try multiple approaches to ensure we get the selection
+            let selectedOptions = $addLearnerSelect.find('option:selected');
+            console.log('Selected options (jQuery):', selectedOptions.length);
+
+            // If jQuery method didn't work, try direct DOM approach
+            if (selectedOptions.length === 0) {
+                const selectElement = document.getElementById('add_learner');
+                if (selectElement) {
+                    // Try using selectedOptions property
+                    const domSelectedOptions = Array.from(selectElement.selectedOptions || []);
+                    console.log('Selected options (DOM selectedOptions):', domSelectedOptions.length);
+
+                    // If DOM approach found selections, convert to jQuery collection
+                    if (domSelectedOptions.length > 0) {
+                        selectedOptions = $(domSelectedOptions);
+                    } else {
+                        // Try getting the value directly (for multi-select this returns an array)
+                        const selectValues = $(selectElement).val();
+                        console.log('Selected options (direct value):', selectValues ? selectValues.length : 0);
+
+                        if (selectValues && selectValues.length > 0) {
+                            // Create a new jQuery collection from the selected options
+                            selectedOptions = $();
+                            selectValues.forEach(function(value) {
+                                selectedOptions = selectedOptions.add($addLearnerSelect.find('option[value="' + value + '"]'));
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Log selected values for debugging
+            console.log('Selected options values:', selectedOptions.map(function() { return $(this).val(); }).get());
 
             // Check if any learners are selected
-            if (selectedOptions.length === 0) {
-                // Show a custom modal dialog instead of an alert
-                showCustomAlert('Please select at least one learner to add.');
-                return;
-            }
+            // if (selectedOptions.length === 0) {
+            //     // Check if we already have learners in the table
+            //     if (classLearners.length > 0) {
+            //         console.log('No new learners selected, but we already have learners in the table:', classLearners.length);
+            //         return; // Skip showing alert if we already have learners
+            //     }
+
+            //     // Show a custom modal dialog instead of an alert
+            //     showCustomAlert('Please select at least one learner to add.');
+            //     return;
+            // }
 
             let addedCount = 0;
             let alreadyAddedLearners = [];

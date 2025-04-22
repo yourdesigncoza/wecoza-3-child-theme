@@ -9,9 +9,9 @@
 | 📝 Todo        |   2   |
 | 🚧 In Progress |   1   |
 | 🔍 In Review   |   0   |
-| ✅ Done        |  15   |
+| ✅ Done        |  17   |
 | ❌ Cancelled   |   5   |
-| **Total**      | **24** |
+| **Total**      | **26** |
 
 <details>
 <summary>📖 Shortcode Options Reference (click to expand)</summary>
@@ -49,7 +49,7 @@
 
 - [ ] WEC-18 – Batch Learner Management _(High)_
   - Description: Allow users to add multiple learners at once from a pre-defined list or template.
-    Proposed solution: Add a “Select All” option and batch processing.
+    Proposed solution: Add a "Select All" option and batch processing.
 
 </details>
 
@@ -74,14 +74,12 @@ _No tasks_
 <details>
 <summary>🚧 In Progress</summary>
 
-
-
 - [ ] WEC-28 – Calendar Export Integration _(Medium)_
   - Description: Add functionality to export class schedules to external calendar applications.
     Proposed Solution: Implement iCalendar (.ics) export for bulk schedule export.
   - Sub‑tasks:
-    - [ ] WEC-28-1: Move the export button into “View Calendar” section
-    - [ ] WEC-28-2: Relocate calendar below “Class Date History”
+    - [ ] WEC-28-1: Move the export button into "View Calendar" section
+    - [ ] WEC-28-2: Relocate calendar below "Class Date History"
 
 </details>
 
@@ -95,6 +93,19 @@ _No tasks_
 <details>
 <summary>✅ Done</summary>
 
+- [x] WEC-37 – Fix Learner Selection Popup Issue _(Urgent)_
+  - Description: Fixed issue where "Please select at least one learner to add" popup appears even when learners are already selected and loaded in the background.
+  - Fixed by commenting out the validation checks that were triggering the popup unnecessarily.
+
+- [x] WEC-36: Fix jQuery error in class-capture.js
+  - Fixed error: `Uncaught TypeError: $ is not a function at showCustomAlert`
+  - The showCustomAlert function was using $ directly outside of the jQuery IIFE
+  - Modified the function to use jQuery instead of $ in the global scope
+
+- [x] WEC-35 – Fix validation error when selecting learners for exams _(High)_
+  - Description: When selecting "Learners Taking Exam", the system shows a validation error message even though a learner is selected.
+  - Fixed by improving the validation logic to properly check for selected exam learners and enhancing the UI state management.
+
 - [x] WEC-33 – Class Types & Durations Integration _(High)_
   - Description: Rework how we integrate Class Types & Durations in the system.
     Implemented a more flexible and maintainable approach for managing class types and their associated durations, ensuring proper calculation of schedule hours and end dates.
@@ -102,7 +113,7 @@ _No tasks_
 
 - [x] WEC-32 – Verification issue _(Urgent)_
   - Description: ![image.png](https://uploads.linear.app/…4277b7d4-59c7-4238-8b9d-0f3174f24547)
-    Under Class Learners, “Select Learners” doesn’t register selections.
+    Under Class Learners, "Select Learners" doesn't register selections.
   - Fixed by correcting the learner-selection logic in `class-learners.php`.
 
 - [x] WEC-27 – Class Conflict Detection _(Urgent)_
@@ -111,7 +122,7 @@ _No tasks_
 
 - [x] WEC-21 – Verification issue _(Urgent)_
   - Description: ![image.png](https://uploads.linear.app/…0f3174f24547)
-    “Select Learners” still shows no response.
+    "Select Learners" still shows no response.
   - Fixed by ensuring the update function fires correctly.
 
 - [x] WEC-17 – Improved Calendar Visualization _(High)_
@@ -133,7 +144,7 @@ _No tasks_
 
 - [x] WEC-20 – Verification issue _(Urgent)_
   - Description: ![image.png](https://uploads.linear.app/…0f3174f24547)
-    Update function wasn’t firing in Class Learners.
+    Update function wasn't firing in Class Learners.
 
 - [x] WEC-15 – Form Validation on Submit _(High)_
   - Description: Fixed validation logic to correctly recognize completed fields.
@@ -159,7 +170,7 @@ _No tasks_
   - Description: Calendar may not initialize properly when switching tabs.
 
 - [ ] WEC-22 – Calendar Initialization in Tabs _(High)_
-  - Description: Calendar doesn’t initialize correctly when embedded.
+  - Description: Calendar doesn't initialize correctly when embedded.
 
 - [ ] WEC-26 – Recurring Schedule Templates _(High)_
   - Description: Allow saving and reusing recurring schedule templates.
@@ -171,3 +182,4 @@ _No tasks_
   - Description: Perform operations on multiple classes at once.
 
 </details>
+

@@ -24,6 +24,11 @@ cp wecoza-3-child-theme.php "$PACKAGE_DIR/"
 cp index.php "$PACKAGE_DIR/"
 cp version.php "$PACKAGE_DIR/"
 
+# Copy any additional root PHP files that might be needed
+if [ -f "ajax-handlers.php" ]; then
+    cp ajax-handlers.php "$PACKAGE_DIR/"
+fi
+
 # Create directory structure
 mkdir -p "$PACKAGE_DIR/app/Controllers"
 mkdir -p "$PACKAGE_DIR/app/Models/Assessment"
@@ -40,12 +45,14 @@ mkdir -p "$PACKAGE_DIR/assets/classes"
 mkdir -p "$PACKAGE_DIR/assets/clients"
 mkdir -p "$PACKAGE_DIR/assets/learners/components"
 mkdir -p "$PACKAGE_DIR/assets/learners/js"
+mkdir -p "$PACKAGE_DIR/assets/js"
 
 mkdir -p "$PACKAGE_DIR/includes/admin"
 mkdir -p "$PACKAGE_DIR/includes/css"
 mkdir -p "$PACKAGE_DIR/includes/functions"
 mkdir -p "$PACKAGE_DIR/includes/js"
 mkdir -p "$PACKAGE_DIR/includes/shortcodes"
+mkdir -p "$PACKAGE_DIR/includes/db/migrations"
 
 mkdir -p "$PACKAGE_DIR/public/js/components"
 mkdir -p "$PACKAGE_DIR/public/js/validation"
@@ -57,6 +64,7 @@ mkdir -p "$PACKAGE_DIR/config"
 # Copy MVC structure
 echo "Copying MVC structure..."
 cp app/bootstrap.php "$PACKAGE_DIR/app/"
+cp app/ajax-handlers.php "$PACKAGE_DIR/app/"
 cp app/Controllers/*.php "$PACKAGE_DIR/app/Controllers/"
 cp app/Models/Assessment/*.php "$PACKAGE_DIR/app/Models/Assessment/"
 cp app/Models/Learner/*.php "$PACKAGE_DIR/app/Models/Learner/"
@@ -78,6 +86,11 @@ cp assets/learners/*.php "$PACKAGE_DIR/assets/learners/"
 cp assets/learners/components/*.php "$PACKAGE_DIR/assets/learners/components/"
 cp assets/learners/js/*.js "$PACKAGE_DIR/assets/learners/js/"
 
+# Copy assets/js files if they exist
+if [ -d "assets/js" ] && [ "$(ls -A assets/js 2>/dev/null)" ]; then
+    cp assets/js/*.js "$PACKAGE_DIR/assets/js/"
+fi
+
 # Copy includes
 echo "Copying includes..."
 cp includes/admin/*.php "$PACKAGE_DIR/includes/admin/"
@@ -86,6 +99,11 @@ cp includes/functions/*.php "$PACKAGE_DIR/includes/functions/"
 cp includes/js/*.js "$PACKAGE_DIR/includes/js/"
 cp includes/shortcodes/*.php "$PACKAGE_DIR/includes/shortcodes/"
 cp includes/*.php "$PACKAGE_DIR/includes/"
+
+# Copy database migrations if they exist
+if [ -d "includes/db/migrations" ] && [ "$(ls -A includes/db/migrations 2>/dev/null)" ]; then
+    cp includes/db/migrations/*.php "$PACKAGE_DIR/includes/db/migrations/"
+fi
 
 # Copy public assets
 echo "Copying public assets..."

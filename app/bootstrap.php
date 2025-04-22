@@ -112,3 +112,4 @@ function init() {
 
 // Initialize the application
 init();
+
