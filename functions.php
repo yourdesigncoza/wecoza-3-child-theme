@@ -29,8 +29,8 @@ function enqueue_assets() {
         wp_enqueue_style('bootstrap-table', 'https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css');
         wp_enqueue_script('bootstrap-table', 'https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js', array('jquery'), null, true);
 
-        // Custom styles
-        wp_enqueue_style('ydcoza-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array(), WECOZA_PLUGIN_VERSION);
+        // Custom styles - load after GeneratePress parent theme styles
+        wp_enqueue_style('ydcoza-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array('generate-style'), WECOZA_PLUGIN_VERSION);
 
 
         // Check if we are on a specific page

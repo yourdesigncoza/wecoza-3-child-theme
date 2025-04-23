@@ -45,8 +45,7 @@ class ClassController {
         // Bootstrap Icons
         \wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
 
-        // Custom CSS
-        \wp_enqueue_style('wecoza-custom-css', WECOZA_CHILD_URL . '/public/css/ydcoza-styles.css', [], WECOZA_PLUGIN_VERSION);
+        // Note: Custom CSS is now loaded globally from includes/css/ydcoza-styles.css
 
         // Custom scripts
         \wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
