@@ -205,6 +205,7 @@
             background-color: #333;
             border-radius: 4px;
             margin-bottom: 8px;
+            white-space: pre-wrap;
         }
 
         .shortcode-reference {
@@ -400,6 +401,53 @@
           "status": "Todo",
           "subtasks": [],
           "comments": []
+        },
+        {
+          "id": "WEC-43",
+          "title": "Color Profile Update Clarification and Implementation",
+          "description": "Client requested color profile updates with some specifications that need clarification before full implementation.",
+          "priority": "Medium",
+          "status": "Todo",
+          "subtasks": [
+            {
+              "id": "WEC-43-1",
+              "title": "Get clarification on design requirements",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-2",
+              "title": "Implement base typography changes",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-3",
+              "title": "Update form styling",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-4",
+              "title": "Implement button styling",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-5",
+              "title": "Update heading margins",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-6",
+              "title": "Implement icon color system",
+              "completed": false
+            }
+          ],
+          "files": [
+            "includes/css/ydcoza-styles.css"
+          ],
+          "comments": [
+            {
+              "text": "Questions for Client Clarification:\n\n1. Top Bar & Sidebar:\n- When specifying 'No background', should it be transparent or white?\n- Should this apply to both mobile and desktop views?\n\n2. Alert Background:\n- Should #44546f apply to all alert types or specific ones?\n- What should the text color be for these alerts?\n\n3. Form Labels:\n- When specifying 'background: none', are we removing an existing background?\n- What size/color should the bold text be?\n\n4. Button States:\n- What color should the hover outline be?\n- Should text color change on hover?\n- What should the border-radius be?\n\n5. Main Button:\n- What should be the text color?\n- What color should the hover outline effect be?\n- Is this style only for section-bottom placement?\n\n6. Icons:\n- Is #94c748 only for dark background icons?\n- What color for light background icons?\n- Does this apply to all icons or specific sets?\n\nProposed CSS Implementation:\n\n```css\n:root {\n    --accent: #1d7afc;\n    --main-action: #216e4e;\n    --icon-dark-bg: #94c748;\n    --form-border: #b3b9c4;\n    --alert-bg: #44546f;\n}\n\nbody {\n    font-family: 'Montserrat', sans-serif;\n}\n\n.ydcoza-compact-form input[type=email],\n.ydcoza-compact-form input[type=number],\n.ydcoza-compact-form input[type=password],\n.ydcoza-compact-form input[type=search],\n.ydcoza-compact-form input[type=tel],\n.ydcoza-compact-form input[type=text],\n.ydcoza-compact-form input[type=url],\n.ydcoza-compact-form select,\n.ydcoza-compact-form textarea {\n    border: 1px solid var(--form-border);\n    border-radius: 2px;\n    padding: 5px 10px;\n}\n\n.ydcoza-compact-form .form-label {\n    background: none;\n    font-weight: bold;\n}\n\n.btn-primary {\n    background-color: var(--accent);\n    padding: 0.5em 1.5em;\n}\n\n.btn-main-action {\n    background-color: var(--main-action);\n    padding: 0.5em 1.5em;\n}\n\nh5 {\n    margin-top: 2em;\n}\n\n.dark-bg .icon {\n    color: var(--icon-dark-bg);\n}\n```"
+            }
+          ]
         }
       ]
     },
@@ -433,7 +481,11 @@
           "files": [
             "includes/css/ydcoza-styles.css"
           ],
-          "comments": []
+          "comments": [
+            {
+              "text": "Questions for Client Clarification:\n\n1. Top Bar & Sidebar:\n- When specifying 'No background', should it be transparent or white?\n- Should this apply to both mobile and desktop views?\n\n2. Alert Background:\n- Should #44546f apply to all alert types or specific ones?\n- What should the text color be for these alerts?\n\n3. Form Labels:\n- When specifying 'background: none', are we removing an existing background?\n- What size/color should the bold text be?\n\n4. Button States:\n- What color should the hover outline be?\n- Should text color change on hover?\n- What should the border-radius be?\n\n5. Main Button:\n- What should be the text color?\n- What color should the hover outline effect be?\n- Is this style only for section-bottom placement?\n\n6. Icons:\n- Is #94c748 only for dark background icons?\n- What color for light background icons?\n- Does this apply to all icons or specific sets?\n\nProposed CSS Implementation:\n\n```css\n:root {\n    --accent: #1d7afc;\n    --main-action: #216e4e;\n    --icon-dark-bg: #94c748;\n    --form-border: #b3b9c4;\n    --alert-bg: #44546f;\n}\n\nbody {\n    font-family: 'Montserrat', sans-serif;\n}\n\n.ydcoza-compact-form input[type=email],\n.ydcoza-compact-form input[type=number],\n.ydcoza-compact-form input[type=password],\n.ydcoza-compact-form input[type=search],\n.ydcoza-compact-form input[type=tel],\n.ydcoza-compact-form input[type=text],\n.ydcoza-compact-form input[type=url],\n.ydcoza-compact-form select,\n.ydcoza-compact-form textarea {\n    border: 1px solid var(--form-border);\n    border-radius: 2px;\n    padding: 5px 10px;\n}\n\n.ydcoza-compact-form .form-label {\n    background: none;\n    font-weight: bold;\n}\n\n.btn-primary {\n    background-color: var(--accent);\n    padding: 0.5em 1.5em;\n}\n\n.btn-main-action {\n    background-color: var(--main-action);\n    padding: 0.5em 1.5em;\n}\n\nh5 {\n    margin-top: 2em;\n}\n\n.dark-bg .icon {\n    color: var(--icon-dark-bg);\n}\n```"
+            }
+          ]
         }
       ]
     },
@@ -865,7 +917,7 @@
                         <div class="comments">
                             <h4>Comments:</h4>
                             ${task.comments.map(comment => `
-                                <div class="comment">${comment}</div>
+                                <div class="comment">${comment.text || comment}</div>
                             `).join('')}
                         </div>
                     ` : ''}
