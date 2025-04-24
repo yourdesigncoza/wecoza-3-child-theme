@@ -1,0 +1,36 @@
+{
+  "ui_ux_improvements": [
+    {
+      "id": "WEC-63",
+      "title": "Event Type Differentiation",
+      "description": "Implement visual distinction between event types with color coding system, icon system, status indicators, and priority highlighting.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-63-1",
+          "title": "Implement color coding system for different event types",
+          "completed": false
+        },
+        {
+          "id": "WEC-63-2",
+          "title": "Create icon system for quick recognition",
+          "completed": false
+        },
+        {
+          "id": "WEC-63-3",
+          "title": "Add status indicators",
+          "completed": false
+        },
+        {
+          "id": "WEC-63-4",
+          "title": "Implement priority highlighting",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Visual distinction between event types:\n- Color coding system:\n  * Delivery events: Blue-based\n  * Exam events: Red-based\n  * Collection events: Green-based\n  * Absence/cancellation: Orange-based\n- Icon system for quick recognition\n- Status indicators\n- Priority highlighting"
+      ]
+    }
+  ]
+}

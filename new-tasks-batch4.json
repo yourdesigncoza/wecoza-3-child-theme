@@ -1,0 +1,412 @@
+{
+  "event_types_to_implement": [
+    {
+      "id": "WEC-55",
+      "title": "Material Delivery Scheduling",
+      "description": "Implement material delivery scheduling with integration to class schedules, delivery status tracking, and multiple delivery types support.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-55-1",
+          "title": "Integrate with class schedule",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-2",
+          "title": "Implement automatic scheduling based on class start date",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-3",
+          "title": "Add delivery status tracking (Pending, In Transit, Delivered)",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-4",
+          "title": "Support multiple delivery types (Initial, Supplementary, Replacement)",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-5",
+          "title": "Add delivery date selection/override",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-6",
+          "title": "Implement courier integration options",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-7",
+          "title": "Create delivery confirmation system",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-8",
+          "title": "Implement notification system for stakeholders",
+          "completed": false
+        },
+        {
+          "id": "WEC-55-9",
+          "title": "Add material inventory tracking",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Delivery event management:\n- Integration with class schedule\n- Automatic scheduling based on class start date\n- Delivery status tracking (Pending, In Transit, Delivered)\n- Multiple delivery types support:\n  * Initial material delivery\n  * Supplementary materials\n  * Replacement materials\nFeatures needed:\n- Delivery date selection/override\n- Courier integration options\n- Delivery confirmation system\n- Notification system for stakeholders\n- Material inventory tracking"
+      ]
+    },
+    {
+      "id": "WEC-56",
+      "title": "Agent Absence Handling",
+      "description": "Implement agent absence handling with absence type categorization, calendar integration, automatic backup agent assignment, and notification system.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-56-1",
+          "title": "Implement absence type categorization",
+          "completed": false
+        },
+        {
+          "id": "WEC-56-2",
+          "title": "Create calendar integration for absence marking",
+          "completed": false
+        },
+        {
+          "id": "WEC-56-3",
+          "title": "Implement automatic backup agent assignment",
+          "completed": false
+        },
+        {
+          "id": "WEC-56-4",
+          "title": "Add class rescheduling options",
+          "completed": false
+        },
+        {
+          "id": "WEC-56-5",
+          "title": "Create notification system for affected parties",
+          "completed": false
+        },
+        {
+          "id": "WEC-56-6",
+          "title": "Implement absence history tracking",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Agent availability management:\n- Absence type categorization:\n  * Planned leave\n  * Sick leave\n  * Emergency absence\nImplementation:\n- Calendar integration for absence marking\n- Automatic backup agent assignment\n- Class rescheduling options\n- Notification system for:\n  * Affected learners\n  * Client contacts\n  * Management team\n- Absence history tracking"
+      ]
+    },
+    {
+      "id": "WEC-57",
+      "title": "Client Cancellation Management",
+      "description": "Implement client cancellation management with support for single session, multiple session, and recurring schedule adjustments.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-57-1",
+          "title": "Implement single session cancellation",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-2",
+          "title": "Add multiple session cancellation",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-3",
+          "title": "Support recurring schedule adjustments",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-4",
+          "title": "Implement cancellation reason tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-5",
+          "title": "Add impact assessment on schedule",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-6",
+          "title": "Create automatic makeup session scheduling",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-7",
+          "title": "Implement hours tracking adjustment",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-8",
+          "title": "Add client communication automation",
+          "completed": false
+        },
+        {
+          "id": "WEC-57-9",
+          "title": "Integrate with reporting system",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Cancellation handling system:\n- Single session cancellation\n- Multiple session cancellation\n- Recurring schedule adjustments\nFeatures:\n- Cancellation reason tracking\n- Impact assessment on schedule\n- Automatic makeup session scheduling\n- Hours tracking adjustment\n- Client communication automation\n- Reporting integration"
+      ]
+    },
+    {
+      "id": "WEC-58",
+      "title": "Exam Date Management",
+      "description": "Implement comprehensive exam scheduling with support for multiple exam types, venue allocation, examiner assignment, and results recording.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-58-1",
+          "title": "Support multiple exam types (AET Communication, AET Numeracy, GETC AET modules)",
+          "completed": false
+        },
+        {
+          "id": "WEC-58-2",
+          "title": "Implement exam venue allocation",
+          "completed": false
+        },
+        {
+          "id": "WEC-58-3",
+          "title": "Add examiner assignment",
+          "completed": false
+        },
+        {
+          "id": "WEC-58-4",
+          "title": "Create candidate registration",
+          "completed": false
+        },
+        {
+          "id": "WEC-58-5",
+          "title": "Implement document preparation tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-58-6",
+          "title": "Add results recording system",
+          "completed": false
+        },
+        {
+          "id": "WEC-58-7",
+          "title": "Integrate with learner progression",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Comprehensive exam scheduling:\n- Multiple exam types support:\n  * AET Communication\n  * AET Numeracy\n  * GETC AET modules\nFeatures:\n- Exam venue allocation\n- Examiner assignment\n- Candidate registration\n- Document preparation tracking\n- Results recording system\n- Integration with learner progression"
+      ]
+    },
+    {
+      "id": "WEC-59",
+      "title": "Material Collection Tracking",
+      "description": "Implement material collection tracking system with schedule collection dates, collection status tracking, and multiple collection types support.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-59-1",
+          "title": "Implement schedule collection dates",
+          "completed": false
+        },
+        {
+          "id": "WEC-59-2",
+          "title": "Add collection status tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-59-3",
+          "title": "Support multiple collection types",
+          "completed": false
+        },
+        {
+          "id": "WEC-59-4",
+          "title": "Implement collection confirmation",
+          "completed": false
+        },
+        {
+          "id": "WEC-59-5",
+          "title": "Add quality check integration",
+          "completed": false
+        },
+        {
+          "id": "WEC-59-6",
+          "title": "Create return processing",
+          "completed": false
+        },
+        {
+          "id": "WEC-59-7",
+          "title": "Implement inventory reconciliation",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Collection event system:\n- Schedule collection dates\n- Track collection status\n- Handle multiple collection types:\n  * Completed portfolios\n  * Assessment materials\n  * Unused resources\nFeatures:\n- Collection confirmation\n- Quality check integration\n- Return processing\n- Inventory reconciliation"
+      ]
+    },
+    {
+      "id": "WEC-60",
+      "title": "Mock Exam Scheduling",
+      "description": "Implement mock exam management with schedule creation, resource allocation, multiple session support, and result tracking.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-60-1",
+          "title": "Implement schedule creation",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-2",
+          "title": "Add resource allocation",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-3",
+          "title": "Support multiple session",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-4",
+          "title": "Implement automatic scheduling based on main exam",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-5",
+          "title": "Add result tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-6",
+          "title": "Create performance analysis",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-7",
+          "title": "Implement feedback system",
+          "completed": false
+        },
+        {
+          "id": "WEC-60-8",
+          "title": "Integrate with exam preparation",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Mock exam management:\n- Schedule creation\n- Resource allocation\n- Multiple session support\nFeatures:\n- Automatic scheduling based on main exam\n- Result tracking\n- Performance analysis\n- Feedback system\n- Integration with exam preparation"
+      ]
+    },
+    {
+      "id": "WEC-61",
+      "title": "SBA Task & Submission Date Tracking",
+      "description": "Implement SBA management system with task scheduling, submission tracking, and multiple submission types support.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-61-1",
+          "title": "Implement task scheduling",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-2",
+          "title": "Add submission tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-3",
+          "title": "Support multiple submission types",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-4",
+          "title": "Implement automatic deadline calculation",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-5",
+          "title": "Add progress tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-6",
+          "title": "Create late submission handling",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-7",
+          "title": "Implement feedback mechanism",
+          "completed": false
+        },
+        {
+          "id": "WEC-61-8",
+          "title": "Integrate with assessment system",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "SBA management system:\n- Task scheduling\n- Submission tracking\n- Multiple submission types:\n  * Individual tasks\n  * Group projects\n  * Portfolio elements\nFeatures:\n- Automatic deadline calculation\n- Progress tracking\n- Late submission handling\n- Feedback mechanism\n- Integration with assessment system"
+      ]
+    }
+  ],
+  "global_integration_requirements": [
+    {
+      "id": "WEC-62",
+      "title": "Global Event Integration Requirements",
+      "description": "Implement global integration requirements for all event types including calendar integration, color coding, drag-and-drop rescheduling, conflict detection, and notification system.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-62-1",
+          "title": "Integrate all events with main calendar system",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-2",
+          "title": "Implement color coding for different event types",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-3",
+          "title": "Add drag-and-drop rescheduling support",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-4",
+          "title": "Create conflict detection and resolution",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-5",
+          "title": "Implement automatic notification system",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-6",
+          "title": "Ensure mobile-responsive interface",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-7",
+          "title": "Add export/import functionality",
+          "completed": false
+        },
+        {
+          "id": "WEC-62-8",
+          "title": "Integrate with reporting system",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Global Integration Requirements:\n- All events must integrate with main calendar system\n- Color coding for different event types\n- Drag-and-drop rescheduling support\n- Conflict detection and resolution\n- Automatic notification system\n- Mobile-responsive interface\n- Export/import functionality\n- Reporting integration\n\nTechnical Implementation:\n- Extend classes-capture-shortcode.php\n- Integrate with ClassTypesController\n- Follow WordPress event handling\n- Support GeneratePress styling\n- Implement proper error handling\n- Enable event filtering/search\n- Support recurring events\n- Enable bulk operations\n\nReference:\n- See feedback-april-15.md for detailed requirements\n- Follow existing calendar implementation\n- Maintain consistent UI/UX patterns"
+      ]
+    }
+  ]
+}

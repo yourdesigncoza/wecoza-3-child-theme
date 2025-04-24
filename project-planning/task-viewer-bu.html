@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeCoza Project Board</title>
+    <style>
+        :root {
+            --base-3: #ffffff;
+            --base-2: #f7f8f9;
+            --base: #f3f0ff;
+            --contrast: #222222;
+            --contrast-2: #575760;
+            --contrast-3: #b2b2be;
+            --accent: #6e5dc6;
+            --accent-light: #8a7ad0;
+            --accent-dark: #5a4aa6;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            font-size: 15px;
+            color: var(--contrast);
+            background-color: #121212;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--base-3);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            color: var(--base-3);
+        }
+        table#summary-table {
+            width: 50%;
+        }
+
+        th, td {
+            padding: 5px 15px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+
+        th {
+            background-color: #2a2a2a;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #252525;
+        }
+
+        td:last-child {
+            text-align: center;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 15px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            color: var(--base-3);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .category-header:hover {
+            background-color: #333;
+        }
+
+        .category-content {
+            display: none;
+            margin-bottom: 10px;
+            padding: 15px;
+            background-color: #252525;
+            border-radius: 4px;
+            color: var(--base-3);
+        }
+
+        .task {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-id {
+            font-weight: bold;
+            color: var(--accent-light);
+        }
+
+        .task-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .task-priority {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .priority-Urgent {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .priority-High {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .priority-Medium {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .priority-Low {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .priority-None {
+            background-color: var(--contrast-3);
+            color: black;
+        }
+
+        .task-description {
+            margin-bottom: 15px;
+            color: var(--contrast-3);
+        }
+
+        .subtasks {
+            margin-top: 15px;
+        }
+
+        .subtask {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            padding: 5px 8px;
+            background-color: #333;
+            border-radius: 4px;
+        }
+
+        .subtask-checkbox {
+            margin-right: 10px;
+        }
+
+        .files {
+            margin-top: 15px;
+        }
+
+        .file {
+            display: block;
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            background-color: #333;
+            border-radius: 4px;
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+
+        .comments {
+            margin-top: 15px;
+        }
+
+        .comment {
+            padding: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+        }
+
+        .shortcode-reference {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #252525;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .shortcode-section {
+            margin-bottom: 20px;
+        }
+
+        .shortcode-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #333;
+            border-radius: 4px;
+        }
+
+        .shortcode-code {
+            font-family: monospace;
+            background-color: #444;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        /* .task-completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+        } */
+
+        .task-checkbox {
+            margin-right: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            min-width: 20px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 10px;
+            background-color: var(--accent);
+            color: white;
+            margin-left: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .task-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .task-priority {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="project-title">WeCoza Project Board</h1>
+
+        <table id="summary-table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody id="summary-body">
+                <!-- Summary data will be populated here -->
+            </tbody>
+        </table>
+
+        <div class="category-header" onclick="toggleSection('shortcode-reference')">
+            📖 Shortcode Options Reference (click to expand)
+        </div>
+        <div id="shortcode-reference" class="shortcode-reference">
+            <!-- Shortcode reference will be populated here -->
+        </div>
+
+        <div id="categories-container">
+            <!-- Categories will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        // Load JSON data
+        // Embed JSON data directly in the HTML file
+        function loadTaskData() {
+            // This is the embedded JSON data
+            const data = {
+  "title": "WeCoza Project Board",
+  "categories": [
+    {
+      "name": "Ideas",
+      "emoji": "💡",
+      "tasks": [
+        {
+          "id": "WEC-18",
+          "title": "Batch Learner Management",
+          "description": "Allow users to add multiple learners at once from a pre-defined list or template. Proposed solution: Add a \"Select All\" option and batch processing.",
+          "priority": "High",
+          "status": "Ideas",
+          "subtasks": [],
+          "comments": []
+        },
+        {
+          "id": "WEC-38",
+          "title": "Tabbed Interface for Class Creation Form",
+          "description": "Implement a tabbed interface for the class creation form to improve user experience.",
+          "priority": "High",
+          "status": "Ideas",
+          "subtasks": [
+            {
+              "id": "WEC-38-1",
+              "title": "Create a new tab structure to replace horizontal dividers",
+              "completed": false
+            },
+            {
+              "id": "WEC-38-2",
+              "title": "Modify the main form structure to use tabs",
+              "completed": false
+            },
+            {
+              "id": "WEC-38-3",
+              "title": "Organize existing partial views into tab content sections",
+              "completed": false
+            },
+            {
+              "id": "WEC-38-4",
+              "title": "Update JavaScript for tab functionality",
+              "completed": false
+            },
+            {
+              "id": "WEC-38-5",
+              "title": "Ensure calendar initializes properly in tab view",
+              "completed": false
+            },
+            {
+              "id": "WEC-38-6",
+              "title": "Add navigation buttons between tabs",
+              "completed": false
+            },
+            {
+              "id": "WEC-38-7",
+              "title": "Implement form validation per tab",
+              "completed": false
+            }
+          ],
+          "files": [
+            "app/Views/components/class-capture-form.view.php",
+            "app/Views/components/class-capture-partials/tab-navigation.php (new)",
+            "public/js/class-capture.js",
+            "includes/css/ydcoza-styles.css"
+          ],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "name": "Backlog",
+      "emoji": "📥",
+      "tasks": []
+    },
+    {
+      "name": "Todo",
+      "emoji": "📝",
+      "tasks": [
+        {
+          "id": "WEC-25",
+          "title": "Drag‑and‑Drop Exception Date Management",
+          "description": "Allow users to add exception dates by clicking directly on the calendar rather than using the full form.",
+          "priority": "Medium",
+          "status": "Todo",
+          "subtasks": [],
+          "comments": []
+        },
+        {
+          "id": "WEC-31",
+          "title": "Stepped Workflow for Classes",
+          "description": "Instead of displaying the whole (full) form, break it into steps for better UX.",
+          "priority": "None",
+          "status": "Todo",
+          "subtasks": [],
+          "comments": []
+        },
+        {
+          "id": "WEC-43",
+          "title": "Color Profile Update Clarification and Implementation",
+          "description": "Client requested color profile updates with some specifications that need clarification before full implementation.",
+          "priority": "Medium",
+          "status": "Todo",
+          "subtasks": [
+            {
+              "id": "WEC-43-1",
+              "title": "Get clarification on design requirements",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-2",
+              "title": "Implement base typography changes",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-3",
+              "title": "Update form styling",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-4",
+              "title": "Implement button styling",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-5",
+              "title": "Update heading margins",
+              "completed": false
+            },
+            {
+              "id": "WEC-43-6",
+              "title": "Implement icon color system",
+              "completed": false
+            }
+          ],
+          "files": [
+            "includes/css/ydcoza-styles.css"
+          ],
+          "comments": [
+            {
+              "text": "Questions for Client Clarification:\n\n1. Top Bar & Sidebar:\n- When specifying 'No background', should it be transparent or white?\n- Should this apply to both mobile and desktop views?\n\n2. Alert Background:\n- Should #44546f apply to all alert types or specific ones?\n- What should the text color be for these alerts?\n\n3. Form Labels:\n- When specifying 'background: none', are we removing an existing background?\n- What size/color should the bold text be?\n\n4. Button States:\n- What color should the hover outline be?\n- Should text color change on hover?\n- What should the border-radius be?\n\n5. Main Button:\n- What should be the text color?\n- What color should the hover outline effect be?\n- Is this style only for section-bottom placement?\n\n6. Icons:\n- Is #94c748 only for dark background icons?\n- What color for light background icons?\n- Does this apply to all icons or specific sets?\n\nProposed CSS Implementation:\n\n```css\n:root {\n    --accent: #1d7afc;\n    --main-action: #216e4e;\n    --icon-dark-bg: #94c748;\n    --form-border: #b3b9c4;\n    --alert-bg: #44546f;\n}\n\nbody {\n    font-family: 'Montserrat', sans-serif;\n}\n\n.ydcoza-compact-form input[type=email],\n.ydcoza-compact-form input[type=number],\n.ydcoza-compact-form input[type=password],\n.ydcoza-compact-form input[type=search],\n.ydcoza-compact-form input[type=tel],\n.ydcoza-compact-form input[type=text],\n.ydcoza-compact-form input[type=url],\n.ydcoza-compact-form select,\n.ydcoza-compact-form textarea {\n    border: 1px solid var(--form-border);\n    border-radius: 2px;\n    padding: 5px 10px;\n}\n\n.ydcoza-compact-form .form-label {\n    background: none;\n    font-weight: bold;\n}\n\n.btn-primary {\n    background-color: var(--accent);\n    padding: 0.5em 1.5em;\n}\n\n.btn-main-action {\n    background-color: var(--main-action);\n    padding: 0.5em 1.5em;\n}\n\nh5 {\n    margin-top: 2em;\n}\n\n.dark-bg .icon {\n    color: var(--icon-dark-bg);\n}\n```"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "In Progress",
+      "emoji": "🚧",
+      "tasks": [
+        {
+          "id": "WEC-39",
+          "title": "Update Color Profile",
+          "description": "Update the color scheme to be more vibrant as the client says the current colors are too faint. Implement a warmer color palette with higher contrast and orange accent color.",
+          "priority": "Medium",
+          "status": "In Progress",
+          "subtasks": [
+            {
+              "id": "WEC-39-1",
+              "title": "Update CSS root variables with new color values",
+              "completed": false
+            },
+            {
+              "id": "WEC-39-2",
+              "title": "Update UI elements to use new color scheme",
+              "completed": false
+            },
+            {
+              "id": "WEC-39-3",
+              "title": "Update calendar styling with new colors",
+              "completed": false
+            }
+          ],
+          "files": [
+            "includes/css/ydcoza-styles.css"
+          ],
+          "comments": [
+            {
+              "text": "Questions for Client Clarification:\n\n1. Top Bar & Sidebar:\n- When specifying 'No background', should it be transparent or white?\n- Should this apply to both mobile and desktop views?\n\n2. Alert Background:\n- Should #44546f apply to all alert types or specific ones?\n- What should the text color be for these alerts?\n\n3. Form Labels:\n- When specifying 'background: none', are we removing an existing background?\n- What size/color should the bold text be?\n\n4. Button States:\n- What color should the hover outline be?\n- Should text color change on hover?\n- What should the border-radius be?\n\n5. Main Button:\n- What should be the text color?\n- What color should the hover outline effect be?\n- Is this style only for section-bottom placement?\n\n6. Icons:\n- Is #94c748 only for dark background icons?\n- What color for light background icons?\n- Does this apply to all icons or specific sets?\n\nProposed CSS Implementation:\n\n```css\n:root {\n    --accent: #1d7afc;\n    --main-action: #216e4e;\n    --icon-dark-bg: #94c748;\n    --form-border: #b3b9c4;\n    --alert-bg: #44546f;\n}\n\nbody {\n    font-family: 'Montserrat', sans-serif;\n}\n\n.ydcoza-compact-form input[type=email],\n.ydcoza-compact-form input[type=number],\n.ydcoza-compact-form input[type=password],\n.ydcoza-compact-form input[type=search],\n.ydcoza-compact-form input[type=tel],\n.ydcoza-compact-form input[type=text],\n.ydcoza-compact-form input[type=url],\n.ydcoza-compact-form select,\n.ydcoza-compact-form textarea {\n    border: 1px solid var(--form-border);\n    border-radius: 2px;\n    padding: 5px 10px;\n}\n\n.ydcoza-compact-form .form-label {\n    background: none;\n    font-weight: bold;\n}\n\n.btn-primary {\n    background-color: var(--accent);\n    padding: 0.5em 1.5em;\n}\n\n.btn-main-action {\n    background-color: var(--main-action);\n    padding: 0.5em 1.5em;\n}\n\nh5 {\n    margin-top: 2em;\n}\n\n.dark-bg .icon {\n    color: var(--icon-dark-bg);\n}\n```"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "In Review",
+      "emoji": "🔍",
+      "tasks": []
+    },
+    {
+      "name": "Done",
+      "emoji": "✅",
+      "tasks": [
+        {
+          "id": "WEC-42",
+          "title": "CSS Variable Standardization",
+          "description": "Updated the stylesheet to use CSS variables consistently throughout the codebase, replacing hardcoded color values with the root variables.",
+          "priority": "Medium",
+          "status": "Done",
+          "completed": true,
+          "files": [
+            "includes/css/ydcoza-styles.css"
+          ],
+          "comments": ["Replaced hardcoded color values with CSS variables to improve consistency and maintainability. This makes theme customization much easier in the future."]
+        },
+        {
+          "id": "WEC-41",
+          "title": "Update CSS Loading Order",
+          "description": "Modified the CSS enqueue order to ensure that ydcoza-styles.css loads after the GeneratePress parent theme styles for proper CSS cascade.",
+          "priority": "Medium",
+          "status": "Done",
+          "completed": true,
+          "files": [
+            "functions.php"
+          ],
+          "comments": ["Updated wp_enqueue_style to include 'generate-style' as a dependency to ensure proper CSS cascade order."]
+        },
+        {
+          "id": "WEC-40",
+          "title": "CSS File Consolidation",
+          "description": "Merged public/css/ydcoza-styles.css into includes/css/ydcoza-styles.css to consolidate all styles into a single file and updated ClassController.php to remove the duplicate style reference.",
+          "priority": "Medium",
+          "status": "Done",
+          "completed": true,
+          "files": [
+            "includes/css/ydcoza-styles.css",
+            "app/Controllers/ClassController.php"
+          ],
+          "comments": ["Consolidated all CSS styles into a single file to improve maintainability and reduce redundancy. Added clear section comments to indicate the source of merged styles."]
+        },
+        {
+          "id": "WEC-28",
+          "title": "Calendar Export Integration",
+          "description": "Add functionality to export class schedules to external calendar applications. Proposed Solution: Implement iCalendar (.ics) export for bulk schedule export.",
+          "priority": "Medium",
+          "status": "Done",
+          "completed": true,
+          "subtasks": [
+            {
+              "id": "WEC-28-1",
+              "title": "Move the export button into \"View Calendar\" section",
+              "completed": true
+            },
+            {
+              "id": "WEC-28-2",
+              "title": "Relocate calendar below \"Class Date History\"",
+              "completed": true
+            }
+          ],
+          "comments": ["Implemented calendar export functionality with the export button in the View Calendar section and relocated the calendar below Class Date History for better user experience."]
+        },
+        {
+          "id": "WEC-37",
+          "title": "Fix Learner Selection Popup Issue",
+          "description": "Fixed issue where \"Please select at least one learner to add\" popup appears even when learners are already selected and loaded in the background.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Fixed by commenting out the validation checks that were triggering the popup unnecessarily."]
+        },
+        {
+          "id": "WEC-36",
+          "title": "Fix jQuery error in class-capture.js",
+          "description": "Fixed error: `Uncaught TypeError: $ is not a function at showCustomAlert`",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": [
+            "The showCustomAlert function was using $ directly outside of the jQuery IIFE",
+            "Modified the function to use jQuery instead of $ in the global scope"
+          ]
+        },
+        {
+          "id": "WEC-35",
+          "title": "Fix validation error when selecting learners for exams",
+          "description": "When selecting \"Learners Taking Exam\", the system shows a validation error message even though a learner is selected.",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Fixed by improving the validation logic to properly check for selected exam learners and enhancing the UI state management."]
+        },
+        {
+          "id": "WEC-33",
+          "title": "Class Types & Durations Integration",
+          "description": "Rework how we integrate Class Types & Durations in the system. Implemented a more flexible and maintainable approach for managing class types and their associated durations, ensuring proper calculation of schedule hours and end dates.",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Completed by creating ClassTypesController and implementing two-level selection system with automatic duration calculation."]
+        },
+        {
+          "id": "WEC-32",
+          "title": "Verification issue",
+          "description": "Under Class Learners, \"Select Learners\" doesn't register selections.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Fixed by correcting the learner-selection logic in `class-learners.php`."]
+        },
+        {
+          "id": "WEC-27",
+          "title": "Class Conflict Detection",
+          "description": "Detect and warn about potential conflicts when scheduling classes.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Fixed by adding conflict‑detection logic to check overlapping schedules."]
+        },
+        {
+          "id": "WEC-21",
+          "title": "Verification issue",
+          "description": "\"Select Learners\" still shows no response.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Fixed by ensuring the update function fires correctly."]
+        },
+        {
+          "id": "WEC-17",
+          "title": "Improved Calendar Visualization",
+          "description": "Enhance calendar visuals with distinct styling and hover states.",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-19",
+          "title": "Advanced Validation Feedback",
+          "description": "Provide more detailed, user‑friendly validation messages.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-11",
+          "title": "Exception Dates Recalculation",
+          "description": "Recalculate recurring schedules when exception dates change.",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-24",
+          "title": "View attachments in Augment",
+          "description": "Need to view Linear attachments from Augment, not WP.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": ["Fixed by integrating Augment tools for attachment preview."]
+        },
+        {
+          "id": "WEC-23",
+          "title": "Page SC",
+          "description": "Updated summary of changes in the Page SC component.",
+          "priority": "None",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-20",
+          "title": "Verification issue",
+          "description": "Update function wasn't firing in Class Learners.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-15",
+          "title": "Form Validation on Submit",
+          "description": "Fixed validation logic to correctly recognize completed fields.",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-14",
+          "title": "Calendar Text Readability",
+          "description": "Ensured white text on events to improve contrast.",
+          "priority": "High",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-13",
+          "title": "Exam Learners Selection Issues",
+          "description": "Fixed exam learner count logic to clear validation errors.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-12",
+          "title": "Class Learners Selection Issues",
+          "description": "Added hidden fields and updated logic to clear stale errors.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        },
+        {
+          "id": "WEC-10",
+          "title": "Day of Week Restriction",
+          "description": "Implemented day‑of‑week consistency checks.",
+          "priority": "Urgent",
+          "status": "Done",
+          "completed": true,
+          "comments": []
+        }
+      ]
+    },
+    {
+      "name": "Cancelled",
+      "emoji": "❌",
+      "tasks": [
+        {
+          "id": "WEC-16",
+          "title": "Calendar Initialization in Tabs",
+          "description": "Calendar may not initialize properly when switching tabs.",
+          "priority": "High",
+          "status": "Cancelled",
+          "completed": false,
+          "comments": []
+        },
+        {
+          "id": "WEC-22",
+          "title": "Calendar Initialization in Tabs",
+          "description": "Calendar doesn't initialize correctly when embedded.",
+          "priority": "High",
+          "status": "Cancelled",
+          "completed": false,
+          "comments": []
+        },
+        {
+          "id": "WEC-26",
+          "title": "Recurring Schedule Templates",
+          "description": "Allow saving and reusing recurring schedule templates.",
+          "priority": "High",
+          "status": "Cancelled",
+          "completed": false,
+          "comments": []
+        },
+        {
+          "id": "WEC-29",
+          "title": "Multi‑View Calendar Options",
+          "description": "Add day/week/month view options to calendar.",
+          "priority": "High",
+          "status": "Cancelled",
+          "completed": false,
+          "comments": []
+        },
+        {
+          "id": "WEC-30",
+          "title": "Bulk Class Operations",
+          "description": "Perform operations on multiple classes at once.",
+          "priority": "High",
+          "status": "Cancelled",
+          "completed": false,
+          "comments": []
+        }
+      ]
+    }
+  ],
+  "shortcodeReference": {
+    "fileReferences": [
+      {"code": "(TK)", "description": "Targets this file (`project-planning.md`)"},
+      {"code": "(TK)(WEC-XX)", "description": "Targets one or more specific tasks"}
+    ],
+    "taskOperations": [
+      {"operation": "Move status", "code": "(TK)(WEC-XX) status=Ideas|Backlog|Todo|InProgress|InReview|Done|Cancelled"},
+      {"operation": "Set priority", "code": "(TK)(WEC-XX) priority=Urgent|High|Medium|Low|None"},
+      {"operation": "Labels", "code": "(TK)(WEC-XX) labels=Bug,Feature,UX"},
+      {"operation": "Comment", "code": "(TK)(WEC-XX) comment=\"Your comment here\""},
+      {"operation": "Add subtask", "code": "(TK)(WEC-XX) add-subtask=\"Describe subtask\""},
+      {"operation": "Screenshot", "code": "(TK)(WEC-XX) screenshot=\"https://…/image.png\""},
+      {"operation": "New task", "code": "(TK)(new WEC-YY) title=\"…\" status=Ideas priority=Medium labels=…"},
+      {"operation": "Delete", "code": "(TK)(WEC-XX) delete"},
+      {"operation": "Overview", "code": "(TK)(overview)"}
+    ]
+  }
+};
+            renderTaskData(data);
+        }
+
+        // Render task data
+        function renderTaskData(data) {
+            // Set project title
+            document.getElementById('project-title').textContent = data.title;
+
+            // Render summary table
+            const summaryBody = document.getElementById('summary-body');
+            let totalTasks = 0;
+
+            data.categories.forEach(category => {
+                const count = category.tasks.length;
+                totalTasks += count;
+
+                summaryBody.innerHTML += `
+                    <tr>
+                        <td>${category.emoji} ${category.name}</td>
+                        <td>${count}</td>
+                    </tr>
+                `;
+            });
+
+            summaryBody.innerHTML += `
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>${totalTasks}</strong></td>
+                </tr>
+            `;
+
+            // Render shortcode reference
+            const shortcodeReference = document.getElementById('shortcode-reference');
+            shortcodeReference.innerHTML = `
+                <h2>Shortcode Options Reference</h2>
+
+                <div class="shortcode-section">
+                    <h3>File References</h3>
+                    <ul>
+                        ${data.shortcodeReference.fileReferences.map(ref => `
+                            <li class="shortcode-item">
+                                <span class="shortcode-code">${ref.code}</span> – ${ref.description}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <div class="shortcode-section">
+                    <h3>Task Operations</h3>
+                    <ul>
+                        ${data.shortcodeReference.taskOperations.map(op => `
+                            <li class="shortcode-item">
+                                <strong>${op.operation}:</strong><br>
+                                <span class="shortcode-code">${op.code}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+
+            // Render categories and tasks
+            const categoriesContainer = document.getElementById('categories-container');
+
+            data.categories.forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.innerHTML = `
+                    <div class="category-header" onclick="toggleSection('category-${category.name}')">
+                        ${category.emoji} ${category.name}
+                    </div>
+                    <div id="category-${category.name}" class="category-content">
+                        ${category.tasks.length === 0 ? '<p><em>No tasks</em></p>' : ''}
+                        <div class="tasks-container">
+                            ${category.tasks.map(task => renderTask(task, category.name)).join('')}
+                        </div>
+                    </div>
+                `;
+
+                categoriesContainer.appendChild(categoryElement);
+            });
+        }
+
+        // Render a single task
+        function renderTask(task, categoryName) {
+            const isCompleted = task.completed || false;
+            const taskClass = isCompleted ? 'task task-completed' : 'task';
+
+            return `
+                <div class="${taskClass}">
+                    <div class="task-header">
+                        <div>
+                            <input type="checkbox" class="task-checkbox" ${isCompleted ? 'checked' : ''} disabled>
+                            <span class="task-id">${task.id}</span>
+                            <span class="task-title">${task.title}</span>
+                        </div>
+                        ${task.priority ? `<span class="task-priority priority-${task.priority}">${task.priority}</span>` : ''}
+                    </div>
+
+                    <div class="task-description">${task.description}</div>
+
+                    ${task.subtasks && task.subtasks.length > 0 ? `
+                        <div class="subtasks">
+                            <h4>Sub-tasks:</h4>
+                            ${task.subtasks.map(subtask => `
+                                <div class="subtask">
+                                    <input type="checkbox" class="subtask-checkbox" ${subtask.completed ? 'checked' : ''} disabled>
+                                    <span>${subtask.id}: ${subtask.title}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    ${task.files && task.files.length > 0 ? `
+                        <div class="files">
+                            <h4>Files:</h4>
+                            ${task.files.map(file => `
+                                <span class="file">${file}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    ${task.comments && task.comments.length > 0 ? `
+                        <div class="comments">
+                            <h4>Comments:</h4>
+                            ${task.comments.map(comment => `
+                                <div class="comment">${comment.text || comment}</div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Toggle section visibility
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTaskData();
+            // All categories closed by default
+        });
+    </script>
+</body>
+</html>

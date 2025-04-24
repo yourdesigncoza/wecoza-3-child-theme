@@ -1,0 +1,283 @@
+{
+  "data_structure_updates": [
+    {
+      "id": "WEC-76",
+      "title": "Class Type Hierarchies",
+      "description": "Implement database structure for class types with primary tables, relationships, and hierarchical structure.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-76-1",
+          "title": "Create class_types table",
+          "completed": false
+        },
+        {
+          "id": "WEC-76-2",
+          "title": "Implement class_modules table",
+          "completed": false
+        },
+        {
+          "id": "WEC-76-3",
+          "title": "Add class_prerequisites table",
+          "completed": false
+        },
+        {
+          "id": "WEC-76-4",
+          "title": "Create one-to-many relationship between class_types and modules",
+          "completed": false
+        },
+        {
+          "id": "WEC-76-5",
+          "title": "Implement self-referential hierarchy for class_types",
+          "completed": false
+        },
+        {
+          "id": "WEC-76-6",
+          "title": "Create many-to-many relationship for module prerequisites",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Database structure for class types:\n- Primary tables:\n  * class_types\n    - id (PRIMARY KEY)\n    - code (VARCHAR) // e.g., AETC, GETC, REALLL\n    - name (VARCHAR)\n    - parent_id (FK to class_types)\n    - duration_hours (INT)\n    - is_active (BOOLEAN)\n    - created_at (TIMESTAMP)\n    - updated_at (TIMESTAMP)\n  * class_modules\n    - id (PRIMARY KEY)\n    - class_type_id (FK)\n    - code (VARCHAR) // e.g., LP19, 1.2\n    - name (VARCHAR)\n    - sequence_order (INT)\n    - duration_hours (INT)\n  * class_prerequisites\n    - id (PRIMARY KEY)\n    - module_id (FK)\n    - prerequisite_id (FK)\n- Relationships:\n  * One-to-many: class_types to modules\n  * Self-referential: class_types hierarchy\n  * Many-to-many: module prerequisites"
+      ]
+    },
+    {
+      "id": "WEC-77",
+      "title": "Duration Mappings",
+      "description": "Implement duration calculation system with core tables and calculations for automatic end date and schedule adjustments.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-77-1",
+          "title": "Create duration_templates table",
+          "completed": false
+        },
+        {
+          "id": "WEC-77-2",
+          "title": "Implement class_schedules table",
+          "completed": false
+        },
+        {
+          "id": "WEC-77-3",
+          "title": "Add automatic end date calculation based on hours/frequency",
+          "completed": false
+        },
+        {
+          "id": "WEC-77-4",
+          "title": "Implement progress tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-77-5",
+          "title": "Add schedule adjustments",
+          "completed": false
+        },
+        {
+          "id": "WEC-77-6",
+          "title": "Create exception handling",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Duration calculation system:\n- Core tables:\n  * duration_templates\n    - id (PRIMARY KEY)\n    - name (VARCHAR)\n    - total_hours (INT)\n    - default_session_hours (DECIMAL)\n    - frequency_type (ENUM) // daily, weekly, monthly\n    - custom_pattern (JSON)\n  * class_schedules\n    - id (PRIMARY KEY)\n    - class_id (FK)\n    - template_id (FK)\n    - start_date (DATE)\n    - end_date (DATE)\n    - actual_hours (DECIMAL)\n    - remaining_hours (DECIMAL)\n- Calculations:\n  * Automatic end date based on hours/frequency\n  * Progress tracking\n  * Schedule adjustments\n  * Exception handling"
+      ]
+    },
+    {
+      "id": "WEC-78",
+      "title": "Event Type Categorization",
+      "description": "Implement event management structure with primary tables and event categories for comprehensive event tracking.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-78-1",
+          "title": "Create event_categories table",
+          "completed": false
+        },
+        {
+          "id": "WEC-78-2",
+          "title": "Implement event_types table",
+          "completed": false
+        },
+        {
+          "id": "WEC-78-3",
+          "title": "Add events table",
+          "completed": false
+        },
+        {
+          "id": "WEC-78-4",
+          "title": "Define event categories",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Event management structure:\n- Primary tables:\n  * event_categories\n    - id (PRIMARY KEY)\n    - name (VARCHAR)\n    - color_code (VARCHAR)\n    - icon_class (VARCHAR)\n    - is_system (BOOLEAN)\n  * event_types\n    - id (PRIMARY KEY)\n    - category_id (FK)\n    - name (VARCHAR)\n    - requires_approval (BOOLEAN)\n    - notification_template (TEXT)\n  * events\n    - id (PRIMARY KEY)\n    - type_id (FK)\n    - class_id (FK)\n    - start_datetime (TIMESTAMP)\n    - end_datetime (TIMESTAMP)\n    - status (ENUM)\n    - metadata (JSON)\n- Event categories:\n  * Class sessions\n  * Examinations\n  * Deliveries\n  * Collections\n  * Absences\n  * Cancellations"
+      ]
+    },
+    {
+      "id": "WEC-79",
+      "title": "Learner Status Tracking",
+      "description": "Implement learner management structure with core tables and status history tracking for comprehensive learner management.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-79-1",
+          "title": "Create learners table",
+          "completed": false
+        },
+        {
+          "id": "WEC-79-2",
+          "title": "Implement learner_class_enrollments table",
+          "completed": false
+        },
+        {
+          "id": "WEC-79-3",
+          "title": "Add learner_progress table",
+          "completed": false
+        },
+        {
+          "id": "WEC-79-4",
+          "title": "Implement status history tracking",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Learner management structure:\n- Core tables:\n  * learners\n    - id (PRIMARY KEY)\n    - external_id (VARCHAR)\n    - first_name (VARCHAR)\n    - last_name (VARCHAR)\n    - contact_details (JSON)\n    - current_status (ENUM)\n    - created_at (TIMESTAMP)\n  * learner_class_enrollments\n    - id (PRIMARY KEY)\n    - learner_id (FK)\n    - class_id (FK)\n    - status (ENUM) // CIC, RBE, DRO\n    - enrollment_date (DATE)\n    - completion_date (DATE)\n  * learner_progress\n    - id (PRIMARY KEY)\n    - enrollment_id (FK)\n    - module_id (FK)\n    - status (ENUM)\n    - completion_percentage (DECIMAL)\n    - last_activity (TIMESTAMP)\n- Status history:\n  * Track all status changes\n  * Record reason for changes\n  * Maintain audit trail"
+      ]
+    },
+    {
+      "id": "WEC-80",
+      "title": "Agent Assignment Structure",
+      "description": "Implement agent management system with primary tables and assignment rules for comprehensive agent management.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-80-1",
+          "title": "Create agents table",
+          "completed": false
+        },
+        {
+          "id": "WEC-80-2",
+          "title": "Implement agent_assignments table",
+          "completed": false
+        },
+        {
+          "id": "WEC-80-3",
+          "title": "Add agent_availability table",
+          "completed": false
+        },
+        {
+          "id": "WEC-80-4",
+          "title": "Implement order number generation",
+          "completed": false
+        },
+        {
+          "id": "WEC-80-5",
+          "title": "Add qualification matching",
+          "completed": false
+        },
+        {
+          "id": "WEC-80-6",
+          "title": "Create schedule conflict detection",
+          "completed": false
+        },
+        {
+          "id": "WEC-80-7",
+          "title": "Implement geographic constraints",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Agent management system:\n- Primary tables:\n  * agents\n    - id (PRIMARY KEY)\n    - external_id (VARCHAR)\n    - first_name (VARCHAR)\n    - last_name (VARCHAR)\n    - qualifications (JSON)\n    - availability (JSON)\n    - status (ENUM)\n  * agent_assignments\n    - id (PRIMARY KEY)\n    - agent_id (FK)\n    - class_id (FK)\n    - order_number (VARCHAR)\n    - role_type (ENUM) // primary, backup\n    - start_date (DATE)\n    - end_date (DATE)\n  * agent_availability\n    - id (PRIMARY KEY)\n    - agent_id (FK)\n    - date (DATE)\n    - status (ENUM)\n    - reason (VARCHAR)\n- Assignment rules:\n  * Order number generation\n  * Qualification matching\n  * Schedule conflicts\n  * Geographic constraints"
+      ]
+    },
+    {
+      "id": "WEC-81",
+      "title": "Global Data Structure Requirements",
+      "description": "Implement global data structure requirements including database compatibility, indexing strategy, data integrity, performance optimization, and security measures.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-81-1",
+          "title": "Ensure database compatibility",
+          "completed": false
+        },
+        {
+          "id": "WEC-81-2",
+          "title": "Implement indexing strategy",
+          "completed": false
+        },
+        {
+          "id": "WEC-81-3",
+          "title": "Add data integrity constraints",
+          "completed": false
+        },
+        {
+          "id": "WEC-81-4",
+          "title": "Optimize performance",
+          "completed": false
+        },
+        {
+          "id": "WEC-81-5",
+          "title": "Implement security measures",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Global Data Structure Requirements:\n- Database compatibility:\n  * MySQL 5.7+\n  * PostgreSQL 12+\n- Indexing strategy:\n  * Primary keys\n  * Foreign keys\n  * Common search fields\n  * Composite indexes\n- Data integrity:\n  * Foreign key constraints\n  * Unique constraints\n  * Check constraints\n  * Default values\n- Performance optimization:\n  * Proper data types\n  * Normalized structure\n  * Efficient queries\n  * Caching strategy\n- Security measures:\n  * Encryption at rest\n  * Access control\n  * Audit logging\n  * Backup procedures"
+      ]
+    }
+  ],
+  "validation_error_handling": [
+    {
+      "id": "WEC-82",
+      "title": "Form Validation Per Section",
+      "description": "Implement form validation for each section of the application with client-side and server-side validation.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-83",
+      "title": "Date Conflict Detection",
+      "description": "Implement date conflict detection to prevent scheduling conflicts and overlapping events.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-84",
+      "title": "Schedule Validation",
+      "description": "Implement schedule validation to ensure valid recurring patterns and schedule integrity.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-85",
+      "title": "Learner Assignment Validation",
+      "description": "Implement learner assignment validation to ensure proper learner-class relationships and prevent errors.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-86",
+      "title": "Agent Availability Checking",
+      "description": "Implement agent availability checking to prevent scheduling conflicts and ensure agent availability.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    }
+  ]
+}

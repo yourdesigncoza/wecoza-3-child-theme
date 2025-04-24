@@ -1,0 +1,82 @@
+{
+  "learner_management_enhancements": [
+    {
+      "id": "WEC-50",
+      "title": "Learner Status Tracking System",
+      "description": "Implement a comprehensive learner status tracking system for CIC (Currently in Class), RBE (Removed by Employer), and DRO (Drop Out) statuses.",
+      "priority": "High",
+      "status": "Backlog",
+      "subtasks": [
+        {
+          "id": "WEC-50-1",
+          "title": "Implement status change dropdown in learner management interface",
+          "completed": false
+        },
+        {
+          "id": "WEC-50-2",
+          "title": "Create automatic status history tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-50-3",
+          "title": "Implement status change notifications",
+          "completed": false
+        },
+        {
+          "id": "WEC-50-4",
+          "title": "Add reporting functionality for status changes",
+          "completed": false
+        },
+        {
+          "id": "WEC-50-5",
+          "title": "Integrate with class attendance tracking",
+          "completed": false
+        },
+        {
+          "id": "WEC-50-6",
+          "title": "Implement status-based access control to resources",
+          "completed": false
+        }
+      ],
+      "comments": [
+        "Implement learner status system:\n- CIC (Currently in Class): Active learner status\n- RBE (Removed by Employer): Employer-initiated removal\n- DRO (Drop Out): Learner-initiated withdrawal\nRequirements:\n- Status change dropdown in learner management interface\n- Automatic status history tracking\n- Status change notifications\n- Reporting functionality for status changes\n- Integration with class attendance tracking\n- Status-based access control to resources"
+      ]
+    },
+    {
+      "id": "WEC-51",
+      "title": "Level/Module Assignment Per Learner",
+      "description": "Implement functionality to assign specific levels and modules to individual learners.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-52",
+      "title": "Automatic Level Progression",
+      "description": "Implement automatic level progression for learners based on completed modules and assessments.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-53",
+      "title": "Portfolio Scanning Integration",
+      "description": "Integrate portfolio scanning functionality for digital document management.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    },
+    {
+      "id": "WEC-54",
+      "title": "Community Learner Handling",
+      "description": "Implement special handling for community learners with different requirements and tracking.",
+      "priority": "Medium",
+      "status": "Backlog",
+      "subtasks": [],
+      "comments": []
+    }
+  ]
+}
