@@ -1,14 +1,9 @@
 # WeCoza Outstanding Tasks & Improvements
 
-## 1. Class Creation Form Improvements (WEC-38)
-- [ ] Currently in "Ideas" status
-- [ ] Implement tab structure
-- [ ] Restructure form layout
-- [ ] Organize partial views
-- [ ] Implement JavaScript tab functionality
-- [ ] Fix calendar initialization in tabs
-- [ ] Add tab navigation
-- [ ] Implement per-tab validation
+## 1. Class Creation Form Improvements (WEC-38) 
+/*
+Move to cancelled we will not be implementing a tabbed form
+*/
 
 ## 2. Calendar & Event Management
 - [ ] Exception date handling (WEC-25)
