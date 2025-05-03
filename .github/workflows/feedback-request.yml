@@ -1,0 +1,28 @@
+name: Feedback Request Notification
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  notify-for-feedback:
+    if: github.event.label.name == 'feedback-requested'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify for feedback
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            
+            // Add a comment to the issue
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `@${issue.user.login}, feedback has been requested on this issue. Please review and provide your feedback.`
+            });
+            
+            // You can also send notifications via other channels like Slack, email, etc.
+            // by integrating with other GitHub Actions

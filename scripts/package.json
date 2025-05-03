@@ -1,0 +1,17 @@
+{
+  "name": "wecoza-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for WeCoza project management",
+  "private": true,
+  "scripts": {
+    "import-tasks": "node import-tasks-to-github.js",
+    "import-tasks:dry": "DRY_RUN=true node import-tasks-to-github.js",
+    "import-tasks:debug": "DEBUG=true node import-tasks-to-github.js",
+    "import-tasks:debug-dry": "DEBUG=true DRY_RUN=true node import-tasks-to-github.js",
+    "delete-issues": "node delete-issues.js",
+    "delete-issues:dry": "DRY_RUN=true node delete-issues.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "^19.0.7"
+  }
+}

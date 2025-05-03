@@ -1,0 +1,47 @@
+name: PR Merged
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  update-issues:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update linked issues
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Extract issue numbers from PR body using regex
+            // Looks for "Closes #123" or "Fixes #123" patterns
+            const issueRegex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/gi;
+            const body = pr.body || '';
+            let match;
+            const issueNumbers = [];
+            
+            while ((match = issueRegex.exec(body)) !== null) {
+              issueNumbers.push(parseInt(match[2], 10));
+            }
+            
+            // Update each linked issue
+            for (const issueNumber of issueNumbers) {
+              // Add a comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: `This issue was addressed in PR #${pr.number} which has been merged.`
+              });
+              
+              // Add a "done" label
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                labels: ['done']
+              });
+            }
