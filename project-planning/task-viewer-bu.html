@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <!--
   TASK ID TRACKING
-  Now using GitHub issue numbers instead of WEC-XX
-  Last used GitHub issue number: #257
-  Next available GitHub issue number: #258
-  
-  IMPORTANT: Always create GitHub issues first to get issue numbers!
+  Last used task ID: WEC-89
+  Next available task ID: WEC-90
+
+  IMPORTANT: Always update these numbers when adding new tasks!
 -->
 <html lang="en">
 <head>
@@ -329,54 +328,53 @@
       "emoji": "💡",
       "tasks": [
         {
-          "id": "187",
+          "id": "WEC-18",
           "title": "Batch Learner Management",
           "description": "Allow users to add multiple learners at once from a pre-defined list or template. Proposed solution: Add a \"Select All\" option and batch processing.",
           "priority": "None",
           "status": "Ideas",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Ideas"
+          "comments": []
         },
         {
-          "id": "206",
+          "id": "WEC-38",
           "title": "Tabbed Interface for Class Creation Form",
           "description": "Implement a tabbed interface for the class creation form to improve user experience.",
           "priority": "None",
           "status": "Cancelled",
           "subtasks": [
             {
-              "id": "206-1",
+              "id": "WEC-38-1",
               "title": "Create a new tab structure to replace horizontal dividers",
               "completed": false
             },
             {
-              "id": "206-2",
+              "id": "WEC-38-2",
               "title": "Modify the main form structure to use tabs",
               "completed": false
             },
             {
-              "id": "206-3",
+              "id": "WEC-38-3",
               "title": "Organize existing partial views into tab content sections",
               "completed": false
             },
             {
-              "id": "206-4",
+              "id": "WEC-38-4",
               "title": "Update JavaScript for tab functionality",
               "completed": false
             },
             {
-              "id": "206-5",
+              "id": "WEC-38-5",
               "title": "Ensure calendar initializes properly in tab view",
               "completed": false
             },
             {
-              "id": "206-6",
+              "id": "WEC-38-6",
               "title": "Add navigation buttons between tabs",
               "completed": false
             },
             {
-              "id": "206-7",
+              "id": "WEC-38-7",
               "title": "Implement form validation per tab",
               "completed": false
             }
@@ -389,8 +387,7 @@
           ],
           "comments": [
             "Moved to cancelled as we will not be implementing a tabbed form"
-          ],
-          "categoryName": "Ideas"
+          ]
         }
       ]
     },
@@ -399,7 +396,7 @@
       "emoji": "📥",
       "tasks": [
         {
-          "id": "212",
+          "id": "WEC-44",
           "title": "Automatic Duration Calculation",
           "description": "Implement automatic duration calculation for class schedules based on class type and frequency.",
           "priority": "None",
@@ -407,11 +404,10 @@
           "subtasks": [],
           "comments": [
             "Part of Calendar & Event Management improvements. Will integrate with class types and durations for automatic end date calculation."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "213",
+          "id": "WEC-45",
           "title": "Recurring Schedule Handling - Every Second Week",
           "description": "Add support for 'Every second week' recurring schedule pattern in the calendar system.",
           "priority": "None",
@@ -419,11 +415,10 @@
           "subtasks": [],
           "comments": [
             "Part of Calendar & Event Management improvements. Will enhance the recurring schedule options."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "214",
+          "id": "WEC-46",
           "title": "Recurring Schedule Handling - Last Saturday of Month",
           "description": "Add support for 'Last Saturday of month' recurring schedule pattern in the calendar system.",
           "priority": "None",
@@ -431,11 +426,10 @@
           "subtasks": [],
           "comments": [
             "Part of Calendar & Event Management improvements. Will enhance the recurring schedule options."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "215",
+          "id": "WEC-47",
           "title": "Recurring Schedule Handling - Custom Patterns",
           "description": "Implement support for custom recurring schedule patterns in the calendar system.",
           "priority": "None",
@@ -443,28 +437,27 @@
           "subtasks": [],
           "comments": [
             "Part of Calendar & Event Management improvements. Will allow for more flexible scheduling options."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "216",
+          "id": "WEC-48",
           "title": "Class Types Integration Points",
           "description": "Extend ClassTypesController::getClassTypes() to include all program categories with detailed subject mappings and hierarchical relationships.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "216-1",
+              "id": "WEC-48-1",
               "title": "Extend ClassTypesController::getClassTypes()",
               "completed": false
             },
             {
-              "id": "216-2",
+              "id": "WEC-48-2",
               "title": "Add detailed subject mappings",
               "completed": false
             },
             {
-              "id": "216-3",
+              "id": "WEC-48-3",
               "title": "Implement hierarchical relationships",
               "completed": false
             }
@@ -474,304 +467,290 @@
           ],
           "comments": [
             "Reference Implementation:\n- ClassTypesController.php already handles basic class type structure\n- Current duration calculation exists but needs expansion\n- Integration with calendar events for automatic scheduling\n\nKey Implementation Notes:\n- All durations need to integrate with the calendar scheduling system for automatic end date calculation\n- Each module type requires specific validation rules\n- Need to implement override capability for manual adjustments\n- Must support both automatic progression and manual override\n- Integration with existing classes-capture-shortcode.php for event display\n\nSee feedback-april-15.md for complete program structure requirements"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "217",
+          "id": "WEC-49",
           "title": "Skill Packages Implementation",
           "description": "Implement Skill Packages (Walk, Hexa, Run) with flexible duration calculation and special invoicing methods.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "217-1",
+              "id": "WEC-49-1",
               "title": "Implement flexible duration calculation",
               "completed": false
             },
             {
-              "id": "217-2",
+              "id": "WEC-49-2",
               "title": "Implement special invoicing methods",
               "completed": false
             },
             {
-              "id": "217-3",
+              "id": "WEC-49-3",
               "title": "Integrate with invoice method dropdown in class creation form",
               "completed": false
             }
           ],
           "comments": [
             "Not yet automated\nNeed to implement flexible duration calculation\nSpecial invoicing methods required (see feedback-april-15.md)\nIntegration with invoice method dropdown in class creation form"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "218",
+          "id": "WEC-50",
           "title": "Learner Status Tracking System",
           "description": "Implement a comprehensive learner status tracking system for CIC (Currently in Class), RBE (Removed by Employer), and DRO (Drop Out) statuses.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "218-1",
+              "id": "WEC-50-1",
               "title": "Implement status change dropdown in learner management interface",
               "completed": false
             },
             {
-              "id": "218-2",
+              "id": "WEC-50-2",
               "title": "Create automatic status history tracking",
               "completed": false
             },
             {
-              "id": "218-3",
+              "id": "WEC-50-3",
               "title": "Implement status change notifications",
               "completed": false
             },
             {
-              "id": "218-4",
+              "id": "WEC-50-4",
               "title": "Add reporting functionality for status changes",
               "completed": false
             },
             {
-              "id": "218-5",
+              "id": "WEC-50-5",
               "title": "Integrate with class attendance tracking",
               "completed": false
             },
             {
-              "id": "218-6",
+              "id": "WEC-50-6",
               "title": "Implement status-based access control to resources",
               "completed": false
             }
           ],
           "comments": [
             "Implement learner status system:\n- CIC (Currently in Class): Active learner status\n- RBE (Removed by Employer): Employer-initiated removal\n- DRO (Drop Out): Learner-initiated withdrawal\nRequirements:\n- Status change dropdown in learner management interface\n- Automatic status history tracking\n- Status change notifications\n- Reporting functionality for status changes\n- Integration with class attendance tracking\n- Status-based access control to resources"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "219",
+          "id": "WEC-51",
           "title": "Level/Module Assignment Per Learner",
           "description": "Implement functionality to assign specific levels and modules to individual learners.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "220",
+          "id": "WEC-52",
           "title": "Automatic Level Progression",
           "description": "Implement automatic level progression for learners based on completed modules and assessments.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "221",
+          "id": "WEC-53",
           "title": "Portfolio Scanning Integration",
           "description": "Integrate portfolio scanning functionality for digital document management.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "222",
+          "id": "WEC-54",
           "title": "Community Learner Handling",
           "description": "Implement special handling for community learners with different requirements and tracking.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "223",
+          "id": "WEC-55",
           "title": "Material Delivery Scheduling",
           "description": "Implement material delivery scheduling with integration to class schedules, delivery status tracking, and multiple delivery types support.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "223-1",
+              "id": "WEC-55-1",
               "title": "Integrate with class schedule",
               "completed": false
             },
             {
-              "id": "223-2",
+              "id": "WEC-55-2",
               "title": "Implement automatic scheduling based on class start date",
               "completed": false
             },
             {
-              "id": "223-3",
+              "id": "WEC-55-3",
               "title": "Add delivery status tracking (Pending, In Transit, Delivered)",
               "completed": false
             }
           ],
           "comments": [
             "Delivery event management:\n- Integration with class schedule\n- Automatic scheduling based on class start date\n- Delivery status tracking (Pending, In Transit, Delivered)\n- Multiple delivery types support:\n  * Initial material delivery\n  * Supplementary materials\n  * Replacement materials\nFeatures needed:\n- Delivery date selection/override\n- Courier integration options\n- Delivery confirmation system\n- Notification system for stakeholders\n- Material inventory tracking"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "226",
+          "id": "WEC-58",
           "title": "Exam Date Management",
           "description": "Implement comprehensive exam scheduling with support for multiple exam types, venue allocation, examiner assignment, and results recording.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "226-1",
+              "id": "WEC-58-1",
               "title": "Support multiple exam types (AET Communication, AET Numeracy, GETC AET modules)",
               "completed": false
             },
             {
-              "id": "226-2",
+              "id": "WEC-58-2",
               "title": "Implement exam venue allocation",
               "completed": false
             },
             {
-              "id": "226-3",
+              "id": "WEC-58-3",
               "title": "Add examiner assignment",
               "completed": false
             }
           ],
           "comments": [
             "Comprehensive exam scheduling:\n- Multiple exam types support:\n  * AET Communication\n  * AET Numeracy\n  * GETC AET modules\nFeatures:\n- Exam venue allocation\n- Examiner assignment\n- Candidate registration\n- Document preparation tracking\n- Results recording system\n- Integration with learner progression"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "230",
+          "id": "WEC-62",
           "title": "Global Event Integration Requirements",
           "description": "Implement global integration requirements for all event types including calendar integration, color coding, drag-and-drop rescheduling, conflict detection, and notification system.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "230-1",
+              "id": "WEC-62-1",
               "title": "Integrate all events with main calendar system",
               "completed": false
             },
             {
-              "id": "230-2",
+              "id": "WEC-62-2",
               "title": "Implement color coding for different event types",
               "completed": false
             },
             {
-              "id": "230-3",
+              "id": "WEC-62-3",
               "title": "Add drag-and-drop rescheduling support",
               "completed": false
             }
           ],
           "comments": [
             "Global Integration Requirements:\n- All events must integrate with main calendar system\n- Color coding for different event types\n- Drag-and-drop rescheduling support\n- Conflict detection and resolution\n- Automatic notification system\n- Mobile-responsive interface\n- Export/import functionality\n- Reporting integration\n\nTechnical Implementation:\n- Extend classes-capture-shortcode.php\n- Integrate with ClassTypesController\n- Follow WordPress event handling\n- Support GeneratePress styling\n- Implement proper error handling\n- Enable event filtering/search\n- Support recurring events\n- Enable bulk operations"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "231",
+          "id": "WEC-63",
           "title": "Event Type Differentiation",
           "description": "Implement visual distinction between event types with color coding system, icon system, status indicators, and priority highlighting.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "231-1",
+              "id": "WEC-63-1",
               "title": "Implement color coding system for different event types",
               "completed": false
             },
             {
-              "id": "231-2",
+              "id": "WEC-63-2",
               "title": "Create icon system for quick recognition",
               "completed": false
             },
             {
-              "id": "231-3",
+              "id": "WEC-63-3",
               "title": "Add status indicators",
               "completed": false
             },
             {
-              "id": "231-4",
+              "id": "WEC-63-4",
               "title": "Implement priority highlighting",
               "completed": false
             }
           ],
           "comments": [
             "Visual distinction between event types:\n- Color coding system:\n  * Delivery events: Blue-based\n  * Exam events: Red-based\n  * Collection events: Green-based\n  * Absence/cancellation: Orange-based\n- Icon system for quick recognition\n- Status indicators\n- Priority highlighting"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "244",
+          "id": "WEC-76",
           "title": "Class Type Hierarchies",
           "description": "Implement database structure for class types with primary tables, relationships, and hierarchical structure.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "244-1",
+              "id": "WEC-76-1",
               "title": "Create class_types table",
               "completed": false
             },
             {
-              "id": "244-2",
+              "id": "WEC-76-2",
               "title": "Implement class_modules table",
               "completed": false
             },
             {
-              "id": "244-3",
+              "id": "WEC-76-3",
               "title": "Add class_prerequisites table",
               "completed": false
             }
           ],
           "comments": [
             "Database structure for class types:\n- Primary tables:\n  * class_types\n    - id (PRIMARY KEY)\n    - code (VARCHAR) // e.g., AETC, GETC, REALLL\n    - name (VARCHAR)\n    - parent_id (FK to class_types)\n    - duration_hours (INT)\n    - is_active (BOOLEAN)\n    - created_at (TIMESTAMP)\n    - updated_at (TIMESTAMP)\n  * class_modules\n    - id (PRIMARY KEY)\n    - class_type_id (FK)\n    - code (VARCHAR) // e.g., LP19, 1.2\n    - name (VARCHAR)\n    - sequence_order (INT)\n    - duration_hours (INT)\n  * class_prerequisites\n    - id (PRIMARY KEY)\n    - module_id (FK)\n    - prerequisite_id (FK)\n- Relationships:\n  * One-to-many: class_types to modules\n  * Self-referential: class_types hierarchy\n  * Many-to-many: module prerequisites"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "250",
+          "id": "WEC-82",
           "title": "Form Validation Per Section",
           "description": "Implement form validation for each section of the application with client-side and server-side validation.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "251",
+          "id": "WEC-83",
           "title": "Date Conflict Detection",
           "description": "Implement date conflict detection to prevent scheduling conflicts and overlapping events.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "255",
+          "id": "WEC-87",
           "title": "Public Holidays Integration",
           "description": "Integrate public holidays into the calendar system with automatic handling and visual indicators.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "255-1",
+              "id": "WEC-87-1",
               "title": "Create a database or hardcoded list of public holidays",
               "completed": false
             },
             {
-              "id": "255-2",
+              "id": "WEC-87-2",
               "title": "Update calendar visualization to highlight public holidays",
               "completed": false
             },
             {
-              "id": "255-3",
+              "id": "WEC-87-3",
               "title": "Integrate public holidays with end date calculation",
               "completed": false
             }
@@ -784,28 +763,27 @@
           ],
           "comments": [
             "Client feedback from delete.md: Public holidays should be integrated by default and accounted for when calculating the 'End Date' of programs/courses. Holidays should be visually highlighted in the calendar."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "256",
+          "id": "WEC-88",
           "title": "Exception Date Validation",
           "description": "Implement validation to prevent setting exception dates before the class start date.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "256-1",
+              "id": "WEC-88-1",
               "title": "Add client-side validation for exception dates",
               "completed": false
             },
             {
-              "id": "256-2",
+              "id": "WEC-88-2",
               "title": "Implement server-side validation as backup",
               "completed": false
             },
             {
-              "id": "256-3",
+              "id": "WEC-88-3",
               "title": "Add clear error messages for validation failures",
               "completed": false
             }
@@ -817,33 +795,32 @@
           ],
           "comments": [
             "Client feedback from delete.md: Exception dates should not be allowed before the class start date. This requires both client-side and server-side validation with clear error messages."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "257",
+          "id": "WEC-89",
           "title": "Yearly Calendar View",
           "description": "Add yearly view option to the calendar with optimized data loading.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "257-1",
+              "id": "WEC-89-1",
               "title": "Add year view option to FullCalendar configuration",
               "completed": false
             },
             {
-              "id": "257-2",
+              "id": "WEC-89-2",
               "title": "Set yearly view as the default calendar view",
               "completed": false
             },
             {
-              "id": "257-3",
+              "id": "WEC-89-3",
               "title": "Remove weekly view option from the calendar",
               "completed": false
             },
             {
-              "id": "257-4",
+              "id": "WEC-89-4",
               "title": "Optimize data loading for year view",
               "completed": false
             }
@@ -855,994 +832,968 @@
           ],
           "comments": [
             "Client feedback from delete.md: Add yearly view option to the calendar, make it the default view, and remove the weekly view option. Ensure the UI remains usable with a year's worth of data."
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "224",
+          "id": "WEC-56",
           "title": "Agent Absence Handling",
           "description": "Implement agent absence handling with absence type categorization, calendar integration, automatic backup agent assignment, and notification system.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "224-1",
+              "id": "WEC-56-1",
               "title": "Implement absence type categorization",
               "completed": false
             },
             {
-              "id": "224-2",
+              "id": "WEC-56-2",
               "title": "Create calendar integration for absence marking",
               "completed": false
             },
             {
-              "id": "224-3",
+              "id": "WEC-56-3",
               "title": "Implement automatic backup agent assignment",
               "completed": false
             },
             {
-              "id": "224-4",
+              "id": "WEC-56-4",
               "title": "Add class rescheduling options",
               "completed": false
             },
             {
-              "id": "224-5",
+              "id": "WEC-56-5",
               "title": "Create notification system for affected parties",
               "completed": false
             },
             {
-              "id": "224-6",
+              "id": "WEC-56-6",
               "title": "Implement absence history tracking",
               "completed": false
             }
           ],
           "comments": [
             "Agent availability management:\n- Absence type categorization:\n  * Planned leave\n  * Sick leave\n  * Emergency absence\nImplementation:\n- Calendar integration for absence marking\n- Automatic backup agent assignment\n- Class rescheduling options\n- Notification system for:\n  * Affected learners\n  * Client contacts\n  * Management team\n- Absence history tracking"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "225",
+          "id": "WEC-57",
           "title": "Client Cancellation Management",
           "description": "Implement client cancellation management with support for single session, multiple session, and recurring schedule adjustments.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "225-1",
+              "id": "WEC-57-1",
               "title": "Implement single session cancellation",
               "completed": false
             },
             {
-              "id": "225-2",
+              "id": "WEC-57-2",
               "title": "Add multiple session cancellation",
               "completed": false
             },
             {
-              "id": "225-3",
+              "id": "WEC-57-3",
               "title": "Support recurring schedule adjustments",
               "completed": false
             },
             {
-              "id": "225-4",
+              "id": "WEC-57-4",
               "title": "Implement cancellation reason tracking",
               "completed": false
             },
             {
-              "id": "225-5",
+              "id": "WEC-57-5",
               "title": "Add impact assessment on schedule",
               "completed": false
             },
             {
-              "id": "225-6",
+              "id": "WEC-57-6",
               "title": "Create automatic makeup session scheduling",
               "completed": false
             },
             {
-              "id": "225-7",
+              "id": "WEC-57-7",
               "title": "Implement hours tracking adjustment",
               "completed": false
             },
             {
-              "id": "225-8",
+              "id": "WEC-57-8",
               "title": "Add client communication automation",
               "completed": false
             },
             {
-              "id": "225-9",
+              "id": "WEC-57-9",
               "title": "Integrate with reporting system",
               "completed": false
             }
           ],
           "comments": [
             "Cancellation handling system:\n- Single session cancellation\n- Multiple session cancellation\n- Recurring schedule adjustments\nFeatures:\n- Cancellation reason tracking\n- Impact assessment on schedule\n- Automatic makeup session scheduling\n- Hours tracking adjustment\n- Client communication automation\n- Reporting integration"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "227",
+          "id": "WEC-59",
           "title": "Material Collection Tracking",
           "description": "Implement material collection tracking system with schedule collection dates, collection status tracking, and multiple collection types support.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "227-1",
+              "id": "WEC-59-1",
               "title": "Implement schedule collection dates",
               "completed": false
             },
             {
-              "id": "227-2",
+              "id": "WEC-59-2",
               "title": "Add collection status tracking",
               "completed": false
             },
             {
-              "id": "227-3",
+              "id": "WEC-59-3",
               "title": "Support multiple collection types",
               "completed": false
             },
             {
-              "id": "227-4",
+              "id": "WEC-59-4",
               "title": "Implement collection confirmation",
               "completed": false
             },
             {
-              "id": "227-5",
+              "id": "WEC-59-5",
               "title": "Add quality check integration",
               "completed": false
             },
             {
-              "id": "227-6",
+              "id": "WEC-59-6",
               "title": "Create return processing",
               "completed": false
             },
             {
-              "id": "227-7",
+              "id": "WEC-59-7",
               "title": "Implement inventory reconciliation",
               "completed": false
             }
           ],
           "comments": [
             "Collection event system:\n- Schedule collection dates\n- Track collection status\n- Handle multiple collection types:\n  * Completed portfolios\n  * Assessment materials\n  * Unused resources\nFeatures:\n- Collection confirmation\n- Quality check integration\n- Return processing\n- Inventory reconciliation"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "228",
+          "id": "WEC-60",
           "title": "Mock Exam Scheduling",
           "description": "Implement mock exam management with schedule creation, resource allocation, multiple session support, and result tracking.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "228-1",
+              "id": "WEC-60-1",
               "title": "Implement schedule creation",
               "completed": false
             },
             {
-              "id": "228-2",
+              "id": "WEC-60-2",
               "title": "Add resource allocation",
               "completed": false
             },
             {
-              "id": "228-3",
+              "id": "WEC-60-3",
               "title": "Support multiple session",
               "completed": false
             },
             {
-              "id": "228-4",
+              "id": "WEC-60-4",
               "title": "Implement automatic scheduling based on main exam",
               "completed": false
             },
             {
-              "id": "228-5",
+              "id": "WEC-60-5",
               "title": "Add result tracking",
               "completed": false
             },
             {
-              "id": "228-6",
+              "id": "WEC-60-6",
               "title": "Create performance analysis",
               "completed": false
             },
             {
-              "id": "228-7",
+              "id": "WEC-60-7",
               "title": "Implement feedback system",
               "completed": false
             },
             {
-              "id": "228-8",
+              "id": "WEC-60-8",
               "title": "Integrate with exam preparation",
               "completed": false
             }
           ],
           "comments": [
             "Mock exam management:\n- Schedule creation\n- Resource allocation\n- Multiple session support\nFeatures:\n- Automatic scheduling based on main exam\n- Result tracking\n- Performance analysis\n- Feedback system\n- Integration with exam preparation"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "229",
+          "id": "WEC-61",
           "title": "SBA Task & Submission Date Tracking",
           "description": "Implement SBA management system with task scheduling, submission tracking, and multiple submission types support.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "229-1",
+              "id": "WEC-61-1",
               "title": "Implement task scheduling",
               "completed": false
             },
             {
-              "id": "229-2",
+              "id": "WEC-61-2",
               "title": "Add submission tracking",
               "completed": false
             },
             {
-              "id": "229-3",
+              "id": "WEC-61-3",
               "title": "Support multiple submission types",
               "completed": false
             },
             {
-              "id": "229-4",
+              "id": "WEC-61-4",
               "title": "Implement automatic deadline calculation",
               "completed": false
             },
             {
-              "id": "229-5",
+              "id": "WEC-61-5",
               "title": "Add progress tracking",
               "completed": false
             },
             {
-              "id": "229-6",
+              "id": "WEC-61-6",
               "title": "Create late submission handling",
               "completed": false
             },
             {
-              "id": "229-7",
+              "id": "WEC-61-7",
               "title": "Implement feedback mechanism",
               "completed": false
             },
             {
-              "id": "229-8",
+              "id": "WEC-61-8",
               "title": "Integrate with assessment system",
               "completed": false
             }
           ],
           "comments": [
             "SBA management system:\n- Task scheduling\n- Submission tracking\n- Multiple submission types:\n  * Individual tasks\n  * Group projects\n  * Portfolio elements\nFeatures:\n- Automatic deadline calculation\n- Progress tracking\n- Late submission handling\n- Feedback mechanism\n- Integration with assessment system"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "232",
+          "id": "WEC-64",
           "title": "SETA Funding Integration",
           "description": "Implement SETA funding management system with funding type identification, status tracking, document management, and financial tracking.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "232-1",
+              "id": "WEC-64-1",
               "title": "Implement funding type identification",
               "completed": false
             },
             {
-              "id": "232-2",
+              "id": "WEC-64-2",
               "title": "Add funding status tracking",
               "completed": false
             },
             {
-              "id": "232-3",
+              "id": "WEC-64-3",
               "title": "Create document management",
               "completed": false
             },
             {
-              "id": "232-4",
+              "id": "WEC-64-4",
               "title": "Integrate with class creation",
               "completed": false
             },
             {
-              "id": "232-5",
+              "id": "WEC-64-5",
               "title": "Implement financial tracking",
               "completed": false
             }
           ],
           "comments": [
             "SETA funding management system:\n- Funding type identification:\n  * AET Communication\n  * AET Numeracy\n  * GETC AET modules\nImplementation requirements:\n- Funding status tracking\n- Automatic validation rules\n- Document management\n- Integration with class creation:\n  * Funding checkbox in class setup\n  * Automatic exam selection\n  * Special reporting requirements\n- Financial tracking:\n  * Funding amounts\n  * Payment schedules\n  * Reconciliation reports"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "233",
+          "id": "WEC-65",
           "title": "Exam System Integration",
           "description": "Implement comprehensive exam management with exam type categorization, automatic scheduling, venue management, and results tracking.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "233-1",
+              "id": "WEC-65-1",
               "title": "Implement exam type categorization",
               "completed": false
             },
             {
-              "id": "233-2",
+              "id": "WEC-65-2",
               "title": "Add automatic scheduling based on class progression",
               "completed": false
             },
             {
-              "id": "233-3",
+              "id": "WEC-65-3",
               "title": "Create venue management",
               "completed": false
             },
             {
-              "id": "233-4",
+              "id": "WEC-65-4",
               "title": "Implement examiner allocation",
               "completed": false
             },
             {
-              "id": "233-5",
+              "id": "WEC-65-5",
               "title": "Add results tracking",
               "completed": false
             },
             {
-              "id": "233-6",
+              "id": "WEC-65-6",
               "title": "Create certificate generation",
               "completed": false
             },
             {
-              "id": "233-7",
+              "id": "WEC-65-7",
               "title": "Integrate with learner profiles",
               "completed": false
             },
             {
-              "id": "233-8",
+              "id": "WEC-65-8",
               "title": "Implement automated notifications",
               "completed": false
             }
           ],
           "comments": [
             "Comprehensive exam management:\n- Exam type categorization:\n  * Internal assessments\n  * External examinations\n  * SETA examinations\nCore features:\n- Automatic scheduling based on class progression\n- Venue management\n- Examiner allocation\n- Results tracking\n- Certificate generation\n- Integration with learner profiles\n- Automated notifications"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "234",
+          "id": "WEC-66",
           "title": "Portfolio Management System",
           "description": "Implement digital portfolio handling with upload functionality, processing features, and management tools.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "234-1",
+              "id": "WEC-66-1",
               "title": "Implement upload functionality",
               "completed": false
             },
             {
-              "id": "234-2",
+              "id": "WEC-66-2",
               "title": "Add processing features",
               "completed": false
             },
             {
-              "id": "234-3",
+              "id": "WEC-66-3",
               "title": "Create management tools",
               "completed": false
             },
             {
-              "id": "234-4",
+              "id": "WEC-66-4",
               "title": "Integrate with learner profiles",
               "completed": false
             },
             {
-              "id": "234-5",
+              "id": "WEC-66-5",
               "title": "Add assessment tracking",
               "completed": false
             },
             {
-              "id": "234-6",
+              "id": "WEC-66-6",
               "title": "Implement progress monitoring",
               "completed": false
             }
           ],
           "comments": [
             "Digital portfolio handling:\n- Upload functionality:\n  * Bulk upload support\n  * File type validation\n  * Size limitations\n- Processing features:\n  * Automatic categorization\n  * OCR for physical documents\n  * Metadata extraction\n- Management tools:\n  * Version control\n  * Review system\n  * Feedback mechanism\n- Integration points:\n  * Learner profiles\n  * Assessment tracking\n  * Progress monitoring"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "235",
+          "id": "WEC-67",
           "title": "Agent Order Number Generation",
           "description": "Implement automated agent numbering system with unique identifier generation and management features.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "235-1",
+              "id": "WEC-67-1",
               "title": "Implement unique identifier generation",
               "completed": false
             },
             {
-              "id": "235-2",
+              "id": "WEC-67-2",
               "title": "Integrate with class assignment",
               "completed": false
             },
             {
-              "id": "235-3",
+              "id": "WEC-67-3",
               "title": "Add to agent profile",
               "completed": false
             },
             {
-              "id": "235-4",
+              "id": "WEC-67-4",
               "title": "Integrate with reporting system",
               "completed": false
             },
             {
-              "id": "235-5",
+              "id": "WEC-67-5",
               "title": "Implement number tracking",
               "completed": false
             },
             {
-              "id": "235-6",
+              "id": "WEC-67-6",
               "title": "Add history logging",
               "completed": false
             },
             {
-              "id": "235-7",
+              "id": "WEC-67-7",
               "title": "Create search functionality",
               "completed": false
             }
           ],
           "comments": [
             "Automated agent numbering system:\n- Unique identifier generation:\n  * Sequential numbering\n  * Region/area codes\n  * Class type indicators\n- Integration requirements:\n  * Class assignment\n  * Agent profile\n  * Reporting system\n- Management features:\n  * Number tracking\n  * History logging\n  * Search functionality"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "236",
+          "id": "WEC-68",
           "title": "Backup Agent System",
           "description": "Implement backup agent management with agent matching system, assignment features, and tracking features.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "236-1",
+              "id": "WEC-68-1",
               "title": "Implement agent matching system",
               "completed": false
             },
             {
-              "id": "236-2",
+              "id": "WEC-68-2",
               "title": "Create assignment features",
               "completed": false
             },
             {
-              "id": "236-3",
+              "id": "WEC-68-3",
               "title": "Integrate with agent profiles",
               "completed": false
             },
             {
-              "id": "236-4",
+              "id": "WEC-68-4",
               "title": "Add to class schedules",
               "completed": false
             },
             {
-              "id": "236-5",
+              "id": "WEC-68-5",
               "title": "Integrate with absence management",
               "completed": false
             },
             {
-              "id": "236-6",
+              "id": "WEC-68-6",
               "title": "Implement replacement history",
               "completed": false
             },
             {
-              "id": "236-7",
+              "id": "WEC-68-7",
               "title": "Add performance monitoring",
               "completed": false
             },
             {
-              "id": "236-8",
+              "id": "WEC-68-8",
               "title": "Create client feedback system",
               "completed": false
             }
           ],
           "comments": [
             "Backup agent management:\n- Agent matching system:\n  * Skill level matching\n  * Availability checking\n  * Geographic location\n- Assignment features:\n  * Automatic suggestion\n  * Manual override\n  * Notification system\n- Integration points:\n  * Agent profiles\n  * Class schedules\n  * Absence management\n- Tracking features:\n  * Replacement history\n  * Performance monitoring\n  * Client feedback"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "237",
+          "id": "WEC-69",
           "title": "Global Integration Requirements",
           "description": "Implement global integration requirements for all systems including WordPress core integration, GeneratePress theme compatibility, and MVC architecture.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "237-1",
+              "id": "WEC-69-1",
               "title": "Integrate with WordPress core",
               "completed": false
             },
             {
-              "id": "237-2",
+              "id": "WEC-69-2",
               "title": "Ensure GeneratePress theme compatibility",
               "completed": false
             },
             {
-              "id": "237-3",
+              "id": "WEC-69-3",
               "title": "Maintain MVC architecture",
               "completed": false
             },
             {
-              "id": "237-4",
+              "id": "WEC-69-4",
               "title": "Implement proper error handling",
               "completed": false
             },
             {
-              "id": "237-5",
+              "id": "WEC-69-5",
               "title": "Support mobile responsiveness",
               "completed": false
             },
             {
-              "id": "237-6",
+              "id": "WEC-69-6",
               "title": "Enable data export/import",
               "completed": false
             },
             {
-              "id": "237-7",
+              "id": "WEC-69-7",
               "title": "Provide API endpoints where needed",
               "completed": false
             }
           ],
           "comments": [
             "Global Integration Notes:\n- All systems must integrate with WordPress core\n- Follow GeneratePress theme compatibility\n- Maintain MVC architecture\n- Implement proper error handling\n- Support mobile responsiveness\n- Enable data export/import\n- Provide API endpoints where needed"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "238",
+          "id": "WEC-70",
           "title": "Class Progress Tracking",
           "description": "Implement comprehensive class monitoring system with progress metrics, visual indicators, automated alerts, and reporting features.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "238-1",
+              "id": "WEC-70-1",
               "title": "Implement progress metrics",
               "completed": false
             },
             {
-              "id": "238-2",
+              "id": "WEC-70-2",
               "title": "Create visual indicators",
               "completed": false
             },
             {
-              "id": "238-3",
+              "id": "WEC-70-3",
               "title": "Add automated alerts",
               "completed": false
             },
             {
-              "id": "238-4",
+              "id": "WEC-70-4",
               "title": "Implement reporting features",
               "completed": false
             }
           ],
           "comments": [
             "Comprehensive class monitoring system:\n- Progress metrics:\n  * Hours completed vs scheduled\n  * Module completion rates\n  * Assessment outcomes\n  * Portfolio submissions\n- Visual indicators:\n  * Progress bars\n  * Status indicators:\n    - On Track (Green)\n    - At Risk (Yellow)\n    - Behind Schedule (Red)\n  * Milestone markers\n- Automated alerts:\n  * Approaching deadlines\n  * Missing submissions\n  * Schedule conflicts\n  * Hours shortfall warnings\n- Reporting features:\n  * Daily progress summaries\n  * Weekly status reports\n  * Monthly completion trends\n  * Custom date range reports\n  * Export capabilities (PDF, Excel)"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "239",
+          "id": "WEC-71",
           "title": "Learner Progression Monitoring",
           "description": "Implement individual learner tracking system with academic progress, status tracking, performance metrics, intervention tracking, and documentation.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "239-1",
+              "id": "WEC-71-1",
               "title": "Implement academic progress tracking",
               "completed": false
             },
             {
-              "id": "239-2",
+              "id": "WEC-71-2",
               "title": "Add status tracking",
               "completed": false
             },
             {
-              "id": "239-3",
+              "id": "WEC-71-3",
               "title": "Create performance metrics",
               "completed": false
             },
             {
-              "id": "239-4",
+              "id": "WEC-71-4",
               "title": "Implement intervention tracking",
               "completed": false
             },
             {
-              "id": "239-5",
+              "id": "WEC-71-5",
               "title": "Add documentation features",
               "completed": false
             }
           ],
           "comments": [
             "Individual learner tracking system:\n- Academic progress:\n  * Module completion status\n  * Assessment scores\n  * Portfolio completion\n  * Practical evaluations\n- Status tracking:\n  * Currently in Class (CIC)\n  * Removed by Employer (RBE)\n  * Drop Out (DRO)\n  * Completed\n- Performance metrics:\n  * Attendance rates\n  * Assignment completion\n  * Test scores\n  * Practical assessments\n- Intervention tracking:\n  * Support provided\n  * Additional resources\n  * Special arrangements\n- Documentation:\n  * Progress reports\n  * Achievement certificates\n  * Competency records\n  * Historical data"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "240",
+          "id": "WEC-72",
           "title": "Attendance Tracking",
           "description": "Implement comprehensive attendance management with daily tracking, reporting features, integration points, automated functions, and management tools.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "240-1",
+              "id": "WEC-72-1",
               "title": "Implement daily tracking",
               "completed": false
             },
             {
-              "id": "240-2",
+              "id": "WEC-72-2",
               "title": "Add reporting features",
               "completed": false
             },
             {
-              "id": "240-3",
+              "id": "WEC-72-3",
               "title": "Create integration points",
               "completed": false
             },
             {
-              "id": "240-4",
+              "id": "WEC-72-4",
               "title": "Implement automated functions",
               "completed": false
             },
             {
-              "id": "240-5",
+              "id": "WEC-72-5",
               "title": "Add management tools",
               "completed": false
             }
           ],
           "comments": [
             "Comprehensive attendance management:\n- Daily tracking:\n  * Present\n  * Absent\n  * Late arrival\n  * Early departure\n  * Excused absence\n- Reporting features:\n  * Individual attendance records\n  * Class attendance summaries\n  * Trend analysis\n  * Absence patterns\n- Integration points:\n  * Class schedules\n  * Exception dates\n  * Public holidays\n  * Special events\n- Automated functions:\n  * Attendance calculations\n  * Warning notifications\n  * Monthly summaries\n  * Required hours tracking\n- Management tools:\n  * Bulk attendance entry\n  * Correction capabilities\n  * Audit trail\n  * Report generation"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "241",
+          "id": "WEC-73",
           "title": "Exception Date Reporting",
           "description": "Implement exception management system with exception types, tracking features, reporting capabilities, and management tools.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "241-1",
+              "id": "WEC-73-1",
               "title": "Implement exception types",
               "completed": false
             },
             {
-              "id": "241-2",
+              "id": "WEC-73-2",
               "title": "Add tracking features",
               "completed": false
             },
             {
-              "id": "241-3",
+              "id": "WEC-73-3",
               "title": "Create reporting capabilities",
               "completed": false
             },
             {
-              "id": "241-4",
+              "id": "WEC-73-4",
               "title": "Implement management tools",
               "completed": false
             }
           ],
           "comments": [
             "Exception management system:\n- Exception types:\n  * Public holidays\n  * Client cancellations\n  * Agent absence\n  * Venue unavailability\n  * Weather-related\n  * Emergency closures\n- Tracking features:\n  * Date and duration\n  * Reason categorization\n  * Impact assessment\n  * Make-up arrangements\n- Reporting capabilities:\n  * Exception summaries\n  * Impact analysis\n  * Schedule adjustments\n  * Hours compensation\n- Management tools:\n  * Calendar integration\n  * Notification system\n  * Rescheduling assistant\n  * Documentation"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "242",
+          "id": "WEC-74",
           "title": "Agent Performance Monitoring",
           "description": "Implement comprehensive agent evaluation system with performance metrics, quality indicators, tracking elements, evaluation components, and reporting features.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "242-1",
+              "id": "WEC-74-1",
               "title": "Implement performance metrics",
               "completed": false
             },
             {
-              "id": "242-2",
+              "id": "WEC-74-2",
               "title": "Add quality indicators",
               "completed": false
             },
             {
-              "id": "242-3",
+              "id": "WEC-74-3",
               "title": "Create tracking elements",
               "completed": false
             },
             {
-              "id": "242-4",
+              "id": "WEC-74-4",
               "title": "Implement evaluation components",
               "completed": false
             },
             {
-              "id": "242-5",
+              "id": "WEC-74-5",
               "title": "Add reporting features",
               "completed": false
             }
           ],
           "comments": [
             "Comprehensive agent evaluation system:\n- Performance metrics:\n  * Class completion rates\n  * Learner success rates\n  * Attendance reliability\n  * Documentation compliance\n  * Client feedback scores\n- Quality indicators:\n  * Teaching effectiveness\n  * Material utilization\n  * Assessment quality\n  * Portfolio management\n  * Administrative compliance\n- Tracking elements:\n  * Classes handled\n  * Hours delivered\n  * Learner progression\n  * Support provided\n  * Professional development\n- Evaluation components:\n  * Regular assessments\n  * Peer reviews\n  * Client feedback\n  * Learner surveys\n  * Self-evaluation\n- Reporting features:\n  * Individual performance reports\n  * Comparative analysis\n  * Trend identification\n  * Development needs\n  * Recognition opportunities"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "243",
+          "id": "WEC-75",
           "title": "Global Reporting Requirements",
           "description": "Implement global reporting requirements including real-time data updates, mobile-responsive interfaces, export functionality, customizable dashboards, security features, and integration capabilities.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "243-1",
+              "id": "WEC-75-1",
               "title": "Implement real-time data updates",
               "completed": false
             },
             {
-              "id": "243-2",
+              "id": "WEC-75-2",
               "title": "Create mobile-responsive interfaces",
               "completed": false
             },
             {
-              "id": "243-3",
+              "id": "WEC-75-3",
               "title": "Add export functionality",
               "completed": false
             },
             {
-              "id": "243-4",
+              "id": "WEC-75-4",
               "title": "Implement customizable dashboards",
               "completed": false
             },
             {
-              "id": "243-5",
+              "id": "WEC-75-5",
               "title": "Add security features",
               "completed": false
             },
             {
-              "id": "243-6",
+              "id": "WEC-75-6",
               "title": "Create integration capabilities",
               "completed": false
             }
           ],
           "comments": [
             "Global Reporting Requirements:\n- Real-time data updates\n- Mobile-responsive interfaces\n- Export functionality:\n  * PDF reports\n  * Excel spreadsheets\n  * CSV data exports\n  * API integration capability\n- Customizable dashboards:\n  * Role-based views\n  * Configurable metrics\n  * Custom report builders\n  * Saved report templates\n- Security features:\n  * Role-based access\n  * Data encryption\n  * Audit logging\n  * Backup systems\n- Integration capabilities:\n  * WordPress core\n  * External systems\n  * Email notifications\n  * SMS alerts"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "245",
+          "id": "WEC-77",
           "title": "Duration Mappings",
           "description": "Implement duration calculation system with core tables and calculations for automatic end date and schedule adjustments.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "245-1",
+              "id": "WEC-77-1",
               "title": "Create duration_templates table",
               "completed": false
             },
             {
-              "id": "245-2",
+              "id": "WEC-77-2",
               "title": "Implement class_schedules table",
               "completed": false
             },
             {
-              "id": "245-3",
+              "id": "WEC-77-3",
               "title": "Add automatic end date calculation based on hours/frequency",
               "completed": false
             },
             {
-              "id": "245-4",
+              "id": "WEC-77-4",
               "title": "Implement progress tracking",
               "completed": false
             },
             {
-              "id": "245-5",
+              "id": "WEC-77-5",
               "title": "Add schedule adjustments",
               "completed": false
             },
             {
-              "id": "245-6",
+              "id": "WEC-77-6",
               "title": "Create exception handling",
               "completed": false
             }
           ],
           "comments": [
             "Duration calculation system:\n- Core tables:\n  * duration_templates\n    - id (PRIMARY KEY)\n    - name (VARCHAR)\n    - total_hours (INT)\n    - default_session_hours (DECIMAL)\n    - frequency_type (ENUM) // daily, weekly, monthly\n    - custom_pattern (JSON)\n  * class_schedules\n    - id (PRIMARY KEY)\n    - class_id (FK)\n    - template_id (FK)\n    - start_date (DATE)\n    - end_date (DATE)\n    - actual_hours (DECIMAL)\n    - remaining_hours (DECIMAL)\n- Calculations:\n  * Automatic end date based on hours/frequency\n  * Progress tracking\n  * Schedule adjustments\n  * Exception handling"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "246",
+          "id": "WEC-78",
           "title": "Event Type Categorization",
           "description": "Implement event management structure with primary tables and event categories for comprehensive event tracking.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "246-1",
+              "id": "WEC-78-1",
               "title": "Create event_categories table",
               "completed": false
             },
             {
-              "id": "246-2",
+              "id": "WEC-78-2",
               "title": "Implement event_types table",
               "completed": false
             },
             {
-              "id": "246-3",
+              "id": "WEC-78-3",
               "title": "Add events table",
               "completed": false
             },
             {
-              "id": "246-4",
+              "id": "WEC-78-4",
               "title": "Define event categories",
               "completed": false
             }
           ],
           "comments": [
             "Event management structure:\n- Primary tables:\n  * event_categories\n    - id (PRIMARY KEY)\n    - name (VARCHAR)\n    - color_code (VARCHAR)\n    - icon_class (VARCHAR)\n    - is_system (BOOLEAN)\n  * event_types\n    - id (PRIMARY KEY)\n    - category_id (FK)\n    - name (VARCHAR)\n    - requires_approval (BOOLEAN)\n    - notification_template (TEXT)\n  * events\n    - id (PRIMARY KEY)\n    - type_id (FK)\n    - class_id (FK)\n    - start_datetime (TIMESTAMP)\n    - end_datetime (TIMESTAMP)\n    - status (ENUM)\n    - metadata (JSON)\n- Event categories:\n  * Class sessions\n  * Examinations\n  * Deliveries\n  * Collections\n  * Absences\n  * Cancellations"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "247",
+          "id": "WEC-79",
           "title": "Learner Status Tracking",
           "description": "Implement learner management structure with core tables and status history tracking for comprehensive learner management.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "247-1",
+              "id": "WEC-79-1",
               "title": "Create learners table",
               "completed": false
             },
             {
-              "id": "247-2",
+              "id": "WEC-79-2",
               "title": "Implement learner_class_enrollments table",
               "completed": false
             },
             {
-              "id": "247-3",
+              "id": "WEC-79-3",
               "title": "Add learner_progress table",
               "completed": false
             },
             {
-              "id": "247-4",
+              "id": "WEC-79-4",
               "title": "Implement status history tracking",
               "completed": false
             }
           ],
           "comments": [
             "Learner management structure:\n- Core tables:\n  * learners\n    - id (PRIMARY KEY)\n    - external_id (VARCHAR)\n    - first_name (VARCHAR)\n    - last_name (VARCHAR)\n    - contact_details (JSON)\n    - current_status (ENUM)\n    - created_at (TIMESTAMP)\n  * learner_class_enrollments\n    - id (PRIMARY KEY)\n    - learner_id (FK)\n    - class_id (FK)\n    - status (ENUM) // CIC, RBE, DRO\n    - enrollment_date (DATE)\n    - completion_date (DATE)\n  * learner_progress\n    - id (PRIMARY KEY)\n    - enrollment_id (FK)\n    - module_id (FK)\n    - status (ENUM)\n    - completion_percentage (DECIMAL)\n    - last_activity (TIMESTAMP)\n- Status history:\n  * Track all status changes\n  * Record reason for changes\n  * Maintain audit trail"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "248",
+          "id": "WEC-80",
           "title": "Agent Assignment Structure",
           "description": "Implement agent management system with primary tables and assignment rules for comprehensive agent management.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "248-1",
+              "id": "WEC-80-1",
               "title": "Create agents table",
               "completed": false
             },
             {
-              "id": "248-2",
+              "id": "WEC-80-2",
               "title": "Implement agent_assignments table",
               "completed": false
             },
             {
-              "id": "248-3",
+              "id": "WEC-80-3",
               "title": "Add agent_availability table",
               "completed": false
             },
             {
-              "id": "248-4",
+              "id": "WEC-80-4",
               "title": "Implement order number generation",
               "completed": false
             },
             {
-              "id": "248-5",
+              "id": "WEC-80-5",
               "title": "Add qualification matching",
               "completed": false
             },
             {
-              "id": "248-6",
+              "id": "WEC-80-6",
               "title": "Create schedule conflict detection",
               "completed": false
             },
             {
-              "id": "248-7",
+              "id": "WEC-80-7",
               "title": "Implement geographic constraints",
               "completed": false
             }
           ],
           "comments": [
             "Agent management system:\n- Primary tables:\n  * agents\n    - id (PRIMARY KEY)\n    - external_id (VARCHAR)\n    - first_name (VARCHAR)\n    - last_name (VARCHAR)\n    - qualifications (JSON)\n    - availability (JSON)\n    - status (ENUM)\n  * agent_assignments\n    - id (PRIMARY KEY)\n    - agent_id (FK)\n    - class_id (FK)\n    - order_number (VARCHAR)\n    - role_type (ENUM) // primary, backup\n    - start_date (DATE)\n    - end_date (DATE)\n  * agent_availability\n    - id (PRIMARY KEY)\n    - agent_id (FK)\n    - date (DATE)\n    - status (ENUM)\n    - reason (VARCHAR)\n- Assignment rules:\n  * Order number generation\n  * Qualification matching\n  * Schedule conflicts\n  * Geographic constraints"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "249",
+          "id": "WEC-81",
           "title": "Global Data Structure Requirements",
           "description": "Implement global data structure requirements including database compatibility, indexing strategy, data integrity, performance optimization, and security measures.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [
             {
-              "id": "249-1",
+              "id": "WEC-81-1",
               "title": "Ensure database compatibility",
               "completed": false
             },
             {
-              "id": "249-2",
+              "id": "WEC-81-2",
               "title": "Implement indexing strategy",
               "completed": false
             },
             {
-              "id": "249-3",
+              "id": "WEC-81-3",
               "title": "Add data integrity constraints",
               "completed": false
             },
             {
-              "id": "249-4",
+              "id": "WEC-81-4",
               "title": "Optimize performance",
               "completed": false
             },
             {
-              "id": "249-5",
+              "id": "WEC-81-5",
               "title": "Implement security measures",
               "completed": false
             }
           ],
           "comments": [
             "Global Data Structure Requirements:\n- Database compatibility:\n  * MySQL 5.7+\n  * PostgreSQL 12+\n- Indexing strategy:\n  * Primary keys\n  * Foreign keys\n  * Common search fields\n  * Composite indexes\n- Data integrity:\n  * Foreign key constraints\n  * Unique constraints\n  * Check constraints\n  * Default values\n- Performance optimization:\n  * Proper data types\n  * Normalized structure\n  * Efficient queries\n  * Caching strategy\n- Security measures:\n  * Encryption at rest\n  * Access control\n  * Audit logging\n  * Backup procedures"
-          ],
-          "categoryName": "Backlog"
+          ]
         },
         {
-          "id": "252",
+          "id": "WEC-84",
           "title": "Schedule Validation",
           "description": "Implement schedule validation to ensure valid recurring patterns and schedule integrity.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "253",
+          "id": "WEC-85",
           "title": "Learner Assignment Validation",
           "description": "Implement learner assignment validation to ensure proper learner-class relationships and prevent errors.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         },
         {
-          "id": "254",
+          "id": "WEC-86",
           "title": "Agent Availability Checking",
           "description": "Implement agent availability checking to prevent scheduling conflicts and ensure agent availability.",
           "priority": "None",
           "status": "Backlog",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Backlog"
+          "comments": []
         }
       ]
     },
@@ -1851,17 +1802,16 @@
       "emoji": "📝",
       "tasks": [
         {
-          "id": "194",
+          "id": "WEC-25",
           "title": "Drag‑and‑Drop Exception Date Management",
           "description": "Allow users to add exception dates by clicking directly on the calendar rather than using the full form.",
           "priority": "None",
           "status": "Todo",
           "subtasks": [],
-          "comments": [],
-          "categoryName": "Todo"
+          "comments": []
         },
         {
-          "id": "200",
+          "id": "WEC-31",
           "title": "Stepped Workflow for Classes",
           "description": "Instead of displaying the whole (full) form, break it into steps for better UX.",
           "priority": "None",
@@ -1869,43 +1819,42 @@
           "subtasks": [],
           "comments": [
             "Cancelled as we will not be implementing a stepped workflow"
-          ],
-          "categoryName": "Todo"
+          ]
         },
         {
-          "id": "211",
+          "id": "WEC-43",
           "title": "Color Profile Update Clarification and Implementation",
           "description": "Client requested color profile updates with some specifications that need clarification before full implementation.",
           "priority": "None",
           "status": "Todo",
           "subtasks": [
             {
-              "id": "211-1",
+              "id": "WEC-43-1",
               "title": "Get clarification on design requirements",
               "completed": false
             },
             {
-              "id": "211-2",
+              "id": "WEC-43-2",
               "title": "Implement base typography changes",
               "completed": false
             },
             {
-              "id": "211-3",
+              "id": "WEC-43-3",
               "title": "Update form styling",
               "completed": false
             },
             {
-              "id": "211-4",
+              "id": "WEC-43-4",
               "title": "Implement button styling",
               "completed": false
             },
             {
-              "id": "211-5",
+              "id": "WEC-43-5",
               "title": "Update heading margins",
               "completed": false
             },
             {
-              "id": "211-6",
+              "id": "WEC-43-6",
               "title": "Implement icon color system",
               "completed": false
             }
@@ -1914,9 +1863,10 @@
             "includes/css/ydcoza-styles.css"
           ],
           "comments": [
-            "{\n  \"text\": \"Questions for Client Clarification:\\n\\n1. Top Bar & Sidebar:\\n- When specifying 'No background', should it be transparent or white?\\n- Should this apply to both mobile and desktop views?\\n\\n2. Alert Background:\\n- Should #44546f apply to all alert types or specific ones?\\n- What should the text color be for these alerts?\\n\\n3. Form Labels:\\n- When specifying 'background: none', are we removing an existing background?\\n- What size/color should the bold text be?\\n\\n4. Button States:\\n- What color should the hover outline be?\\n- Should text color change on hover?\\n- What should the border-radius be?\\n\\n5. Main Button:\\n- What should be the text color?\\n- What color should the hover outline effect be?\\n- Is this style only for section-bottom placement?\\n\\n6. Icons:\\n- Is #94c748 only for dark background icons?\\n- What color for light background icons?\\n- Does this apply to all icons or specific sets?\\n\\nProposed CSS Implementation:\\n\\n```css\\n:root {\\n    --accent: #1d7afc;\\n    --main-action: #216e4e;\\n    --icon-dark-bg: #94c748;\\n    --form-border: #b3b9c4;\\n    --alert-bg: #44546f;\\n}\\n\\nbody {\\n    font-family: 'Montserrat', sans-serif;\\n}\\n\\n.ydcoza-compact-form input[type=email],\\n.ydcoza-compact-form input[type=number],\\n.ydcoza-compact-form input[type=password],\\n.ydcoza-compact-form input[type=search],\\n.ydcoza-compact-form input[type=tel],\\n.ydcoza-compact-form input[type=text],\\n.ydcoza-compact-form input[type=url],\\n.ydcoza-compact-form select,\\n.ydcoza-compact-form textarea {\\n    border: 1px solid var(--form-border);\\n    border-radius: 2px;\\n    padding: 5px 10px;\\n}\\n\\n.ydcoza-compact-form .form-label {\\n    background: none;\\n    font-weight: bold;\\n}\\n\\n.btn-primary {\\n    background-color: var(--accent);\\n    padding: 0.5em 1.5em;\\n}\\n\\n.btn-main-action {\\n    background-color: var(--main-action);\\n    padding: 0.5em 1.5em;\\n}\\n\\nh5 {\\n    margin-top: 2em;\\n}\\n\\n.dark-bg .icon {\\n    color: var(--icon-dark-bg);\\n}\\n```\"\n}"
-          ],
-          "categoryName": "Todo"
+            {
+              "text": "Questions for Client Clarification:\n\n1. Top Bar & Sidebar:\n- When specifying 'No background', should it be transparent or white?\n- Should this apply to both mobile and desktop views?\n\n2. Alert Background:\n- Should #44546f apply to all alert types or specific ones?\n- What should the text color be for these alerts?\n\n3. Form Labels:\n- When specifying 'background: none', are we removing an existing background?\n- What size/color should the bold text be?\n\n4. Button States:\n- What color should the hover outline be?\n- Should text color change on hover?\n- What should the border-radius be?\n\n5. Main Button:\n- What should be the text color?\n- What color should the hover outline effect be?\n- Is this style only for section-bottom placement?\n\n6. Icons:\n- Is #94c748 only for dark background icons?\n- What color for light background icons?\n- Does this apply to all icons or specific sets?\n\nProposed CSS Implementation:\n\n```css\n:root {\n    --accent: #1d7afc;\n    --main-action: #216e4e;\n    --icon-dark-bg: #94c748;\n    --form-border: #b3b9c4;\n    --alert-bg: #44546f;\n}\n\nbody {\n    font-family: 'Montserrat', sans-serif;\n}\n\n.ydcoza-compact-form input[type=email],\n.ydcoza-compact-form input[type=number],\n.ydcoza-compact-form input[type=password],\n.ydcoza-compact-form input[type=search],\n.ydcoza-compact-form input[type=tel],\n.ydcoza-compact-form input[type=text],\n.ydcoza-compact-form input[type=url],\n.ydcoza-compact-form select,\n.ydcoza-compact-form textarea {\n    border: 1px solid var(--form-border);\n    border-radius: 2px;\n    padding: 5px 10px;\n}\n\n.ydcoza-compact-form .form-label {\n    background: none;\n    font-weight: bold;\n}\n\n.btn-primary {\n    background-color: var(--accent);\n    padding: 0.5em 1.5em;\n}\n\n.btn-main-action {\n    background-color: var(--main-action);\n    padding: 0.5em 1.5em;\n}\n\nh5 {\n    margin-top: 2em;\n}\n\n.dark-bg .icon {\n    color: var(--icon-dark-bg);\n}\n```"
+            }
+          ]
         }
       ]
     },
@@ -1925,24 +1875,24 @@
       "emoji": "🚧",
       "tasks": [
         {
-          "id": "207",
+          "id": "WEC-39",
           "title": "Update Color Profile",
           "description": "Update the color scheme to be more vibrant as the client says the current colors are too faint. Implement a warmer color palette with higher contrast and orange accent color.",
           "priority": "None",
           "status": "In Progress",
           "subtasks": [
             {
-              "id": "207-1",
+              "id": "WEC-39-1",
               "title": "Update CSS root variables with new color values",
               "completed": false
             },
             {
-              "id": "207-2",
+              "id": "WEC-39-2",
               "title": "Update UI elements to use new color scheme",
               "completed": false
             },
             {
-              "id": "207-3",
+              "id": "WEC-39-3",
               "title": "Update calendar styling with new colors",
               "completed": false
             }
@@ -1951,9 +1901,10 @@
             "includes/css/ydcoza-styles.css"
           ],
           "comments": [
-            "{\n  \"text\": \"Questions for Client Clarification:\\n\\n1. Top Bar & Sidebar:\\n- When specifying 'No background', should it be transparent or white?\\n- Should this apply to both mobile and desktop views?\\n\\n2. Alert Background:\\n- Should #44546f apply to all alert types or specific ones?\\n- What should the text color be for these alerts?\\n\\n3. Form Labels:\\n- When specifying 'background: none', are we removing an existing background?\\n- What size/color should the bold text be?\\n\\n4. Button States:\\n- What color should the hover outline be?\\n- Should text color change on hover?\\n- What should the border-radius be?\\n\\n5. Main Button:\\n- What should be the text color?\\n- What color should the hover outline effect be?\\n- Is this style only for section-bottom placement?\\n\\n6. Icons:\\n- Is #94c748 only for dark background icons?\\n- What color for light background icons?\\n- Does this apply to all icons or specific sets?\\n\\nProposed CSS Implementation:\\n\\n```css\\n:root {\\n    --accent: #1d7afc;\\n    --main-action: #216e4e;\\n    --icon-dark-bg: #94c748;\\n    --form-border: #b3b9c4;\\n    --alert-bg: #44546f;\\n}\\n\\nbody {\\n    font-family: 'Montserrat', sans-serif;\\n}\\n\\n.ydcoza-compact-form input[type=email],\\n.ydcoza-compact-form input[type=number],\\n.ydcoza-compact-form input[type=password],\\n.ydcoza-compact-form input[type=search],\\n.ydcoza-compact-form input[type=tel],\\n.ydcoza-compact-form input[type=text],\\n.ydcoza-compact-form input[type=url],\\n.ydcoza-compact-form select,\\n.ydcoza-compact-form textarea {\\n    border: 1px solid var(--form-border);\\n    border-radius: 2px;\\n    padding: 5px 10px;\\n}\\n\\n.ydcoza-compact-form .form-label {\\n    background: none;\\n    font-weight: bold;\\n}\\n\\n.btn-primary {\\n    background-color: var(--accent);\\n    padding: 0.5em 1.5em;\\n}\\n\\n.btn-main-action {\\n    background-color: var(--main-action);\\n    padding: 0.5em 1.5em;\\n}\\n\\nh5 {\\n    margin-top: 2em;\\n}\\n\\n.dark-bg .icon {\\n    color: var(--icon-dark-bg);\\n}\\n```\"\n}"
-          ],
-          "categoryName": "In Progress"
+            {
+              "text": "Questions for Client Clarification:\n\n1. Top Bar & Sidebar:\n- When specifying 'No background', should it be transparent or white?\n- Should this apply to both mobile and desktop views?\n\n2. Alert Background:\n- Should #44546f apply to all alert types or specific ones?\n- What should the text color be for these alerts?\n\n3. Form Labels:\n- When specifying 'background: none', are we removing an existing background?\n- What size/color should the bold text be?\n\n4. Button States:\n- What color should the hover outline be?\n- Should text color change on hover?\n- What should the border-radius be?\n\n5. Main Button:\n- What should be the text color?\n- What color should the hover outline effect be?\n- Is this style only for section-bottom placement?\n\n6. Icons:\n- Is #94c748 only for dark background icons?\n- What color for light background icons?\n- Does this apply to all icons or specific sets?\n\nProposed CSS Implementation:\n\n```css\n:root {\n    --accent: #1d7afc;\n    --main-action: #216e4e;\n    --icon-dark-bg: #94c748;\n    --form-border: #b3b9c4;\n    --alert-bg: #44546f;\n}\n\nbody {\n    font-family: 'Montserrat', sans-serif;\n}\n\n.ydcoza-compact-form input[type=email],\n.ydcoza-compact-form input[type=number],\n.ydcoza-compact-form input[type=password],\n.ydcoza-compact-form input[type=search],\n.ydcoza-compact-form input[type=tel],\n.ydcoza-compact-form input[type=text],\n.ydcoza-compact-form input[type=url],\n.ydcoza-compact-form select,\n.ydcoza-compact-form textarea {\n    border: 1px solid var(--form-border);\n    border-radius: 2px;\n    padding: 5px 10px;\n}\n\n.ydcoza-compact-form .form-label {\n    background: none;\n    font-weight: bold;\n}\n\n.btn-primary {\n    background-color: var(--accent);\n    padding: 0.5em 1.5em;\n}\n\n.btn-main-action {\n    background-color: var(--main-action);\n    padding: 0.5em 1.5em;\n}\n\nh5 {\n    margin-top: 2em;\n}\n\n.dark-bg .icon {\n    color: var(--icon-dark-bg);\n}\n```"
+            }
+          ]
         }
       ]
     },
@@ -1967,7 +1918,7 @@
       "emoji": "✅",
       "tasks": [
         {
-          "id": "210",
+          "id": "WEC-42",
           "title": "CSS Variable Standardization",
           "description": "Updated the stylesheet to use CSS variables consistently throughout the codebase, replacing hardcoded color values with the root variables.",
           "priority": "None",
@@ -1978,11 +1929,10 @@
           ],
           "comments": [
             "Replaced hardcoded color values with CSS variables to improve consistency and maintainability. This makes theme customization much easier in the future."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "209",
+          "id": "WEC-41",
           "title": "Update CSS Loading Order",
           "description": "Modified the CSS enqueue order to ensure that ydcoza-styles.css loads after the GeneratePress parent theme styles for proper CSS cascade.",
           "priority": "None",
@@ -1993,11 +1943,10 @@
           ],
           "comments": [
             "Updated wp_enqueue_style to include 'generate-style' as a dependency to ensure proper CSS cascade order."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "208",
+          "id": "WEC-40",
           "title": "CSS File Consolidation",
           "description": "Merged public/css/ydcoza-styles.css into includes/css/ydcoza-styles.css to consolidate all styles into a single file and updated ClassController.php to remove the duplicate style reference.",
           "priority": "None",
@@ -2009,11 +1958,10 @@
           ],
           "comments": [
             "Consolidated all CSS styles into a single file to improve maintainability and reduce redundancy. Added clear section comments to indicate the source of merged styles."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "197",
+          "id": "WEC-28",
           "title": "Calendar Export Integration",
           "description": "Add functionality to export class schedules to external calendar applications. Proposed Solution: Implement iCalendar (.ics) export for bulk schedule export.",
           "priority": "None",
@@ -2021,23 +1969,22 @@
           "completed": true,
           "subtasks": [
             {
-              "id": "197-1",
+              "id": "WEC-28-1",
               "title": "Move the export button into \"View Calendar\" section",
               "completed": true
             },
             {
-              "id": "197-2",
+              "id": "WEC-28-2",
               "title": "Relocate calendar below \"Class Date History\"",
               "completed": true
             }
           ],
           "comments": [
             "Implemented calendar export functionality with the export button in the View Calendar section and relocated the calendar below Class Date History for better user experience."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "205",
+          "id": "WEC-37",
           "title": "Fix Learner Selection Popup Issue",
           "description": "Fixed issue where \"Please select at least one learner to add\" popup appears even when learners are already selected and loaded in the background.",
           "priority": "None",
@@ -2045,11 +1992,10 @@
           "completed": true,
           "comments": [
             "Fixed by commenting out the validation checks that were triggering the popup unnecessarily."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "204",
+          "id": "WEC-36",
           "title": "Fix jQuery error in class-capture.js",
           "description": "Fixed error: `Uncaught TypeError: $ is not a function at showCustomAlert`",
           "priority": "None",
@@ -2058,11 +2004,10 @@
           "comments": [
             "The showCustomAlert function was using $ directly outside of the jQuery IIFE",
             "Modified the function to use jQuery instead of $ in the global scope"
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "203",
+          "id": "WEC-35",
           "title": "Fix validation error when selecting learners for exams",
           "description": "When selecting \"Learners Taking Exam\", the system shows a validation error message even though a learner is selected.",
           "priority": "None",
@@ -2070,11 +2015,10 @@
           "completed": true,
           "comments": [
             "Fixed by improving the validation logic to properly check for selected exam learners and enhancing the UI state management."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "202",
+          "id": "WEC-33",
           "title": "Class Types & Durations Integration",
           "description": "Rework how we integrate Class Types & Durations in the system. Implemented a more flexible and maintainable approach for managing class types and their associated durations, ensuring proper calculation of schedule hours and end dates.",
           "priority": "None",
@@ -2082,11 +2026,10 @@
           "completed": true,
           "comments": [
             "Completed by creating ClassTypesController and implementing two-level selection system with automatic duration calculation."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "201",
+          "id": "WEC-32",
           "title": "Verification issue",
           "description": "Under Class Learners, \"Select Learners\" doesn't register selections.",
           "priority": "None",
@@ -2094,11 +2037,10 @@
           "completed": true,
           "comments": [
             "Fixed by correcting the learner-selection logic in `class-learners.php`."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "196",
+          "id": "WEC-27",
           "title": "Class Conflict Detection",
           "description": "Detect and warn about potential conflicts when scheduling classes.",
           "priority": "None",
@@ -2106,11 +2048,10 @@
           "completed": true,
           "comments": [
             "Fixed by adding conflict‑detection logic to check overlapping schedules."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "190",
+          "id": "WEC-21",
           "title": "Verification issue",
           "description": "\"Select Learners\" still shows no response.",
           "priority": "None",
@@ -2118,41 +2059,37 @@
           "completed": true,
           "comments": [
             "Fixed by ensuring the update function fires correctly."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "186",
+          "id": "WEC-17",
           "title": "Improved Calendar Visualization",
           "description": "Enhance calendar visuals with distinct styling and hover states.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "188",
+          "id": "WEC-19",
           "title": "Advanced Validation Feedback",
           "description": "Provide more detailed, user‑friendly validation messages.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "180",
+          "id": "WEC-11",
           "title": "Exception Dates Recalculation",
           "description": "Recalculate recurring schedules when exception dates change.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "193",
+          "id": "WEC-24",
           "title": "View attachments in Augment",
           "description": "Need to view Linear attachments from Augment, not WP.",
           "priority": "None",
@@ -2160,78 +2097,70 @@
           "completed": true,
           "comments": [
             "Fixed by integrating Augment tools for attachment preview."
-          ],
-          "categoryName": "Done"
+          ]
         },
         {
-          "id": "192",
+          "id": "WEC-23",
           "title": "Page SC",
           "description": "Updated summary of changes in the Page SC component.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "189",
+          "id": "WEC-20",
           "title": "Verification issue",
           "description": "Update function wasn't firing in Class Learners.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "184",
+          "id": "WEC-15",
           "title": "Form Validation on Submit",
           "description": "Fixed validation logic to correctly recognize completed fields.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "183",
+          "id": "WEC-14",
           "title": "Calendar Text Readability",
           "description": "Ensured white text on events to improve contrast.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "182",
+          "id": "WEC-13",
           "title": "Exam Learners Selection Issues",
           "description": "Fixed exam learner count logic to clear validation errors.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "181",
+          "id": "WEC-12",
           "title": "Class Learners Selection Issues",
           "description": "Added hidden fields and updated logic to clear stale errors.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         },
         {
-          "id": "179",
+          "id": "WEC-10",
           "title": "Day of Week Restriction",
           "description": "Implemented day‑of‑week consistency checks.",
           "priority": "None",
           "status": "Done",
           "completed": true,
-          "comments": [],
-          "categoryName": "Done"
+          "comments": []
         }
       ]
     },
@@ -2240,54 +2169,49 @@
       "emoji": "❌",
       "tasks": [
         {
-          "id": "185",
+          "id": "WEC-16",
           "title": "Calendar Initialization in Tabs",
           "description": "Calendar may not initialize properly when switching tabs.",
           "priority": "None",
           "status": "Cancelled",
           "completed": false,
-          "comments": [],
-          "categoryName": "Cancelled"
+          "comments": []
         },
         {
-          "id": "191",
+          "id": "WEC-22",
           "title": "Calendar Initialization in Tabs",
           "description": "Calendar doesn't initialize correctly when embedded.",
           "priority": "None",
           "status": "Cancelled",
           "completed": false,
-          "comments": [],
-          "categoryName": "Cancelled"
+          "comments": []
         },
         {
-          "id": "195",
+          "id": "WEC-26",
           "title": "Recurring Schedule Templates",
           "description": "Allow saving and reusing recurring schedule templates.",
           "priority": "None",
           "status": "Cancelled",
           "completed": false,
-          "comments": [],
-          "categoryName": "Cancelled"
+          "comments": []
         },
         {
-          "id": "198",
+          "id": "WEC-29",
           "title": "Multi‑View Calendar Options",
           "description": "Add day/week/month view options to calendar.",
           "priority": "None",
           "status": "Cancelled",
           "completed": false,
-          "comments": [],
-          "categoryName": "Cancelled"
+          "comments": []
         },
         {
-          "id": "199",
+          "id": "WEC-30",
           "title": "Bulk Class Operations",
           "description": "Perform operations on multiple classes at once.",
           "priority": "None",
           "status": "Cancelled",
           "completed": false,
-          "comments": [],
-          "categoryName": "Cancelled"
+          "comments": []
         }
       ]
     }
@@ -2299,7 +2223,7 @@
         "description": "Targets this file (`project-planning.md`)"
       },
       {
-        "code": "(TK)(XX)",
+        "code": "(TK)(WEC-XX)",
         "description": "Targets one or more specific tasks"
       }
     ],
@@ -2312,35 +2236,35 @@
     "taskOperations": [
       {
         "operation": "Move status",
-        "code": "(TK)(XX) status=Ideas|Backlog|Todo|InProgress|InReview|Done|Cancelled"
+        "code": "(TK)(WEC-XX) status=Ideas|Backlog|Todo|InProgress|InReview|Done|Cancelled"
       },
       {
         "operation": "Set priority",
-        "code": "(TK)(XX) priority=Urgent|High|Medium|Low|None"
+        "code": "(TK)(WEC-XX) priority=Urgent|High|Medium|Low|None"
       },
       {
         "operation": "Labels",
-        "code": "(TK)(XX) labels=Bug,Feature,UX"
+        "code": "(TK)(WEC-XX) labels=Bug,Feature,UX"
       },
       {
         "operation": "Comment",
-        "code": "(TK)(XX) comment=\"Your comment here\""
+        "code": "(TK)(WEC-XX) comment=\"Your comment here\""
       },
       {
         "operation": "Add subtask",
-        "code": "(TK)(XX) add-subtask=\"Describe subtask\""
+        "code": "(TK)(WEC-XX) add-subtask=\"Describe subtask\""
       },
       {
         "operation": "Screenshot",
-        "code": "(TK)(XX) screenshot=\"https://…/image.png\""
+        "code": "(TK)(WEC-XX) screenshot=\"https://…/image.png\""
       },
       {
         "operation": "New task",
-        "code": "(TK)(new XX) title=\"…\" status=Ideas priority=Medium labels=…"
+        "code": "(TK)(new WEC-YY) title=\"…\" status=Ideas priority=Medium labels=…"
       },
       {
         "operation": "Delete",
-        "code": "(TK)(XX) delete"
+        "code": "(TK)(WEC-XX) delete"
       },
       {
         "operation": "Overview",

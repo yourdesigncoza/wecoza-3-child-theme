@@ -4,7 +4,7 @@ This directory contains utility scripts for the WeCoza project.
 
 ## Import Tasks to GitHub
 
-The `import-tasks-to-github.js` script imports tasks from the `task-viewer.html` file to GitHub Issues.
+The `import-tasks-to-github.js` script imports tasks from the `task-viewer.html` file to GitHub Issues in sequential order based on their WEC-XX ID numbers.
 
 ### Prerequisites
 
@@ -64,10 +64,11 @@ You can configure the script using environment variables:
 ### What It Does
 
 1. Extracts task data from `project-planning/task-viewer.html`
-2. Creates GitHub issues for each task
-3. Formats subtasks, files, and comments as Markdown
-4. Adds appropriate labels based on priority and status
-5. Skips tasks that are already completed or cancelled
+2. Sorts tasks by their WEC-XX ID numbers to ensure sequential ordering
+3. Creates GitHub issues for each task in numerical order (WEC-44 before WEC-45, etc.)
+4. Formats subtasks, files, and comments as Markdown
+5. Adds appropriate labels based on priority and status
+6. Skips tasks that are already completed or cancelled
 
 ### Troubleshooting
 
