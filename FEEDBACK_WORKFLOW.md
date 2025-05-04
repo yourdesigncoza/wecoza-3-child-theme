@@ -221,4 +221,4 @@ The packaged theme will be named `wecoza-3-child-theme-TIMESTAMP.zip` and will b
 If you have any questions about the feedback process or theme development, please contact:
 
 - John - laudes.michael@gmail.com - For technical questions
-- Your Design Co - info@yourdesign.co.za - For project management
+- Your Design Co - support@yourdesign.co.za - For project management
