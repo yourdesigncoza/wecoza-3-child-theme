@@ -482,16 +482,16 @@ function getClassTypeHours(classTypeId) {
         }
 
         calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            initialView: 'multiMonthYear', // Set multiMonthYear as default view
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek'
+                right: 'multiMonthYear,dayGridMonth'
             },
             buttonText: {
                 today: 'Today',
                 month: 'Month',
-                week: 'Week'
+                year: 'Year'
             },
             height: 500,
             allDaySlot: false,

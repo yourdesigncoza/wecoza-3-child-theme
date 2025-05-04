@@ -38,9 +38,11 @@ class ClassController {
      */
     public function enqueueAssets() {
         // Always enqueue these scripts to ensure they're available
-        // FullCalendar CSS and JS
-        \wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css');
-        \wp_enqueue_script('fullcalendar-js', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js', ['jquery'], null, true);
+        // FullCalendar CSS and JS - Using FullCalendar 6.x with multiMonthYear view support
+        \wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css');
+
+        // Use the full bundle that includes all plugins (FullCalendar 6.x)
+        \wp_enqueue_script('fullcalendar-bundle', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js', ['jquery'], null, true);
 
         // Bootstrap Icons
         \wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
@@ -48,9 +50,9 @@ class ClassController {
         // Note: Custom CSS is now loaded globally from includes/css/ydcoza-styles.css
 
         // Custom scripts
-        \wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery', 'fullcalendar-bundle'], WECOZA_PLUGIN_VERSION, true);
         \wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
-        \wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery', 'fullcalendar-js'], WECOZA_PLUGIN_VERSION, true);
+        \wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery', 'fullcalendar-bundle'], WECOZA_PLUGIN_VERSION, true);
         \wp_enqueue_script('wecoza-calendar-export-js', WECOZA_CHILD_URL . '/public/js/calendar-export.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
         \wp_enqueue_script('wecoza-class-types-js', WECOZA_CHILD_URL . '/assets/js/class-types.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
 

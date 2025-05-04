@@ -226,19 +226,19 @@ function showCustomAlert(message) {
         $('#eventStartTime').html(timeOptions);
         $('#eventEndTime').html(timeOptions);
 
-        // Initialize FullCalendar
+        // Initialize FullCalendar with FullCalendar 6.x
         const calendarEl = document.getElementById('class-calendar');
         calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            initialView: 'multiMonthYear', // Set multiMonthYear as default view
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: 'multiMonthYear,dayGridMonth,timeGridDay'
             },
             buttonText: {
                 today: 'Today',
                 month: 'Month',
-                week: 'Week',
+                year: 'Year',
                 day: 'Day'
             },
             height: 500,

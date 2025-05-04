@@ -448,6 +448,56 @@ details {
 }
 
 /* ##############################
+### Calendar Styles
+############################## */
+/* FullCalendar multiMonthYear view styles */
+.fc-multiMonthYear-view .fc-multimonth-title {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: var(--accent);
+    padding: 8px 0;
+}
+
+.fc-multiMonthYear-view .fc-daygrid-day-number {
+    font-size: 0.9em;
+}
+
+.fc-multiMonthYear-view .fc-daygrid-day.fc-day-today {
+    background-color: var(--base);
+}
+
+.fc-multiMonthYear-view .fc-event {
+    border-radius: 2px;
+    font-size: 0.8em;
+    padding: 2px;
+}
+
+.fc-multiMonthYear-view .fc-event-title {
+    font-weight: normal;
+}
+
+.fc-multiMonthYear-view .fc-toolbar-title {
+    font-size: 1.5em;
+    color: var(--accent);
+}
+
+.fc-multiMonthYear-view .fc-button-primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.fc-multiMonthYear-view .fc-button-primary:hover {
+    background-color: var(--accent-dark, #5a4aa6);
+    border-color: var(--accent-dark, #5a4aa6);
+}
+
+.fc-multiMonthYear-view .fc-button-primary:not(:disabled).fc-button-active,
+.fc-multiMonthYear-view .fc-button-primary:not(:disabled):active {
+    background-color: var(--accent-dark, #5a4aa6);
+    border-color: var(--accent-dark, #5a4aa6);
+}
+
+/* ##############################
 ### Misc
 ############################## */
 .clearfix::after {
