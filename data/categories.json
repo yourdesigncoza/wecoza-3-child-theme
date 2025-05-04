@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Ideas",
+    "emoji": "💡",
+    "githubLabels": [
+      "idea",
+      "enhancement"
+    ]
+  },
+  {
+    "name": "Backlog",
+    "emoji": "📥",
+    "githubLabels": [
+      "backlog"
+    ]
+  },
+  {
+    "name": "Todo",
+    "emoji": "📝",
+    "githubLabels": []
+  },
+  {
+    "name": "In Progress",
+    "emoji": "🚧",
+    "githubLabels": [
+      "in progress",
+      "wip"
+    ]
+  },
+  {
+    "name": "In Review",
+    "emoji": "🔍",
+    "githubLabels": [
+      "in review",
+      "review"
+    ]
+  },
+  {
+    "name": "Done",
+    "emoji": "✅",
+    "githubState": "closed",
+    "excludeLabels": [
+      "cancelled",
+      "wontfix"
+    ]
+  },
+  {
+    "name": "Cancelled",
+    "emoji": "❌",
+    "githubState": "closed",
+    "githubLabels": [
+      "cancelled",
+      "wontfix"
+    ]
+  }
+]
