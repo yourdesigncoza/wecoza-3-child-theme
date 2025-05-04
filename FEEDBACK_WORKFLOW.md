@@ -20,16 +20,16 @@ We use GitHub's built-in features to manage the feedback process:
 All tasks are tracked as GitHub Issues. When creating a new task:
 
 1. Use the appropriate issue template (Feature, Bug, etc.)
-2. Include the WEC-XX ID in the title
+2. Use the GitHub issue number as the task ID (e.g., #123)
 3. Add relevant labels (priority, type)
 4. Assign to the responsible developer
 
 #### 2. Working on Tasks
 
-1. Create a branch for the task: `feature/WEC-XX-short-description`
+1. Create a branch for the task: `feature/issue-123-short-description`
 2. Make your changes
 3. Commit regularly with descriptive messages
-4. Reference the issue in commits: `WEC-XX: Add feature`
+4. Reference the issue in commits: `#123: Add feature`
 
 #### 3. Requesting Feedback
 
@@ -123,9 +123,13 @@ Our project board has the following columns:
 4. **Feedback Requested** - Tasks awaiting client feedback
 5. **Done** - Tasks completed and approved
 
-## Importing Existing Tasks
+## GitHub Issue Management
 
-To import tasks from the task-viewer.html file:
+We have several scripts to manage GitHub issues and synchronize them with our local task tracking system.
+
+### Creating GitHub Issues
+
+To create GitHub issues from tasks in the task-viewer.html file:
 
 1. Install Node.js if not already installed
 2. Install dependencies:
@@ -133,36 +137,88 @@ To import tasks from the task-viewer.html file:
    cd scripts
    npm install
    ```
-3. Run the import script in dry run mode first:
+3. Run the create-issues script in dry run mode first:
    ```bash
    export GITHUB_TOKEN=your_token_here
-   npm run import-tasks:dry
+   npm run create-issues:dry
    ```
 4. When you're ready to create the actual issues:
    ```bash
-   npm run import-tasks
+   npm run create-issues
    ```
 
-### Troubleshooting Task Import
+### Synchronizing GitHub Issues
 
-If you encounter issues with the import process:
+To synchronize tasks between task-viewer.html and GitHub issues:
+
+1. Run the sync script in dry run mode first:
+   ```bash
+   export GITHUB_TOKEN=your_token_here
+   npm run sync-issues:dry
+   ```
+2. When you're ready to synchronize:
+   ```bash
+   npm run sync-issues
+   ```
+3. For one-way synchronization:
+   ```bash
+   # Only create GitHub issues for local tasks
+   npm run sync-issues:local-to-github
+
+   # Only create local tasks for GitHub issues
+   npm run sync-issues:github-to-local
+   ```
+
+### Cleaning Up GitHub Issues
+
+To mark GitHub issues as deprecated:
+
+1. Run the delete script in dry run mode first:
+   ```bash
+   export GITHUB_TOKEN=your_token_here
+   npm run delete-issues:dry
+   ```
+2. When you're ready to mark issues as deprecated:
+   ```bash
+   npm run delete-issues
+   ```
+
+### Troubleshooting GitHub Scripts
+
+If you encounter issues with any of the GitHub scripts:
 
 1. **Debug Mode**: Run with debugging enabled
    ```bash
-   npm run import-tasks:debug-dry
+   npm run create-issues:debug-dry
+   npm run sync-issues:debug-dry
    ```
 
-2. **Object Object in Comments**: If you see `[object Object]` in comments, the script encountered a JavaScript object it couldn't properly format. Run with debug mode to see details.
+2. **Rate Limiting**: GitHub API has rate limits. If you hit them, wait a while before trying again.
 
-3. **Rate Limiting**: GitHub API has rate limits. If you hit them, wait a while before trying again.
+3. **Authentication Errors**: Ensure your token has the correct permissions (needs `repo` scope).
 
-4. **Authentication Errors**: Ensure your token has the correct permissions (needs `repo` scope).
+See `scripts/README.md` for more detailed information about all GitHub scripts.
 
-See `scripts/README.md` for more detailed information about the import script.
+## Theme Packaging
+
+To package the theme for WordPress upload:
+
+1. Run the packaging script:
+   ```bash
+   ./package-theme.sh
+   ```
+2. The script will:
+   - Check for required WordPress theme files
+   - Create a temporary directory with the necessary files
+   - Remove development files and directories
+   - Create a zip archive ready for upload
+   - Display a summary of the packaged files
+
+The packaged theme will be named `wecoza-3-child-theme-TIMESTAMP.zip` and will be ready for upload to WordPress.
 
 ## Need Help?
 
-If you have any questions about the feedback process, please contact:
+If you have any questions about the feedback process or theme development, please contact:
 
-- [Developer Name] - [Email] - For technical questions
-- [Project Manager] - [Email] - For process questions
+- John - laudes.michael@gmail.com - For technical questions
+- Your Design Co - info@yourdesign.co.za - For project management
