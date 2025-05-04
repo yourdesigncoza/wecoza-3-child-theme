@@ -34,3 +34,6 @@ assets/dist/
 
 # Package files
 *.zip
+
+# Other files
+dictate.txt
