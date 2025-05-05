@@ -177,6 +177,52 @@
         // Update end date when start date or class type changes
         $startDate.add($classType).on('change', function() {
             console.log('Start date or class type changed, recalculating end date');
+
+            // If start date changed, validate against class original start date
+            if ($(this).attr('id') === 'schedule_start_date') {
+                const startDate = $(this).val();
+                const originalStartDate = $('#class_start_date').val();
+
+                // Validate schedule start date against original start date
+                if (startDate && originalStartDate && startDate < originalStartDate) {
+                    // Show validation error
+                    $(this).addClass('is-invalid');
+                    $(this).siblings('.invalid-feedback').text('Start date cannot be before the class original start date');
+
+                    // Add a custom data attribute to track validation state
+                    $(this).attr('data-valid', 'false');
+                } else {
+                    // Clear validation error
+                    $(this).removeClass('is-invalid');
+                    $(this).siblings('.invalid-feedback').text('Please select a start date.');
+
+                    // Update data attribute
+                    $(this).attr('data-valid', 'true');
+
+                    // Check all exception date rows
+                    $('#exception-dates-container .exception-date-row:not(.d-none)').each(function() {
+                        const $row = $(this);
+                        const exceptionDate = $row.find('input[name="exception_dates[]"]').val();
+
+                        if (exceptionDate && startDate && exceptionDate < startDate) {
+                            // Show validation error
+                            $row.find('input[name="exception_dates[]"]').addClass('is-invalid');
+                            $row.find('.invalid-feedback').text('Exception date cannot be before the class start date');
+
+                            // Add a custom data attribute to track validation state
+                            $row.attr('data-valid', 'false');
+                        } else {
+                            // Clear validation error
+                            $row.find('input[name="exception_dates[]"]').removeClass('is-invalid');
+                            $row.find('.invalid-feedback').text('Please select a valid date.');
+
+                            // Update data attribute
+                            $row.attr('data-valid', 'true');
+                        }
+                    });
+                }
+            }
+
             // Use recalculateEndDate instead of calculateEndDate to account for exception dates
             recalculateEndDate();
             updateScheduleData();
@@ -229,6 +275,9 @@ function getClassTypeHours(classTypeId) {
             $newRow.removeClass('d-none').removeAttr('id');
             $container.append($newRow);
 
+            // Set default validation state to true
+            $newRow.attr('data-valid', 'true');
+
             // Initialize remove button
             $newRow.find('.remove-exception-btn').on('click', function() {
                 console.log('Removing exception date row');
@@ -241,6 +290,27 @@ function getClassTypeHours(classTypeId) {
             // Update schedule data when date or reason changes
             $newRow.find('input, select').on('change', function() {
                 console.log('Exception date or reason changed');
+
+                // Validate exception date against class start date
+                const exceptionDate = $newRow.find('input[name="exception_dates[]"]').val();
+                const startDate = $('#schedule_start_date').val();
+
+                if (exceptionDate && startDate && exceptionDate < startDate) {
+                    // Show validation error
+                    $newRow.find('input[name="exception_dates[]"]').addClass('is-invalid');
+                    $newRow.find('.invalid-feedback').text('Exception date cannot be before the class start date');
+
+                    // Add a custom data attribute to track validation state
+                    $newRow.attr('data-valid', 'false');
+                } else {
+                    // Clear validation error
+                    $newRow.find('input[name="exception_dates[]"]').removeClass('is-invalid');
+                    $newRow.find('.invalid-feedback').text('Please select a valid date.');
+
+                    // Update data attribute
+                    $newRow.attr('data-valid', 'true');
+                }
+
                 updateScheduleData();
                 // Ensure end date is recalculated when an exception date is changed
                 recalculateEndDate();
@@ -265,6 +335,20 @@ function getClassTypeHours(classTypeId) {
                         $newRow.find('input[name="exception_dates[]"]').val(exceptionDate.date);
                         $newRow.find('select[name="exception_reasons[]"]').val(exceptionDate.reason);
 
+                        // Validate against start date
+                        const startDate = $('#schedule_start_date').val();
+                        if (exceptionDate.date && startDate && exceptionDate.date < startDate) {
+                            // Show validation error
+                            $newRow.find('input[name="exception_dates[]"]').addClass('is-invalid');
+                            $newRow.find('.invalid-feedback').text('Exception date cannot be before the class start date');
+
+                            // Add a custom data attribute to track validation state
+                            $newRow.attr('data-valid', 'false');
+                        } else {
+                            // Mark as valid
+                            $newRow.attr('data-valid', 'true');
+                        }
+
                         // Initialize event handlers
                         $newRow.find('.remove-exception-btn').on('click', function() {
                             console.log('Removing exception date row');
@@ -275,6 +359,27 @@ function getClassTypeHours(classTypeId) {
 
                         $newRow.find('input, select').on('change', function() {
                             console.log('Exception date or reason changed');
+
+                            // Validate exception date against class start date
+                            const exceptionDate = $newRow.find('input[name="exception_dates[]"]').val();
+                            const startDate = $('#schedule_start_date').val();
+
+                            if (exceptionDate && startDate && exceptionDate < startDate) {
+                                // Show validation error
+                                $newRow.find('input[name="exception_dates[]"]').addClass('is-invalid');
+                                $newRow.find('.invalid-feedback').text('Exception date cannot be before the class start date');
+
+                                // Add a custom data attribute to track validation state
+                                $newRow.attr('data-valid', 'false');
+                            } else {
+                                // Clear validation error
+                                $newRow.find('input[name="exception_dates[]"]').removeClass('is-invalid');
+                                $newRow.find('.invalid-feedback').text('Please select a valid date.');
+
+                                // Update data attribute
+                                $newRow.attr('data-valid', 'true');
+                            }
+
                             updateScheduleData();
                             recalculateEndDate();
                         });
@@ -957,9 +1062,95 @@ function getClassTypeHours(classTypeId) {
         }
     }
 
+    /**
+     * Validate the form before submission
+     */
+    function validateForm() {
+        // Check if schedule start date is invalid
+        const $scheduleStartDate = $('#schedule_start_date');
+        if ($scheduleStartDate.attr('data-valid') === 'false') {
+            // Scroll to the schedule start date
+            $('html, body').animate({
+                scrollTop: $scheduleStartDate.offset().top - 100
+            }, 200);
+
+            // Focus on the input
+            $scheduleStartDate.focus();
+
+            // Return false to prevent form submission
+            return false;
+        }
+
+        // Check if any exception date is invalid
+        const $invalidExceptionDates = $('#exception-dates-container .exception-date-row[data-valid="false"]');
+
+        if ($invalidExceptionDates.length > 0) {
+            // Scroll to the first invalid exception date
+            $('html, body').animate({
+                scrollTop: $invalidExceptionDates.first().offset().top - 100
+            }, 200);
+
+            // Focus on the invalid input
+            $invalidExceptionDates.first().find('input[name="exception_dates[]"]').focus();
+
+            // Return false to prevent form submission
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Initialize validation for class original start date
+     */
+    function initOriginalStartDateValidation() {
+        // Set initial validation state for schedule start date
+        $('#schedule_start_date').attr('data-valid', 'true');
+
+        // When class original start date changes, validate schedule start date
+        $('#class_start_date').on('change', function() {
+            const originalStartDate = $(this).val();
+            const scheduleStartDate = $('#schedule_start_date').val();
+
+            if (scheduleStartDate && originalStartDate && scheduleStartDate < originalStartDate) {
+                // Show validation error on schedule start date
+                $('#schedule_start_date').addClass('is-invalid');
+                $('#schedule_start_date').siblings('.invalid-feedback').text('Start date cannot be before the class original start date');
+                $('#schedule_start_date').attr('data-valid', 'false');
+            } else if (scheduleStartDate) {
+                // Clear validation error
+                $('#schedule_start_date').removeClass('is-invalid');
+                $('#schedule_start_date').siblings('.invalid-feedback').text('Please select a start date.');
+                $('#schedule_start_date').attr('data-valid', 'true');
+            }
+        });
+
+        // Initial validation check
+        setTimeout(function() {
+            const originalStartDate = $('#class_start_date').val();
+            const scheduleStartDate = $('#schedule_start_date').val();
+
+            if (scheduleStartDate && originalStartDate && scheduleStartDate < originalStartDate) {
+                // Show validation error on schedule start date
+                $('#schedule_start_date').addClass('is-invalid');
+                $('#schedule_start_date').siblings('.invalid-feedback').text('Start date cannot be before the class original start date');
+                $('#schedule_start_date').attr('data-valid', 'false');
+            }
+        }, 100);
+    }
+
     // Initialize when document is ready
     $(document).ready(function() {
         initClassScheduleForm();
+        initOriginalStartDateValidation();
+
+        // Add form validation before submission
+        $('form').on('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                return false;
+            }
+        });
     });
 
 })(jQuery);

@@ -98,6 +98,7 @@ npm run build
 - [API Documentation](docs/api.md)
 - [Database Schema](docs/schema.md)
 - [Shortcode Reference](docs/shortcodes.md)
+- [CLI Commands](docs/cli-commands.md)
 
 ## Support
 

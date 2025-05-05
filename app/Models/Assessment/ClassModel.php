@@ -843,6 +843,54 @@ class ClassModel {
 
                     return true;
                 }
+            ],
+            // Add validation for exception dates
+            'scheduleData' => [
+                'custom' => function($value, $data) {
+                    // If no schedule data or no class start date, skip validation
+                    if (!is_array($value) || empty($data['class_start_date'])) {
+                        return true;
+                    }
+
+                    // Get class start date
+                    $classStartDate = $data['class_start_date'];
+                    $classStartTimestamp = strtotime($classStartDate);
+
+                    // Validate schedule start date against class original start date
+                    if (isset($value['start_date']) && !empty($value['start_date'])) {
+                        $scheduleStartDate = $value['start_date'];
+                        $scheduleStartTimestamp = strtotime($scheduleStartDate);
+
+                        if ($scheduleStartTimestamp < $classStartTimestamp) {
+                            return 'Schedule start date cannot be before the class original start date';
+                        }
+                    }
+
+                    // Check exception dates if they exist
+                    if (isset($value['exception_dates'])) {
+                        $exceptionDates = $value['exception_dates'];
+
+                        // Handle JSON string
+                        if (is_string($exceptionDates)) {
+                            $exceptionDates = json_decode($exceptionDates, true);
+                        }
+
+                        // Validate each exception date
+                        if (is_array($exceptionDates)) {
+                            foreach ($exceptionDates as $exception) {
+                                if (isset($exception['date']) && !empty($exception['date'])) {
+                                    $exceptionTimestamp = strtotime($exception['date']);
+
+                                    if ($exceptionTimestamp < $classStartTimestamp) {
+                                        return 'Exception dates cannot be before the class start date';
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return true;
+                }
             ]
         ];
     }
