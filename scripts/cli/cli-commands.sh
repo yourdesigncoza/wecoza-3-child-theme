@@ -340,24 +340,148 @@ This issue has been moved to 'In Review' status. All required changes have been 
     return 0
 }
 
+# Function to handle CLI-CREATE command
+cli_create() {
+    local title=$1
+    local body=$2
+    local labels=$3
+
+    # Handle auto-generation from Augment thread
+    if [ "$title" = "AUTO_GENERATE" ]; then
+        echo "Auto-generating issue from Augment thread..."
+
+        # Create a temporary file to store the Augment thread
+        temp_file=$(mktemp)
+
+        # Prompt the user to provide a title and description for the issue
+        echo "Please provide a title for the issue:"
+        read -r title
+
+        echo "Please provide a description for the issue (type 'DONE' on a new line when finished):"
+        description=""
+        while IFS= read -r line; do
+            if [ "$line" = "DONE" ]; then
+                break
+            fi
+            description+="$line"$'\n'
+        done
+
+        # Default labels for Augment-generated issues
+        labels="augment,auto-generated"
+
+        # Clean up
+        rm -f "$temp_file"
+
+        if [ -z "$title" ]; then
+            echo "Error: Title is required."
+            return 1
+        fi
+
+        body="$description"
+
+        echo "Creating new issue with title: $title"
+    elif [ -z "$title" ]; then
+        echo "Error: Title is required."
+        echo "Usage: (CLI-CREATE)(\"Title\")(\"Body\")(\"label1,label2\")"
+        return 1
+    else
+        echo "Creating new issue with title: $title"
+    fi
+
+    # Check if we should use GitHub CLI or fallback to curl with GITHUB_TOKEN
+    if gh auth status &>/dev/null; then
+        # Use GitHub CLI
+        echo "Using GitHub CLI..."
+
+        # Create the issue
+        if [ -z "$labels" ]; then
+            # Create issue without labels
+            issue_url=$(gh issue create --repo "$REPO_OWNER/$REPO_NAME" --title "$title" --body "$body")
+        else
+            # Create issue with labels
+            issue_url=$(gh issue create --repo "$REPO_OWNER/$REPO_NAME" --title "$title" --body "$body" --label "$labels")
+        fi
+
+        # Extract issue number from URL
+        issue_number=$(echo "$issue_url" | grep -o '[0-9]*$')
+
+        echo "Issue #$issue_number created successfully: $issue_url"
+
+    elif [ -n "$GITHUB_TOKEN" ]; then
+        # Fallback to curl with GITHUB_TOKEN
+        echo "Using GITHUB_TOKEN for authentication..."
+
+        # Prepare JSON data for issue creation
+        if [ -z "$labels" ]; then
+            # Create issue without labels
+            issue_data="{\"title\":\"$title\",\"body\":\"$body\"}"
+        else
+            # Convert comma-separated labels to JSON array
+            labels_json="["
+            IFS=',' read -ra LABEL_ARRAY <<< "$labels"
+            for label in "${LABEL_ARRAY[@]}"; do
+                labels_json+="\"$label\","
+            done
+            # Remove trailing comma and close array
+            labels_json="${labels_json%,}]"
+
+            issue_data="{\"title\":\"$title\",\"body\":\"$body\",\"labels\":$labels_json}"
+        fi
+
+        # Create the issue
+        response=$(curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$issue_data" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues")
+
+        # Check if issue was created successfully
+        if command -v jq &>/dev/null; then
+            issue_number=$(echo "$response" | jq -r '.number')
+            issue_url=$(echo "$response" | jq -r '.html_url')
+        else
+            issue_number=$(echo "$response" | grep -o '"number":[^,]*' | cut -d':' -f2)
+            issue_url=$(echo "$response" | grep -o '"html_url":"[^"]*"' | cut -d'"' -f4)
+        fi
+
+        if [ -z "$issue_number" ] || [ "$issue_number" = "null" ]; then
+            echo "Error: Failed to create issue."
+            echo "Response: $response"
+            return 1
+        fi
+
+        echo "Issue #$issue_number created successfully: $issue_url"
+    else
+        echo "Error: Neither GitHub CLI authentication nor GITHUB_TOKEN is available."
+        echo "Please either authenticate with GitHub CLI or set the GITHUB_TOKEN environment variable."
+        return 1
+    fi
+
+    return 0
+}
+
 # Main function to handle CLI commands
 handle_cli_command() {
     local command=$1
-    local issue_number=$2
+    local param1=$2
+    local param2=$3
+    local param3=$4
 
     # Check GitHub CLI authentication
     check_github_auth || return 1
 
     case $command in
         "CLI-PULL")
-            cli_pull "$issue_number"
+            cli_pull "$param1"
             ;;
         "CLI-REVIEW")
-            cli_review "$issue_number"
+            cli_review "$param1"
+            ;;
+        "CLI-CREATE")
+            cli_create "$param1" "$param2" "$param3"
             ;;
         *)
             echo "Error: Unknown command '$command'."
-            echo "Available commands: CLI-PULL, CLI-REVIEW"
+            echo "Available commands: CLI-PULL, CLI-REVIEW, CLI-CREATE"
             return 1
             ;;
     esac
