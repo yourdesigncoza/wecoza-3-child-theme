@@ -95,7 +95,6 @@ class ClassController {
             'supervisors' => $this->getSupervisors(),
             'learners' => $this->getLearnersExam(),
             'setas' => MainController::getSeta(),
-            'products' => MainController::getProducts(),
             'class_types' => MainController::getClassType(),
             'yes_no_options' => MainController::getYesNoOptions(),
             'class_notes_options' => MainController::getClassNotesOptions(),
@@ -233,7 +232,6 @@ class ClassController {
         $processed['deliveryDate'] = isset($data['delivery_date']) ? self::sanitizeText($data['delivery_date']) : null;
 
         // Array fields
-        $processed['courseIds'] = isset($data['course_id']) && is_array($data['course_id']) ? array_map([self::class, 'sanitizeText'], $data['course_id']) : [];
         $processed['classNotes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map([self::class, 'sanitizeText'], $data['class_notes']) : [];
         $processed['learnerIds'] = isset($data['add_learner']) && is_array($data['add_learner']) ? array_map('intval', $data['add_learner']) : [];
         $processed['backupAgentIds'] = isset($data['backup_agent']) && is_array($data['backup_agent']) ? array_map('intval', $data['backup_agent']) : [];

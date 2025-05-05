@@ -57,16 +57,5 @@
       <div class="valid-feedback">Looks good!</div>
    </div>
 
-   <!-- Class Subjects -->
-   <div class="col-md-4">
-      <label for="course_id" class="form-label">Additional Subjects <span class="text-danger">*</span></label>
-      <select id="course_id" name="course_id[]" class="form-select form-select-sm" required>
-         <option value="">Select</option>
-         <?php foreach ($data['products'] as $product): ?>
-            <option value="<?php echo esc_attr($product['id']); ?>"><?php echo esc_html($product['name']); ?><?php echo !empty($product['learning_area']) ? ' - ' . esc_html($product['learning_area']) : ''; ?></option>
-         <?php endforeach; ?>
-      </select>
-      <div class="invalid-feedback">Please select at least one subject.</div>
-      <div class="valid-feedback">Looks good!</div>
-   </div>
+
 </div>

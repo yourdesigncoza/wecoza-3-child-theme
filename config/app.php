@@ -17,7 +17,7 @@ return [
     /**
      * Debug mode
      */
-    'debug' => true,
+    'debug' => false,
 
     /**
      * Database configuration

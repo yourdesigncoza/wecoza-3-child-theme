@@ -23,7 +23,6 @@ class ClassModel {
     private $classCode;
     private $classDuration;
     private $classStartDate;
-    private $courseIds = [];
     private $classNotes = [];
     private $setaFunded;
     private $setaId;
@@ -83,7 +82,6 @@ class ClassModel {
                 $class->loadStopRestartDates();
                 $class->loadLearners();
                 $class->loadBackupAgents();
-                $class->loadCourses();
                 $class->loadClassNotes();
 
                 return $class;
@@ -147,7 +145,6 @@ class ClassModel {
             $this->saveStopRestartDates($classId);
             $this->saveLearners($classId);
             $this->saveBackupAgents($classId);
-            $this->saveCourses($classId);
             $this->saveClassNotes($classId);
 
             $db->commit();
@@ -213,7 +210,6 @@ class ClassModel {
             $this->saveStopRestartDates($this->getId());
             $this->saveLearners($this->getId());
             $this->saveBackupAgents($this->getId());
-            $this->saveCourses($this->getId());
             $this->saveClassNotes($this->getId());
 
             $db->commit();
@@ -265,7 +261,6 @@ class ClassModel {
         $db->query("DELETE FROM wecoza_class_dates WHERE class_id = ?", [$classId]);
         $db->query("DELETE FROM wecoza_class_learners WHERE class_id = ?", [$classId]);
         $db->query("DELETE FROM wecoza_class_backup_agents WHERE class_id = ?", [$classId]);
-        $db->query("DELETE FROM wecoza_class_courses WHERE class_id = ?", [$classId]);
         $db->query("DELETE FROM wecoza_class_notes WHERE class_id = ?", [$classId]);
     }
 
@@ -441,40 +436,7 @@ class ClassModel {
         }
     }
 
-    /**
-     * Load courses
-     */
-    private function loadCourses() {
-        $db = DatabaseService::getInstance();
-        $stmt = $db->query("SELECT course_id FROM wecoza_class_courses WHERE class_id = ?", [$this->getId()]);
-        $courseIds = [];
 
-        while ($row = $stmt->fetch()) {
-            $courseIds[] = $row['course_id'];
-        }
-
-        $this->setCourseIds($courseIds);
-    }
-
-    /**
-     * Save courses
-     *
-     * @param int $classId Class ID
-     */
-    private function saveCourses($classId) {
-        $db = DatabaseService::getInstance();
-        $courseIds = $this->getCourseIds();
-
-        if (empty($courseIds)) {
-            return;
-        }
-
-        $sql = "INSERT INTO wecoza_class_courses (class_id, course_id) VALUES (?, ?)";
-
-        foreach ($courseIds as $courseId) {
-            $db->query($sql, [$classId, $courseId]);
-        }
-    }
 
     /**
      * Load class notes
@@ -593,14 +555,7 @@ class ClassModel {
         return $this;
     }
 
-    public function getCourseIds() {
-        return $this->courseIds;
-    }
 
-    public function setCourseIds($courseIds) {
-        $this->courseIds = $courseIds;
-        return $this;
-    }
 
     public function getClassNotes() {
         return $this->classNotes;
@@ -773,10 +728,6 @@ class ClassModel {
             'class_start_date' => [
                 'required' => true,
                 'date' => true
-            ],
-            'course_id' => [
-                'required' => true,
-                'array' => true
             ],
             'seta_funded' => [
                 'required' => true,
