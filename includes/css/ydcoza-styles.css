@@ -497,6 +497,55 @@ details {
     border-color: var(--accent-dark, #5a4aa6);
 }
 
+/* Public Holiday Styles */
+.fc-event.public-holiday {
+    background-color: #f44336 !important;
+    border-color: #d32f2f !important;
+    color: #ffffff !important;
+}
+
+.fc-daygrid-day.public-holiday-day {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+}
+
+.fc-event.public-holiday .fc-event-title {
+    font-weight: 500;
+}
+
+/* Holiday tooltip */
+.holiday-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 1000;
+    white-space: nowrap;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.holiday-tooltip:after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #f44336 transparent;
+}
+
+/* Exception Date Styles */
+.fc-event.exception-date {
+    background-color: #ff9800 !important;
+    border-color: #f57c00 !important;
+    color: #ffffff !important;
+}
+
 /* ##############################
 ### Misc
 ############################## */

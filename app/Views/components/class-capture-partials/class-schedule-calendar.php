@@ -17,7 +17,7 @@
    </div>
 <!-- Calendar Reference View (hidden by default) -->
 <div class="mb-3 d-none" id="calendar-reference-container">
-   
+
    <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="mb-0">Class Schedule Calendar</h5>
       <button type="button" class="btn btn-sm btn-outline-secondary" id="hide-calendar-btn">
@@ -45,6 +45,10 @@
       </div>
       <div class="d-flex align-items-center">
          <div class="color-box" style="width: 15px; height: 15px; background-color: #f44336; margin-right: 5px;"></div>
+         <small>Public Holiday</small>
+      </div>
+      <div class="d-flex align-items-center">
+         <div class="color-box" style="width: 15px; height: 15px; background-color: #ff9800; margin-right: 5px;"></div>
          <small>Exception Date</small>
       </div>
    </div>

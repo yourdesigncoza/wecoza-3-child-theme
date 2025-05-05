@@ -351,10 +351,21 @@ function getClassTypeHours(classTypeId) {
                         while (sessionsScheduled < sessionsNeeded) {
                             const dateStr = date.toISOString().split('T')[0];
 
-                            // Skip exception dates
-                            if (!exceptionDates.includes(dateStr)) {
+                            // Check if this date is a public holiday
+                            let isPublicHoliday = false;
+                            if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+                                isPublicHoliday = wecozaPublicHolidays.events.some(holiday => {
+                                    // Direct string comparison
+                                    return holiday.start === dateStr;
+                                });
+                            }
+
+                            // Skip exception dates and public holidays
+                            if (!exceptionDates.includes(dateStr) && !isPublicHoliday) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
+                            } else if (isPublicHoliday) {
+                                console.log('Public holiday skipped:', dateStr);
                             } else {
                                 console.log('Exception date skipped:', dateStr);
                             }
@@ -377,10 +388,21 @@ function getClassTypeHours(classTypeId) {
                         while (sessionsScheduled < sessionsNeeded) {
                             const dateStr = date.toISOString().split('T')[0];
 
-                            // Skip exception dates
-                            if (!exceptionDates.includes(dateStr)) {
+                            // Check if this date is a public holiday
+                            let isPublicHoliday = false;
+                            if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+                                isPublicHoliday = wecozaPublicHolidays.events.some(holiday => {
+                                    // Direct string comparison
+                                    return holiday.start === dateStr;
+                                });
+                            }
+
+                            // Skip exception dates and public holidays
+                            if (!exceptionDates.includes(dateStr) && !isPublicHoliday) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
+                            } else if (isPublicHoliday) {
+                                console.log('Public holiday skipped:', dateStr);
                             } else {
                                 console.log('Exception date skipped:', dateStr);
                             }
@@ -415,10 +437,21 @@ function getClassTypeHours(classTypeId) {
 
                             const dateStr = dateToUse.toISOString().split('T')[0];
 
-                            // Skip exception dates
-                            if (!exceptionDates.includes(dateStr)) {
+                            // Check if this date is a public holiday
+                            let isPublicHoliday = false;
+                            if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+                                isPublicHoliday = wecozaPublicHolidays.events.some(holiday => {
+                                    // Direct string comparison
+                                    return holiday.start === dateStr;
+                                });
+                            }
+
+                            // Skip exception dates and public holidays
+                            if (!exceptionDates.includes(dateStr) && !isPublicHoliday) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
+                            } else if (isPublicHoliday) {
+                                console.log('Public holiday skipped:', dateStr);
                             } else {
                                 console.log('Exception date skipped:', dateStr);
                             }
@@ -508,7 +541,23 @@ function getClassTypeHours(classTypeId) {
             },
             eventClassNames: function(arg) {
                 // Add custom classes based on event type
+                if (arg.event.extendedProps.isPublicHoliday) {
+                    return ['public-holiday'];
+                }
                 return ['event-type-' + arg.event.extendedProps.type];
+            },
+            dayCellDidMount: function(arg) {
+                // Check if this day is a public holiday
+                if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+                    const dateStr = arg.date.toISOString().split('T')[0];
+                    const isHoliday = wecozaPublicHolidays.events.some(holiday => {
+                        // Direct string comparison
+                        return holiday.start === dateStr;
+                    });
+                    if (isHoliday) {
+                        arg.el.classList.add('public-holiday-day');
+                    }
+                }
             },
             eventDidMount: function(info) {
                 // Add tooltips to events
@@ -561,6 +610,25 @@ function getClassTypeHours(classTypeId) {
         // Add all events to calendar
         calendar.addEventSource(events);
         calendar.addEventSource(exceptionEvents);
+
+        // Add public holidays if available
+        if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+            // Filter public holidays to only include those within the date range
+            const startDateObj = new Date(startDate);
+            const endDateObj = new Date(endDate || startDate);
+            endDateObj.setMonth(endDateObj.getMonth() + 3); // Default to 3 months if no end date
+
+            const filteredHolidays = wecozaPublicHolidays.events.filter(holiday => {
+                // Parse the date parts to ensure correct date (avoid timezone issues)
+                const [year, month, day] = holiday.start.split('-').map(Number);
+                const holidayDate = new Date(year, month - 1, day);
+                return holidayDate >= startDateObj && holidayDate <= endDateObj;
+            });
+
+            if (filteredHolidays.length > 0) {
+                calendar.addEventSource(filteredHolidays);
+            }
+        }
     }
 
     /**
@@ -762,10 +830,23 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Check if a date is an exception date
+     * Check if a date is an exception date or public holiday
      */
     function isExceptionDate(date, exceptionDates) {
-        return exceptionDates.includes(date);
+        // Check if it's an exception date
+        if (exceptionDates.includes(date)) {
+            return true;
+        }
+
+        // Check if it's a public holiday
+        if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+            return wecozaPublicHolidays.events.some(holiday => {
+                // Direct string comparison
+                return holiday.start === date;
+            });
+        }
+
+        return false;
     }
 
     /**

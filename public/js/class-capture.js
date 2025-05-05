@@ -250,6 +250,7 @@ function showCustomAlert(message) {
             selectable: true,
             selectMirror: true,
             dayMaxEvents: true,
+            timeZone: 'local', // Use local timezone to avoid timezone issues
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
                 startTime: '08:00',
@@ -257,7 +258,49 @@ function showCustomAlert(message) {
             },
             eventClassNames: function(arg) {
                 // Add custom classes based on event type
+                if (arg.event.extendedProps.isPublicHoliday) {
+                    return ['public-holiday'];
+                }
                 return ['event-type-' + arg.event.extendedProps.type];
+            },
+            dayCellDidMount: function(arg) {
+                // Check if this day is a public holiday
+                if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+                    // Get the date in local timezone to avoid timezone issues
+                    const year = arg.date.getFullYear();
+                    const month = String(arg.date.getMonth() + 1).padStart(2, '0');
+                    const day = String(arg.date.getDate()).padStart(2, '0');
+                    const dateStr = `${year}-${month}-${day}`;
+
+                    console.log('Checking if date is a holiday:', dateStr);
+
+                    // Find matching holiday - direct string comparison
+                    const holiday = wecozaPublicHolidays.events.find(h => {
+                        return h.start === dateStr;
+                    });
+
+                    if (holiday) {
+                        console.log('Found holiday on', dateStr, ':', holiday.title);
+                        arg.el.classList.add('public-holiday-day');
+
+                        // Add a tooltip with the holiday name
+                        const tooltipText = document.createElement('div');
+                        tooltipText.className = 'holiday-tooltip';
+                        tooltipText.textContent = holiday.title;
+                        tooltipText.style.display = 'none';
+
+                        // Show tooltip on hover
+                        arg.el.addEventListener('mouseenter', function() {
+                            tooltipText.style.display = 'block';
+                        });
+
+                        arg.el.addEventListener('mouseleave', function() {
+                            tooltipText.style.display = 'none';
+                        });
+
+                        arg.el.appendChild(tooltipText);
+                    }
+                }
             },
             select: function(arg) {
                 // Reset validation state

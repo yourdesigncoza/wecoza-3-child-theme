@@ -10,6 +10,7 @@ namespace WeCoza\Controllers;
 use WeCoza\Models\Assessment\ClassModel;
 use WeCoza\Controllers\MainController;
 use WeCoza\Controllers\ClassTypesController;
+use WeCoza\Controllers\PublicHolidaysController;
 use WeCoza\Services\Export\CalendarExportService;
 
 // WordPress functions are in global namespace
@@ -63,6 +64,12 @@ class ClassController {
             'siteAddresses' => self::getSiteAddresses(),
             'debug' => true,
             'conflictCheckEnabled' => true
+        ]);
+
+        // Add public holidays data to the calendar
+        $holidaysController = PublicHolidaysController::getInstance();
+        \wp_localize_script('wecoza-class-js', 'wecozaPublicHolidays', [
+            'events' => $holidaysController->getHolidaysAsCalendarEvents()
         ]);
 
         // Calendar initialization is now handled by class-calendar-init.js
@@ -543,6 +550,20 @@ class ClassController {
                         $exceptionDates[] = $exception['date'];
                     }
                 }
+            }
+        }
+
+        // Add public holidays to exception dates
+        if (!empty($startDate) && !empty($endDate)) {
+            // Get public holidays controller instance
+            $holidaysController = PublicHolidaysController::getInstance();
+
+            // Get public holidays within the date range
+            $publicHolidays = $holidaysController->getHolidayDatesInRange($startDate, $endDate);
+
+            // Add public holidays to exception dates
+            if (!empty($publicHolidays)) {
+                $exceptionDates = array_merge($exceptionDates, $publicHolidays);
             }
         }
 
