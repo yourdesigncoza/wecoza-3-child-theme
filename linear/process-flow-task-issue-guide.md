@@ -79,28 +79,28 @@ As shown in the UI:
 - [Feedback mechanisms]
 
 ## Subtasks
-- [ ] WEC-XX.1: [First Major Component]
+- [ ] WEC-XX-1: [First Major Component]
   - [Specific implementation detail]
   - [Technical approach]
   - [Integration points]
   - [Error handling considerations]
   - [Performance considerations]
 
-- [ ] WEC-XX.2: [Second Major Component]
+- [ ] WEC-XX-2: [Second Major Component]
   - [Specific implementation detail]
   - [Technical approach]
   - [Integration points]
   - [Error handling considerations]
   - [Performance considerations]
 
-- [ ] WEC-XX.3: [Third Major Component]
+- [ ] WEC-XX-3: [Third Major Component]
   - [Specific implementation detail]
   - [Technical approach]
   - [Integration points]
   - [Error handling considerations]
   - [Performance considerations]
 
-- [ ] WEC-XX.4: [Testing and Documentation]
+- [ ] WEC-XX-4: [Testing and Documentation]
   - [Test cases to cover]
   - [Documentation requirements]
   - [User guidance needed]

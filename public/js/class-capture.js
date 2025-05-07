@@ -259,7 +259,14 @@ function showCustomAlert(message) {
             eventClassNames: function(arg) {
                 // Add custom classes based on event type
                 if (arg.event.extendedProps.isPublicHoliday) {
-                    return ['public-holiday'];
+                    const classes = ['public-holiday'];
+
+                    // Check if this holiday has been overridden
+                    if (arg.event.extendedProps.isOverridden) {
+                        classes.push('holiday-overridden');
+                    }
+
+                    return classes;
                 }
                 return ['event-type-' + arg.event.extendedProps.type];
             },
@@ -283,10 +290,30 @@ function showCustomAlert(message) {
                         console.log('Found holiday on', dateStr, ':', holiday.title);
                         arg.el.classList.add('public-holiday-day');
 
+                        // Check if this holiday has been overridden
+                        let isOverridden = false;
+                        let holidayOverrides = {};
+
+                        try {
+                            // Try to get holiday overrides from the form
+                            const overridesInput = document.getElementById('holiday_overrides');
+                            if (overridesInput && overridesInput.value) {
+                                holidayOverrides = JSON.parse(overridesInput.value);
+                                if (holidayOverrides[dateStr]) {
+                                    isOverridden = holidayOverrides[dateStr].override;
+                                    if (isOverridden) {
+                                        arg.el.classList.add('holiday-overridden-day');
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing holiday overrides:', e);
+                        }
+
                         // Add a tooltip with the holiday name
                         const tooltipText = document.createElement('div');
-                        tooltipText.className = 'holiday-tooltip';
-                        tooltipText.textContent = holiday.title;
+                        tooltipText.className = 'holiday-tooltip' + (isOverridden ? ' overridden' : '');
+                        tooltipText.textContent = holiday.title + (isOverridden ? ' (Included)' : '');
                         tooltipText.style.display = 'none';
 
                         // Show tooltip on hover

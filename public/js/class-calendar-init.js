@@ -94,19 +94,42 @@
 
             console.log('Holiday date object:', eventDate.toDateString());
 
-            // Create the event
+            // Check if this holiday has been overridden
+            let isOverridden = false;
+            let holidayOverrides = {};
+
+            try {
+                // Try to get holiday overrides from the form
+                const overridesInput = document.getElementById('holiday_overrides');
+                if (overridesInput && overridesInput.value) {
+                    holidayOverrides = JSON.parse(overridesInput.value);
+                    if (holidayOverrides[holiday.start]) {
+                        isOverridden = holidayOverrides[holiday.start].override;
+                    }
+                }
+            } catch (e) {
+                console.error('Error parsing holiday overrides:', e);
+            }
+
+            // Create the event with appropriate styling
+            const eventClasses = ['public-holiday'];
+            if (isOverridden) {
+                eventClasses.push('holiday-overridden');
+            }
+
             window.calendar.addEvent({
                 title: holiday.title,
                 start: eventDate,
                 allDay: true,
-                className: 'public-holiday',
-                backgroundColor: '#f44336', // Red color for public holidays
-                borderColor: '#d32f2f',
+                className: eventClasses,
+                backgroundColor: isOverridden ? '#ff9800' : '#f44336', // Orange for overridden, red for regular
+                borderColor: isOverridden ? '#f57c00' : '#d32f2f',
                 textColor: '#ffffff',
                 extendedProps: {
                     isPublicHoliday: true,
-                    description: holiday.description,
-                    isObserved: holiday.extendedProps && holiday.extendedProps.isObserved
+                    description: holiday.description + (isOverridden ? ' (Included - Class will occur on this holiday)' : ''),
+                    isObserved: holiday.extendedProps && holiday.extendedProps.isObserved,
+                    isOverridden: isOverridden
                 }
             });
         });

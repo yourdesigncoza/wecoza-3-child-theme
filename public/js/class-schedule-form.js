@@ -27,8 +27,8 @@
         // Initialize exception dates
         initExceptionDates();
 
-        // Initialize holiday override modal
-        initHolidayOverrideModal();
+        // Initialize holiday overrides
+        initHolidayOverrides();
 
         // Initialize calendar toggle
         initCalendarToggle();
@@ -1107,17 +1107,14 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Initialize holiday override modal
+     * Initialize holiday override functionality
      */
-    function initHolidayOverrideModal() {
-        const $modal = $('#holiday-override-modal');
+    function initHolidayOverrides() {
         const $holidaysList = $('#holidays-list');
-        const $noHolidaysAlert = $('#no-holidays-alert');
+        const $noHolidaysAlert = $('#no-holidays-message');
         const $overrideAllCheckbox = $('#override-all-holidays');
         const $skipAllBtn = $('#skip-all-holidays-btn');
         const $overrideAllBtn = $('#override-all-holidays-btn');
-        const $confirmBtn = $('#confirm-holiday-overrides-btn');
-        const $rememberChoice = $('#remember-holiday-choice');
         const $holidayOverridesInput = $('#holiday_overrides');
 
         // Load existing overrides if available
@@ -1147,19 +1144,10 @@ function getClassTypeHours(classTypeId) {
             $('.holiday-override-checkbox').prop('checked', isChecked).trigger('change');
         });
 
-        // Handle confirm button
-        $confirmBtn.on('click', function() {
+        // Handle holiday override changes
+        $holidaysList.on('change', '.holiday-override-checkbox', function() {
             // Save overrides to hidden input
             $holidayOverridesInput.val(JSON.stringify(holidayOverrides));
-
-            // Remember choice if selected
-            if ($rememberChoice.prop('checked')) {
-                sessionStorage.setItem('rememberHolidayChoice', 'true');
-                sessionStorage.setItem('holidayOverrides', JSON.stringify(holidayOverrides));
-            }
-
-            // Close modal
-            $modal.modal('hide');
 
             // Recalculate end date with the new overrides
             recalculateEndDate();
@@ -1252,36 +1240,33 @@ function getClassTypeHours(classTypeId) {
             return;
         }
 
-        // Check if we should remember choice from session
-        const rememberChoice = sessionStorage.getItem('rememberHolidayChoice') === 'true';
-        if (rememberChoice) {
-            try {
-                const savedOverrides = sessionStorage.getItem('holidayOverrides');
-                if (savedOverrides) {
-                    holidayOverrides = JSON.parse(savedOverrides);
-                    $('#holiday_overrides').val(savedOverrides);
-                    console.log('Using remembered holiday overrides:', holidayOverrides);
-                    return;
-                }
-            } catch (e) {
-                console.error('Error parsing remembered holiday overrides:', e);
+        // Load any saved overrides from session storage
+        try {
+            const savedOverrides = sessionStorage.getItem('holidayOverrides');
+            if (savedOverrides) {
+                holidayOverrides = JSON.parse(savedOverrides);
+                $('#holiday_overrides').val(savedOverrides);
+                console.log('Using saved holiday overrides:', holidayOverrides);
             }
+        } catch (e) {
+            console.error('Error parsing saved holiday overrides:', e);
         }
 
         // Populate the holidays list
         populateHolidaysList(holidaysInRange);
 
-        // Show the modal
-        $('#holiday-override-modal').modal('show');
+        // Show the holidays table
+        $('#no-holidays-message').addClass('d-none');
+        $('#holidays-table-container').removeClass('d-none');
     }
 
     /**
-     * Populate the holidays list in the override modal
+     * Populate the holidays list in the public holidays section
      */
     function populateHolidaysList(holidays) {
         const $holidaysList = $('#holidays-list');
-        const $template = $('#holiday-override-row-template');
-        const $noHolidaysAlert = $('#no-holidays-alert');
+        const $template = $('#holiday-row-template');
+        const $noHolidaysAlert = $('#no-holidays-message');
 
         // Clear existing rows
         $holidaysList.empty();

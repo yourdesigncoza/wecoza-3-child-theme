@@ -244,6 +244,11 @@ class ClassController {
             // Store the schedule pattern data
             $processed['schedulePattern'] = $data['schedule_data'];
 
+            // Store holiday overrides if present
+            if (isset($data['schedule_data']['holiday_overrides'])) {
+                $processed['schedulePattern']['holiday_overrides'] = $data['schedule_data']['holiday_overrides'];
+            }
+
             // Generate schedule data based on pattern
             $scheduleData = self::generateScheduleData($data['schedule_data']);
             if (!empty($scheduleData)) {
@@ -551,7 +556,7 @@ class ClassController {
             }
         }
 
-        // Add public holidays to exception dates
+        // Add public holidays to exception dates, respecting overrides
         if (!empty($startDate) && !empty($endDate)) {
             // Get public holidays controller instance
             $holidaysController = PublicHolidaysController::getInstance();
@@ -559,9 +564,37 @@ class ClassController {
             // Get public holidays within the date range
             $publicHolidays = $holidaysController->getHolidayDatesInRange($startDate, $endDate);
 
-            // Add public holidays to exception dates
-            if (!empty($publicHolidays)) {
-                $exceptionDates = array_merge($exceptionDates, $publicHolidays);
+            // Check for holiday overrides
+            $holidayOverrides = [];
+            if (isset($scheduleData['holiday_overrides']) && !empty($scheduleData['holiday_overrides'])) {
+                // Handle JSON string
+                if (is_string($scheduleData['holiday_overrides'])) {
+                    $holidayOverrides = json_decode($scheduleData['holiday_overrides'], true);
+                }
+                // Handle array
+                else if (is_array($scheduleData['holiday_overrides'])) {
+                    $holidayOverrides = $scheduleData['holiday_overrides'];
+                }
+            }
+
+            // Filter out overridden holidays
+            $nonOverriddenHolidays = [];
+            foreach ($publicHolidays as $holidayDate) {
+                // Check if this holiday has an override
+                if (isset($holidayOverrides[$holidayDate]) &&
+                    isset($holidayOverrides[$holidayDate]['override']) &&
+                    $holidayOverrides[$holidayDate]['override'] === true) {
+                    // This holiday is overridden, don't add to exception dates
+                    error_log("Holiday {$holidayDate} is overridden, not adding to exception dates");
+                } else {
+                    // This holiday is not overridden, add to exception dates
+                    $nonOverriddenHolidays[] = $holidayDate;
+                }
+            }
+
+            // Add non-overridden public holidays to exception dates
+            if (!empty($nonOverriddenHolidays)) {
+                $exceptionDates = array_merge($exceptionDates, $nonOverriddenHolidays);
             }
         }
 
