@@ -103,7 +103,7 @@
       </div>
 
       <div class="col-md-4">
-         <label for="schedule_duration" class="form-label">Duration (Hours)</label>
+         <label for="schedule_duration" class="form-label">Class Duration (Hours)</label>
          <input type="text" id="schedule_duration" name="schedule_duration" class="form-control form-control-sm readonly-field" readonly>
          <small class="text-muted">Automatically calculated</small>
       </div>
@@ -124,7 +124,7 @@
          <small class="text-muted">Automatically calculated based on class duration</small>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-4 d-none">
          <label for="schedule_total_hours" class="form-label">Total Hours</label>
          <input type="text" id="schedule_total_hours" name="schedule_total_hours" class="form-control form-control-sm readonly-field" readonly>
          <small class="text-muted">Based on class type</small>
