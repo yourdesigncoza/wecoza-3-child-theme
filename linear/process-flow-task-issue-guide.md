@@ -23,7 +23,7 @@ Understand how similar features are implemented in the codebase:
 
 ## Step 3: Create a Detailed Task Description Using the Development Template
 
-1. Create a markdown file in the `build-tasks/` directory with a name that reflects your feature:
+1. Create a markdown file in the `linear/build-tasks/` directory with a name that reflects your feature:
 
 ```markdown
 # [Feature Title]

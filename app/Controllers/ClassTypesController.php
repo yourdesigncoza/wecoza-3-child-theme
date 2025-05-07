@@ -18,7 +18,9 @@ class ClassTypesController {
             ['id' => 'AET', 'name' => 'AET Communication & Numeracy'],
             ['id' => 'GETC', 'name' => 'GETC AET'],
             ['id' => 'REALLL', 'name' => 'REALLL'],
-            ['id' => 'BA', 'name' => 'Business Admin'],
+            ['id' => 'BA2', 'name' => 'Business Admin NQF 2'],
+            ['id' => 'BA3', 'name' => 'Business Admin NQF 3'],
+            ['id' => 'BA4', 'name' => 'Business Admin NQF 4'],
             ['id' => 'SKILL', 'name' => 'Skill Packages'],
             ['id' => 'SOFT', 'name' => 'Soft Skill Courses'],
         ];
@@ -33,16 +35,9 @@ class ClassTypesController {
     public static function getClassSubjects($classTypeId = '') {
         $allSubjects = [
             'AET' => [
-                ['id' => 'CL1B', 'name' => 'Communication level 1 Basic', 'duration' => 120],
-                ['id' => 'CL1', 'name' => 'Communication level 1', 'duration' => 120],
-                ['id' => 'CL2', 'name' => 'Communication level 2', 'duration' => 120],
-                ['id' => 'CL3', 'name' => 'Communication level 3', 'duration' => 120],
-                ['id' => 'CL4', 'name' => 'Communication level 4', 'duration' => 120],
-                ['id' => 'NL1B', 'name' => 'Numeracy level 1 Basic', 'duration' => 120],
-                ['id' => 'NL1', 'name' => 'Numeracy level 1', 'duration' => 120],
-                ['id' => 'NL2', 'name' => 'Numeracy level 2', 'duration' => 120],
-                ['id' => 'NL3', 'name' => 'Numeracy level 3', 'duration' => 120],
-                ['id' => 'NL4', 'name' => 'Numeracy level 4', 'duration' => 120],
+                ['id' => 'COMM', 'name' => 'Communication (separate)', 'duration' => 120],
+                ['id' => 'NUM', 'name' => 'Numeracy (separate)', 'duration' => 120],
+                ['id' => 'BOTH', 'name' => 'Communication & Numeracy (both)', 'duration' => 240],
             ],
             'GETC' => [
                 ['id' => 'CL4', 'name' => 'Communication level 4', 'duration' => 120],
@@ -58,38 +53,39 @@ class ClassTypesController {
                 ['id' => 'RLN', 'name' => 'Numeracy', 'duration' => 160],
                 ['id' => 'RLF', 'name' => 'Finance', 'duration' => 40],
             ],
-            'BA' => [
-                // NQF 2
-                ['id' => 'BA2LP9', 'name' => 'Business Admin (NQF 2) LP9', 'duration' => 80],
-                ['id' => 'BA2LP10', 'name' => 'Business Admin (NQF 2) LP10', 'duration' => 64],
-                ['id' => 'BA2LP1', 'name' => 'Business Admin (NQF 2) LP1', 'duration' => 72],
-                ['id' => 'BA2LP2', 'name' => 'Business Admin (NQF 2) LP2', 'duration' => 56],
-                ['id' => 'BA2LP3', 'name' => 'Business Admin (NQF 2) LP3', 'duration' => 40],
-                ['id' => 'BA2LP4', 'name' => 'Business Admin (NQF 2) LP4', 'duration' => 20],
-                ['id' => 'BA2LP5', 'name' => 'Business Admin (NQF 2) LP5', 'duration' => 56],
-                ['id' => 'BA2LP6', 'name' => 'Business Admin (NQF 2) LP6', 'duration' => 60],
-                ['id' => 'BA2LP7', 'name' => 'Business Admin (NQF 2) LP7', 'duration' => 40],
-                ['id' => 'BA2LP8', 'name' => 'Business Admin (NQF 2) LP8', 'duration' => 32],
-                // NQF 3
-                ['id' => 'BA3LP2', 'name' => 'Business Admin (NQF 3) LP2', 'duration' => 52],
-                ['id' => 'BA3LP4', 'name' => 'Business Admin (NQF 3) LP4', 'duration' => 40],
-                ['id' => 'BA3LP5', 'name' => 'Business Admin (NQF 3) LP5', 'duration' => 36],
-                ['id' => 'BA3LP6', 'name' => 'Business Admin (NQF 3) LP6', 'duration' => 44],
-                ['id' => 'BA3LP1', 'name' => 'Business Admin (NQF 3) LP1', 'duration' => 60],
-                ['id' => 'BA3LP7', 'name' => 'Business Admin (NQF 3) LP7', 'duration' => 40],
-                ['id' => 'BA3LP8', 'name' => 'Business Admin (NQF 3) LP8', 'duration' => 44],
-                ['id' => 'BA3LP9', 'name' => 'Business Admin (NQF 3) LP9', 'duration' => 28],
-                ['id' => 'BA3LP10', 'name' => 'Business Admin (NQF 3) LP10', 'duration' => 48],
-                ['id' => 'BA3LP11', 'name' => 'Business Admin (NQF 3) LP11', 'duration' => 36],
-                ['id' => 'BA3LP3', 'name' => 'Business Admin (NQF 3) LP3', 'duration' => 44],
-                // NQF 4
-                ['id' => 'BA4LP2', 'name' => 'Business Admin (NQF 4) LP2', 'duration' => 104],
-                ['id' => 'BA4LP3', 'name' => 'Business Admin (NQF 4) LP3', 'duration' => 80],
-                ['id' => 'BA4LP4', 'name' => 'Business Admin (NQF 4) LP4', 'duration' => 64],
-                ['id' => 'BA4LP1', 'name' => 'Business Admin (NQF 4) LP1', 'duration' => 88],
-                ['id' => 'BA4LP6', 'name' => 'Business Admin (NQF 4) LP6', 'duration' => 84],
-                ['id' => 'BA4LP5', 'name' => 'Business Admin (NQF 4) LP5', 'duration' => 76],
-                ['id' => 'BA4LP7', 'name' => 'Business Admin (NQF 4) LP7', 'duration' => 88],
+            'BA2' => [
+                ['id' => 'BA2LP9', 'name' => 'LP9', 'duration' => 80],
+                ['id' => 'BA2LP10', 'name' => 'LP10', 'duration' => 64],
+                ['id' => 'BA2LP1', 'name' => 'LP1', 'duration' => 72],
+                ['id' => 'BA2LP2', 'name' => 'LP2', 'duration' => 56],
+                ['id' => 'BA2LP3', 'name' => 'LP3', 'duration' => 40],
+                ['id' => 'BA2LP4', 'name' => 'LP4', 'duration' => 20],
+                ['id' => 'BA2LP5', 'name' => 'LP5', 'duration' => 56],
+                ['id' => 'BA2LP6', 'name' => 'LP6', 'duration' => 60],
+                ['id' => 'BA2LP7', 'name' => 'LP7', 'duration' => 40],
+                ['id' => 'BA2LP8', 'name' => 'LP8', 'duration' => 32],
+            ],
+            'BA3' => [
+                ['id' => 'BA3LP2', 'name' => 'LP2', 'duration' => 52],
+                ['id' => 'BA3LP4', 'name' => 'LP4', 'duration' => 40],
+                ['id' => 'BA3LP5', 'name' => 'LP5', 'duration' => 36],
+                ['id' => 'BA3LP6', 'name' => 'LP6', 'duration' => 44],
+                ['id' => 'BA3LP1', 'name' => 'LP1', 'duration' => 60],
+                ['id' => 'BA3LP7', 'name' => 'LP7', 'duration' => 40],
+                ['id' => 'BA3LP8', 'name' => 'LP8', 'duration' => 44],
+                ['id' => 'BA3LP9', 'name' => 'LP9', 'duration' => 28],
+                ['id' => 'BA3LP10', 'name' => 'LP10', 'duration' => 48],
+                ['id' => 'BA3LP11', 'name' => 'LP11', 'duration' => 36],
+                ['id' => 'BA3LP3', 'name' => 'LP3', 'duration' => 44],
+            ],
+            'BA4' => [
+                ['id' => 'BA4LP2', 'name' => 'LP2', 'duration' => 104],
+                ['id' => 'BA4LP3', 'name' => 'LP3', 'duration' => 80],
+                ['id' => 'BA4LP4', 'name' => 'LP4', 'duration' => 64],
+                ['id' => 'BA4LP1', 'name' => 'LP1', 'duration' => 88],
+                ['id' => 'BA4LP6', 'name' => 'LP6', 'duration' => 84],
+                ['id' => 'BA4LP5', 'name' => 'LP5', 'duration' => 76],
+                ['id' => 'BA4LP7', 'name' => 'LP7', 'duration' => 88],
             ],
             'SKILL' => [
                 ['id' => 'WALK', 'name' => 'Walk Package', 'duration' => 120],
@@ -126,20 +122,20 @@ class ClassTypesController {
      */
     public static function getClassDuration($subjectId) {
         $allSubjects = self::getClassSubjects();
-        
+
         // Flatten the array of subjects
         $subjects = [];
         foreach ($allSubjects as $typeSubjects) {
             $subjects = array_merge($subjects, $typeSubjects);
         }
-        
+
         // Find the subject by ID
         foreach ($subjects as $subject) {
             if ($subject['id'] === $subjectId) {
                 return $subject['duration'];
             }
         }
-        
+
         // Default duration if subject not found
         return 120;
     }
