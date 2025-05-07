@@ -448,6 +448,46 @@ details {
 }
 
 /* ##############################
+### Holiday Override Styles
+############################## */
+/* Holiday override table styles */
+#holidays-table-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#holidays-list .holiday-row {
+    transition: background-color 0.2s ease;
+}
+
+#holidays-list .holiday-row:hover {
+    background-color: var(--base);
+}
+
+#holidays-list .holiday-date {
+    font-weight: 500;
+}
+
+#holidays-list .holiday-name {
+    color: var(--contrast-2);
+}
+
+#holidays-list .holiday-skipped {
+    font-weight: normal;
+}
+
+#holidays-list .holiday-overridden {
+    font-weight: normal;
+}
+
+/* Override buttons */
+#skip-all-holidays-btn,
+#override-all-holidays-btn {
+    margin-right: 10px;
+    font-size: 0.85rem;
+}
+
+/* ##############################
 ### Calendar Styles
 ############################## */
 /* FullCalendar multiMonthYear view styles */
@@ -512,6 +552,23 @@ details {
     font-weight: 500;
 }
 
+/* Overridden Holiday Styles */
+.fc-event.public-holiday.holiday-overridden {
+    background-color: #ff9800 !important;
+    border-color: #f57c00 !important;
+    color: #ffffff !important;
+}
+
+.fc-daygrid-day.public-holiday-day.holiday-overridden-day {
+    background-color: rgba(255, 152, 0, 0.1) !important;
+}
+
+.fc-event.public-holiday.holiday-overridden .fc-event-title::after {
+    content: " (Overridden)";
+    font-size: 0.85em;
+    font-style: italic;
+}
+
 /* Holiday tooltip */
 .holiday-tooltip {
     position: absolute;
@@ -537,6 +594,14 @@ details {
     border-width: 5px;
     border-style: solid;
     border-color: transparent transparent #f44336 transparent;
+}
+
+.holiday-tooltip.overridden {
+    background-color: #ff9800;
+}
+
+.holiday-tooltip.overridden:after {
+    border-color: transparent transparent #ff9800 transparent;
 }
 
 /* Exception Date Styles */

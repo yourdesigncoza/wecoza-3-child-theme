@@ -176,6 +176,92 @@
       </button>
    </div>
 
+   <!-- Calendar Legend -->
+   <div class="mb-4 d-none" id="calendar-legend">
+      <h6 class="mb-2">Calendar Legend</h6>
+      <div class="d-flex flex-wrap gap-3">
+         <div class="d-flex align-items-center">
+            <span class="color-box" style="background-color: #f44336;"></span>
+            <span>Public Holiday</span>
+         </div>
+         <div class="d-flex align-items-center">
+            <span class="color-box" style="background-color: #ff9800;"></span>
+            <span>Overridden Holiday</span>
+         </div>
+         <div class="d-flex align-items-center">
+            <span class="color-box" style="background-color: #f44336; opacity: 0.1;"></span>
+            <span>Holiday Date</span>
+         </div>
+         <div class="d-flex align-items-center">
+            <span class="color-box" style="background-color: #ff9800; opacity: 0.1;"></span>
+            <span>Overridden Holiday Date</span>
+         </div>
+      </div>
+   </div>
+
+   <!-- Public Holidays Section -->
+   <div class="mb-4">
+      <h6 class="mb-2">Public Holidays</h6>
+      <p class="text-muted small mb-3">By default, classes are not scheduled on public holidays. You can override this behavior by selecting specific holidays where classes should still occur.</p>
+
+      <!-- No holidays message -->
+      <div id="no-holidays-message" class="alert alert-info">
+         No public holidays were found within the selected date range.
+      </div>
+
+      <!-- Holidays table container -->
+      <div id="holidays-table-container" class="d-none">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th style="width: 50px;">
+                        <div class="form-check">
+                           <input class="form-check-input" type="checkbox" id="override-all-holidays">
+                           <label class="form-check-label" for="override-all-holidays"></label>
+                        </div>
+                     </th>
+                     <th>Date</th>
+                     <th>Holiday</th>
+                     <th>Override</th>
+                  </tr>
+               </thead>
+               <tbody id="holidays-list">
+                  <!-- Holidays will be populated here dynamically -->
+               </tbody>
+            </table>
+         </div>
+
+         <div class="d-flex justify-content-between mt-2">
+            <div>
+               <button type="button" class="btn btn-outline-secondary btn-sm" id="skip-all-holidays-btn">Skip All Holidays</button>
+               <button type="button" class="btn btn-outline-primary btn-sm" id="override-all-holidays-btn">Override All Holidays</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <!-- Holiday Row Template (for JavaScript) -->
+   <template id="holiday-row-template">
+      <tr class="holiday-row">
+         <td>
+            <div class="form-check">
+               <input class="form-check-input holiday-override-checkbox" type="checkbox" id="override-holiday-{id}" data-date="{date}">
+               <label class="form-check-label" for="override-holiday-{id}"></label>
+            </div>
+         </td>
+         <td class="holiday-date">{formatted_date}</td>
+         <td class="holiday-name">{name}</td>
+         <td class="holiday-status">
+            <span class="badge bg-danger holiday-skipped">Skipped</span>
+            <span class="badge bg-warning text-dark holiday-overridden d-none">Included</span>
+         </td>
+      </tr>
+   </template>
+
+   <!-- Hidden input to store holiday override data -->
+   <input type="hidden" id="holiday_overrides" name="schedule_data[holiday_overrides]" value="">
+
    <!-- Hidden inputs to store schedule data in the format expected by the backend -->
    <div id="schedule-data-container">
       <!-- These will be populated dynamically via JavaScript -->
