@@ -27,8 +27,8 @@
         // Initialize exception dates
         initExceptionDates();
 
-        // Initialize holiday overrides
-        initHolidayOverrides();
+        // Initialize holiday override modal
+        initHolidayOverrideModal();
 
         // Initialize calendar toggle
         initCalendarToggle();
@@ -188,6 +188,7 @@
             if ($(this).attr('id') === 'schedule_start_date') {
                 const startDate = $(this).val();
                 const originalStartDate = $('#class_start_date').val();
+                const endDate = $('#schedule_end_date').val();
 
                 // Validate schedule start date against original start date
                 if (startDate && originalStartDate && startDate < originalStartDate) {
@@ -226,6 +227,15 @@
                             $row.attr('data-valid', 'true');
                         }
                     });
+
+                    // Check for holidays that conflict with the schedule
+                    const pattern = $('#schedule_pattern').val();
+                    const scheduleDay = $('#schedule_day').val();
+                    const dayOfMonth = $('#schedule_day_of_month').val();
+
+                    if (pattern && ((pattern !== 'monthly' && scheduleDay) || (pattern === 'monthly' && dayOfMonth))) {
+                        checkForHolidays(startDate, endDate);
+                    }
                 }
             }
 
@@ -1031,11 +1041,17 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Initialize holiday overrides
+     * Initialize holiday override modal
      */
-    function initHolidayOverrides() {
+    function initHolidayOverrideModal() {
+        const $modal = $('#holiday-override-modal');
         const $holidaysList = $('#holidays-list');
+        const $noHolidaysAlert = $('#no-holidays-alert');
         const $overrideAllCheckbox = $('#override-all-holidays');
+        const $skipAllBtn = $('#skip-all-holidays-btn');
+        const $overrideAllBtn = $('#override-all-holidays-btn');
+        const $confirmBtn = $('#confirm-holiday-overrides-btn');
+        const $rememberChoice = $('#remember-holiday-choice');
         const $holidayOverridesInput = $('#holiday_overrides');
 
         // Load existing overrides if available
@@ -1049,24 +1065,43 @@ function getClassTypeHours(classTypeId) {
             console.error('Error parsing holiday overrides:', e);
         }
 
+        // Handle "Override All" button click
+        $overrideAllBtn.on('click', function() {
+            $('.holiday-override-checkbox').prop('checked', true).trigger('change');
+        });
+
+        // Handle "Skip All" button click
+        $skipAllBtn.on('click', function() {
+            $('.holiday-override-checkbox').prop('checked', false).trigger('change');
+        });
+
         // Handle "Override All" checkbox
         $overrideAllCheckbox.on('change', function() {
             const isChecked = $(this).prop('checked');
             $('.holiday-override-checkbox').prop('checked', isChecked).trigger('change');
         });
 
-        // Handle "Skip All Holidays" button
-        $('#skip-all-holidays-btn').on('click', function() {
-            $('.holiday-override-checkbox').prop('checked', false).trigger('change');
-            $overrideAllCheckbox.prop('checked', false);
-            $overrideAllCheckbox.prop('indeterminate', false);
-        });
+        // Handle confirm button
+        $confirmBtn.on('click', function() {
+            // Save overrides to hidden input
+            $holidayOverridesInput.val(JSON.stringify(holidayOverrides));
 
-        // Handle "Override All Holidays" button
-        $('#override-all-holidays-btn').on('click', function() {
-            $('.holiday-override-checkbox').prop('checked', true).trigger('change');
-            $overrideAllCheckbox.prop('checked', true);
-            $overrideAllCheckbox.prop('indeterminate', false);
+            // Remember choice if selected
+            if ($rememberChoice.prop('checked')) {
+                sessionStorage.setItem('rememberHolidayChoice', 'true');
+                sessionStorage.setItem('holidayOverrides', JSON.stringify(holidayOverrides));
+            }
+
+            // Close modal
+            $modal.modal('hide');
+
+            // Recalculate end date with the new overrides
+            recalculateEndDate();
+
+            // Update calendar if visible
+            if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
+                updateCalendarEvents();
+            }
         });
 
         // Handle individual holiday checkbox changes
@@ -1092,19 +1127,8 @@ function getClassTypeHours(classTypeId) {
                 holidayOverrides[date].override = isChecked;
             }
 
-            // Save overrides to hidden input
-            $holidayOverridesInput.val(JSON.stringify(holidayOverrides));
-
             // Update "Override All" checkbox state
             updateOverrideAllCheckbox();
-
-            // Recalculate end date with the new overrides
-            recalculateEndDate();
-
-            // Update calendar if visible
-            if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
-                updateCalendarEvents();
-            }
         });
 
         // Update the "Override All" checkbox based on individual checkboxes
@@ -1125,7 +1149,7 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Check for public holidays in date range and update the inline holiday section
+     * Check for public holidays in date range and show override modal if needed
      */
     function checkForHolidays(startDate, endDate) {
         // If no public holidays data, return
@@ -1157,38 +1181,52 @@ function getClassTypeHours(classTypeId) {
             return holidayDate >= startDateObj && holidayDate <= endDateObj;
         });
 
-        // Get references to DOM elements
-        const $holidaysList = $('#holidays-list');
-        const $noHolidaysMessage = $('#no-holidays-message');
-        const $holidaysTableContainer = $('#holidays-table-container');
-
-        // Clear existing rows
-        $holidaysList.empty();
-
-        // Show/hide appropriate elements based on whether holidays were found
+        // If no holidays in range, return
         if (holidaysInRange.length === 0) {
-            $noHolidaysMessage.removeClass('d-none');
-            $holidaysTableContainer.addClass('d-none');
             return;
-        } else {
-            $noHolidaysMessage.addClass('d-none');
-            $holidaysTableContainer.removeClass('d-none');
+        }
+
+        // Check if we should remember choice from session
+        const rememberChoice = sessionStorage.getItem('rememberHolidayChoice') === 'true';
+        if (rememberChoice) {
+            try {
+                const savedOverrides = sessionStorage.getItem('holidayOverrides');
+                if (savedOverrides) {
+                    holidayOverrides = JSON.parse(savedOverrides);
+                    $('#holiday_overrides').val(savedOverrides);
+                    console.log('Using remembered holiday overrides:', holidayOverrides);
+                    return;
+                }
+            } catch (e) {
+                console.error('Error parsing remembered holiday overrides:', e);
+            }
         }
 
         // Populate the holidays list
         populateHolidaysList(holidaysInRange);
+
+        // Show the modal
+        $('#holiday-override-modal').modal('show');
     }
 
     /**
-     * Populate the holidays list in the inline holiday section
+     * Populate the holidays list in the override modal
      */
     function populateHolidaysList(holidays) {
         const $holidaysList = $('#holidays-list');
-        const $template = $('#holiday-row-template');
-        const $overrideAllCheckbox = $('#override-all-holidays');
+        const $template = $('#holiday-override-row-template');
+        const $noHolidaysAlert = $('#no-holidays-alert');
 
         // Clear existing rows
         $holidaysList.empty();
+
+        // Show/hide no holidays alert
+        if (holidays.length === 0) {
+            $noHolidaysAlert.removeClass('d-none');
+            return;
+        } else {
+            $noHolidaysAlert.addClass('d-none');
+        }
 
         // Add a row for each holiday
         holidays.forEach((holiday, index) => {
@@ -1228,6 +1266,7 @@ function getClassTypeHours(classTypeId) {
         });
 
         // Update "Override All" checkbox state
+        const $overrideAllCheckbox = $('#override-all-holidays');
         const totalHolidays = $('.holiday-override-checkbox').length;
         const checkedHolidays = $('.holiday-override-checkbox:checked').length;
 
