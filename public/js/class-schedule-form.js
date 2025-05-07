@@ -188,7 +188,6 @@
             if ($(this).attr('id') === 'schedule_start_date') {
                 const startDate = $(this).val();
                 const originalStartDate = $('#class_start_date').val();
-                const endDate = $('#schedule_end_date').val();
 
                 // Validate schedule start date against original start date
                 if (startDate && originalStartDate && startDate < originalStartDate) {
@@ -227,15 +226,6 @@
                             $row.attr('data-valid', 'true');
                         }
                     });
-
-                    // Check for holidays that conflict with the schedule
-                    const pattern = $('#schedule_pattern').val();
-                    const scheduleDay = $('#schedule_day').val();
-                    const dayOfMonth = $('#schedule_day_of_month').val();
-
-                    if (pattern && ((pattern !== 'monthly' && scheduleDay) || (pattern === 'monthly' && dayOfMonth))) {
-                        checkForHolidays(startDate, endDate);
-                    }
                 }
             }
 
@@ -505,17 +495,31 @@ function getClassTypeHours(classTypeId) {
 
                             // Check if this date is a public holiday
                             let isPublicHoliday = false;
+                            let isHolidayOverridden = false;
+
                             if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
-                                isPublicHoliday = wecozaPublicHolidays.events.some(holiday => {
+                                const matchingHoliday = wecozaPublicHolidays.events.find(holiday => {
                                     // Direct string comparison
                                     return holiday.start === dateStr;
                                 });
+
+                                if (matchingHoliday) {
+                                    isPublicHoliday = true;
+
+                                    // Check if this holiday has been overridden
+                                    if (typeof holidayOverrides === 'object' && holidayOverrides[dateStr] && holidayOverrides[dateStr].override === true) {
+                                        isHolidayOverridden = true;
+                                    }
+                                }
                             }
 
-                            // Skip exception dates and public holidays
-                            if (!exceptionDates.includes(dateStr) && !isPublicHoliday) {
+                            // Skip exception dates and public holidays (unless overridden)
+                            if (!exceptionDates.includes(dateStr) && (!isPublicHoliday || isHolidayOverridden)) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
+                                if (isHolidayOverridden) {
+                                    console.log('Holiday overridden:', dateStr);
+                                }
                             } else if (isPublicHoliday) {
                                 console.log('Public holiday skipped:', dateStr);
                             } else {
@@ -542,17 +546,31 @@ function getClassTypeHours(classTypeId) {
 
                             // Check if this date is a public holiday
                             let isPublicHoliday = false;
+                            let isHolidayOverridden = false;
+
                             if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
-                                isPublicHoliday = wecozaPublicHolidays.events.some(holiday => {
+                                const matchingHoliday = wecozaPublicHolidays.events.find(holiday => {
                                     // Direct string comparison
                                     return holiday.start === dateStr;
                                 });
+
+                                if (matchingHoliday) {
+                                    isPublicHoliday = true;
+
+                                    // Check if this holiday has been overridden
+                                    if (typeof holidayOverrides === 'object' && holidayOverrides[dateStr] && holidayOverrides[dateStr].override === true) {
+                                        isHolidayOverridden = true;
+                                    }
+                                }
                             }
 
-                            // Skip exception dates and public holidays
-                            if (!exceptionDates.includes(dateStr) && !isPublicHoliday) {
+                            // Skip exception dates and public holidays (unless overridden)
+                            if (!exceptionDates.includes(dateStr) && (!isPublicHoliday || isHolidayOverridden)) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
+                                if (isHolidayOverridden) {
+                                    console.log('Holiday overridden:', dateStr);
+                                }
                             } else if (isPublicHoliday) {
                                 console.log('Public holiday skipped:', dateStr);
                             } else {
@@ -591,17 +609,31 @@ function getClassTypeHours(classTypeId) {
 
                             // Check if this date is a public holiday
                             let isPublicHoliday = false;
+                            let isHolidayOverridden = false;
+
                             if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
-                                isPublicHoliday = wecozaPublicHolidays.events.some(holiday => {
+                                const matchingHoliday = wecozaPublicHolidays.events.find(holiday => {
                                     // Direct string comparison
                                     return holiday.start === dateStr;
                                 });
+
+                                if (matchingHoliday) {
+                                    isPublicHoliday = true;
+
+                                    // Check if this holiday has been overridden
+                                    if (typeof holidayOverrides === 'object' && holidayOverrides[dateStr] && holidayOverrides[dateStr].override === true) {
+                                        isHolidayOverridden = true;
+                                    }
+                                }
                             }
 
-                            // Skip exception dates and public holidays
-                            if (!exceptionDates.includes(dateStr) && !isPublicHoliday) {
+                            // Skip exception dates and public holidays (unless overridden)
+                            if (!exceptionDates.includes(dateStr) && (!isPublicHoliday || isHolidayOverridden)) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
+                                if (isHolidayOverridden) {
+                                    console.log('Holiday overridden:', dateStr);
+                                }
                             } else if (isPublicHoliday) {
                                 console.log('Public holiday skipped:', dateStr);
                             } else {
@@ -715,7 +747,7 @@ function getClassTypeHours(classTypeId) {
 
                         // Check if this holiday has been overridden
                         let isOverridden = false;
-                        if (holidayOverrides[dateStr]) {
+                        if (typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[dateStr]) {
                             isOverridden = holidayOverrides[dateStr].override;
                             if (isOverridden) {
                                 arg.el.classList.add('holiday-overridden-day');
@@ -1029,7 +1061,7 @@ function getClassTypeHours(classTypeId) {
             });
 
             // If it's a holiday, check if it's been overridden
-            if (isHoliday && holidayOverrides[date]) {
+            if (isHoliday && typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[date]) {
                 // If override is true, we don't treat it as an exception date
                 return !holidayOverrides[date].override;
             }
@@ -1038,6 +1070,40 @@ function getClassTypeHours(classTypeId) {
         }
 
         return false;
+    }
+
+    /**
+     * Initialize holiday overrides
+     */
+    function initHolidayOverrides() {
+        // Initialize holidayOverrides object if not already initialized
+        if (typeof holidayOverrides !== 'object' || holidayOverrides === null) {
+            holidayOverrides = {};
+        }
+
+        // Load existing overrides if available
+        try {
+            const existingOverrides = $('#holiday_overrides').val();
+            if (existingOverrides) {
+                holidayOverrides = JSON.parse(existingOverrides);
+                console.log('Loaded existing holiday overrides:', holidayOverrides);
+            }
+        } catch (e) {
+            console.error('Error parsing holiday overrides:', e);
+        }
+
+        // Check for holidays when start date changes
+        $('#schedule_start_date').on('change', function() {
+            const startDate = $(this).val();
+            const endDate = $('#schedule_end_date').val();
+            const pattern = $('#schedule_pattern').val();
+            const scheduleDay = $('#schedule_day').val();
+            const dayOfMonth = $('#schedule_day_of_month').val();
+
+            if (startDate && pattern && ((pattern !== 'monthly' && scheduleDay) || (pattern === 'monthly' && dayOfMonth))) {
+                checkForHolidays(startDate, endDate);
+            }
+        });
     }
 
     /**
