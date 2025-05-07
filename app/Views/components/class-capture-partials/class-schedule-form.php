@@ -202,11 +202,11 @@
    <!-- Public Holidays Section -->
    <div class="mb-4">
       <h6 class="mb-2">Public Holidays</h6>
-      <p class="text-muted small mb-3">By default, classes are not scheduled on public holidays. You can override this behavior by selecting specific holidays where classes should still occur.</p>
+      <p class="text-muted small mb-3">By default, classes are not scheduled on public holidays. The system will only show holidays that conflict with your class schedule (when a holiday falls on a scheduled class day). You can override specific holidays to include them in the schedule.</p>
 
       <!-- No holidays message -->
       <div id="no-holidays-message" class="alert alert-info">
-         No public holidays were found within the selected date range.
+         No public holidays that conflict with your class schedule were found. Holidays are only shown when they fall on a scheduled class day.
       </div>
 
       <!-- Holidays table container -->

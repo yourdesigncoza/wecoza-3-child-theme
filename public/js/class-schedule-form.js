@@ -69,6 +69,13 @@
             // Update schedule data
             updateScheduleData();
 
+            // Check for holidays that conflict with the new pattern
+            const startDate = $('#schedule_start_date').val();
+            const endDate = $('#schedule_end_date').val();
+            if (startDate) {
+                checkForHolidays(startDate, endDate);
+            }
+
             // Recalculate end date when pattern changes
             recalculateEndDate();
         });
@@ -77,6 +84,14 @@
         $('#schedule_day, #schedule_day_of_month').on('change', function() {
             updateScheduleData();
             restrictStartDateByDay();
+
+            // Check for holidays that conflict with the new day selection
+            const startDate = $('#schedule_start_date').val();
+            const endDate = $('#schedule_end_date').val();
+            if (startDate) {
+                checkForHolidays(startDate, endDate);
+            }
+
             // Recalculate end date when day changes
             recalculateEndDate();
         });
@@ -176,8 +191,6 @@
 
         // Initialize date fields
         const $startDate = $('#schedule_start_date');
-        const $endDate = $('#schedule_end_date');
-        const $totalHours = $('#schedule_total_hours');
         const $classType = $('#class_type');
 
         // Update end date when start date or class type changes
@@ -234,13 +247,7 @@
             updateScheduleData();
         });
 
-        // Calculate end date based on class type and start date
-        // This function is now a wrapper for recalculateEndDate which handles exception dates
-        function calculateEndDate() {
-            console.log('calculateEndDate called, delegating to recalculateEndDate');
-            // Call the more comprehensive recalculateEndDate function
-            recalculateEndDate();
-        }
+        // Note: calculateEndDate has been replaced by recalculateEndDate which handles exception dates
 
     }
 
@@ -1111,7 +1118,6 @@ function getClassTypeHours(classTypeId) {
      */
     function initHolidayOverrides() {
         const $holidaysList = $('#holidays-list');
-        const $noHolidaysAlert = $('#no-holidays-message');
         const $overrideAllCheckbox = $('#override-all-holidays');
         const $skipAllBtn = $('#skip-all-holidays-btn');
         const $overrideAllBtn = $('#override-all-holidays-btn');
@@ -1203,7 +1209,7 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Check for public holidays in date range and show override modal if needed
+     * Check for public holidays in date range and show only those that conflict with the class schedule
      */
     function checkForHolidays(startDate, endDate) {
         // If no public holidays data, return
@@ -1223,12 +1229,32 @@ function getClassTypeHours(classTypeId) {
             endDate = date.toISOString().split('T')[0];
         }
 
+        // Get schedule pattern and related data
+        const pattern = $('#schedule_pattern').val();
+        const scheduleDay = $('#schedule_day').val();
+        const dayOfMonth = $('#schedule_day_of_month').val();
+
+        // If pattern is not set, we can't determine conflicts
+        if (!pattern) {
+            return;
+        }
+
+        // For weekly/biweekly patterns, we need the day of week
+        if ((pattern === 'weekly' || pattern === 'biweekly') && !scheduleDay) {
+            return;
+        }
+
+        // For monthly pattern, we need the day of month
+        if (pattern === 'monthly' && !dayOfMonth) {
+            return;
+        }
+
         // Convert dates to Date objects for comparison
         const startDateObj = new Date(startDate);
         const endDateObj = new Date(endDate);
 
         // Filter holidays to only include those within the date range
-        const holidaysInRange = wecozaPublicHolidays.events.filter(holiday => {
+        const allHolidaysInRange = wecozaPublicHolidays.events.filter(holiday => {
             // Parse the date parts to ensure correct date (avoid timezone issues)
             const [year, month, day] = holiday.start.split('-').map(Number);
             const holidayDate = new Date(year, month - 1, day);
@@ -1236,7 +1262,23 @@ function getClassTypeHours(classTypeId) {
         });
 
         // If no holidays in range, return
-        if (holidaysInRange.length === 0) {
+        if (allHolidaysInRange.length === 0) {
+            return;
+        }
+
+        console.log('All holidays in range:', allHolidaysInRange);
+
+        // Filter to only include holidays that conflict with the class schedule
+        const conflictingHolidays = allHolidaysInRange.filter(holiday => {
+            return holidayConflictsWithSchedule(holiday.start, pattern, scheduleDay, dayOfMonth, startDate);
+        });
+
+        console.log('Conflicting holidays:', conflictingHolidays);
+
+        // If no conflicting holidays, hide the holidays table and show the no holidays message
+        if (conflictingHolidays.length === 0) {
+            $('#holidays-table-container').addClass('d-none');
+            $('#no-holidays-message').removeClass('d-none');
             return;
         }
 
@@ -1252,12 +1294,73 @@ function getClassTypeHours(classTypeId) {
             console.error('Error parsing saved holiday overrides:', e);
         }
 
-        // Populate the holidays list
-        populateHolidaysList(holidaysInRange);
+        // Populate the holidays list with only conflicting holidays
+        populateHolidaysList(conflictingHolidays);
 
         // Show the holidays table
         $('#no-holidays-message').addClass('d-none');
         $('#holidays-table-container').removeClass('d-none');
+    }
+
+    /**
+     * Check if a holiday conflicts with the class schedule
+     */
+    function holidayConflictsWithSchedule(holidayDate, pattern, scheduleDay, dayOfMonth, startDate) {
+        // Parse the holiday date
+        const holidayDateObj = new Date(holidayDate);
+        const holidayDayOfWeek = holidayDateObj.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const holidayDayOfMonth = holidayDateObj.getDate(); // 1-31
+
+        // For weekly pattern, check if the holiday falls on the scheduled day of the week
+        if (pattern === 'weekly') {
+            const scheduleDayIndex = getDayIndex(scheduleDay);
+            return holidayDayOfWeek === scheduleDayIndex;
+        }
+
+        // For bi-weekly pattern, check if the holiday falls on the scheduled day of the week
+        // and is in the correct week sequence
+        if (pattern === 'biweekly') {
+            const scheduleDayIndex = getDayIndex(scheduleDay);
+
+            // First, check if it's the right day of the week
+            if (holidayDayOfWeek !== scheduleDayIndex) {
+                return false;
+            }
+
+            // Then check if it's in the correct bi-weekly sequence
+            const startDateObj = new Date(startDate);
+
+            // Set start date to the first occurrence of the scheduled day
+            while (startDateObj.getDay() !== scheduleDayIndex) {
+                startDateObj.setDate(startDateObj.getDate() + 1);
+            }
+
+            // Calculate days between start date and holiday
+            const daysDiff = Math.round((holidayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+
+            // Check if the difference is divisible by 14 (bi-weekly)
+            return daysDiff % 14 === 0;
+        }
+
+        // For monthly pattern, check if the holiday falls on the scheduled day of the month
+        if (pattern === 'monthly') {
+            if (dayOfMonth === 'last') {
+                // Check if it's the last day of the month
+                const lastDayOfMonth = new Date(holidayDateObj.getFullYear(), holidayDateObj.getMonth() + 1, 0).getDate();
+                return holidayDayOfMonth === lastDayOfMonth;
+            } else {
+                // Check if it's the specified day of the month
+                return holidayDayOfMonth === parseInt(dayOfMonth);
+            }
+        }
+
+        // For custom pattern, we can't determine conflicts automatically
+        if (pattern === 'custom') {
+            // For custom patterns, we'll show all holidays in the range
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1267,16 +1370,19 @@ function getClassTypeHours(classTypeId) {
         const $holidaysList = $('#holidays-list');
         const $template = $('#holiday-row-template');
         const $noHolidaysAlert = $('#no-holidays-message');
+        const $holidaysTableContainer = $('#holidays-table-container');
 
         // Clear existing rows
         $holidaysList.empty();
 
-        // Show/hide no holidays alert
+        // Show/hide no holidays alert and table container
         if (holidays.length === 0) {
             $noHolidaysAlert.removeClass('d-none');
+            $holidaysTableContainer.addClass('d-none');
             return;
         } else {
             $noHolidaysAlert.addClass('d-none');
+            $holidaysTableContainer.removeClass('d-none');
         }
 
         // Add a row for each holiday

@@ -191,7 +191,7 @@ We've successfully implemented the public holiday override feature as outlined i
 Based on client feedback, we're revising the implementation approach to use an inline UI rather than a modal dialog. This approach will be more streamlined and intuitive for users.
 
 ### Revised UI Approach
-- Show only holidays that actually conflict with the class schedule
+- Show only holidays that actually conflict with the class schedule ✅
 - Place these holidays in a dedicated section above the exception dates
 - Use checkboxes to include (override) specific holidays
 - Have holidays deselected by default (excluded from scheduling)
