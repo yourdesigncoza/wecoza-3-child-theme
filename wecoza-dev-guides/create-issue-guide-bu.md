@@ -1,6 +1,6 @@
-# How to Create a Comprehensive Linear Task for Any Feature
+# How to Create a Comprehensive WECOZA-DEV Task for Any Feature
 
-This guide outlines the streamlined process for creating a well-structured Linear task for implementing any new feature or functionality.
+This guide outlines the streamlined process for creating a well-structured WECOZA-DEV task for implementing any new feature or functionality.
 
 ## Step 1: Gather Information About the Feature Requirements
 
@@ -116,30 +116,30 @@ As shown in the UI:
 - [Related issue reference, if any]
 ```
 
-## Step 4: Create the Linear Task
+## Step 4: Create the WECOZA-DEV Task
 
-1. Create a new Linear task with a basic title and description:
+1. Create a new WECOZA-DEV task with a basic title and description:
 
 ```
-linear> Create a new issue with title "Implement [Feature Name]" and description "[Brief description of the feature]"
+WECOZA-DEV> Create a new issue with title "Implement [Feature Name]" and description "[Brief description of the feature]"
 ```
 
 2. Note the issue ID and UUID from the response:
    - Issue ID: WEC-XX (e.g., WEC-67)
    - UUID: [UUID from response] (e.g., 7ac3dd6e-51aa-41d4-ab7e-da1d069d6df6)
 
-## Step 5: Update the Linear Task with Detailed Content
+## Step 5: Update the WECOZA-DEV Task with Detailed Content
 
 Update the task with the full detailed description from your markdown file in the `build-tasks/` directory:
 
 ```
-linear> Update issue WEC-XX with description "[Paste your complete markdown content here]"
+WECOZA-DEV> Update issue WEC-XX with description "[Paste your complete markdown content here]"
 ```
 
 For example:
 
 ```
-linear> Update issue WEC-XX with description "# Implement [Feature Name]
+WECOZA-DEV> Update issue WEC-XX with description "# Implement [Feature Name]
 
 ## Description
 [Your detailed feature description]
@@ -174,7 +174,7 @@ As shown in the UI:
 1. First, get the team states to find the UUID of the "In Progress" state:
 
 ```
-linear> Get team with id "[your-team-id]" including states
+WECOZA-DEV> Get team with id "[your-team-id]" including states
 ```
 
 2. From the response, identify the UUID for the "In Progress" state:
@@ -183,12 +183,12 @@ linear> Get team with id "[your-team-id]" including states
 3. Update the task state:
 
 ```
-linear> Update issue WEC-XX with stateId "[in-progress-state-uuid]"
+WECOZA-DEV> Update issue WEC-XX with stateId "[in-progress-state-uuid]"
 ```
 
 ## Summary
 
-Following this process, you've created a comprehensive Linear task that:
+Following this process, you've created a comprehensive WECOZA-DEV task that:
 
 1. Has a clear title and description
 2. Includes detailed subtasks with the WEC-xx.y convention

@@ -1,6 +1,6 @@
-# How to Create a Comprehensive Linear Task for Any Feature
+# How to Create a Comprehensive WECOZA-DEV Task for Any Feature
 
-This guide outlines the streamlined process for creating a well-structured Linear task for implementing any new feature or functionality.
+This guide outlines the streamlined process for creating a well-structured WECOZA-DEV task for implementing any new feature or functionality.
 
 ## Step 1: Gather Information About the Feature Requirements
 
@@ -23,7 +23,7 @@ Understand how similar features are implemented in the codebase:
 
 ## Step 3: Create a Detailed Task Description Using the Development Template
 
-1. Create a markdown file in the `linear/build-tasks/` directory with a name that reflects your feature:
+1. Create a markdown file in the `WECOZA-DEV/build-tasks/` directory with a name that reflects your feature:
 
 ```markdown
 # [Feature Title]
@@ -116,7 +116,7 @@ As shown in the UI:
 - [Related issue reference, if any]
 ```
 
-## Step 4: Use the Linear Task ID from the Previous Step
+## Step 4: Use the WECOZA-DEV Task ID from the Previous Step
 
 1. Note the issue ID and UUID from the response:
    - Issue ID: WEC-XX (e.g., WEC-67)
