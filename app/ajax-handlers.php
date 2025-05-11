@@ -67,8 +67,6 @@ function register_shortcodes() {
     \add_shortcode('wecoza_capture_class', [$classController, 'captureClassShortcode']);
     \add_shortcode('wecoza_display_class', [$classController, 'displayClassShortcode']);
     
-    // Contact form shortcode
-    $contactController = new WeCoza\Controllers\ContactController();
 }
 
 // Register shortcodes
