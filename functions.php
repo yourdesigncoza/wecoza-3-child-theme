@@ -56,6 +56,11 @@ function enqueue_assets() {
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('wecoza_table_nonce')
         ));
+        
+        // Localize AJAX URL for all scripts
+        wp_localize_script('jquery', 'wecoza_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php')
+        ));
 
 }
 add_action('wp_enqueue_scripts', 'enqueue_assets'); // Enqueue assets
