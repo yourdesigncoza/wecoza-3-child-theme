@@ -1080,40 +1080,6 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Initialize holiday overrides
-     */
-    function initHolidayOverrides() {
-        // Initialize holidayOverrides object if not already initialized
-        if (typeof holidayOverrides !== 'object' || holidayOverrides === null) {
-            holidayOverrides = {};
-        }
-
-        // Load existing overrides if available
-        try {
-            const existingOverrides = $('#holiday_overrides').val();
-            if (existingOverrides) {
-                holidayOverrides = JSON.parse(existingOverrides);
-                console.log('Loaded existing holiday overrides:', holidayOverrides);
-            }
-        } catch (e) {
-            console.error('Error parsing holiday overrides:', e);
-        }
-
-        // Check for holidays when start date changes
-        $('#schedule_start_date').on('change', function() {
-            const startDate = $(this).val();
-            const endDate = $('#schedule_end_date').val();
-            const pattern = $('#schedule_pattern').val();
-            const scheduleDay = $('#schedule_day').val();
-            const dayOfMonth = $('#schedule_day_of_month').val();
-
-            if (startDate && pattern && ((pattern !== 'monthly' && scheduleDay) || (pattern === 'monthly' && dayOfMonth))) {
-                checkForHolidays(startDate, endDate);
-            }
-        });
-    }
-
-    /**
      * Initialize holiday override functionality
      */
     function initHolidayOverrides() {
@@ -1122,6 +1088,11 @@ function getClassTypeHours(classTypeId) {
         const $skipAllBtn = $('#skip-all-holidays-btn');
         const $overrideAllBtn = $('#override-all-holidays-btn');
         const $holidayOverridesInput = $('#holiday_overrides');
+
+        // Initialize holidayOverrides object if not already initialized
+        if (typeof holidayOverrides !== 'object' || holidayOverrides === null) {
+            holidayOverrides = {};
+        }
 
         // Load existing overrides if available
         try {
@@ -1150,21 +1121,9 @@ function getClassTypeHours(classTypeId) {
             $('.holiday-override-checkbox').prop('checked', isChecked).trigger('change');
         });
 
-        // Handle holiday override changes
-        $holidaysList.on('change', '.holiday-override-checkbox', function() {
-            // Save overrides to hidden input
-            $holidayOverridesInput.val(JSON.stringify(holidayOverrides));
-
-            // Recalculate end date with the new overrides
-            recalculateEndDate();
-
-            // Update calendar if visible
-            if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
-                updateCalendarEvents();
-            }
-        });
-
-        // Handle individual holiday checkbox changes
+        // Handle individual holiday checkbox changes - CONSOLIDATED HANDLER
+        // Fix for WEC-82: Consolidated the two separate event handlers into one to prevent
+        // the need to click multiple times on checkboxes
         $holidaysList.on('change', '.holiday-override-checkbox', function() {
             const $checkbox = $(this);
             const date = $checkbox.data('date');
@@ -1187,8 +1146,32 @@ function getClassTypeHours(classTypeId) {
                 holidayOverrides[date].override = isChecked;
             }
 
+            // Save overrides to hidden input
+            $holidayOverridesInput.val(JSON.stringify(holidayOverrides));
+
             // Update "Override All" checkbox state
             updateOverrideAllCheckbox();
+
+            // Recalculate end date with the new overrides
+            recalculateEndDate();
+
+            // Update calendar if visible
+            if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
+                updateCalendarEvents();
+            }
+        });
+
+        // Check for holidays when start date changes
+        $('#schedule_start_date').on('change', function() {
+            const startDate = $(this).val();
+            const endDate = $('#schedule_end_date').val();
+            const pattern = $('#schedule_pattern').val();
+            const scheduleDay = $('#schedule_day').val();
+            const dayOfMonth = $('#schedule_day_of_month').val();
+
+            if (startDate && pattern && ((pattern !== 'monthly' && scheduleDay) || (pattern === 'monthly' && dayOfMonth))) {
+                checkForHolidays(startDate, endDate);
+            }
         });
 
         // Update the "Override All" checkbox based on individual checkboxes

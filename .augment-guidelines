@@ -311,3 +311,6 @@ Services:
 - Feature tests for complete flows
 - Mock external services
 - Test view rendering
+
+# GIT Workflow
+- Always use the GIT MCP
