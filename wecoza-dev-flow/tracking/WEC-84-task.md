@@ -208,6 +208,5 @@ For the sidebar navigation, we'll replace the current vertical tabs with the Pho
 
 The CSS variables will be organized in a new phoenix-theme.css file, which will be enqueued in functions.php. The existing ydcoza-styles.css will be updated to use these variables for consistent styling across the application.
 
-The dark/light mode toggle will be implemented using JavaScript to switch between themes, with theme preference stored in local storage for persistence across page loads.
 
 Throughout the implementation, we'll maintain a focus on accessibility, performance, and cross-browser compatibility to ensure a high-quality user experience.

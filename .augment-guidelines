@@ -313,4 +313,23 @@ Services:
 - Test view rendering
 
 # GIT Workflow
-- Always use the GIT MCP
+- Always use the `GIT MCP Server`
+- (GIT) use the `GIT MCP Server`
+
+
+# Vertex 
+When using any tools that interact with the filesystem, especially vertex-ai-mcp-server tools:
+
+- The project root is located at: /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme
+
+- All relative paths should be resolved from this root directory.
+
+- When using path-based tools like read_file_content, write_file_content, list_directory_contents, etc., 
+   always use the full path starting with the project root:
+   /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme/[rest-of-path]
+
+- For codebase-retrieval and other tools that don't require full paths, 
+   specify that searches should be limited to this directory.
+
+- When executing terminal commands, always cd into the project root first:
+   cd /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme && [your-command]
