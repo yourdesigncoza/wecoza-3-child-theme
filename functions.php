@@ -1,4 +1,36 @@
 <?php
+
+/**
+ * @package Bootscore Child
+ *
+ * @version 6.0.0
+ */
+
+
+// Exit if accessed directly
+defined('ABSPATH') || exit;
+
+
+/**
+ * Enqueue scripts and styles
+ */
+add_action('wp_enqueue_scripts', 'bootscore_child_enqueue_styles');
+function bootscore_child_enqueue_styles() {
+
+  // Compiled main.css
+  $modified_bootscoreChildCss = date('YmdHi', filemtime(get_stylesheet_directory() . '/assets/css/main.css'));
+  wp_enqueue_style('main', get_stylesheet_directory_uri() . '/assets/css/main.css', array('parent-style'), $modified_bootscoreChildCss);
+
+  // style.css
+  wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
+  
+  // custom.js
+  // Get modification time. Enqueue file with modification date to prevent browser from loading cached scripts when file content changes. 
+  $modificated_CustomJS = date('YmdHi', filemtime(get_stylesheet_directory() . '/assets/js/custom.js'));
+  wp_enqueue_script('custom-js', get_stylesheet_directory_uri() . '/assets/js/custom.js', array('jquery'), $modificated_CustomJS, false, true);
+}
+
+
 // Prevent direct access to this file
 defined('ABSPATH') or die('No script kiddies please!');
 
@@ -36,8 +68,12 @@ add_action( 'wp_head', 'ydcoza_google_fonts_links' );
 
 function enqueue_assets() {
         // Bootstrap 5 https://fastbootstrap.com/get-started/installation/
-        wp_enqueue_style('bootstrap-5', 'https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css');
+        // wp_enqueue_style('bootstrap-5', 'https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css');
         // wp_enqueue_style('bootstrap-5', 'https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css');
+
+          // style.css
+          wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
+
         wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css');
         wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
         // wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
@@ -46,12 +82,12 @@ function enqueue_assets() {
         wp_enqueue_style('bootstrap-table', 'https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css');
         wp_enqueue_script('bootstrap-table', 'https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js', array('jquery'), null, true);
 
-        // Phoenix theme styles - load before custom styles
-        wp_enqueue_style('phoenix-theme', WECOZA_CHILD_URL . '/includes/css/phoenix-theme.css', array('generate-style'), WECOZA_PLUGIN_VERSION);
-
-        // Custom styles - load after Phoenix theme styles
-        wp_enqueue_style('ydcoza-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array('phoenix-theme'), WECOZA_PLUGIN_VERSION);
-
+        // Theme styles - load after Parent
+        wp_enqueue_style('ydcoza_theme-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-theme.css', array('parent-style'), WECOZA_PLUGIN_VERSION);
+        // Override styles - load after Parent
+        wp_enqueue_style('ydcoza-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array('ydcoza_theme-css'), WECOZA_PLUGIN_VERSION);
+        // Override styles - load after Parent
+        wp_enqueue_style('ydcoza_line-css', WECOZA_CHILD_URL . '/includes/css/line.css', array('ydcoza-css'), WECOZA_PLUGIN_VERSION);
 
         // Check if we are on a specific page
         if (is_page('all-learners-table')) { // Replace 'your-page-slug' with the slug of your target page
@@ -68,10 +104,6 @@ function enqueue_assets() {
         // Chart .js
         wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), null, true);
 
-        // Phoenix theme scripts
-        wp_enqueue_script('phoenix-sidebar', WECOZA_CHILD_URL . '/includes/js/phoenix-sidebar.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
-        wp_enqueue_script('theme-toggle', WECOZA_CHILD_URL . '/includes/js/theme-toggle.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
-
         // Custom scripts with localization
         wp_enqueue_script('wecoza-table-handler', WECOZA_CHILD_URL . '/includes/js/app.js', array('jquery', 'bootstrap-table'), WECOZA_PLUGIN_VERSION, true);
         wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array(
@@ -83,6 +115,34 @@ function enqueue_assets() {
         wp_localize_script('jquery', 'wecoza_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php')
         ));
+
+        // simplebar.min.js
+        wp_enqueue_script('simplebar-js', WECOZA_CHILD_URL . '/includes/js/simplebar.min.js', array(),  WECOZA_PLUGIN_VERSION, false);
+        // config.js
+        wp_enqueue_script('config-js', WECOZA_CHILD_URL . '/includes/js/config.js', array(),  WECOZA_PLUGIN_VERSION, false);
+        // popper.min.js
+        wp_enqueue_script('popper-js', WECOZA_CHILD_URL . '/includes/js/popper.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // anchor.min.js
+        wp_enqueue_script('anchor-js', WECOZA_CHILD_URL . '/includes/js/anchor.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // is.min.js
+        wp_enqueue_script('is-js', WECOZA_CHILD_URL . '/includes/js/is.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // fontawesome-all.min.js
+        wp_enqueue_script('fontawesome_all-js', WECOZA_CHILD_URL . '/includes/js/fontawesome-all.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // lodash.min.js
+        wp_enqueue_script('lodash-js', WECOZA_CHILD_URL . '/includes/js/lodash.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // list.min.js
+        wp_enqueue_script('list-js', WECOZA_CHILD_URL . '/includes/js/list.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // feather.min.js
+        wp_enqueue_script('feather-js', WECOZA_CHILD_URL . '/includes/js/feather.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // dayjs.min.js
+        wp_enqueue_script('dayjs-js', WECOZA_CHILD_URL . '/includes/js/dayjs.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // choices.min.js
+        wp_enqueue_script('choices-js', WECOZA_CHILD_URL . '/includes/js/choices.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
+        // phoenix .js
+        wp_enqueue_script('phoenix-js', WECOZA_CHILD_URL . '/includes/js/phoenix.js', array(),  WECOZA_PLUGIN_VERSION, true);
+
+
+
 
 }
 add_action('wp_enqueue_scripts', 'enqueue_assets'); // Enqueue assets
@@ -219,3 +279,73 @@ function fetch_dynamic_table_data() {
 }
 add_action('wp_ajax_fetch_dynamic_table_data', 'fetch_dynamic_table_data');
 add_action('wp_ajax_nopriv_fetch_dynamic_table_data', 'fetch_dynamic_table_data');
+
+
+// Add theme‐toggle switch to end of Primary menu
+function add_theme_toggle_nav_item( $items, $args ) {
+    // change 'primary' to your menu's theme_location if different
+    if ( isset($args->theme_location) && $args->theme_location === 'main-menu' ) {
+        $items .= '
+            <li class="nav-item">
+              <div class="theme-control-toggle fa-icon-wait px-2">
+                <input
+                  class="form-check-input ms-0 theme-control-toggle-input"
+                  type="checkbox"
+                  data-theme-control="phoenixTheme"
+                  value="dark"
+                  id="themeControlToggle"
+                >
+                <label
+                  class="mb-0 theme-control-toggle-label theme-control-toggle-light"
+                  for="themeControlToggle"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="left"
+                  data-bs-title="Switch theme"
+                  style="height:32px;width:32px;"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       width="16px" height="16px"
+                       viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor"
+                       stroke-width="2" stroke-linecap="round"
+                       stroke-linejoin="round"
+                       class="feather feather-moon icon"
+                  >
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3
+                             7 7 0 0 0 21 12.79z" />
+                  </svg>
+                </label>
+                <label
+                  class="mb-0 theme-control-toggle-label theme-control-toggle-dark"
+                  for="themeControlToggle"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="left"
+                  data-bs-title="Switch theme"
+                  style="height:32px;width:32px;"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       width="16px" height="16px"
+                       viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor"
+                       stroke-width="2" stroke-linecap="round"
+                       stroke-linejoin="round"
+                       class="feather feather-sun icon"
+                  >
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                </label>
+              </div>
+            </li>
+        ';
+    }
+    return $items;
+}
+add_filter( 'wp_nav_menu_items', 'add_theme_toggle_nav_item', 10, 2 );
