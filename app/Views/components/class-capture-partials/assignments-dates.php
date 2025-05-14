@@ -18,22 +18,26 @@
 
    <!-- Initial Class Agent -->
    <div class="row mb-3">
-      <div class="col-md-5">
-         <label for="initial_class_agent" class="form-label">Initial Class Agent <span class="text-danger">*</span></label>
-         <select id="initial_class_agent" name="initial_class_agent" class="form-select form-select-sm" required>
-            <option value="">Select</option>
-            <?php foreach ($data['agents'] as $agent): ?>
-               <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
-            <?php endforeach; ?>
-         </select>
-         <div class="invalid-feedback">Please select the initial class agent.</div>
-         <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-5 mb-3">
+         <div class="form-floating">
+            <select id="initial_class_agent" name="initial_class_agent" class="form-select" required>
+               <option value="">Select</option>
+               <?php foreach ($data['agents'] as $agent): ?>
+                  <option value="<?php echo $agent['id']; ?>"><?php echo $agent['name']; ?></option>
+               <?php endforeach; ?>
+            </select>
+            <label for="initial_class_agent">Initial Class Agent <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select the initial class agent.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
-      <div class="col-md-5">
-         <label for="initial_agent_start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-         <input type="date" id="initial_agent_start_date" name="initial_agent_start_date" class="form-control form-control-sm" required>
-         <div class="invalid-feedback">Please select the start date.</div>
-         <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-5 mb-3">
+         <div class="form-floating">
+            <input type="date" id="initial_agent_start_date" name="initial_agent_start_date" class="form-control" placeholder="YYYY-MM-DD" required>
+            <label for="initial_agent_start_date">Start Date <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select the start date.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
    </div>
 
@@ -48,29 +52,34 @@
    <div class="row agent-replacement-row d-none" id="agent-replacement-row-template">
       <!-- Replacement Agent -->
       <div class="col-md-5 mb-2">
-         <label class="form-label">Replacement Agent</label>
-         <select name="replacement_agent_ids[]" class="form-select form-select-sm replacement-agent-select">
-            <option value="">Select</option>
-            <?php foreach ($data['agents'] as $agent): ?>
-               <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
-            <?php endforeach; ?>
-         </select>
-         <div class="invalid-feedback">Please select a replacement agent.</div>
-         <div class="valid-feedback">Looks good!</div>
+         <div class="form-floating">
+            <select name="replacement_agent_ids[]" class="form-select replacement-agent-select">
+               <option value="">Select</option>
+               <?php foreach ($data['agents'] as $agent): ?>
+                  <option value="<?php echo $agent['id']; ?>"><?php echo $agent['name']; ?></option>
+               <?php endforeach; ?>
+            </select>
+            <label>Replacement Agent</label>
+            <div class="invalid-feedback">Please select a replacement agent.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
       <!-- Takeover Date -->
       <div class="col-md-5 mb-2">
-         <label class="form-label">Takeover Date</label>
-         <input type="date" name="replacement_agent_dates[]" class="form-control form-control-sm">
-         <div class="invalid-feedback">Please select a valid takeover date.</div>
-         <div class="valid-feedback">Looks good!</div>
+         <div class="form-floating">
+            <input type="date" name="replacement_agent_dates[]" class="form-control" placeholder="YYYY-MM-DD">
+            <label>Takeover Date</label>
+            <div class="invalid-feedback">Please select a valid takeover date.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
       <!-- Remove Button -->
       <div class="col-md-2 mb-2">
-         <label class="form-label invisible">&nbsp;</label>
-         <button type="button" class="btn btn-outline-danger btn-sm remove-agent-replacement-btn form-control date-remove-btn">Remove</button>
+         <div class="d-flex h-100 align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-sm remove-agent-replacement-btn form-control date-remove-btn">Remove</button>
+         </div>
       </div>
    </div>
 
@@ -82,16 +91,18 @@
 
 <!-- Project Supervisor -->
 <div class="row mb-4">
-   <div class="col-md-5">
-      <label for="project_supervisor" class="form-label">Project Supervisor <span class="text-danger">*</span></label>
-      <select id="project_supervisor" name="project_supervisor" class="form-select form-select-sm" required>
-         <option value="">Select</option>
-         <?php foreach ($data['supervisors'] as $supervisor): ?>
-            <option value="<?php echo esc_attr($supervisor['id']); ?>"><?php echo esc_html($supervisor['name']); ?></option>
-         <?php endforeach; ?>
-      </select>
-      <div class="invalid-feedback">Please select a project supervisor.</div>
-      <div class="valid-feedback">Looks good!</div>
+   <div class="col-md-5 mb-3">
+      <div class="form-floating">
+         <select id="project_supervisor" name="project_supervisor" class="form-select" required>
+            <option value="">Select</option>
+            <?php foreach ($data['supervisors'] as $supervisor): ?>
+               <option value="<?php echo $supervisor['id']; ?>"><?php echo $supervisor['name']; ?></option>
+            <?php endforeach; ?>
+         </select>
+         <label for="project_supervisor">Project Supervisor <span class="text-danger">*</span></label>
+         <div class="invalid-feedback">Please select a project supervisor.</div>
+         <div class="valid-feedback">Looks good!</div>
+      </div>
    </div>
 </div>
 
@@ -107,29 +118,34 @@
    <div class="row backup-agent-row d-none" id="backup-agent-row-template">
       <!-- Backup Agent -->
       <div class="col-md-5 mb-2">
-         <label class="form-label">Backup Agent</label>
-         <select name="backup_agent_ids[]" class="form-select form-select-sm backup-agent-select">
-            <option value="">Select</option>
-            <?php foreach ($data['agents'] as $agent): ?>
-               <option value="<?php echo esc_attr($agent['id']); ?>"><?php echo esc_html($agent['name']); ?></option>
-            <?php endforeach; ?>
-         </select>
-         <div class="invalid-feedback">Please select a backup agent.</div>
-         <div class="valid-feedback">Looks good!</div>
+         <div class="form-floating">
+            <select name="backup_agent_ids[]" class="form-select backup-agent-select">
+               <option value="">Select</option>
+               <?php foreach ($data['agents'] as $agent): ?>
+                  <option value="<?php echo $agent['id']; ?>"><?php echo $agent['name']; ?></option>
+               <?php endforeach; ?>
+            </select>
+            <label>Backup Agent</label>
+            <div class="invalid-feedback">Please select a backup agent.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
       <!-- Backup Date -->
       <div class="col-md-5 mb-2">
-         <label class="form-label">Backup Date</label>
-         <input type="date" name="backup_agent_dates[]" class="form-control form-control-sm">
-         <div class="invalid-feedback">Please select a valid date.</div>
-         <div class="valid-feedback">Looks good!</div>
+         <div class="form-floating">
+            <input type="date" name="backup_agent_dates[]" class="form-control" placeholder="YYYY-MM-DD">
+            <label>Backup Date</label>
+            <div class="invalid-feedback">Please select a valid date.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
       <!-- Remove Button -->
       <div class="col-md-2 mb-2">
-         <label class="form-label invisible">&nbsp;</label>
-         <button type="button" class="btn btn-outline-danger btn-sm remove-backup-agent-btn form-control date-remove-btn">Remove</button>
+         <div class="d-flex h-100 align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-sm remove-backup-agent-btn form-control date-remove-btn">Remove</button>
+         </div>
       </div>
    </div>
 

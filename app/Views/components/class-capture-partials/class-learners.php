@@ -14,42 +14,47 @@
 <div class="row mb-4">
    <!-- Learner Selection -->
    <div class="col-md-4">
-      <label for="add_learner" class="form-label">Select Learners</label>
-      <select id="add_learner" name="add_learner[]" class="form-select form-select-sm" size="5" multiple>
-         <?php foreach ($data['learners'] as $learner): ?>
-            <option value="<?php echo esc_attr($learner['id']); ?>"><?php echo esc_html($learner['name']); ?></option>
-         <?php endforeach; ?>
-      </select>
-      <div class="form-text">Select multiple learners to add to this class.</div>
-      <div class="invalid-feedback">Please select at least one learner.</div>
-      <div class="valid-feedback">Looks good!</div>
-      <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-selected-learners-btn">
-         Add Selected Learners
-      </button>
+      <!-- For multi-select with floating labels, we need a custom approach -->
+      <div class="form-floating mb-3">
+         <select id="add_learner" name="add_learner[]" class="form-select" aria-label="Learner selection" multiple>
+            <?php foreach ($data['learners'] as $learner): ?>
+               <option value="<?php echo $learner['id']; ?>"><?php echo $learner['name']; ?></option>
+            <?php endforeach; ?>
+         </select>
+         <label for="add_learner">Select Learners</label>
+         <div class="form-text">Select multiple learners to add to this class. Hold Ctrl/Cmd to select multiple.</div>
+         <div class="invalid-feedback">Please select at least one learner.</div>
+         <div class="valid-feedback">Looks good!</div>
+         <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-selected-learners-btn">
+            Add Selected Learners
+         </button>
+      </div>
    </div>
 
    <!-- Learners Table -->
    <div class="col-md-8">
-      <label class="form-label">Class Learners</label>
-      <div id="class-learners-container" class="border rounded p-3">
-         <div class="alert alert-info" id="no-learners-message">
-            No learners added to this class yet. At least one learner is required. Select learners from the list and click "Add Selected Learners".
+      <div class="mb-3">
+         <div class="form-label mb-2">Class Learners</div>
+         <div id="class-learners-container" class="border rounded p-3">
+            <div class="alert alert-info" id="no-learners-message">
+               No learners added to this class yet. At least one learner is required. Select learners from the list and click "Add Selected Learners".
+            </div>
+            <table class="table table-sm d-none" id="class-learners-table">
+               <thead>
+                  <tr>
+                     <th>Learner</th>
+                     <th>Level/Module</th>
+                     <th>Host/Walk-in Status</th>
+                     <th>Actions</th>
+                  </tr>
+               </thead>
+               <tbody id="class-learners-tbody">
+                  <!-- Learner rows will be added here dynamically -->
+               </tbody>
+            </table>
          </div>
-         <table class="table table-sm d-none" id="class-learners-table">
-            <thead>
-               <tr>
-                  <th>Learner</th>
-                  <th>Level/Module</th>
-                  <th>Host/Walk-in Status</th>
-                  <th>Actions</th>
-               </tr>
-            </thead>
-            <tbody id="class-learners-tbody">
-               <!-- Learner rows will be added here dynamically -->
-            </tbody>
-         </table>
+         <!-- Hidden field to store learner data -->
+         <input type="hidden" id="class_learners_data" name="class_learners_data" value="">
       </div>
-      <!-- Hidden field to store learner data -->
-      <input type="hidden" id="class_learners_data" name="class_learners_data" value="">
    </div>
 </div>

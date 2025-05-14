@@ -34,3 +34,27 @@ textarea {
     }
 
 }
+
+
+.ydcoza-upload input[type="file"]::file-selector-button {
+  border: 2px solid #fff;
+  padding: 0.2em 0.4em;
+  border-radius: 0;
+  background-color: #fff !important;
+}
+
+.ydcoza-upload input[type="file"]::file-selector-button:hover {
+  background-color: #fff !important;
+}
+
+/* WebKit fallback */
+.ydcoza-upload input[type="file"]::-webkit-file-upload-button {
+  border: 2px solid #fff;
+  padding: 0.2em 0.4em;
+  border-radius: 0;
+  background-color: #fff !important;
+}
+
+.ydcoza-upload input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #fff !important;
+}

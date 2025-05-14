@@ -15,119 +15,137 @@
 
    <!-- Schedule Pattern Selection -->
    <div class="row mb-3">
-      <div class="col-md-4">
-         <label for="schedule_pattern" class="form-label">Schedule Pattern <span class="text-danger">*</span></label>
-         <select id="schedule_pattern" name="schedule_pattern" class="form-select form-select-sm" required>
-            <option value="">Select</option>
-            <option value="weekly">Weekly (Every Week)</option>
-            <option value="biweekly">Bi-Weekly (Every Two Weeks)</option>
-            <option value="monthly">Monthly</option>
-            <option value="custom">Custom</option>
-         </select>
-         <div class="invalid-feedback">Please select a schedule pattern.</div>
-         <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-4 mb-3">
+         <div class="form-floating">
+            <select id="schedule_pattern" name="schedule_pattern" class="form-select" required>
+               <option value="">Select</option>
+               <option value="weekly">Weekly (Every Week)</option>
+               <option value="biweekly">Bi-Weekly (Every Two Weeks)</option>
+               <option value="monthly">Monthly</option>
+               <option value="custom">Custom</option>
+            </select>
+            <label for="schedule_pattern">Schedule Pattern <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select a schedule pattern.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
       <!-- Day Selection (for weekly/biweekly) -->
-      <div class="col-md-4" id="day-selection-container">
-         <label for="schedule_day" class="form-label">Day of Week <span class="text-danger">*</span></label>
-         <select id="schedule_day" name="schedule_day" class="form-select form-select-sm">
-            <option value="">Select</option>
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
-         </select>
-         <div class="invalid-feedback">Please select a day.</div>
-         <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-4 mb-3" id="day-selection-container">
+         <div class="form-floating">
+            <select id="schedule_day" name="schedule_day" class="form-select">
+               <option value="">Select</option>
+               <option value="Monday">Monday</option>
+               <option value="Tuesday">Tuesday</option>
+               <option value="Wednesday">Wednesday</option>
+               <option value="Thursday">Thursday</option>
+               <option value="Friday">Friday</option>
+               <option value="Saturday">Saturday</option>
+               <option value="Sunday">Sunday</option>
+            </select>
+            <label for="schedule_day">Day of Week <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select a day.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
       <!-- Day of Month (for monthly) -->
-      <div class="col-md-4 d-none" id="day-of-month-container">
-         <label for="schedule_day_of_month" class="form-label">Day of Month <span class="text-danger">*</span></label>
-         <select id="schedule_day_of_month" name="schedule_day_of_month" class="form-select form-select-sm">
-            <option value="">Select</option>
-            <?php for ($i = 1; $i <= 31; $i++): ?>
-               <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-            <?php endfor; ?>
-            <option value="last">Last Day</option>
-         </select>
-         <div class="invalid-feedback">Please select a day of the month.</div>
-         <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-4 mb-3 d-none" id="day-of-month-container">
+         <div class="form-floating">
+            <select id="schedule_day_of_month" name="schedule_day_of_month" class="form-select">
+               <option value="">Select</option>
+               <?php for ($i = 1; $i <= 31; $i++): ?>
+                  <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+               <?php endfor; ?>
+               <option value="last">Last Day</option>
+            </select>
+            <label for="schedule_day_of_month">Day of Month <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select a day of the month.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
    </div>
 
    <!-- Time Selection -->
    <div class="row mb-3">
-      <div class="col-md-4">
-         <label for="schedule_start_time" class="form-label">Start Time <span class="text-danger">*</span></label>
-         <select id="schedule_start_time" name="schedule_start_time" class="form-select form-select-sm" required>
-            <option value="">Select</option>
-            <?php
-            // Generate time options from 6:00 AM to 8:00 PM in 30-minute increments
-            $start = strtotime('06:00:00');
-            $end = strtotime('20:00:00');
-            $interval = 30 * 60; // 30 minutes in seconds
+      <div class="col-md-4 mb-3">
+         <div class="form-floating">
+            <select id="schedule_start_time" name="schedule_start_time" class="form-select" required>
+               <option value="">Select</option>
+               <?php
+               // Generate time options from 6:00 AM to 8:00 PM in 30-minute increments
+               $start = strtotime('06:00:00');
+               $end = strtotime('20:00:00');
+               $interval = 30 * 60; // 30 minutes in seconds
 
-            for ($time = $start; $time <= $end; $time += $interval) {
-               $timeStr = date('H:i', $time);
-               echo '<option value="' . $timeStr . '">' . date('g:i A', $time) . '</option>';
-            }
-            ?>
-         </select>
-         <div class="invalid-feedback">Please select a start time.</div>
-         <div class="valid-feedback">Looks good!</div>
+               for ($time = $start; $time <= $end; $time += $interval) {
+                  $timeStr = date('H:i', $time);
+                  echo '<option value="' . $timeStr . '">' . date('g:i A', $time) . '</option>';
+               }
+               ?>
+            </select>
+            <label for="schedule_start_time">Start Time <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select a start time.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
-      <div class="col-md-4">
-         <label for="schedule_end_time" class="form-label">End Time <span class="text-danger">*</span></label>
-         <select id="schedule_end_time" name="schedule_end_time" class="form-select form-select-sm" required>
-            <option value="">Select</option>
-            <?php
-            // Generate time options from 6:30 AM to 8:30 PM in 30-minute increments
-            $start = strtotime('06:30:00');
-            $end = strtotime('20:30:00');
-            $interval = 30 * 60; // 30 minutes in seconds
+      <div class="col-md-4 mb-3">
+         <div class="form-floating">
+            <select id="schedule_end_time" name="schedule_end_time" class="form-select" required>
+               <option value="">Select</option>
+               <?php
+               // Generate time options from 6:30 AM to 8:30 PM in 30-minute increments
+               $start = strtotime('06:30:00');
+               $end = strtotime('20:30:00');
+               $interval = 30 * 60; // 30 minutes in seconds
 
-            for ($time = $start; $time <= $end; $time += $interval) {
-               $timeStr = date('H:i', $time);
-               echo '<option value="' . $timeStr . '">' . date('g:i A', $time) . '</option>';
-            }
-            ?>
-         </select>
-         <div class="invalid-feedback">Please select an end time.</div>
-         <div class="valid-feedback">Looks good!</div>
+               for ($time = $start; $time <= $end; $time += $interval) {
+                  $timeStr = date('H:i', $time);
+                  echo '<option value="' . $timeStr . '">' . date('g:i A', $time) . '</option>';
+               }
+               ?>
+            </select>
+            <label for="schedule_end_time">End Time <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select an end time.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
-      <div class="col-md-4">
-         <label for="schedule_duration" class="form-label">Class Duration (Hours)</label>
-         <input type="text" id="schedule_duration" name="schedule_duration" class="form-control form-control-sm readonly-field" readonly>
-         <small class="text-muted">Automatically calculated</small>
+      <div class="col-md-4 mb-3">
+         <div class="form-floating">
+            <input type="text" id="schedule_duration" name="schedule_duration" class="form-control readonly-field" placeholder="Duration" readonly>
+            <label for="schedule_duration">Class Duration (Hours)</label>
+            <small class="text-muted">Automatically calculated</small>
+         </div>
       </div>
    </div>
 
    <!-- Date Range -->
    <div class="row mb-3">
-      <div class="col-md-4">
-         <label for="schedule_start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-         <input type="date" id="schedule_start_date" name="schedule_start_date" class="form-control form-control-sm" required>
-         <div class="invalid-feedback">Please select a start date.</div>
-         <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-4 mb-3">
+         <div class="form-floating">
+            <input type="date" id="schedule_start_date" name="schedule_start_date" class="form-control" placeholder="YYYY-MM-DD" required>
+            <label for="schedule_start_date">Start Date <span class="text-danger">*</span></label>
+            <div class="invalid-feedback">Please select a start date.</div>
+            <div class="valid-feedback">Looks good!</div>
+         </div>
       </div>
 
-      <div class="col-md-4">
-         <label for="schedule_end_date" class="form-label">End Date</label>
-         <input type="date" id="schedule_end_date" name="schedule_end_date" class="form-control form-control-sm readonly-field" readonly>
-         <small class="text-muted">Automatically calculated based on class duration</small>
+      <div class="col-md-4 mb-3">
+         <div class="form-floating">
+            <input type="date" id="schedule_end_date" name="schedule_end_date" class="form-control readonly-field" placeholder="YYYY-MM-DD" readonly>
+            <label for="schedule_end_date">End Date</label>
+            <small class="text-muted">Automatically calculated based on class duration</small>
+         </div>
       </div>
 
       <div class="col-md-4 d-none">
-         <label for="schedule_total_hours" class="form-label">Total Hours</label>
-         <input type="text" id="schedule_total_hours" name="schedule_total_hours" class="form-control form-control-sm readonly-field" readonly>
-         <small class="text-muted">Based on class type</small>
+         <div class="form-floating">
+            <input type="text" id="schedule_total_hours" name="schedule_total_hours" class="form-control readonly-field" placeholder="Total Hours" readonly>
+            <label for="schedule_total_hours">Total Hours</label>
+            <small class="text-muted">Based on class type</small>
+         </div>
       </div>
    </div>
 
@@ -143,30 +161,35 @@
       <div class="row exception-date-row d-none" id="exception-date-row-template">
          <!-- Exception Date -->
          <div class="col-md-4 mb-2">
-            <label class="form-label">Date</label>
-            <input type="date" name="exception_dates[]" class="form-control form-control-sm">
-            <div class="invalid-feedback">Please select a valid date.</div>
-            <div class="valid-feedback">Looks good!</div>
+            <div class="form-floating">
+               <input type="date" name="exception_dates[]" class="form-control" placeholder="YYYY-MM-DD">
+               <label>Date</label>
+               <div class="invalid-feedback">Please select a valid date.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
          </div>
 
          <!-- Reason -->
          <div class="col-md-6 mb-2">
-            <label class="form-label">Reason</label>
-            <select name="exception_reasons[]" class="form-select form-select-sm">
-               <option value="">Select</option>
-               <option value="Client Cancelled">Client Cancelled</option>
-               <option value="Agent Absent">Agent Absent</option>
-               <option value="Public Holiday">Public Holiday</option>
-               <option value="Other">Other</option>
-            </select>
-            <div class="invalid-feedback">Please select a reason.</div>
-            <div class="valid-feedback">Looks good!</div>
+            <div class="form-floating">
+               <select name="exception_reasons[]" class="form-select">
+                  <option value="">Select</option>
+                  <option value="Client Cancelled">Client Cancelled</option>
+                  <option value="Agent Absent">Agent Absent</option>
+                  <option value="Public Holiday">Public Holiday</option>
+                  <option value="Other">Other</option>
+               </select>
+               <label>Reason</label>
+               <div class="invalid-feedback">Please select a reason.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
          </div>
 
          <!-- Remove Button -->
          <div class="col-md-2 mb-2">
-            <label class="form-label invisible">&nbsp;</label>
-            <button type="button" class="btn btn-outline-danger btn-sm remove-exception-btn form-control date-remove-btn">Remove</button>
+            <div class="d-flex h-100 align-items-end">
+               <button type="button" class="btn btn-outline-danger btn-sm remove-exception-btn form-control date-remove-btn">Remove</button>
+            </div>
          </div>
       </div>
 
