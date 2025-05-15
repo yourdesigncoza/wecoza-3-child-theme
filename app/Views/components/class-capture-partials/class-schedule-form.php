@@ -228,7 +228,7 @@
       <p class="text-muted small mb-3">By default, classes are not scheduled on public holidays. The system will only show holidays that conflict with your class schedule (when a holiday falls on a scheduled class day). You can override specific holidays to include them in the schedule.</p>
 
       <!-- No holidays message -->
-      <div id="no-holidays-message" class="alert alert-info">
+      <div id="no-holidays-message" class="bd-callout bd-callout-info">
          No public holidays that conflict with your class schedule were found. Holidays are only shown when they fall on a scheduled class day.
       </div>
 

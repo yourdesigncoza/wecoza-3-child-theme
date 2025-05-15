@@ -1,4 +1,6 @@
 @charset "UTF-8";
+
+
 /* -------------------------------------------------------------------------- */
 /* Override theme styles here                                      */
 /* -------------------------------------------------------------------------- */
@@ -16,6 +18,19 @@ textarea {
   text-transform: none;
 }
 
+.page #content,
+.single-app #content {
+    min-height: 100vh;
+    padding: calc(var(--phoenix-navbar-top-height) + 2rem) 4rem 6.375rem 12.5rem;
+    position: relative;
+    padding-bottom: 6rem;
+}
+@media (min-width: 576px) {
+    .page #content,
+    .single-app #content {
+        padding-bottom: 4rem;
+    }
+}
 .navbar-brand {
   max-width: 160px;
 }
@@ -34,8 +49,6 @@ textarea {
     }
 
 }
-
-
 .ydcoza-upload input[type="file"]::file-selector-button {
   border: 2px solid #fff;
   padding: 0.2em 0.4em;
@@ -57,4 +70,95 @@ textarea {
 
 .ydcoza-upload input[type="file"]::-webkit-file-upload-button:hover {
   background-color: #fff !important;
+}
+
+.menu-item,
+.nav-item {
+  position: relative;
+}
+.menu-item.nav-item i._mi {
+  color: var(--phoenix-navbar-vertical-link-hover-color);
+    width: 16px;
+    height: 16px;
+    margin-top: -.265em;
+    font-size: 1.4em;
+    line-height: 20px;
+    display: inline-block;
+}
+
+li.nav-item i._mi {
+  color: var(--phoenix-navbar-vertical-link-hover-color);
+    width: 23px;
+    height: 16px;
+    margin-top: -.25em;
+    font-size: 1.4em;
+    line-height: 20px;
+    display: inline-block;
+}
+
+/* Smooth rotation transition for the arrow icon */
+.dropdown-indicator-icon {
+    position: absolute;
+    top: 9px;
+    left: 25px;
+    color: var(--phoenix-navbar-vertical-dropdown-indicator-color);
+    transition: transform 0.2s ease;
+}
+/* Rotate the caret icon 90deg (pointing down) when the submenu is expanded */
+.nav-link[aria-expanded="true"] .dropdown-indicator-icon {
+  transform: rotate(90deg);
+}
+
+/* Make the icon+text container a flex row and center them vertically */
+.nav-link-text {
+  display: inline-flex;      /* or just `flex` if block-level is OK */
+  align-items: center;
+  gap: 0.5em;                 /* space between icon and text */
+}
+
+/* (Optional) If you need finer control on the icon itself: */
+.nav-link-text i {
+  display: inline-block;     /* ensures vertical-align rules apply */
+  vertical-align: middle;    /* fallback for non-flex environments */
+  /* margin-right instead of gap if you prefer:
+  margin-right: 0.5em;
+  */
+}
+
+li.nav-item.active a {
+  color: var(--phoenix-navbar-vertical-link-active-color) !important;
+}
+.page .entry-header  h1, .h1 {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+}
+.page aside#secondary {
+  display: none;
+}
+
+body .bg-body-tertiary {
+    background-color: transparent !important;
+}
+
+.entry-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.navbar-vertical-footer .support-chat + .btn-support-chat {
+  bottom: 2.5rem;
+  left: 3rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb a,
+.breadcrumb .current {
+  margin: 0 0.5rem;
+}
+.bd-callout.bd-callout-info {
+  font-size: 0.875rem;
 }

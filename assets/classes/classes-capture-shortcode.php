@@ -17,7 +17,7 @@
    <!-- Hidden Auto-generated Class ID -->
    <input type="hidden" id="class_id" name="class_id" value="auto-generated">
    <!-- ===== Section: Basic Details ===== -->
-   <div class="container container-md classes-form">
+   <div class="container container-md classes-form ps-0">
       <div class="row">
          <!-- Client Name (ID) -->
          <div class="col-md-3">

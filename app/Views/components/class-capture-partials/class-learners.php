@@ -36,7 +36,7 @@
       <div class="mb-3">
          <div class="form-label mb-2">Class Learners</div>
          <div id="class-learners-container" class="border rounded p-3">
-            <div class="alert alert-info" id="no-learners-message">
+            <div class="bd-callout bd-callout-info" id="no-learners-message">
                No learners added to this class yet. At least one learner is required. Select learners from the list and click "Add Selected Learners".
             </div>
             <table class="table table-sm d-none" id="class-learners-table">

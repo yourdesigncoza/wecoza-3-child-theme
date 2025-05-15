@@ -121,3 +121,9 @@ defined('ABSPATH') || exit;
   </header><!-- #masthead -->
   
   <?php do_action( 'bootscore_after_masthead' ); ?>
+
+  
+<?php
+// Include the sidebar menu view
+echo \WeCoza\view('components/sidebar-menu');
+?>

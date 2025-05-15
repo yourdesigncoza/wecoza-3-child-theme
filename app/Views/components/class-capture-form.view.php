@@ -60,7 +60,7 @@
    <input type="hidden" id="nonce" name="nonce" value="<?php echo wp_create_nonce('wecoza_class_nonce'); ?>">
 
    <!-- ===== Section: Basic Details ===== -->
-   <div class="container container-md classes-form">
+   <div class="container container-md classes-form ps-0">
       <?php include_once('class-capture-partials/basic-details.php'); ?>
 
       <?php echo section_divider(); ?>

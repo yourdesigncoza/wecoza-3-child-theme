@@ -82,12 +82,14 @@ function enqueue_assets() {
         wp_enqueue_style('bootstrap-table', 'https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css');
         wp_enqueue_script('bootstrap-table', 'https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js', array('jquery'), null, true);
 
-        // Theme styles - load after Parent
+        // Bootstrap with Document css
+        wp_enqueue_style('ydcoza_boot_demo-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-bootstrap-demo.css', array('parent-style'), WECOZA_PLUGIN_VERSION);
+        // Theme styles - load after Parent 
         wp_enqueue_style('ydcoza_theme-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-theme.css', array('parent-style'), WECOZA_PLUGIN_VERSION);
         // Override styles - load after Parent
-        wp_enqueue_style('ydcoza-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array('ydcoza_theme-css'), WECOZA_PLUGIN_VERSION);
+        wp_enqueue_style('ydcoza_line-css', WECOZA_CHILD_URL . '/includes/css/line.css', array('parent-style'), WECOZA_PLUGIN_VERSION); 
         // Override styles - load after Parent
-        wp_enqueue_style('ydcoza_line-css', WECOZA_CHILD_URL . '/includes/css/line.css', array('ydcoza-css'), WECOZA_PLUGIN_VERSION);
+        wp_enqueue_style('ydcoza-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array('parent-style'), WECOZA_PLUGIN_VERSION);
 
         // Check if we are on a specific page
         if (is_page('all-learners-table')) { // Replace 'your-page-slug' with the slug of your target page
@@ -132,8 +134,6 @@ function enqueue_assets() {
         wp_enqueue_script('lodash-js', WECOZA_CHILD_URL . '/includes/js/lodash.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
         // list.min.js
         wp_enqueue_script('list-js', WECOZA_CHILD_URL . '/includes/js/list.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
-        // feather.min.js
-        wp_enqueue_script('feather-js', WECOZA_CHILD_URL . '/includes/js/feather.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
         // dayjs.min.js
         wp_enqueue_script('dayjs-js', WECOZA_CHILD_URL . '/includes/js/dayjs.min.js', array(),  WECOZA_PLUGIN_VERSION, true);
         // choices.min.js
@@ -349,3 +349,157 @@ function add_theme_toggle_nav_item( $items, $args ) {
     return $items;
 }
 add_filter( 'wp_nav_menu_items', 'add_theme_toggle_nav_item', 10, 2 );
+
+
+/**
+ * Register “App” Custom Post Type
+ */
+function ydcoza_register_app_cpt() {
+    $labels = array(
+        'name'                  => _x( 'Apps', 'Post Type General Name', 'text-domain' ),
+        'singular_name'         => _x( 'App', 'Post Type Singular Name', 'text-domain' ),
+        'menu_name'             => __( 'Apps', 'text-domain' ),
+        'name_admin_bar'        => __( 'App', 'text-domain' ),
+        'add_new'               => __( 'Add New', 'text-domain' ),
+        'add_new_item'          => __( 'Add New App', 'text-domain' ),
+        'edit_item'             => __( 'Edit App', 'text-domain' ),
+        'new_item'              => __( 'New App', 'text-domain' ),
+        'view_item'             => __( 'View App', 'text-domain' ),
+        'all_items'             => __( 'All Apps', 'text-domain' ),
+        'search_items'          => __( 'Search Apps', 'text-domain' ),
+        'parent_item_colon'     => __( 'Parent Apps:', 'text-domain' ),
+        'not_found'             => __( 'No apps found.', 'text-domain' ),
+        'not_found_in_trash'    => __( 'No apps found in Trash.', 'text-domain' ),
+        'archives'              => __( 'App Archives', 'text-domain' ),
+        'attributes'            => __( 'App Attributes', 'text-domain' ),
+        'insert_into_item'      => __( 'Insert into app', 'text-domain' ),
+        'uploaded_to_this_item' => __( 'Uploaded to this app', 'text-domain' ),
+        'featured_image'        => __( 'App Featured Image', 'text-domain' ),
+        'set_featured_image'    => __( 'Set featured image', 'text-domain' ),
+        'remove_featured_image' => __( 'Remove featured image', 'text-domain' ),
+        'use_featured_image'    => __( 'Use as featured image', 'text-domain' ),
+        'filter_items_list'     => __( 'Filter apps list', 'text-domain' ),
+        'items_list_navigation' => __( 'Apps list navigation', 'text-domain' ),
+        'items_list'            => __( 'Apps list', 'text-domain' ),
+    );
+
+    $args = array(
+        'labels'             => $labels,
+        'public'             => true,
+        'has_archive'        => true,
+        'hierarchical'       => true,               // behave like Pages
+        'show_in_menu'       => true,
+        'show_in_rest'       => true,               // Gutenberg support
+        'rewrite'            => array( 'slug' => 'app' ),
+        'supports'           => array(
+            'title',
+            'editor',
+            'author',
+            'thumbnail',
+            'excerpt',
+            'revisions',
+            'page-attributes', // for menu order / parent selection
+        ),
+        'capability_type'    => 'page',             // use Page caps
+        'map_meta_cap'       => true,               // map meta caps properly
+    );
+
+    register_post_type( 'app', $args );
+}
+add_action( 'init', 'ydcoza_register_app_cpt' );
+
+
+/**
+ * Output breadcrumb trail.
+ */
+function ydcoza_breadcrumbs() {
+    $sep  = ' &raquo; ';
+    $home = '<a href="' . home_url() . '">Home</a>';
+
+    if ( is_front_page() ) {
+        // Nothing
+        return;
+    }
+
+    echo '<nav aria-label="breadcrumb"><div class="breadcrumb">';
+    echo $home;
+
+    if ( is_home() ) {
+        echo $sep . 'Blog';
+    }
+    elseif ( is_singular() ) {
+        $post_type = get_post_type();
+
+        // Custom Post Type
+        if ( $post_type && $post_type !== 'post' && $post_type !== 'page' ) {
+            $pt_obj  = get_post_type_object( $post_type );
+            $archive = get_post_type_archive_link( $post_type );
+            if ( $archive ) {
+                echo $sep . '<a href="' . esc_url( $archive ) . '">' . esc_html( $pt_obj->labels->name ) . '</a>';
+            }
+        }
+
+        // If Page, show ancestors
+        if ( is_page() ) {
+            $ancestors = get_post_ancestors( get_the_ID() );
+            if ( ! empty( $ancestors ) ) {
+                $ancestors = array_reverse( $ancestors );
+                foreach ( $ancestors as $crumb_id ) {
+                    echo $sep . '<a href="' . get_permalink( $crumb_id ) . '">' . get_the_title( $crumb_id ) . '</a>';
+                }
+            }
+        }
+
+        // If Post, show category
+        if ( is_single() && get_post_type() === 'post' ) {
+            $cats = get_the_category();
+            if ( ! empty( $cats ) ) {
+                $cat  = $cats[0];
+                $link = get_category_link( $cat );
+                echo $sep . '<a href="' . esc_url( $link ) . '">' . esc_html( $cat->name ) . '</a>';
+            }
+        }
+
+        // Finally, current item
+        echo $sep . '<span class="current">' . get_the_title() . '</span>';
+    }
+    elseif ( is_archive() ) {
+        if ( is_post_type_archive() ) {
+            $pt_obj = get_post_type_object( get_post_type() );
+            echo $sep . '<span class="current">' . esc_html( $pt_obj->labels->name ) . ' Archive</span>';
+        }
+        elseif ( is_category() ) {
+            echo $sep . '<span class="current">Category: ' . single_cat_title( '', false ) . '</span>';
+        }
+        elseif ( is_tag() ) {
+            echo $sep . '<span class="current">Tag: ' . single_tag_title( '', false ) . '</span>';
+        }
+        elseif ( is_author() ) {
+            echo $sep . '<span class="current">Author: ' . get_the_author() . '</span>';
+        }
+        elseif ( is_date() ) {
+            echo $sep . '<span class="current">Archives for ' . get_the_date() . '</span>';
+        }
+    }
+    elseif ( is_search() ) {
+        echo $sep . '<span class="current">Search results for “' . get_search_query() . '”</span>';
+    }
+    elseif ( is_404() ) {
+        echo $sep . '<span class="current">404 Not Found</span>';
+    }
+
+    echo '</div></nav>';
+}
+
+/**
+ * Fire our breadcrumbs on the Bootscore hook right after <div id="primary"> opens.
+ */
+add_action( 'bootscore_after_primary_open', 'ydcoza_breadcrumbs_after_primary', 10, 1 );
+function ydcoza_breadcrumbs_after_primary( $template ) {
+    // you can restrict to your CPT if you like:
+    // if ( is_singular('app') ) { 
+        if ( function_exists( 'ydcoza_breadcrumbs' ) ) {
+            ydcoza_breadcrumbs();
+        }
+    // }
+}
