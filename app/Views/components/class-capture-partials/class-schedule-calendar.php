@@ -13,10 +13,12 @@
       <button type="button" class="btn btn-outline-secondary mt-5" id="view-calendar-btn">
          <i class="bi bi-calendar3"></i> View Calendar
       </button>
+      <div class="clearfix"></div>
       <small class="text-muted ms-2">Click to view a visual representation of the schedule</small>
    </div>
 <!-- Calendar Reference View (hidden by default) -->
-<div class="mb-3 d-none" id="calendar-reference-container">
+<div class="d-none card my-3" id="calendar-reference-container">
+   <div class="card-body px-5 position-relative">
 
    <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="mb-0">Class Schedule Calendar</h5>
@@ -68,5 +70,6 @@
             </div>
          </div>
       </div>
+   </div>
    </div>
 </div>

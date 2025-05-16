@@ -15,7 +15,6 @@ function wecoza_display_learners_shortcode() {
 
     <!-- Alert Container -->
     <div id="alert-container" class="alert-container"></div>
-
     <!-- Loader -->
     <div id="wecoza-loader-container">
         <button id="wecoza-loader-02" class="btn btn-primary mt-7" type="button">
@@ -25,7 +24,7 @@ function wecoza_display_learners_shortcode() {
     </div>
 
     <!-- Main Content Container -->
-    <div id="learners-container" style="display: none;">
+    <div id="learners-container" class="card shadow-none border my-5"style="display: none;">
         <div class="table-responsive">
             <table id="learners-display-data" class="table table-bordered ydcoza-compact-table">
                 <thead>

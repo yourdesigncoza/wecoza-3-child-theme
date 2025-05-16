@@ -4,20 +4,16 @@
 /* -------------------------------------------------------------------------- */
 /* Override theme styles here                                      */
 /* -------------------------------------------------------------------------- */
-body,
-button,
-input,
-select,
-textarea {
-  font-family: "Nunito Sans", -apple-system, system-ui, BlinkMacSystemFont,
-               "Segoe UI", Helvetica, Arial, sans-serif,
-               "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-weight: 400;
-  font-size: 17px;
-  line-height: 1.5;
-  text-transform: none;
-}
 
+/* -------------------------------------------------------------------------- */
+/* Misc                                     */
+/* -------------------------------------------------------------------------- */
+.ydcoza-w-600 {
+   max-width: 600px;
+}
+/* -------------------------------------------------------------------------- */
+/* Navagation                                    */
+/* -------------------------------------------------------------------------- */
 .page #content,
 .single-app #content {
     min-height: 100vh;
@@ -161,4 +157,168 @@ body .bg-body-tertiary {
 }
 .bd-callout.bd-callout-info {
   font-size: 0.875rem;
+}
+
+/* ##############################
+### Calendar Styles
+############################## */
+/* FullCalendar multiMonthYear view styles */
+.fc-multiMonthYear-view .fc-multimonth-title {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: var(--accent);
+    padding: 8px 0;
+}
+
+.fc-multiMonthYear-view .fc-daygrid-day-number {
+    font-size: 0.9em;
+}
+
+.fc-multiMonthYear-view .fc-daygrid-day.fc-day-today {
+    background-color: var(--base);
+}
+
+.fc-multiMonthYear-view .fc-event {
+    border-radius: 2px;
+    font-size: 0.8em;
+    padding: 2px;
+}
+
+.fc-multiMonthYear-view .fc-event-title {
+    font-weight: normal;
+}
+
+.fc-multiMonthYear-view .fc-toolbar-title {
+    font-size: 1.5em;
+    color: var(--accent);
+}
+
+.fc-multiMonthYear-view .fc-button-primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.fc-multiMonthYear-view .fc-button-primary:hover {
+    background-color: var(--accent-dark, #5a4aa6);
+    border-color: var(--accent-dark, #5a4aa6);
+}
+
+.fc-multiMonthYear-view .fc-button-primary:not(:disabled).fc-button-active,
+.fc-multiMonthYear-view .fc-button-primary:not(:disabled):active {
+    background-color: var(--accent-dark, #5a4aa6);
+    border-color: var(--accent-dark, #5a4aa6);
+}
+
+/* Public Holiday Styles */
+.fc-event.public-holiday {
+    background-color: #f44336 !important;
+    border-color: #d32f2f !important;
+    color: #ffffff !important;
+}
+
+.fc-daygrid-day.public-holiday-day {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+}
+
+.fc-event.public-holiday .fc-event-title {
+    font-weight: 500;
+}
+
+/* Overridden Holiday Styles */
+.fc-event.public-holiday.holiday-overridden {
+    background-color: #ff9800 !important;
+    border-color: #f57c00 !important;
+    color: #ffffff !important;
+}
+
+.fc-daygrid-day.public-holiday-day.holiday-overridden-day {
+    background-color: rgba(255, 152, 0, 0.1) !important;
+}
+
+.fc-event.public-holiday.holiday-overridden .fc-event-title::after {
+    content: " (Overridden)";
+    font-size: 0.85em;
+    font-style: italic;
+}
+
+/* Holiday tooltip */
+.holiday-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 1000;
+    white-space: nowrap;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.holiday-tooltip:after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #f44336 transparent;
+}
+
+.holiday-tooltip.overridden {
+    background-color: #ff9800;
+}
+
+.holiday-tooltip.overridden:after {
+    border-color: transparent transparent #ff9800 transparent;
+}
+
+/* Exception Date Styles */
+.fc-event.exception-date {
+    background-color: #ff9800 !important;
+    border-color: #f57c00 !important;
+    color: #ffffff !important;
+}
+
+
+
+/* -------------------------------------------------------------------------- */
+/* Table "small / compact"                                      */
+/* -------------------------------------------------------------------------- */
+.bootstrap-table .fixed-table-container .table.ydcoza-compact-table tfoot th .th-inner,
+.breadcrumb .fixed-table-container .table.ydcoza-compact-table thead th .th-inner {
+    padding: .5rem .5rem;
+}
+.ydcoza-compact-content,
+.ydcoza-compact-table {
+    font-size: 0.8rem !important;
+    line-height: 0.8rem;
+}
+.ydcoza-compact-table a.detail-icon {
+    font-size: 22px !important;
+}
+.table.ydcoza-compact-table>:not(caption)>*>* {
+    padding: 0 0.25rem
+    /* line-height: 13px !important; */
+}
+.table-responsive {
+    padding: 0.8rem;
+}
+.ydcoza-compact-content .btn-sm,
+.ydcoza-compact-table .btn-sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 12px;
+    line-height: 12px;
+}
+.ydcoza-compact-table .btn-close {
+    background-size: 0.6em;
+}
+.bootstrap-table .pagination-detail {
+    font-size: 14px;
+}
+.table > tbody > tr > td:first-child {
+  padding-left: .5rem; 
 }

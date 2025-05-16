@@ -40,13 +40,13 @@ class ClassController {
     public function enqueueAssets() {
         // Always enqueue these scripts to ensure they're available
         // FullCalendar CSS and JS - Using FullCalendar 6.x with multiMonthYear view support
-        \wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css');
+        \wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@4.0.0-alpha.3/dist/fullcalendar.min.css');
 
         // Use the full bundle that includes all plugins (FullCalendar 6.x)
-        \wp_enqueue_script('fullcalendar-bundle', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js', ['jquery'], null, true);
+        \wp_enqueue_script('fullcalendar-bundle', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js', ['jquery'], null, true);
 
-        // Bootstrap Icons
-        \wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
+        // Bootstrap Icons ( Loaded in Functions.php )
+        //\wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css');
 
         // Note: Custom CSS is now loaded globally from includes/css/ydcoza-styles.css
 

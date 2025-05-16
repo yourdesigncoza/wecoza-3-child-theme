@@ -934,9 +934,9 @@
                <tbody class="list" id="table-latest-review-body">
                   <tr class="hover-actions-trigger btn-reveal-trigger position-static">
                      <td class="fs-9 align-middle ps-0">
-                        <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;Fitbit Sense Advanced Smartwatch with Tools for Heart Health, Stress Management &amp; Skin Temperature Trends, Carbon/Graphite, One Size (S &amp; L Bands)&quot;,&quot;productImage&quot;:&quot;/products/60x60/1.png&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Richard Dawkins&quot;,&quot;avatar&quot;:&quot;&quot;},&quot;rating&quot;:5,&quot;review&quot;:&quot;This Fitbit is fantastic! I was trying to be in better shape and needed some motivation, so I decided to treat myself to a new Fitbit.&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Approved&quot;,&quot;badge&quot;:&quot;success&quot;,&quot;icon&quot;:&quot;check&quot;},&quot;time&quot;:&quot;Just now&quot;}"></div>
+                        <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;Fitbit Sense Advanced Smartwatch with Tools for Heart Health, Stress Management &amp; Skin Temperature Trends, Carbon/Graphite, One Size (S &amp; L Bands)&quot;,&quot;productImage&quot;&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Richard Dawkins&quot;,&quot;avatar&quot;:&quot;&quot;},&quot;rating&quot;:5,&quot;review&quot;:&quot;This Fitbit is fantastic! I was trying to be in better shape and needed some motivation, so I decided to treat myself to a new Fitbit.&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Approved&quot;,&quot;badge&quot;:&quot;success&quot;,&quot;icon&quot;:&quot;check&quot;},&quot;time&quot;:&quot;Just now&quot;}"></div>
                      </td>
-                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="assets/img//products/60x60/1.png" alt="" width="53"></a></td>
+                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="https://prium.github.io/phoenix/v1.22.0/assets/img/products/60x60/1.png" alt="" width="53"></a></td>
                      <td class="align-middle product white-space-nowrap"><a class="fw-semibold" href="apps/e-commerce/landing/product-details.html">Fitbit Sense Advanced Smartwatch with Tools fo...</a></td>
                      <td class="align-middle customer white-space-nowrap">
                         <a class="d-flex align-items-center text-body" href="apps/e-commerce/landing/profile.html">
@@ -1020,7 +1020,7 @@
                      <td class="fs-9 align-middle ps-0">
                         <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;iPhone 13 pro max-Pacific Blue-128GB storage&quot;,&quot;productImage&quot;:&quot;/products/60x60/2.png&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Ashley Garrett&quot;,&quot;avatar&quot;:&quot;/team/40x40/59.webp&quot;},&quot;rating&quot;:3,&quot;review&quot;:&quot;The order was delivered ahead of schedule. To give us additional time, you should leave the packaging sealed with plastic.&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Approved&quot;,&quot;badge&quot;:&quot;success&quot;,&quot;icon&quot;:&quot;check&quot;},&quot;time&quot;:&quot;Just now&quot;}"></div>
                      </td>
-                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="assets/img//products/60x60/2.png" alt="" width="53"></a></td>
+                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="https://prium.github.io/phoenix/v1.22.0/assets/img/products/60x60/2.png" alt="" width="53"></a></td>
                      <td class="align-middle product white-space-nowrap"><a class="fw-semibold" href="apps/e-commerce/landing/product-details.html">iPhone 13 pro max-Pacific Blue-128GB storage</a></td>
                      <td class="align-middle customer white-space-nowrap">
                         <a class="d-flex align-items-center text-body" href="apps/e-commerce/landing/profile.html">
@@ -1102,7 +1102,7 @@
                      <td class="fs-9 align-middle ps-0">
                         <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;Apple MacBook Pro 13 inch-M1-8/256GB-space&quot;,&quot;productImage&quot;:&quot;/products/60x60/3.png&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Woodrow Burton&quot;,&quot;avatar&quot;:&quot;/team/40x40/58.webp&quot;},&quot;rating&quot;:4.5,&quot;review&quot;:&quot;It's a Mac, after all. Once you've gone Mac, there's no going back. My first Mac lasted over nine years, and this is my second.&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Pending&quot;,&quot;badge&quot;:&quot;warning&quot;,&quot;icon&quot;:&quot;clock&quot;},&quot;time&quot;:&quot;Just now&quot;}"></div>
                      </td>
-                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="assets/img//products/60x60/3.png" alt="" width="53"></a></td>
+                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="https://prium.github.io/phoenix/v1.22.0/assets/img/products/60x60/3.png" alt="" width="53"></a></td>
                      <td class="align-middle product white-space-nowrap"><a class="fw-semibold" href="apps/e-commerce/landing/product-details.html">Apple MacBook Pro 13 inch-M1-8/256GB-space</a></td>
                      <td class="align-middle customer white-space-nowrap">
                         <a class="d-flex align-items-center text-body" href="apps/e-commerce/landing/profile.html">
@@ -1185,7 +1185,7 @@
                      <td class="fs-9 align-middle ps-0">
                         <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;Apple iMac 24\&quot; 4K Retina Display M1 8 Core CPU, 7 Core GPU, 256GB SSD, Green (MJV83ZP/A) 2021&quot;,&quot;productImage&quot;:&quot;/products/60x60/4.png&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Eric McGee&quot;,&quot;avatar&quot;:&quot;/team/40x40/avatar.webp&quot;,&quot;avatarPlaceholder&quot;:true},&quot;rating&quot;:3,&quot;review&quot;:&quot;Personally, I like the minimalist style, but I wouldn't choose it if I were searching for a computer that I would use frequently. It's not horrible in terms of speed and power, but the&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Pending&quot;,&quot;badge&quot;:&quot;warning&quot;,&quot;icon&quot;:&quot;clock&quot;},&quot;time&quot;:&quot;Nov 09, 3:23 AM&quot;}"></div>
                      </td>
-                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="assets/img//products/60x60/4.png" alt="" width="53"></a></td>
+                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="https://prium.github.io/phoenix/v1.22.0/assets/img/products/60x60/4.png" alt="" width="53"></a></td>
                      <td class="align-middle product white-space-nowrap"><a class="fw-semibold" href="apps/e-commerce/landing/product-details.html">Apple iMac 24" 4K Retina Display M1 8 Core CPU...</a></td>
                      <td class="align-middle customer white-space-nowrap">
                         <a class="d-flex align-items-center text-body" href="apps/e-commerce/landing/profile.html">
@@ -1268,7 +1268,7 @@
                      <td class="fs-9 align-middle ps-0">
                         <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;Razer Kraken v3 x Wired 7.1 Surroung Sound Gaming headset&quot;,&quot;productImage&quot;:&quot;/products/60x60/5.png&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Kim Carroll&quot;,&quot;avatar&quot;:&quot;/team/40x40/avatar.webp&quot;,&quot;avatarPlaceholder&quot;:true},&quot;rating&quot;:4,&quot;review&quot;:&quot;It performs exactly as expected. There are three of these in the family.&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Pending&quot;,&quot;badge&quot;:&quot;warning&quot;,&quot;icon&quot;:&quot;clock&quot;},&quot;time&quot;:&quot;Nov 09, 2:15 PM&quot;}"></div>
                      </td>
-                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="assets/img//products/60x60/5.png" alt="" width="53"></a></td>
+                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="https://prium.github.io/phoenix/v1.22.0/assets/img/products/60x60/5.png" alt="" width="53"></a></td>
                      <td class="align-middle product white-space-nowrap"><a class="fw-semibold" href="apps/e-commerce/landing/product-details.html">Razer Kraken v3 x Wired 7.1 Surroung Sound Gam...</a></td>
                      <td class="align-middle customer white-space-nowrap">
                         <a class="d-flex align-items-center text-body" href="apps/e-commerce/landing/profile.html">
@@ -1351,7 +1351,7 @@
                      <td class="fs-9 align-middle ps-0">
                         <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row="{&quot;product&quot;:&quot;PlayStation 5 DualSense Wireless Controller&quot;,&quot;productImage&quot;:&quot;/products/60x60/6.png&quot;,&quot;customer&quot;:{&quot;name&quot;:&quot;Barbara Lucas&quot;,&quot;avatar&quot;:&quot;/team/40x40/57.webp&quot;},&quot;rating&quot;:4,&quot;review&quot;:&quot;The controller is quite comfy for me. Despite its increased size, the controller still fits well in my hands.&quot;,&quot;status&quot;:{&quot;title&quot;:&quot;Approved&quot;,&quot;badge&quot;:&quot;success&quot;,&quot;icon&quot;:&quot;check&quot;},&quot;time&quot;:&quot;Nov 08, 8:53 AM&quot;}"></div>
                      </td>
-                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="assets/img//products/60x60/6.png" alt="" width="53"></a></td>
+                     <td class="align-middle product white-space-nowrap py-0"><a class="d-block rounded-2 border border-translucent" href="apps/e-commerce/landing/product-details.html"><img src="https://prium.github.io/phoenix/v1.22.0/assets/img/products/60x60/6.png" alt="" width="53"></a></td>
                      <td class="align-middle product white-space-nowrap"><a class="fw-semibold" href="apps/e-commerce/landing/product-details.html">PlayStation 5 DualSense Wireless Controller</a></td>
                      <td class="align-middle customer white-space-nowrap">
                         <a class="d-flex align-items-center text-body" href="apps/e-commerce/landing/profile.html">
@@ -1758,7 +1758,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -1863,7 +1863,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -1968,7 +1968,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2073,7 +2073,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2227,7 +2227,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2332,7 +2332,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2437,7 +2437,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2594,7 +2594,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2699,7 +2699,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2850,7 +2850,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -2955,7 +2955,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3060,7 +3060,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3165,7 +3165,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3320,7 +3320,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3425,7 +3425,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3530,7 +3530,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3790,7 +3790,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -3895,7 +3895,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -4000,7 +4000,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
@@ -4105,7 +4105,7 @@
                                  </a>
                                  <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
                                     <div class="position-relative">
-                                       <div class="bg-holder z-n1" style="background-image:url(../assets/img/bg/bg-32.png);background-size: auto;"></div>
+                                       <div class="bg-holder z-n1" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/bg/bg-32.png);background-size: auto;"></div>
                                        <!--/.bg-holder-->
                                        <div class="p-3">
                                           <div class="text-end">
