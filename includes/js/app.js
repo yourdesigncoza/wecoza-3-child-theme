@@ -467,3 +467,73 @@ if (chBar) {
   });
 }
 
+
+/**
+ * Theme Switcher Function
+ * 
+ * This function handles the theme switching functionality for the website.
+ * It allows users to toggle between light and dark themes, and also supports
+ * an 'auto' option that follows the system preference.
+ * 
+ * Key features:
+ * - Stores the user's theme preference in localStorage
+ * - Applies the theme without page reload
+ * - Supports 'auto' theme which follows system preference
+ * - Uses a checkbox (#themeControlToggle) as the theme toggle control
+ * - See in helper.php >> function ydcoza_print_theme_sniffer() {
+ */
+jQuery(function($){
+  var themeKey = 'phoenixTheme';
+
+  function resolveTheme(t){
+    if (t === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    }
+    return t;
+  }
+
+  function applyTheme(t){
+    var finalTheme = resolveTheme(t);
+    document.documentElement.setAttribute('data-bs-theme', finalTheme);
+  }
+
+  // load and apply
+  var stored = localStorage.getItem(themeKey) || 'auto';
+  applyTheme(stored);
+
+  var $toggle = $('#themeControlToggle');
+  $toggle.prop('checked', stored === 'dark');
+
+  $toggle.on('change', function(e){
+    e.preventDefault();
+    var chosen = this.checked ? 'dark' : 'light';
+    localStorage.setItem(themeKey, chosen);
+    applyTheme(chosen);
+    // <-- no reload here any more
+  });
+});
+
+jQuery(window).on('load', function(){
+  jQuery('.fa-icon-wait').css('opacity', 1);
+});
+
+jQuery(function($){
+  var $wrapper = $('.support-chat-container');
+  var $panel   = $wrapper.find('.support-chat');
+  var $toggle  = $wrapper.find('.btn-support-chat');
+  var $close   = $wrapper.find('.btn-chat-close');
+
+  // Toggle the panel in/out
+  $toggle.on('click', function(e){
+    e.preventDefault();
+    $panel.toggleClass('show-chat');
+  });
+
+  // If you have a “close” icon in the header:
+  $close.on('click', function(e){
+    e.preventDefault();
+    $panel.removeClass('show-chat');
+  });
+});

@@ -48,9 +48,6 @@ function enqueue_assets() {
     wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), null, true);
     // bootstrap
     wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
-    // app
-    wp_enqueue_script('wecoza-table-handler', WECOZA_CHILD_URL . '/includes/js/app.js', array('jquery', 'bootstrap-table'), WECOZA_PLUGIN_VERSION, true);
-
 
     // Custom scripts with localization
     wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array('ajax_url' => admin_url('admin-ajax.php'),'nonce' => wp_create_nonce('wecoza_table_nonce') ));
@@ -67,9 +64,32 @@ add_action('wp_enqueue_scripts', 'enqueue_assets'); // Enqueue assets
 function ydcoza_load_child_style_last() {
     // YDCOZA Styles
     wp_enqueue_style('ydcoza_styles-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array(), WECOZA_PLUGIN_VERSION);
+    // app
+    wp_enqueue_script('wecoza-table-handler', WECOZA_CHILD_URL . '/includes/js/app.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
 }
 // Run at priority 99 so it fires after most other enqueue calls:
 add_action( 'wp_enqueue_scripts', 'ydcoza_load_child_style_last', 99 );
+
+
+/**
+ * Print inline theme-sniffer script before any CSS loads.
+ */
+function ydcoza_print_theme_sniffer() {
+    ?>
+    <script>
+    (function(){
+      var key = 'phoenixTheme';
+      var stored = localStorage.getItem(key) || 'auto';
+      var resolved = (stored === 'auto')
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : stored;
+      document.documentElement.setAttribute('data-bs-theme', resolved);
+    })();
+    </script>
+    <?php
+}
+add_action( 'wp_head', 'ydcoza_print_theme_sniffer', 1 );
+
 
 /**
  * Remove FontAwesome stylesheet

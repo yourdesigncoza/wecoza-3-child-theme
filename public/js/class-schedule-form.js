@@ -720,7 +720,7 @@ function getClassTypeHours(classTypeId) {
                 month: 'Month',
                 year: 'Year'
             },
-            height: 500,
+            height: 800,
             allDaySlot: false,
             slotMinTime: '06:00:00',
             slotMaxTime: '20:00:00',

@@ -158,6 +158,9 @@ body .bg-body-tertiary {
 .bd-callout.bd-callout-info {
   font-size: 0.875rem;
 }
+.support-chat .card-body {
+    height: 24rem
+}
 
 /* ##############################
 ### Calendar Styles
@@ -244,7 +247,7 @@ body .bg-body-tertiary {
 /* Holiday tooltip */
 .holiday-tooltip {
     position: absolute;
-    top: 100%;
+    top: 96%;
     left: 50%;
     transform: translateX(-50%);
     background-color: #f44336;
@@ -258,14 +261,15 @@ body .bg-body-tertiary {
 }
 
 .holiday-tooltip:after {
-    content: '';
+    /* content: '';
     position: absolute;
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent #f44336 transparent;
+    border-color: transparent transparent #f44336 transparent; */
+    display: none;
 }
 
 .holiday-tooltip.overridden {
@@ -282,7 +286,43 @@ body .bg-body-tertiary {
     border-color: #f57c00 !important;
     color: #ffffff !important;
 }
-
+.fc-more-popover {
+    z-index: 2;
+    width: auto !important;
+}
+.fc-event-time {
+  margin: 0.5rem 0;
+}
+.fc .fc-daygrid-more-link {
+    padding: 2px 5px;
+    background-color: white;
+    margin-top: -10px;
+    border-color: white !important;
+    color: #222222 !important;
+    margin-left: 0;
+    font-size: 0.7rem;
+}
+.fc .fc-button {
+    font-size: 16px;
+    line-height: 9px;
+}
+.fc .fc-button .fc-icon {
+    font-size: 18px;
+}
+.ping-icon-wrapper .ping-icon-bg {
+    left: 1px;
+}
+html[data-bs-theme="dark"] .border-success-subtle {
+    border-color: #408650 !important;
+}
+html[data-bs-theme="dark"] .fc.fc-theme-standard .fc-list, 
+html[data-bs-theme="dark"] .fc.fc-theme-standard td, 
+html[data-bs-theme="dark"] .fc.fc-theme-standard th {
+    border: 1px solid #222834;
+}
+html[data-bs-theme="dark"] .fc .fc-multimonth {
+    border: 1px solid #566485;
+}
 
 
 /* -------------------------------------------------------------------------- */

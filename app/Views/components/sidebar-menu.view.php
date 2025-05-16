@@ -35,12 +35,13 @@ use WeCoza\Walkers\Bootstrap_Sidebar_Walker;
         </div>
     </div>
     <div class="navbar-vertical-footer">
-<div class="support-chat-container show">
+      
+      <div class="support-chat-container show">
         <div class="container-fluid support-chat">
           <div class="card bg-body-emphasis">
             <div class="card-header d-flex flex-between-center px-4 py-3 border-bottom border-translucent">
               <h5 class="mb-0 d-flex align-items-center gap-2">Support <span class="fa-solid fa-circle text-success fs-11"></span></h5>
-              <button class="btn btn-support-chat p-0 border border-translucent btn-chat-close"></span><span class="fa-solid fa-chevron-down text-primary fs-7"></span></button>
+              <button class="btn btn-support-chat p-0 border border-translucent btn-chat-close"  data-bs-toggle="modal" data-bs-target="#exampleModal"></span><span class="fa-solid fa-chevron-down text-primary fs-7"></span></button>
             </div>
                <div class="card-body chat p-0">
                   <div class="d-flex flex-column-reverse scrollbar h-100 p-3">

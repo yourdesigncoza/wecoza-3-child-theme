@@ -10,7 +10,7 @@
 ?>
    <!-- View Calendar Button -->
    <div class="mt-4">
-      <button type="button" class="btn btn-outline-secondary mt-5" id="view-calendar-btn">
+      <button type="button" class="btn bg-success-subtle border-success-subtle mt-5" id="view-calendar-btn">
          <i class="bi bi-calendar3"></i> View Calendar
       </button>
       <div class="clearfix"></div>
