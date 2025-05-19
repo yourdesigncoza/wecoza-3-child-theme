@@ -62,7 +62,7 @@
 - Always use the `GIT MCP Server` with (GIT)
 
 # Vertex 
-vertex-ai-mcp-server tools:
+<!-- vertex-ai-mcp-server tools:
 
 - The project root is located at: /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme
 
@@ -76,4 +76,4 @@ vertex-ai-mcp-server tools:
    specify that searches should be limited to this directory.
 
 - When executing terminal commands, always cd into the project root first:
-   cd /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme && [your-command]
+   cd /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme && [your-command] -->

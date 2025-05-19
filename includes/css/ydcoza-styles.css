@@ -149,6 +149,7 @@ body .bg-body-tertiary {
 .breadcrumb {
   display: flex;
   align-items: center;
+  margin-left: -0.5rem;
 }
 
 .breadcrumb a,
@@ -315,8 +316,8 @@ body .bg-body-tertiary {
 html[data-bs-theme="dark"] .border-success-subtle {
     border-color: #408650 !important;
 }
-html[data-bs-theme="dark"] .fc.fc-theme-standard .fc-list, 
-html[data-bs-theme="dark"] .fc.fc-theme-standard td, 
+html[data-bs-theme="dark"] .fc.fc-theme-standard .fc-list,
+html[data-bs-theme="dark"] .fc.fc-theme-standard td,
 html[data-bs-theme="dark"] .fc.fc-theme-standard th {
     border: 1px solid #222834;
 }
@@ -360,5 +361,25 @@ html[data-bs-theme="dark"] .fc .fc-multimonth {
     font-size: 14px;
 }
 .table > tbody > tr > td:first-child {
-  padding-left: .5rem; 
+  padding-left: .5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Class Schedule Form Styles                                      */
+/* -------------------------------------------------------------------------- */
+.days-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-check-inline {
+    margin-right: 0;
+}
+
+#day-selection-container .invalid-feedback,
+#day-selection-container .valid-feedback {
+    display: block;
+    margin-top: 0.5rem;
 }

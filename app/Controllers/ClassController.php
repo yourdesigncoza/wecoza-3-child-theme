@@ -525,12 +525,23 @@ class ClassController {
 
         // Extract schedule pattern data
         $pattern = isset($scheduleData['pattern']) ? $scheduleData['pattern'] : '';
+        $days = isset($scheduleData['days']) ? $scheduleData['days'] : [];
         $day = isset($scheduleData['day']) ? $scheduleData['day'] : '';
         $dayOfMonth = isset($scheduleData['day_of_month']) ? $scheduleData['day_of_month'] : '';
         $startTime = isset($scheduleData['start_time']) ? $scheduleData['start_time'] : '';
         $endTime = isset($scheduleData['end_time']) ? $scheduleData['end_time'] : '';
         $startDate = isset($scheduleData['start_date']) ? $scheduleData['start_date'] : '';
         $endDate = isset($scheduleData['end_date']) ? $scheduleData['end_date'] : '';
+
+        // Handle legacy format (single day as string)
+        if (empty($days) && !empty($day)) {
+            $days = [$day];
+        }
+
+        // Ensure days is an array
+        if (!is_array($days)) {
+            $days = [$days];
+        }
 
         // Extract exception dates
         $exceptionDates = [];
@@ -615,64 +626,116 @@ class ClassController {
         $end = new \DateTime($endDate);
 
         // Weekly pattern
-        if ($pattern === 'weekly' && !empty($day)) {
-            $dayIndex = self::getDayIndex($day);
-
-            // Set start date to the first occurrence of the selected day
-            $current = clone $start;
-            while ($current->format('w') != $dayIndex) {
-                $current->modify('+1 day');
+        if ($pattern === 'weekly' && !empty($days)) {
+            // Get day indices for all selected days
+            $dayIndices = [];
+            foreach ($days as $day) {
+                $dayIndices[] = self::getDayIndex($day);
             }
 
-            // Generate events for each week
-            while ($current <= $end) {
-                $dateStr = $current->format('Y-m-d');
+            // Set start date to the first occurrence of any selected day
+            $current = clone $start;
+            $currentDayIndex = (int)$current->format('w');
 
-                // Skip exception dates
-                if (!in_array($dateStr, $exceptionDates)) {
-                    $result[] = [
-                        'day' => $day,
-                        'date' => $dateStr,
-                        'start_time' => $startTime,
-                        'end_time' => $endTime,
-                        'notes' => '',
-                        'type' => 'class'
-                    ];
+            // If current day is not in selected days, find the next occurrence
+            if (!in_array($currentDayIndex, $dayIndices)) {
+                $daysToAdd = 1;
+                $nextDate = clone $current;
+                $nextDate->modify('+' . $daysToAdd . ' day');
+
+                while (!in_array((int)$nextDate->format('w'), $dayIndices)) {
+                    $daysToAdd++;
+                    $nextDate = clone $current;
+                    $nextDate->modify('+' . $daysToAdd . ' day');
                 }
 
-                // Move to next week
-                $current->modify('+7 days');
+                $current = $nextDate;
+            }
+
+            // Generate events for each day in the date range
+            while ($current <= $end) {
+                $currentDayIndex = (int)$current->format('w');
+                $currentDayName = self::getDayName($currentDayIndex);
+                $dateStr = $current->format('Y-m-d');
+
+                // If current day is in selected days
+                if (in_array($currentDayIndex, $dayIndices)) {
+                    // Skip exception dates
+                    if (!in_array($dateStr, $exceptionDates)) {
+                        $result[] = [
+                            'day' => $currentDayName,
+                            'date' => $dateStr,
+                            'start_time' => $startTime,
+                            'end_time' => $endTime,
+                            'notes' => '',
+                            'type' => 'class'
+                        ];
+                    }
+                }
+
+                // Move to next day
+                $current->modify('+1 day');
             }
         }
 
         // Bi-weekly pattern
-        else if ($pattern === 'biweekly' && !empty($day)) {
-            $dayIndex = self::getDayIndex($day);
-
-            // Set start date to the first occurrence of the selected day
-            $current = clone $start;
-            while ($current->format('w') != $dayIndex) {
-                $current->modify('+1 day');
+        else if ($pattern === 'biweekly' && !empty($days)) {
+            // Get day indices for all selected days
+            $dayIndices = [];
+            foreach ($days as $day) {
+                $dayIndices[] = self::getDayIndex($day);
             }
 
-            // Generate events for every other week
-            while ($current <= $end) {
-                $dateStr = $current->format('Y-m-d');
+            // Set start date to the first occurrence of any selected day
+            $current = clone $start;
+            $currentDayIndex = (int)$current->format('w');
 
-                // Skip exception dates
-                if (!in_array($dateStr, $exceptionDates)) {
-                    $result[] = [
-                        'day' => $day,
-                        'date' => $dateStr,
-                        'start_time' => $startTime,
-                        'end_time' => $endTime,
-                        'notes' => '',
-                        'type' => 'class'
-                    ];
+            // If current day is not in selected days, find the next occurrence
+            if (!in_array($currentDayIndex, $dayIndices)) {
+                $daysToAdd = 1;
+                $nextDate = clone $current;
+                $nextDate->modify('+' . $daysToAdd . ' day');
+
+                while (!in_array((int)$nextDate->format('w'), $dayIndices)) {
+                    $daysToAdd++;
+                    $nextDate = clone $current;
+                    $nextDate->modify('+' . $daysToAdd . ' day');
                 }
 
-                // Move to next bi-week
-                $current->modify('+14 days');
+                $current = $nextDate;
+            }
+
+            // Track which week we're in (0 = first week, 1 = second week)
+            $weekCounter = 0;
+
+            // Generate events for each day in the date range
+            while ($current <= $end) {
+                $currentDayIndex = (int)$current->format('w');
+                $currentDayName = self::getDayName($currentDayIndex);
+                $dateStr = $current->format('Y-m-d');
+
+                // If current day is in selected days and we're in the first week of the biweek
+                if (in_array($currentDayIndex, $dayIndices) && $weekCounter === 0) {
+                    // Skip exception dates
+                    if (!in_array($dateStr, $exceptionDates)) {
+                        $result[] = [
+                            'day' => $currentDayName,
+                            'date' => $dateStr,
+                            'start_time' => $startTime,
+                            'end_time' => $endTime,
+                            'notes' => '',
+                            'type' => 'class'
+                        ];
+                    }
+                }
+
+                // Move to next day
+                $current->modify('+1 day');
+
+                // Update week counter (0 = first week, 1 = second week)
+                if ((int)$current->format('w') === 0) { // If it's Sunday
+                    $weekCounter = ($weekCounter + 1) % 2;
+                }
             }
         }
 
@@ -733,6 +796,17 @@ class ClassController {
     private static function getDayIndex($dayName) {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return array_search($dayName, $days);
+    }
+
+    /**
+     * Helper function to get day name from day index
+     *
+     * @param int $dayIndex Day index (0 = Sunday, 1 = Monday, etc.)
+     * @return string Day name
+     */
+    private static function getDayName($dayIndex) {
+        $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return isset($days[$dayIndex]) ? $days[$dayIndex] : '';
     }
     /**
      * Handle AJAX request to check for class conflicts

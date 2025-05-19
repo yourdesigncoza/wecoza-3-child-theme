@@ -31,22 +31,44 @@
       </div>
 
       <!-- Day Selection (for weekly/biweekly) -->
-      <div class="col-md-4 mb-3" id="day-selection-container">
-         <div class="form-floating">
-            <select id="schedule_day" name="schedule_day" class="form-select">
-               <option value="">Select</option>
-               <option value="Monday">Monday</option>
-               <option value="Tuesday">Tuesday</option>
-               <option value="Wednesday">Wednesday</option>
-               <option value="Thursday">Thursday</option>
-               <option value="Friday">Friday</option>
-               <option value="Saturday">Saturday</option>
-               <option value="Sunday">Sunday</option>
-            </select>
-            <label for="schedule_day">Day of Week <span class="text-danger">*</span></label>
-            <div class="invalid-feedback">Please select a day.</div>
-            <div class="valid-feedback">Looks good!</div>
+      <div class="col-md-12 mb-3" id="day-selection-container">
+         <label class="form-label">Days of Week <span class="text-danger">*</span></label>
+         <div class="days-checkbox-group">
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_monday" name="schedule_days[]" value="Monday">
+               <label class="form-check-label" for="schedule_day_monday">Monday</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_tuesday" name="schedule_days[]" value="Tuesday">
+               <label class="form-check-label" for="schedule_day_tuesday">Tuesday</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_wednesday" name="schedule_days[]" value="Wednesday">
+               <label class="form-check-label" for="schedule_day_wednesday">Wednesday</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_thursday" name="schedule_days[]" value="Thursday">
+               <label class="form-check-label" for="schedule_day_thursday">Thursday</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_friday" name="schedule_days[]" value="Friday">
+               <label class="form-check-label" for="schedule_day_friday">Friday</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_saturday" name="schedule_days[]" value="Saturday">
+               <label class="form-check-label" for="schedule_day_saturday">Saturday</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_sunday" name="schedule_days[]" value="Sunday">
+               <label class="form-check-label" for="schedule_day_sunday">Sunday</label>
+            </div>
          </div>
+         <div class="mt-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="select-all-days">Select All</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-all-days">Clear All</button>
+         </div>
+         <div class="invalid-feedback">Please select at least one day.</div>
+         <div class="valid-feedback">Looks good!</div>
       </div>
 
       <!-- Day of Month (for monthly) -->

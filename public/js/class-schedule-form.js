@@ -55,12 +55,13 @@
             // Show appropriate fields based on pattern
             if (pattern === 'weekly' || pattern === 'biweekly') {
                 $daySelection.removeClass('d-none');
-                $('#schedule_day').attr('required', 'required');
                 $('#schedule_day_of_month').removeAttr('required');
+
+                // Ensure at least one day is selected for validation
+                validateDaySelection();
             } else if (pattern === 'monthly') {
                 $dayOfMonth.removeClass('d-none');
                 $('#schedule_day_of_month').attr('required', 'required');
-                $('#schedule_day').removeAttr('required');
             } else if (pattern === 'custom') {
                 // For custom pattern, we'll use the calendar view
                 $('#view-calendar-btn').trigger('click');
@@ -80,10 +81,26 @@
             recalculateEndDate();
         });
 
-        // Handle day selection changes
-        $('#schedule_day, #schedule_day_of_month').on('change', function() {
+        // Initialize day selection buttons
+        $('#select-all-days').on('click', function() {
+            $('.schedule-day-checkbox').prop('checked', true);
+            validateDaySelection();
             updateScheduleData();
-            restrictStartDateByDay();
+            restrictStartDateBySelectedDays();
+            recalculateEndDate();
+        });
+
+        $('#clear-all-days').on('click', function() {
+            $('.schedule-day-checkbox').prop('checked', false);
+            validateDaySelection();
+            updateScheduleData();
+        });
+
+        // Handle day checkbox changes
+        $('.schedule-day-checkbox').on('change', function() {
+            validateDaySelection();
+            updateScheduleData();
+            restrictStartDateBySelectedDays();
 
             // Check for holidays that conflict with the new day selection
             const startDate = $('#schedule_start_date').val();
@@ -96,54 +113,120 @@
             recalculateEndDate();
         });
 
-        // Restrict start date based on selected day
-        function restrictStartDateByDay() {
-            const selectedDay = $('#schedule_day').val();
+        // Handle day of month selection changes
+        $('#schedule_day_of_month').on('change', function() {
+            updateScheduleData();
+
+            // Check for holidays that conflict with the new day selection
+            const startDate = $('#schedule_start_date').val();
+            const endDate = $('#schedule_end_date').val();
+            if (startDate) {
+                checkForHolidays(startDate, endDate);
+            }
+
+            // Recalculate end date when day changes
+            recalculateEndDate();
+        });
+
+        // Restrict start date based on selected days
+        function restrictStartDateBySelectedDays() {
+            const selectedDays = getSelectedDays();
             const $startDate = $('#schedule_start_date');
 
-            if (selectedDay && !$('#day-selection-container').hasClass('d-none')) {
+            if (selectedDays.length > 0 && !$('#day-selection-container').hasClass('d-none')) {
                 // Get the current date value
                 const currentDate = $startDate.val();
 
                 if (currentDate) {
                     const date = new Date(currentDate);
-                    const dayIndex = getDayIndex(selectedDay);
+                    const dayName = getDayName(date.getDay());
 
-                    // If the current date is not the selected day, find the next occurrence
-                    if (date.getDay() !== dayIndex) {
-                        // Find the next occurrence of the selected day
-                        while (date.getDay() !== dayIndex) {
-                            date.setDate(date.getDate() + 1);
+                    // If the current date is not one of the selected days, find the next occurrence
+                    if (!selectedDays.includes(dayName)) {
+                        // Find the next occurrence of any selected day
+                        let daysToAdd = 1;
+                        let nextDate = new Date(date);
+                        nextDate.setDate(nextDate.getDate() + daysToAdd);
+
+                        while (!selectedDays.includes(getDayName(nextDate.getDay()))) {
+                            daysToAdd++;
+                            nextDate = new Date(date);
+                            nextDate.setDate(nextDate.getDate() + daysToAdd);
                         }
 
                         // Update the start date
-                        $startDate.val(date.toISOString().split('T')[0]);
-                        console.log('Start date adjusted to match day of week');
+                        $startDate.val(nextDate.toISOString().split('T')[0]);
+                        console.log('Start date adjusted to match selected days');
                         // This will trigger recalculateEndDate via the change event handler
                         $startDate.trigger('change');
                     }
                 }
 
-                // Add a custom validation to ensure the date is the correct day
+                // Add a custom validation to ensure the date is one of the correct days
                 $startDate.on('change', function() {
                     const date = new Date($(this).val());
-                    const dayIndex = getDayIndex(selectedDay);
+                    const dayName = getDayName(date.getDay());
 
-                    if (date.getDay() !== dayIndex) {
-                        // Find the next occurrence of the selected day
-                        while (date.getDay() !== dayIndex) {
-                            date.setDate(date.getDate() + 1);
+                    if (!selectedDays.includes(dayName)) {
+                        // Find the next occurrence of any selected day
+                        let daysToAdd = 1;
+                        let nextDate = new Date(date);
+                        nextDate.setDate(nextDate.getDate() + daysToAdd);
+
+                        while (!selectedDays.includes(getDayName(nextDate.getDay()))) {
+                            daysToAdd++;
+                            nextDate = new Date(date);
+                            nextDate.setDate(nextDate.getDate() + daysToAdd);
                         }
 
                         // Update the start date
-                        $(this).val(date.toISOString().split('T')[0]);
-                        console.log('Start date adjusted to match day of week on change');
+                        $(this).val(nextDate.toISOString().split('T')[0]);
+                        console.log('Start date adjusted to match selected days on change');
                         // Manually call recalculateEndDate since we're not triggering the change event
                         recalculateEndDate();
                     }
                 });
             }
         }
+    }
+
+    /**
+     * Validate that at least one day is selected
+     */
+    function validateDaySelection() {
+        const anyDaySelected = $('.schedule-day-checkbox:checked').length > 0;
+        const $daySelectionContainer = $('#day-selection-container');
+
+        if (!$daySelectionContainer.hasClass('d-none')) {
+            if (anyDaySelected) {
+                $daySelectionContainer.find('.invalid-feedback').hide();
+                $daySelectionContainer.find('.valid-feedback').show();
+            } else {
+                $daySelectionContainer.find('.invalid-feedback').show();
+                $daySelectionContainer.find('.valid-feedback').hide();
+            }
+        }
+
+        return anyDaySelected;
+    }
+
+    /**
+     * Get all selected days
+     */
+    function getSelectedDays() {
+        const selectedDays = [];
+        $('.schedule-day-checkbox:checked').each(function() {
+            selectedDays.push($(this).val());
+        });
+        return selectedDays;
+    }
+
+    /**
+     * Helper function to get day name from day index
+     */
+    function getDayName(dayIndex) {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[dayIndex];
     }
 
     /**
@@ -488,17 +571,37 @@ function getClassTypeHours(classTypeId) {
 
                     // Weekly pattern
                     if (pattern === 'weekly') {
-                        const dayIndex = getDayIndex($('#schedule_day').val());
-                        console.log('Weekly pattern, day index:', dayIndex);
+                        const selectedDays = getSelectedDays();
+                        console.log('Weekly pattern, selected days:', selectedDays);
 
-                        // Set start date to the first occurrence of the selected day
-                        while (date.getDay() !== dayIndex) {
-                            date.setDate(date.getDate() + 1);
+                        if (selectedDays.length === 0) {
+                            return; // Can't calculate without selected days
                         }
 
-                        // Add weeks until we have enough sessions
+                        // Convert selected days to day indices
+                        const dayIndices = selectedDays.map(day => getDayIndex(day));
+
+                        // Set start date to the first occurrence of any selected day
+                        const currentDayIndex = date.getDay();
+                        if (!dayIndices.includes(currentDayIndex)) {
+                            // Find the next occurrence of any selected day
+                            let daysToAdd = 1;
+                            let nextDate = new Date(date);
+                            nextDate.setDate(nextDate.getDate() + daysToAdd);
+
+                            while (!dayIndices.includes(nextDate.getDay())) {
+                                daysToAdd++;
+                                nextDate = new Date(date);
+                                nextDate.setDate(nextDate.getDate() + daysToAdd);
+                            }
+
+                            date = nextDate;
+                        }
+
+                        // Add days until we have enough sessions
                         while (sessionsScheduled < sessionsNeeded) {
                             const dateStr = date.toISOString().split('T')[0];
+                            const currentDayIndex = date.getDay();
 
                             // Check if this date is a public holiday
                             let isPublicHoliday = false;
@@ -521,7 +624,10 @@ function getClassTypeHours(classTypeId) {
                             }
 
                             // Skip exception dates and public holidays (unless overridden)
-                            if (!exceptionDates.includes(dateStr) && (!isPublicHoliday || isHolidayOverridden)) {
+                            // Only count days that are in our selected days list
+                            if (dayIndices.includes(currentDayIndex) &&
+                                !exceptionDates.includes(dateStr) &&
+                                (!isPublicHoliday || isHolidayOverridden)) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
                                 if (isHolidayOverridden) {
@@ -529,27 +635,50 @@ function getClassTypeHours(classTypeId) {
                                 }
                             } else if (isPublicHoliday) {
                                 console.log('Public holiday skipped:', dateStr);
-                            } else {
+                            } else if (exceptionDates.includes(dateStr)) {
                                 console.log('Exception date skipped:', dateStr);
                             }
 
-                            // Move to next week
-                            date.setDate(date.getDate() + 7);
+                            // Move to next day
+                            date.setDate(date.getDate() + 1);
                         }
                     }
                     // Bi-weekly pattern
                     else if (pattern === 'biweekly') {
-                        const dayIndex = getDayIndex($('#schedule_day').val());
-                        console.log('Bi-weekly pattern, day index:', dayIndex);
+                        const selectedDays = getSelectedDays();
+                        console.log('Bi-weekly pattern, selected days:', selectedDays);
 
-                        // Set start date to the first occurrence of the selected day
-                        while (date.getDay() !== dayIndex) {
-                            date.setDate(date.getDate() + 1);
+                        if (selectedDays.length === 0) {
+                            return; // Can't calculate without selected days
                         }
 
-                        // Add two weeks until we have enough sessions
+                        // Convert selected days to day indices
+                        const dayIndices = selectedDays.map(day => getDayIndex(day));
+
+                        // Set start date to the first occurrence of any selected day
+                        const currentDayIndex = date.getDay();
+                        if (!dayIndices.includes(currentDayIndex)) {
+                            // Find the next occurrence of any selected day
+                            let daysToAdd = 1;
+                            let nextDate = new Date(date);
+                            nextDate.setDate(nextDate.getDate() + daysToAdd);
+
+                            while (!dayIndices.includes(nextDate.getDay())) {
+                                daysToAdd++;
+                                nextDate = new Date(date);
+                                nextDate.setDate(nextDate.getDate() + daysToAdd);
+                            }
+
+                            date = nextDate;
+                        }
+
+                        // Track which week we're in (0 = first week, 1 = second week)
+                        let weekCounter = 0;
+
+                        // Add days until we have enough sessions
                         while (sessionsScheduled < sessionsNeeded) {
                             const dateStr = date.toISOString().split('T')[0];
+                            const currentDayIndex = date.getDay();
 
                             // Check if this date is a public holiday
                             let isPublicHoliday = false;
@@ -572,7 +701,11 @@ function getClassTypeHours(classTypeId) {
                             }
 
                             // Skip exception dates and public holidays (unless overridden)
-                            if (!exceptionDates.includes(dateStr) && (!isPublicHoliday || isHolidayOverridden)) {
+                            // Only count days that are in our selected days list and in the first week of the biweek
+                            if (dayIndices.includes(currentDayIndex) &&
+                                weekCounter === 0 &&
+                                !exceptionDates.includes(dateStr) &&
+                                (!isPublicHoliday || isHolidayOverridden)) {
                                 sessionsScheduled++;
                                 console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
                                 if (isHolidayOverridden) {
@@ -580,12 +713,17 @@ function getClassTypeHours(classTypeId) {
                                 }
                             } else if (isPublicHoliday) {
                                 console.log('Public holiday skipped:', dateStr);
-                            } else {
+                            } else if (exceptionDates.includes(dateStr)) {
                                 console.log('Exception date skipped:', dateStr);
                             }
 
-                            // Move to next bi-week
-                            date.setDate(date.getDate() + 14);
+                            // Move to next day
+                            date.setDate(date.getDate() + 1);
+
+                            // Update week counter (0 = first week, 1 = second week)
+                            if (date.getDay() === 0) { // If it's Sunday
+                                weekCounter = (weekCounter + 1) % 2;
+                            }
                         }
                     }
                     // Monthly pattern
@@ -896,65 +1034,125 @@ function getClassTypeHours(classTypeId) {
 
         // Weekly pattern
         if (pattern === 'weekly') {
-            const dayIndex = getDayIndex(dayOfWeek);
+            // Get day indices for all selected days
+            const selectedDays = scheduleData.days || [];
+            const dayIndices = [];
+            selectedDays.forEach(function(day) {
+                dayIndices.push(getDayIndex(day));
+            });
 
-            // Set start date to the first occurrence of the selected day
-            while (start.getDay() !== dayIndex) {
-                start.setDate(start.getDate() + 1);
+            if (dayIndices.length === 0) {
+                return events; // Can't generate events without selected days
             }
 
-            // Generate events for each week
+            // Set start date to the first occurrence of any selected day
             const current = new Date(start);
-            while (current <= end) {
-                const dateStr = current.toISOString().split('T')[0];
+            const currentDayIndex = current.getDay();
 
-                // Skip exception dates
-                if (!isExceptionDate(dateStr, exceptionDates)) {
-                    events.push({
-                        title: classType,
-                        start: dateStr + 'T' + startTime + ':00',
-                        end: dateStr + 'T' + endTime + ':00',
-                        extendedProps: {
-                            type: 'class',
-                            description: classType + ' - ' + dayOfWeek
-                        }
-                    });
+            // If current day is not in selected days, find the next occurrence
+            if (!dayIndices.includes(currentDayIndex)) {
+                let daysToAdd = 1;
+                let nextDate = new Date(current);
+                nextDate.setDate(nextDate.getDate() + daysToAdd);
+
+                while (!dayIndices.includes(nextDate.getDay())) {
+                    daysToAdd++;
+                    nextDate = new Date(current);
+                    nextDate.setDate(nextDate.getDate() + daysToAdd);
                 }
 
-                // Move to next week
-                current.setDate(current.getDate() + 7);
+                current.setTime(nextDate.getTime());
+            }
+
+            // Generate events for each day in the date range
+            while (current <= end) {
+                const currentDayIndex = current.getDay();
+                const dateStr = current.toISOString().split('T')[0];
+
+                // If current day is in selected days
+                if (dayIndices.includes(currentDayIndex)) {
+                    // Skip exception dates
+                    if (!isExceptionDate(dateStr, exceptionDates)) {
+                        events.push({
+                            title: classType,
+                            start: dateStr + 'T' + startTime + ':00',
+                            end: dateStr + 'T' + endTime + ':00',
+                            extendedProps: {
+                                type: 'class',
+                                description: classType + ' - ' + getDayName(currentDayIndex)
+                            }
+                        });
+                    }
+                }
+
+                // Move to next day
+                current.setDate(current.getDate() + 1);
             }
         }
 
         // Bi-weekly pattern
         else if (pattern === 'biweekly') {
-            const dayIndex = getDayIndex(dayOfWeek);
+            // Get day indices for all selected days
+            const selectedDays = scheduleData.days || [];
+            const dayIndices = [];
+            selectedDays.forEach(function(day) {
+                dayIndices.push(getDayIndex(day));
+            });
 
-            // Set start date to the first occurrence of the selected day
-            while (start.getDay() !== dayIndex) {
-                start.setDate(start.getDate() + 1);
+            if (dayIndices.length === 0) {
+                return events; // Can't generate events without selected days
             }
 
-            // Generate events for every other week
+            // Set start date to the first occurrence of any selected day
             const current = new Date(start);
-            while (current <= end) {
-                const dateStr = current.toISOString().split('T')[0];
+            const currentDayIndex = current.getDay();
 
-                // Skip exception dates
-                if (!isExceptionDate(dateStr, exceptionDates)) {
-                    events.push({
-                        title: classType,
-                        start: dateStr + 'T' + startTime + ':00',
-                        end: dateStr + 'T' + endTime + ':00',
-                        extendedProps: {
-                            type: 'class',
-                            description: classType + ' - ' + dayOfWeek + ' (Bi-weekly)'
-                        }
-                    });
+            // If current day is not in selected days, find the next occurrence
+            if (!dayIndices.includes(currentDayIndex)) {
+                let daysToAdd = 1;
+                let nextDate = new Date(current);
+                nextDate.setDate(nextDate.getDate() + daysToAdd);
+
+                while (!dayIndices.includes(nextDate.getDay())) {
+                    daysToAdd++;
+                    nextDate = new Date(current);
+                    nextDate.setDate(nextDate.getDate() + daysToAdd);
                 }
 
-                // Move to next bi-week
-                current.setDate(current.getDate() + 14);
+                current.setTime(nextDate.getTime());
+            }
+
+            // Track which week we're in (0 = first week, 1 = second week)
+            let weekCounter = 0;
+
+            // Generate events for each day in the date range
+            while (current <= end) {
+                const currentDayIndex = current.getDay();
+                const dateStr = current.toISOString().split('T')[0];
+
+                // If current day is in selected days and we're in the first week of the biweek
+                if (dayIndices.includes(currentDayIndex) && weekCounter === 0) {
+                    // Skip exception dates
+                    if (!isExceptionDate(dateStr, exceptionDates)) {
+                        events.push({
+                            title: classType,
+                            start: dateStr + 'T' + startTime + ':00',
+                            end: dateStr + 'T' + endTime + ':00',
+                            extendedProps: {
+                                type: 'class',
+                                description: classType + ' - ' + getDayName(currentDayIndex) + ' (Bi-weekly)'
+                            }
+                        });
+                    }
+                }
+
+                // Move to next day
+                current.setDate(current.getDate() + 1);
+
+                // Update week counter (0 = first week, 1 = second week)
+                if (current.getDay() === 0) { // If it's Sunday
+                    weekCounter = (weekCounter + 1) % 2;
+                }
             }
         }
 
@@ -1460,7 +1658,7 @@ function getClassTypeHours(classTypeId) {
 
         // Get form data
         const pattern = $('#schedule_pattern').val();
-        const day = $('#schedule_day').val();
+        const selectedDays = getSelectedDays();
         const dayOfMonth = $('#schedule_day_of_month').val();
         const startTime = $('#schedule_start_time').val();
         const endTime = $('#schedule_end_time').val();
@@ -1473,8 +1671,9 @@ function getClassTypeHours(classTypeId) {
             $container.append('<input type="hidden" name="schedule_data[pattern]" value="' + pattern + '">');
         }
 
-        if (day) {
-            $container.append('<input type="hidden" name="schedule_data[day]" value="' + day + '">');
+        // Store selected days as JSON array
+        if (selectedDays.length > 0) {
+            $container.append('<input type="hidden" name="schedule_data[days]" value=\'' + JSON.stringify(selectedDays) + '\'>');
         }
 
         if (dayOfMonth) {
@@ -1533,6 +1732,8 @@ function getClassTypeHours(classTypeId) {
      * Validate the form before submission
      */
     function validateForm() {
+        let isValid = true;
+
         // Check if schedule start date is invalid
         const $scheduleStartDate = $('#schedule_start_date');
         if ($scheduleStartDate.attr('data-valid') === 'false') {
@@ -1564,7 +1765,26 @@ function getClassTypeHours(classTypeId) {
             return false;
         }
 
-        return true;
+        // Validate day selection for weekly/biweekly patterns
+        const pattern = $('#schedule_pattern').val();
+        if ((pattern === 'weekly' || pattern === 'biweekly') && !$('#day-selection-container').hasClass('d-none')) {
+            const anyDaySelected = $('.schedule-day-checkbox:checked').length > 0;
+            if (!anyDaySelected) {
+                // Show validation error
+                $('#day-selection-container').find('.invalid-feedback').show();
+
+                // Scroll to the day selection container
+                $('html, body').animate({
+                    scrollTop: $('#day-selection-container').offset().top - 100
+                }, 200);
+
+                isValid = false;
+            } else {
+                $('#day-selection-container').find('.invalid-feedback').hide();
+            }
+        }
+
+        return isValid;
     }
 
     /**
