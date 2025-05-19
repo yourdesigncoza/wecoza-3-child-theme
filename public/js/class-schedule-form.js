@@ -879,7 +879,7 @@ function getClassTypeHours(classTypeId) {
             slotDuration: '00:30:00',
             editable: false, // Not editable - view only
             selectable: false, // Not selectable - view only
-            dayMaxEvents: true,
+            dayMaxEvents: false, // Disable "more" popovers
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
                 startTime: '08:00',

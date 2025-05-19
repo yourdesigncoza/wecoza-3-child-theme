@@ -249,7 +249,7 @@ function showCustomAlert(message) {
             editable: true,
             selectable: true,
             selectMirror: true,
-            dayMaxEvents: true,
+            dayMaxEvents: false, // Disable "more" popovers
             timeZone: 'local', // Use local timezone to avoid timezone issues
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday

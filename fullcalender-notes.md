@@ -95,3 +95,28 @@ $adjustedDate = $dateObj->format('Y-m-d');
 ```
 
 This adjustment is essential for the correct display of holidays in the calendar grid and should not be modified.
+
+## Implemented Solutions
+
+### Disabled "More" Popovers
+
+Since the date display in the "more" popovers was incorrect and attempts to fix it were unsuccessful, we've disabled the popovers completely:
+
+1. **Changed `dayMaxEvents` option:**
+   - Set `dayMaxEvents: false` in both calendar initialization files:
+     - `public/js/class-schedule-form.js`
+     - `public/js/class-capture.js`
+   - This forces FullCalendar to display all events without using the "+more" link and popovers
+   - All events will now be visible directly in the calendar cells
+
+2. **Benefits of this approach:**
+   - Eliminates the confusing date discrepancy in popovers
+   - Shows all events directly in the calendar view
+   - Maintains the correct display of holidays on their proper dates
+
+3. **Potential drawbacks:**
+   - Calendar cells with many events may become crowded
+   - Some events might be visually truncated if there are too many on a single day
+   - May require adjusting the calendar cell height or event display style for better visibility
+
+This solution prioritizes correct date display over the compact representation provided by the "more" popovers.
