@@ -83,6 +83,7 @@
 
         // Initialize day selection buttons
         $('#select-all-days').on('click', function() {
+            dayCheckboxInteracted = true;
             $('.schedule-day-checkbox').prop('checked', true);
             validateDaySelection();
             updateScheduleData();
@@ -91,6 +92,7 @@
         });
 
         $('#clear-all-days').on('click', function() {
+            dayCheckboxInteracted = true;
             $('.schedule-day-checkbox').prop('checked', false);
             validateDaySelection();
             updateScheduleData();
@@ -98,6 +100,7 @@
 
         // Handle day checkbox changes
         $('.schedule-day-checkbox').on('change', function() {
+            dayCheckboxInteracted = true;
             validateDaySelection();
             updateScheduleData();
             restrictStartDateBySelectedDays();
@@ -190,19 +193,30 @@
         }
     }
 
+    // Flag to track user interaction with day checkboxes
+    let dayCheckboxInteracted = false;
+
     /**
      * Validate that at least one day is selected
      */
     function validateDaySelection() {
         const anyDaySelected = $('.schedule-day-checkbox:checked').length > 0;
         const $daySelectionContainer = $('#day-selection-container');
+        const formValidated = $('form').hasClass('was-validated');
 
         if (!$daySelectionContainer.hasClass('d-none')) {
-            if (anyDaySelected) {
-                $daySelectionContainer.find('.invalid-feedback').hide();
-                $daySelectionContainer.find('.valid-feedback').show();
+            // Only show feedback if the form has been validated or user has interacted with checkboxes
+            if (formValidated || dayCheckboxInteracted) {
+                if (anyDaySelected) {
+                    $daySelectionContainer.find('.invalid-feedback').hide();
+                    $daySelectionContainer.find('.valid-feedback').show();
+                } else {
+                    $daySelectionContainer.find('.invalid-feedback').show();
+                    $daySelectionContainer.find('.valid-feedback').hide();
+                }
             } else {
-                $daySelectionContainer.find('.invalid-feedback').show();
+                // On initial load, ensure both feedback messages are hidden
+                $daySelectionContainer.find('.invalid-feedback').hide();
                 $daySelectionContainer.find('.valid-feedback').hide();
             }
         }
@@ -1772,6 +1786,7 @@ function getClassTypeHours(classTypeId) {
             if (!anyDaySelected) {
                 // Show validation error
                 $('#day-selection-container').find('.invalid-feedback').show();
+                $('#day-selection-container').find('.valid-feedback').hide();
 
                 // Scroll to the day selection container
                 $('html, body').animate({
@@ -1781,7 +1796,11 @@ function getClassTypeHours(classTypeId) {
                 isValid = false;
             } else {
                 $('#day-selection-container').find('.invalid-feedback').hide();
+                $('#day-selection-container').find('.valid-feedback').show();
             }
+
+            // Set the interaction flag to true since we're validating the form
+            dayCheckboxInteracted = true;
         }
 
         return isValid;
@@ -1826,8 +1845,18 @@ function getClassTypeHours(classTypeId) {
         }, 100);
     }
 
+    /**
+     * Initialize feedback messages to be hidden on page load
+     */
+    function initFeedbackMessages() {
+        // Hide all feedback messages on initial load
+        $('#day-selection-container').find('.invalid-feedback').hide();
+        $('#day-selection-container').find('.valid-feedback').hide();
+    }
+
     // Initialize when document is ready
     $(document).ready(function() {
+        initFeedbackMessages();
         initClassScheduleForm();
         initOriginalStartDateValidation();
 

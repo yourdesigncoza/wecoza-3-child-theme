@@ -147,7 +147,9 @@ class PublicHolidaysController {
             // Debug log
             error_log("Preparing holiday for calendar: {$holiday->getName()} on {$date}");
 
+            // IMPORTANT: DO NOT CHANGE THIS ADJUSTMENT!
             // Subtract one day from the date to compensate for the timezone shift
+            // Removing or changing this adjustment will cause holidays to display on the wrong dates
             $dateObj = new \DateTime($date);
             $dateObj->modify('-1 day');
             $adjustedDate = $dateObj->format('Y-m-d');
