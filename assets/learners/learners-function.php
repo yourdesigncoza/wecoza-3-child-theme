@@ -23,7 +23,6 @@ function load_learners_files() {
         '/assets/learners/learners-capture-shortcode.php',
         '/assets/learners/learners-diplay-shortcode.php',
         '/assets/learners/learners-update-shortcode.php',
-        // '/assets/classes/classes-capture-shortcode.php', // Removed - now using MVC architecture
     );
 
     // Load each required file

@@ -38,11 +38,11 @@
          <div class="col-md-8">
             <div class="mb-3">
                <div class="form-label mb-2">Learners Taking Exams</div>
-               <div id="exam-learners-list" class="border rounded p-3 mb-3">
+               <div id="exam-learners-list" class="card-body card px-5">
                   <div class="alert alert-info" id="no-exam-learners-message">
                      No exam learners added yet. Select learners from the list and click "Add Selected Exam Learners".
                   </div>
-                  <table class="table table-sm d-none" id="exam-learners-table">
+                  <table class="table table-sm fs-9 d-none" id="exam-learners-table">
                      <thead>
                         <tr>
                            <th>Learner</th>

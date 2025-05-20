@@ -115,7 +115,7 @@
    <div id="backup-agents-container"></div>
 
    <!-- Hidden Template Row (initially d-none) -->
-   <div class="row backup-agent-row d-none" id="backup-agent-row-template">
+   <div class="row backup-agent-row align-items-center d-none" id="backup-agent-row-template">
       <!-- Backup Agent -->
       <div class="col-md-5 mb-2">
          <div class="form-floating">

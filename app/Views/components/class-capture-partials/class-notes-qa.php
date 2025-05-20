@@ -49,7 +49,7 @@
    <div id="qa-visits-container"></div>
 
    <!-- Hidden Template Row (initially d-none) -->
-   <div class="row qa-visit-row d-none" id="qa-visit-row-template">
+   <div class="row qa-visit-row align-items-center d-none" id="qa-visit-row-template">
       <!-- Visit Date -->
       <div class="col-md-4 mb-2">
          <div class="form-floating">

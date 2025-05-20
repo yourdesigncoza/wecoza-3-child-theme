@@ -3,6 +3,12 @@
  *
  * Handles the client-side functionality for the class capture form
  */
+// Calendar data will be stored in this variable
+var calendarData = {
+    events: [],
+    publicHolidays: [],
+    exceptionDates: []
+};
 
 /**
  * Helper function to get day index from day name
@@ -67,6 +73,10 @@ function formatTime(dateOrHour, minute) {
     return hour12 + ':' + minuteStr + ' ' + ampm;
 }
 
+// Make the initialization function globally available
+function initializeClassCalendar() {
+    console.log('Manual calendar initialization triggered');
+}
 
 /**
  * Show a custom alert dialog instead of using the browser's native alert
@@ -102,6 +112,29 @@ function showCustomAlert(message) {
     modal.show();
 }
 
+// Initialize calendar when it's in a tab
+(function() {
+    if (jQuery('#class-calendar').length) {
+        setTimeout(function() {
+            if (typeof initializeCalendarInTab === 'function') {
+                initializeCalendarInTab();
+            } else {
+                console.log('Calendar initialization function not found, trying direct initialization');
+                if (calendar) {
+                    calendar.updateSize();
+                    calendarInitialized = true;
+                    console.log('Calendar size updated');
+                } else {
+                    console.log('Calendar object not found, initializing from scratch');
+                    initClassCaptureForm();
+                }
+            }
+        }, 100);
+    } else {
+        console.log('Calendar container not found');
+    }
+})();
+
 (function($) {
     'use strict';
 
@@ -112,6 +145,11 @@ function showCustomAlert(message) {
      * Initialize the class capture form
      */
     window.initClassCaptureForm = function() {
+        // Initialize the calendar if the container has the data-calendar-init attribute
+        if ($('#class-calendar[data-calendar-init="true"]').length) {
+            initializeCalendar();
+        }
+
         // Initialize the site address lookup
         initializeSiteAddressLookup();
 
@@ -141,6 +179,520 @@ function showCustomAlert(message) {
 
         // Initialize form submission
         initializeFormSubmission();
+    }
+
+    /**
+     * Initialize the calendar
+     */
+    function initializeCalendar() {
+        // 1. Generate 30-min increments from 6:00 AM to 8:00 PM
+        function generateTimeOptions() {
+            let optionsHTML = '';
+            for (let hour = 6; hour <= 20; hour++) {
+                for (let min = 0; min < 60; min += 30) {
+                    let label = formatTime(hour, min);  // e.g. "6:00 AM", "6:30 AM", etc.
+                    optionsHTML += '<option value="' + label + '">' + label + '</option>';
+                }
+            }
+            return optionsHTML;
+        }
+
+        // 2. Use the global formatTime function
+
+        // 3. Helper function to convert 12-hour format to 24-hour format
+        function convertTo24Hour(time12h) {
+            const [time, modifier] = time12h.split(' ');
+            let [hours, minutes] = time.split(':');
+
+            if (hours === '12') {
+                hours = '00';
+            }
+
+            if (modifier === 'PM') {
+                hours = parseInt(hours, 10) + 12;
+            }
+
+            return `${hours}:${minutes}`;
+        }
+
+        // 4. Use the global getDayOfWeek function
+
+        // 5. Use the global formatDate function
+
+        // 6. Helper function to combine date and time
+        function combineDateTime(dateStr, timeStr) {
+            const date = new Date(dateStr + 'T' + convertTo24Hour(timeStr) + ':00');
+            return date;
+        }
+
+        // Populate time dropdowns in the modal
+        const timeOptions = generateTimeOptions();
+        $('#eventStartTime').html(timeOptions);
+        $('#eventEndTime').html(timeOptions);
+
+        // Initialize FullCalendar with FullCalendar 6.x
+        const calendarEl = document.getElementById('class-calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'multiMonthYear', // Set multiMonthYear as default view
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'multiMonthYear,dayGridMonth,timeGridDay'
+            },
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                year: 'Year',
+                day: 'Day'
+            },
+            height: 500,
+            allDaySlot: false,
+            slotMinTime: '06:00:00',
+            slotMaxTime: '20:00:00',
+            slotDuration: '00:30:00',
+            editable: true,
+            selectable: true,
+            selectMirror: true,
+            dayMaxEvents: false, // Disable "more" popovers
+            timeZone: 'local', // Use local timezone to avoid timezone issues
+            businessHours: {
+                daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
+                startTime: '08:00',
+                endTime: '17:00',
+            },
+            eventClassNames: function(arg) {
+                // Add custom classes based on event type
+                if (arg.event.extendedProps.isPublicHoliday) {
+                    const classes = ['public-holiday'];
+
+                    // Check if this holiday has been overridden
+                    if (arg.event.extendedProps.isOverridden) {
+                        classes.push('holiday-overridden');
+                    }
+
+                    return classes;
+                }
+                return ['event-type-' + arg.event.extendedProps.type];
+            },
+            dayCellDidMount: function(arg) {
+                // Check if this day is a public holiday
+                if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
+                    // Get the date in local timezone to avoid timezone issues
+                    const year = arg.date.getFullYear();
+                    const month = String(arg.date.getMonth() + 1).padStart(2, '0');
+                    const day = String(arg.date.getDate()).padStart(2, '0');
+                    const dateStr = `${year}-${month}-${day}`;
+
+                    console.log('Checking if date is a holiday:', dateStr);
+
+                    // Find matching holiday - direct string comparison
+                    const holiday = wecozaPublicHolidays.events.find(h => {
+                        return h.start === dateStr;
+                    });
+
+                    if (holiday) {
+                        console.log('Found holiday on', dateStr, ':', holiday.title);
+                        arg.el.classList.add('public-holiday-day');
+
+                        // Check if this holiday has been overridden
+                        let isOverridden = false;
+                        let holidayOverrides = {};
+
+                        try {
+                            // Try to get holiday overrides from the form
+                            const overridesInput = document.getElementById('holiday_overrides');
+                            if (overridesInput && overridesInput.value) {
+                                holidayOverrides = JSON.parse(overridesInput.value);
+                                if (holidayOverrides[dateStr]) {
+                                    isOverridden = holidayOverrides[dateStr].override;
+                                    if (isOverridden) {
+                                        arg.el.classList.add('holiday-overridden-day');
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing holiday overrides:', e);
+                        }
+
+                        // Add a tooltip with the holiday name
+                        const tooltipText = document.createElement('div');
+                        tooltipText.className = 'holiday-tooltip' + (isOverridden ? ' overridden' : '');
+                        tooltipText.textContent = holiday.title + (isOverridden ? ' (Included)' : '');
+                        tooltipText.style.display = 'none';
+
+                        // Show tooltip on hover
+                        arg.el.addEventListener('mouseenter', function() {
+                            tooltipText.style.display = 'block';
+                        });
+
+                        arg.el.addEventListener('mouseleave', function() {
+                            tooltipText.style.display = 'none';
+                        });
+
+                        arg.el.appendChild(tooltipText);
+                    }
+                }
+            },
+            select: function(arg) {
+                // Reset validation state
+                resetValidationState();
+
+                // Open modal for new event
+                const startDate = formatDate(arg.start);
+                const endDate = formatDate(arg.end);
+                const dayOfWeek = getDayOfWeek(arg.start);
+
+                // Set default values in the form
+                $('#eventId').val(''); // New event
+                $('#eventType').val(''); // Empty to force selection
+                $('#eventDescription').val('');
+                $('#eventDate').val(startDate);
+                $('#eventDay').val(dayOfWeek);
+
+                // Set times based on selection
+                const startHour = arg.start.getHours();
+                const startMinute = arg.start.getMinutes();
+                const endHour = arg.end.getHours();
+                const endMinute = arg.end.getMinutes();
+
+                const startTime = formatTime(startHour, startMinute);
+                const endTime = formatTime(endHour, endMinute);
+
+                $('#eventStartTime').val(startTime);
+                $('#eventEndTime').val(endTime);
+
+                // Show the modal using JavaScript instead of Bootstrap's modal method
+                const modal = document.getElementById('eventModal');
+                modal.style.display = 'block';
+                modal.classList.add('show');
+                document.body.classList.add('modal-open');
+
+                // Create backdrop if it doesn't exist
+                if (!document.querySelector('.modal-backdrop')) {
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                }
+            },
+            eventClick: function(arg) {
+                // Reset validation state
+                resetValidationState();
+
+                // Open modal with existing event data
+                const event = arg.event;
+                const dayOfWeek = event.extendedProps.day || getDayOfWeek(event.start);
+
+                $('#eventId').val(event.id);
+                $('#eventType').val(event.extendedProps.type || ''); // Empty if not set to force selection
+                $('#eventDescription').val(event.title);
+                $('#eventDate').val(formatDate(event.start));
+                $('#eventDay').val(dayOfWeek);
+
+                // Format times for the dropdowns
+                const startHour = event.start.getHours();
+                const startMinute = event.start.getMinutes();
+                const endHour = event.end.getHours();
+                const endMinute = event.end.getMinutes();
+
+                const startTime = formatTime(startHour, startMinute);
+                const endTime = formatTime(endHour, endMinute);
+
+                $('#eventStartTime').val(startTime);
+                $('#eventEndTime').val(endTime);
+
+                // Show the modal using JavaScript instead of Bootstrap's modal method
+                const modal = document.getElementById('eventModal');
+                modal.style.display = 'block';
+                modal.classList.add('show');
+                document.body.classList.add('modal-open');
+
+                // Create backdrop if it doesn't exist
+                if (!document.querySelector('.modal-backdrop')) {
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                }
+            },
+            eventDrop: function(arg) {
+                updateHiddenFields();
+            },
+            eventResize: function(arg) {
+                updateHiddenFields();
+            }
+        });
+
+        // Render the calendar
+        calendar.render();
+
+        // Initialize hidden fields
+        updateHiddenFields();
+
+        // Add event listener for calendar changes
+        calendar.on('eventChange', function() {
+            updateHiddenFields();
+        });
+
+        // Function to properly initialize calendar when it becomes visible
+        window.initializeCalendarInTab = function() {
+            if (!calendarInitialized) {
+                calendar.updateSize();
+                calendarInitialized = true;
+                console.log('Calendar fully initialized');
+            } else {
+                // Even if already initialized, update size to ensure proper display
+                calendar.updateSize();
+                console.log('Calendar size updated');
+            }
+        }
+
+        // The initialization function is now defined globally at the top of the file
+
+        // Specifically target the vertical tab that contains our calendar
+        $(document).on('click', '[href="#vertical-tabpanel-6"], [data-bs-target="#vertical-tabpanel-6"]', function() {
+            console.log('Calendar tab clicked');
+            // Small delay to let the tab become visible
+            setTimeout(function() {
+                initializeCalendarInTab();
+            }, 100);
+        });
+
+        // Also listen for any tab changes that might affect our calendar
+        $(document).on('click', '[data-toggle="tab"]', function() {
+            if ($('#class-calendar').is(':visible')) {
+                console.log('Calendar became visible via tab change');
+                setTimeout(function() {
+                    initializeCalendarInTab();
+                }, 100);
+            }
+        });
+
+        // Check if we're already on the calendar tab on page load
+        if (window.location.hash === '#vertical-tabpanel-6' || $('#vertical-tabpanel-6').is(':visible')) {
+            console.log('Calendar tab is active on page load');
+            setTimeout(function() {
+                initializeCalendarInTab();
+            }, 200);
+        }
+
+        // Listen for Bootstrap's tab shown event
+        $(document).on('shown.bs.tab', function(e) {
+            var target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
+            if (target === '#vertical-tabpanel-6') {
+                console.log('Bootstrap tab event: calendar tab shown');
+                setTimeout(function() {
+                    initializeCalendarInTab();
+                }, 100);
+            }
+        });
+
+        // Function to reset validation state
+        function resetValidationState() {
+            $('#eventType, #eventDescription, #eventStartTime, #eventEndTime').removeClass('is-invalid is-valid');
+        }
+
+        // Function to close modal properly
+        function closeModal() {
+            const modal = document.getElementById('eventModal');
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+
+            // Remove backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.parentNode.removeChild(backdrop);
+            }
+
+            // Reset validation state
+            resetValidationState();
+        }
+
+        // Close button handler
+        $('#closeModalBtn, #cancelEvent').on('click', function() {
+            closeModal();
+        });
+
+        // Save event handler
+        $('#saveEvent').on('click', function() {
+            const eventId = $('#eventId').val();
+            const eventType = $('#eventType').val();
+            const description = $('#eventDescription').val();
+            const eventDate = $('#eventDate').val();
+            const eventDay = $('#eventDay').val();
+            const startTime = $('#eventStartTime').val();
+            const endTime = $('#eventEndTime').val();
+
+            // Validate form
+            let isValid = true;
+
+            // Check each required field and add visual indication
+            if (!eventType) {
+                $('#eventType').addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $('#eventType').removeClass('is-invalid').addClass('is-valid');
+            }
+
+            if (!description) {
+                $('#eventDescription').addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $('#eventDescription').removeClass('is-invalid').addClass('is-valid');
+            }
+
+            if (!startTime) {
+                $('#eventStartTime').addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $('#eventStartTime').removeClass('is-invalid').addClass('is-valid');
+            }
+
+            if (!endTime) {
+                $('#eventEndTime').addClass('is-invalid').removeClass('is-valid');
+                isValid = false;
+            } else {
+                $('#eventEndTime').removeClass('is-invalid').addClass('is-valid');
+            }
+
+            if (!eventDate) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            try {
+                // Create event object
+                const eventData = {
+                    id: eventId || Date.now().toString(), // Use timestamp as ID for new events
+                    title: description,
+                    start: combineDateTime(eventDate, startTime),
+                    end: combineDateTime(eventDate, endTime),
+                    extendedProps: {
+                        type: eventType,
+                        day: eventDay
+                    }
+                };
+
+                // If editing an existing event, remove the old one
+                if (eventId) {
+                    const existingEvent = calendar.getEventById(eventId);
+                    if (existingEvent) {
+                        existingEvent.remove();
+                    }
+                }
+
+                // Add the event to the calendar
+                calendar.addEvent(eventData);
+
+                // Update hidden fields
+                updateHiddenFields();
+
+                // Close modal
+                closeModal();
+
+                // Log success for debugging
+                console.log('Event saved successfully:', eventData);
+                console.log('Calendar events after save:', calendar.getEvents());
+            } catch (error) {
+                console.error('Error saving event:', error);
+                alert('There was an error saving the event. Please try again.');
+            }
+        });
+
+        // Delete event handler
+        $('#deleteEvent').on('click', function() {
+            const eventId = $('#eventId').val();
+
+            if (eventId) {
+                try {
+                    // Remove the event from the calendar
+                    const existingEvent = calendar.getEventById(eventId);
+                    if (existingEvent) {
+                        existingEvent.remove();
+                    }
+
+                    // Update hidden fields
+                    updateHiddenFields();
+
+                    // Close modal
+                    closeModal();
+
+                    console.log('Event deleted successfully');
+                    console.log('Calendar events after delete:', calendar.getEvents());
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    alert('There was an error deleting the event. Please try again.');
+                }
+            } else {
+                // Just close the modal if there's no event to delete
+                closeModal();
+            }
+        });
+
+        // Update hidden fields with calendar data
+        function updateHiddenFields() {
+            try {
+                const events = calendar.getEvents();
+                const scheduleContainer = $('#schedule-data-container');
+
+                // Clear existing hidden fields
+                scheduleContainer.empty();
+
+                console.log('Updating hidden fields with events:', events);
+
+                // Create hidden fields for each event
+                events.forEach(function(event, index) {
+                    if (!event.start || !event.end) {
+                        console.error('Event missing start or end time:', event);
+                        return;
+                    }
+
+                    const startDate = formatDate(event.start);
+                    const startHour = event.start.getHours();
+                    const startMinute = event.start.getMinutes();
+                    const endHour = event.end.getHours();
+                    const endMinute = event.end.getMinutes();
+
+                    const startTime = formatTime(startHour, startMinute);
+                    const endTime = formatTime(endHour, endMinute);
+
+                    // Get day from extendedProps or calculate it
+                    const day = event.extendedProps && event.extendedProps.day ?
+                               event.extendedProps.day :
+                               getDayOfWeek(event.start);
+
+                    // Get type from extendedProps or default to 'class'
+                    const type = event.extendedProps && event.extendedProps.type ?
+                                event.extendedProps.type :
+                                'class';
+
+                    // Create hidden inputs with the same names as the original form
+                    scheduleContainer.append(`<input type="hidden" name="schedule_day[]" value="${day}">`);
+                    scheduleContainer.append(`<input type="hidden" name="schedule_date[]" value="${startDate}">`);
+                    scheduleContainer.append(`<input type="hidden" name="start_time[]" value="${startTime}">`);
+                    scheduleContainer.append(`<input type="hidden" name="end_time[]" value="${endTime}">`);
+                    scheduleContainer.append(`<input type="hidden" name="schedule_notes[]" value="${event.title}">`);
+                    scheduleContainer.append(`<input type="hidden" name="event_type[]" value="${type}">`);
+
+                    console.log('Added hidden fields for event:', {
+                        day: day,
+                        date: startDate,
+                        startTime: startTime,
+                        endTime: endTime,
+                        title: event.title,
+                        type: type
+                    });
+                });
+
+                // Add a debug message to show the number of events processed
+                console.log(`Updated hidden fields for ${events.length} events`);
+            } catch (error) {
+                console.error('Error updating hidden fields:', error);
+            }
+        }
     }
 
     /**
@@ -1293,6 +1845,15 @@ function showCustomAlert(message) {
             return;
         }
 
+        // Get schedule data from calendar
+        const events = calendar ? calendar.getEvents() : [];
+        if (!events.length) {
+            if (typeof callback === 'function') {
+                callback(null);
+            }
+            return;
+        }
+
         // Format schedule data for the server
         const scheduleData = events.map(function(event) {
             if (!event.start || !event.end) {
@@ -1414,6 +1975,9 @@ function showCustomAlert(message) {
 
                         // Reset validation state
                         resetValidationState();
+
+                        // Update calendar data before validation
+                        updateHiddenFields();
 
                         // Add custom validation for date pairs
                         let dateHistoryValid = true;
@@ -1550,6 +2114,45 @@ function showCustomAlert(message) {
                     }, false)
                 })
         })();
+
+        // Function to update hidden fields
+        function updateHiddenFields() {
+            if (typeof calendar !== 'undefined') {
+                try {
+                    const events = calendar.getEvents();
+                    const scheduleContainer = $('#schedule-data-container');
+
+                    // Clear existing hidden fields
+                    scheduleContainer.empty();
+
+                    // Create hidden fields for each event
+                    events.forEach(function(event) {
+                        if (!event.start || !event.end) {
+                            return;
+                        }
+
+                        const startDate = formatDate(event.start);
+                        const day = event.extendedProps && event.extendedProps.day ?
+                                   event.extendedProps.day :
+                                   getDayOfWeek(event.start);
+                        const startTime = formatTime(event.start);
+                        const endTime = formatTime(event.end);
+                        const type = event.extendedProps && event.extendedProps.type ?
+                                    event.extendedProps.type :
+                                    'class';
+
+                        scheduleContainer.append(`<input type="hidden" name="schedule_day[]" value="${day}">`);
+                        scheduleContainer.append(`<input type="hidden" name="schedule_date[]" value="${startDate}">`);
+                        scheduleContainer.append(`<input type="hidden" name="start_time[]" value="${startTime}">`);
+                        scheduleContainer.append(`<input type="hidden" name="end_time[]" value="${endTime}">`);
+                        scheduleContainer.append(`<input type="hidden" name="schedule_notes[]" value="${event.title}">`);
+                        scheduleContainer.append(`<input type="hidden" name="event_type[]" value="${type}">`);
+                    });
+                } catch (error) {
+                    console.error('Error updating hidden fields:', error);
+                }
+            }
+        }
 
         // Use the global formatDate function
 

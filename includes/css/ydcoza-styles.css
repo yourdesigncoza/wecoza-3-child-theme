@@ -45,6 +45,7 @@
     }
 
 }
+/* choose File Button Styles */
 .ydcoza-upload input[type="file"]::file-selector-button {
   border: 2px solid #fff;
   padding: 0.2em 0.4em;
@@ -67,6 +68,25 @@
 .ydcoza-upload input[type="file"]::-webkit-file-upload-button:hover {
   background-color: #fff !important;
 }
+html[data-bs-theme="dark"] .ydcoza-upload input[type="file"]::file-selector-button {
+  border: 2px solid var(--phoenix-emphasis-bg);
+  background-color: var(--phoenix-emphasis-bg) !important;
+}
+html[data-bs-theme="dark"] .ydcoza-upload input[type="file"]::file-selector-button:hover {
+  background-color: var(--phoenix-emphasis-bg) !important;
+}
+
+html[data-bs-theme="dark"] .ydcoza-upload input[type="file"]::-webkit-file-upload-button {
+  border: 2px solid var(--phoenix-emphasis-bg);
+  background-color: var(--phoenix-emphasis-bg) !important;
+}
+
+html[data-bs-theme="dark"] .ydcoza-upload input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: var(--phoenix-emphasis-bg) !important;
+}
+
+
+
 
 .menu-item,
 .nav-item {
@@ -161,154 +181,6 @@ body .bg-body-tertiary {
 }
 .support-chat .card-body {
     height: 24rem
-}
-
-/* ##############################
-### Calendar Styles
-############################## */
-/* FullCalendar multiMonthYear view styles */
-.fc-multiMonthYear-view .fc-multimonth-title {
-    font-size: 1.2em;
-    font-weight: 500;
-    color: var(--accent);
-    padding: 8px 0;
-}
-
-.fc-multiMonthYear-view .fc-daygrid-day-number {
-    font-size: 0.9em;
-}
-
-.fc-multiMonthYear-view .fc-daygrid-day.fc-day-today {
-    background-color: var(--base);
-}
-
-.fc-multiMonthYear-view .fc-event {
-    border-radius: 2px;
-    font-size: 0.8em;
-    padding: 2px;
-}
-
-.fc-multiMonthYear-view .fc-event-title {
-    font-weight: normal;
-}
-
-.fc-multiMonthYear-view .fc-toolbar-title {
-    font-size: 1.5em;
-    color: var(--accent);
-}
-
-.fc-multiMonthYear-view .fc-button-primary {
-    background-color: var(--accent);
-    border-color: var(--accent);
-}
-
-.fc-multiMonthYear-view .fc-button-primary:hover {
-    background-color: var(--accent-dark, #5a4aa6);
-    border-color: var(--accent-dark, #5a4aa6);
-}
-
-.fc-multiMonthYear-view .fc-button-primary:not(:disabled).fc-button-active,
-.fc-multiMonthYear-view .fc-button-primary:not(:disabled):active {
-    background-color: var(--accent-dark, #5a4aa6);
-    border-color: var(--accent-dark, #5a4aa6);
-}
-
-/* Public Holiday Styles */
-.fc-event.public-holiday {
-    background-color: #f44336 !important;
-    border-color: #d32f2f !important;
-    color: #ffffff !important;
-}
-
-.fc-daygrid-day.public-holiday-day {
-    background-color: rgba(244, 67, 54, 0.1) !important;
-}
-
-.fc-event.public-holiday .fc-event-title {
-    font-weight: 500;
-}
-
-/* Overridden Holiday Styles */
-.fc-event.public-holiday.holiday-overridden {
-    background-color: #ff9800 !important;
-    border-color: #f57c00 !important;
-    color: #ffffff !important;
-}
-
-.fc-daygrid-day.public-holiday-day.holiday-overridden-day {
-    background-color: rgba(255, 152, 0, 0.1) !important;
-}
-
-.fc-event.public-holiday.holiday-overridden .fc-event-title::after {
-    content: " (Overridden)";
-    font-size: 0.85em;
-    font-style: italic;
-}
-
-/* Holiday tooltip */
-.holiday-tooltip {
-    position: absolute;
-    top: 96%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #f44336;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    z-index: 1000;
-    white-space: nowrap;
-    font-size: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.holiday-tooltip:after {
-    /* content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent #f44336 transparent; */
-    display: none;
-}
-
-.holiday-tooltip.overridden {
-    background-color: #ff9800;
-}
-
-.holiday-tooltip.overridden:after {
-    border-color: transparent transparent #ff9800 transparent;
-}
-
-/* Exception Date Styles */
-.fc-event.exception-date {
-    background-color: #ff9800 !important;
-    border-color: #f57c00 !important;
-    color: #ffffff !important;
-}
-.fc-more-popover {
-    z-index: 2;
-    width: auto !important;
-}
-.fc-event-time {
-  margin: 0.5rem 0;
-}
-.fc .fc-daygrid-more-link {
-    padding: 2px 5px;
-    background-color: white;
-    margin-top: -10px;
-    border-color: white !important;
-    color: #222222 !important;
-    margin-left: 0;
-    font-size: 0.7rem;
-}
-.fc .fc-button {
-    font-size: 16px;
-    line-height: 9px;
-}
-.fc .fc-button .fc-icon {
-    font-size: 18px;
 }
 .ping-icon-wrapper .ping-icon-bg {
     left: 1px;

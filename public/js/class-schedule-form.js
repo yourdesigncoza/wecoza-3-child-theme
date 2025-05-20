@@ -7,10 +7,6 @@
 (function($) {
     'use strict';
 
-    // Calendar instance
-    var calendar;
-    var calendarInitialized = false;
-
     // Holiday override data
     var holidayOverrides = {};
 
@@ -35,6 +31,29 @@
 
         // Initialize schedule data updates
         initScheduleDataUpdates();
+
+        // Initialize debug JSON toggle
+        initDebugJsonToggle();
+    }
+
+    /**
+     * Initialize debug JSON toggle button
+     */
+    function initDebugJsonToggle() {
+        const $toggleBtn = $('#toggle-debug-json-btn');
+        const $debugJsonDisplay = $('#debug-json-display');
+
+        $toggleBtn.on('click', function() {
+            if ($debugJsonDisplay.hasClass('d-none')) {
+                // Show the debug JSON display
+                $debugJsonDisplay.removeClass('d-none');
+                $toggleBtn.addClass('btn-primary').removeClass('btn-outline-secondary');
+            } else {
+                // Hide the debug JSON display
+                $debugJsonDisplay.addClass('d-none');
+                $toggleBtn.removeClass('btn-primary').addClass('btn-outline-secondary');
+            }
+        });
     }
 
     /**
@@ -810,9 +829,9 @@ function getClassTypeHours(classTypeId) {
                     console.log('Calculated end date:', endDate);
                     $('#schedule_end_date').val(endDate);
 
-                    // Update calendar if visible
-                    if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
-                        updateCalendarEvents();
+                    // Update schedule tables if visible
+                    if (!$('#calendar-reference-container').hasClass('d-none')) {
+                        updateScheduleTables();
                     }
                 }
             }
@@ -826,470 +845,163 @@ function getClassTypeHours(classTypeId) {
         const $viewButton = $('#view-calendar-btn');
         const $hideButton = $('#hide-calendar-btn');
         const $calendarContainer = $('#calendar-reference-container');
-        const $calendarLegend = $('#calendar-legend');
 
-        // Show calendar when view button is clicked
+        // Show schedule view when view button is clicked
         $viewButton.on('click', function() {
             $calendarContainer.removeClass('d-none');
-            $calendarLegend.removeClass('d-none');
 
-            // Initialize calendar if not already initialized
-            if (!calendarInitialized) {
-                initializeCalendar();
-            } else {
-                // Update calendar with current schedule data
-                updateCalendarEvents();
-            }
+            // Update schedule tables with current data
+            updateScheduleTables();
         });
 
-        // Hide calendar when hide button is clicked
+        // Hide schedule view when hide button is clicked
         $hideButton.on('click', function() {
             $calendarContainer.addClass('d-none');
-            $calendarLegend.addClass('d-none');
         });
     }
 
     /**
-     * Initialize the calendar
+     * Update schedule tables with current data
      */
-    function initializeCalendar() {
-        const calendarEl = document.getElementById('class-calendar');
-
-        if (!calendarEl) {
-            console.error('Calendar element not found');
-            return;
-        }
-
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'multiMonthYear', // Set multiMonthYear as default view
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'multiMonthYear,dayGridMonth'
-            },
-            buttonText: {
-                today: 'Today',
-                month: 'Month',
-                year: 'Year'
-            },
-            height: 800,
-            allDaySlot: false,
-            slotMinTime: '06:00:00',
-            slotMaxTime: '20:00:00',
-            slotDuration: '00:30:00',
-            editable: false, // Not editable - view only
-            selectable: false, // Not selectable - view only
-            dayMaxEvents: false, // Disable "more" popovers
-            businessHours: {
-                daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
-                startTime: '08:00',
-                endTime: '17:00',
-            },
-            eventClassNames: function(arg) {
-                // Add custom classes based on event type
-                if (arg.event.extendedProps.isPublicHoliday) {
-                    return ['public-holiday'];
-                }
-                return ['event-type-' + arg.event.extendedProps.type];
-            },
-            dayCellDidMount: function(arg) {
-                // Check if this day is a public holiday
-                if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
-                    const dateStr = arg.date.toISOString().split('T')[0];
-                    const holiday = wecozaPublicHolidays.events.find(holiday => {
-                        // Direct string comparison
-                        return holiday.start === dateStr;
-                    });
-
-                    if (holiday) {
-                        arg.el.classList.add('public-holiday-day');
-
-                        // Check if this holiday has been overridden
-                        let isOverridden = false;
-                        if (typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[dateStr]) {
-                            isOverridden = holidayOverrides[dateStr].override;
-                            if (isOverridden) {
-                                arg.el.classList.add('holiday-overridden-day');
-                            }
-                        }
-
-                        // Add a tooltip with the holiday name
-                        const tooltipText = document.createElement('div');
-                        tooltipText.className = 'holiday-tooltip' + (isOverridden ? ' overridden' : '');
-                        tooltipText.textContent = holiday.title + (isOverridden ? ' (Overridden)' : '');
-                        tooltipText.style.display = 'none';
-
-                        // Show tooltip on hover
-                        arg.el.addEventListener('mouseenter', function() {
-                            tooltipText.style.display = 'block';
-                        });
-
-                        arg.el.addEventListener('mouseleave', function() {
-                            tooltipText.style.display = 'none';
-                        });
-
-                        arg.el.appendChild(tooltipText);
-                    }
-                }
-            },
-            eventDidMount: function(info) {
-                // Add tooltips to events
-                $(info.el).tooltip({
-                    title: info.event.extendedProps.description || info.event.title,
-                    placement: 'top',
-                    trigger: 'hover',
-                    container: 'body'
-                });
-            }
-        });
-
-        // Render the calendar
-        calendar.render();
-        calendarInitialized = true;
-
-        // Update calendar with current schedule data
-        updateCalendarEvents();
-    }
-
-    /**
-     * Update calendar events based on form data
-     */
-    function updateCalendarEvents() {
-        if (!calendar || !calendarInitialized) {
-            return;
-        }
-
-        // Clear existing events
-        calendar.removeAllEvents();
-
-        // Get form data
+    function updateScheduleTables() {
+        // Get schedule data
         const pattern = $('#schedule_pattern').val();
         const startDate = $('#schedule_start_date').val();
         const endDate = $('#schedule_end_date').val();
         const startTime = $('#schedule_start_time').val();
         const endTime = $('#schedule_end_time').val();
-        const classType = $('#class_type option:selected').text();
 
-        if (!pattern || !startDate || !startTime || !endTime) {
-            return;
+        // Format pattern for display
+        let patternDisplay = '';
+        switch(pattern) {
+            case 'weekly':
+                patternDisplay = 'Weekly';
+                break;
+            case 'biweekly':
+                patternDisplay = 'Bi-weekly';
+                break;
+            case 'monthly':
+                patternDisplay = 'Monthly';
+                break;
+            case 'custom':
+                patternDisplay = 'Custom';
+                break;
+            default:
+                patternDisplay = pattern;
         }
 
-        // Generate events based on pattern
-        const events = generateEvents(pattern, startDate, endDate, startTime, endTime, classType);
-
-        // Add exception dates as events
-        const exceptionEvents = generateExceptionEvents();
-
-        // Add all events to calendar
-        calendar.addEventSource(events);
-        calendar.addEventSource(exceptionEvents);
-
-        // Add public holidays if available
-        if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
-            // Filter public holidays to only include those within the date range
-            const startDateObj = new Date(startDate);
-            const endDateObj = new Date(endDate || startDate);
-            endDateObj.setMonth(endDateObj.getMonth() + 3); // Default to 3 months if no end date
-
-            const filteredHolidays = wecozaPublicHolidays.events.filter(holiday => {
-                // Parse the date parts to ensure correct date (avoid timezone issues)
-                const [year, month, day] = holiday.start.split('-').map(Number);
-                const holidayDate = new Date(year, month - 1, day);
-                return holidayDate >= startDateObj && holidayDate <= endDateObj;
+        // Format dates for display
+        const formatDate = function(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-ZA', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
+        };
 
-            if (filteredHolidays.length > 0) {
-                calendar.addEventSource(filteredHolidays);
-            }
-        }
+        // Update schedule summary table
+        $('#schedule-summary-pattern').text(patternDisplay);
+        $('#schedule-summary-start-date').text(formatDate(startDate));
+        $('#schedule-summary-end-date').text(formatDate(endDate));
+        $('#schedule-summary-class-time').text(startTime + ' - ' + endTime);
+
+        // Get selected days
+        const selectedDays = getSelectedDays();
+        $('#schedule-summary-days').text(selectedDays.join(', '));
+
+        // Update exception dates table
+        updateExceptionDatesTable();
+
+        // Update holidays table
+        updateHolidaysTable(startDate, endDate);
+
+        // Update debug JSON display
+        updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
     }
 
     /**
-     * Generate events based on schedule pattern
+     * Update debug JSON display with current schedule data
      */
-    function generateEvents(pattern, startDate, endDate, startTime, endTime, classType) {
-        const events = [];
-
-        if (!startDate) {
-            return events;
-        }
-
-        // Set end date to 3 months from start date if not provided
-        if (!endDate) {
-            const date = new Date(startDate);
-            date.setMonth(date.getMonth() + 3);
-            endDate = date.toISOString().split('T')[0];
-        }
-
-        // Get day of week for weekly/biweekly patterns
-        let dayOfWeek;
-        if (pattern === 'weekly' || pattern === 'biweekly') {
-            dayOfWeek = $('#schedule_day').val();
-            if (!dayOfWeek) {
-                return events;
-            }
-        }
-
-        // Get day of month for monthly pattern
-        let dayOfMonth;
-        if (pattern === 'monthly') {
-            dayOfMonth = $('#schedule_day_of_month').val();
-            if (!dayOfMonth) {
-                return events;
-            }
-        }
-
-        // Generate events based on pattern
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-
-        // Get exception dates to exclude
-        const exceptionDates = getExceptionDates();
-
-        // Weekly pattern
-        if (pattern === 'weekly') {
-            // Get day indices for all selected days
-            const selectedDays = scheduleData.days || [];
-            const dayIndices = [];
-            selectedDays.forEach(function(day) {
-                dayIndices.push(getDayIndex(day));
-            });
-
-            if (dayIndices.length === 0) {
-                return events; // Can't generate events without selected days
-            }
-
-            // Set start date to the first occurrence of any selected day
-            const current = new Date(start);
-            const currentDayIndex = current.getDay();
-
-            // If current day is not in selected days, find the next occurrence
-            if (!dayIndices.includes(currentDayIndex)) {
-                let daysToAdd = 1;
-                let nextDate = new Date(current);
-                nextDate.setDate(nextDate.getDate() + daysToAdd);
-
-                while (!dayIndices.includes(nextDate.getDay())) {
-                    daysToAdd++;
-                    nextDate = new Date(current);
-                    nextDate.setDate(nextDate.getDate() + daysToAdd);
-                }
-
-                current.setTime(nextDate.getTime());
-            }
-
-            // Generate events for each day in the date range
-            while (current <= end) {
-                const currentDayIndex = current.getDay();
-                const dateStr = current.toISOString().split('T')[0];
-
-                // If current day is in selected days
-                if (dayIndices.includes(currentDayIndex)) {
-                    // Skip exception dates
-                    if (!isExceptionDate(dateStr, exceptionDates)) {
-                        events.push({
-                            title: classType,
-                            start: dateStr + 'T' + startTime + ':00',
-                            end: dateStr + 'T' + endTime + ':00',
-                            extendedProps: {
-                                type: 'class',
-                                description: classType + ' - ' + getDayName(currentDayIndex)
-                            }
-                        });
-                    }
-                }
-
-                // Move to next day
-                current.setDate(current.getDate() + 1);
-            }
-        }
-
-        // Bi-weekly pattern
-        else if (pattern === 'biweekly') {
-            // Get day indices for all selected days
-            const selectedDays = scheduleData.days || [];
-            const dayIndices = [];
-            selectedDays.forEach(function(day) {
-                dayIndices.push(getDayIndex(day));
-            });
-
-            if (dayIndices.length === 0) {
-                return events; // Can't generate events without selected days
-            }
-
-            // Set start date to the first occurrence of any selected day
-            const current = new Date(start);
-            const currentDayIndex = current.getDay();
-
-            // If current day is not in selected days, find the next occurrence
-            if (!dayIndices.includes(currentDayIndex)) {
-                let daysToAdd = 1;
-                let nextDate = new Date(current);
-                nextDate.setDate(nextDate.getDate() + daysToAdd);
-
-                while (!dayIndices.includes(nextDate.getDay())) {
-                    daysToAdd++;
-                    nextDate = new Date(current);
-                    nextDate.setDate(nextDate.getDate() + daysToAdd);
-                }
-
-                current.setTime(nextDate.getTime());
-            }
-
-            // Track which week we're in (0 = first week, 1 = second week)
-            let weekCounter = 0;
-
-            // Generate events for each day in the date range
-            while (current <= end) {
-                const currentDayIndex = current.getDay();
-                const dateStr = current.toISOString().split('T')[0];
-
-                // If current day is in selected days and we're in the first week of the biweek
-                if (dayIndices.includes(currentDayIndex) && weekCounter === 0) {
-                    // Skip exception dates
-                    if (!isExceptionDate(dateStr, exceptionDates)) {
-                        events.push({
-                            title: classType,
-                            start: dateStr + 'T' + startTime + ':00',
-                            end: dateStr + 'T' + endTime + ':00',
-                            extendedProps: {
-                                type: 'class',
-                                description: classType + ' - ' + getDayName(currentDayIndex) + ' (Bi-weekly)'
-                            }
-                        });
-                    }
-                }
-
-                // Move to next day
-                current.setDate(current.getDate() + 1);
-
-                // Update week counter (0 = first week, 1 = second week)
-                if (current.getDay() === 0) { // If it's Sunday
-                    weekCounter = (weekCounter + 1) % 2;
-                }
-            }
-        }
-
-        // Monthly pattern
-        else if (pattern === 'monthly') {
-            // Generate events for each month
-            const current = new Date(start);
-
-            while (current <= end) {
-                let dateToUse = new Date(current);
-
-                if (dayOfMonth === 'last') {
-                    // Set to last day of the month
-                    dateToUse = new Date(current.getFullYear(), current.getMonth() + 1, 0);
-                } else {
-                    // Set to specific day of month
-                    dateToUse.setDate(parseInt(dayOfMonth));
-
-                    // If day is beyond the end of the month, move to next month
-                    if (dateToUse.getMonth() !== current.getMonth()) {
-                        current.setMonth(current.getMonth() + 1);
-                        continue;
-                    }
-                }
-
-                const dateStr = dateToUse.toISOString().split('T')[0];
-
-                // Skip exception dates
-                if (!isExceptionDate(dateStr, exceptionDates)) {
-                    events.push({
-                        title: classType,
-                        start: dateStr + 'T' + startTime + ':00',
-                        end: dateStr + 'T' + endTime + ':00',
-                        extendedProps: {
-                            type: 'class',
-                            description: classType + ' - Monthly (' + (dayOfMonth === 'last' ? 'Last Day' : dayOfMonth) + ')'
-                        }
-                    });
-                }
-
-                // Move to next month
-                current.setMonth(current.getMonth() + 1);
-            }
-        }
-
-        return events;
-    }
-
-    /**
-     * Generate exception events
-     */
-    function generateExceptionEvents() {
-        const events = [];
-
-        // Get all exception date rows
+    function updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays) {
+        // Get exception dates
+        const exceptionDates = [];
         $('#exception-dates-container .exception-date-row:not(.d-none)').each(function() {
             const $row = $(this);
             const date = $row.find('input[name="exception_dates[]"]').val();
             const reason = $row.find('select[name="exception_reasons[]"]').val();
 
             if (date) {
-                events.push({
-                    title: reason || 'Exception',
-                    start: date,
-                    allDay: true,
-                    extendedProps: {
-                        type: 'exception',
-                        description: reason || 'Exception Date'
-                    },
-                    backgroundColor: '#f44336',
-                    borderColor: '#d32f2f'
+                exceptionDates.push({
+                    date: date,
+                    reason: reason || ''
                 });
             }
         });
 
-        return events;
-    }
+        // Get holidays in range
+        const holidays = [];
+        if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events && startDate && endDate) {
+            // Convert dates to Date objects for comparison
+            const startDateObj = new Date(startDate);
+            const endDateObj = new Date(endDate);
 
-    /**
-     * Get exception dates
-     */
-    function getExceptionDates() {
-        const dates = [];
+            // Filter holidays to only include those within the date range
+            wecozaPublicHolidays.events.forEach(holiday => {
+                // Parse the date parts to ensure correct date (avoid timezone issues)
+                const [year, month, day] = holiday.start.split('-').map(Number);
+                const holidayDate = new Date(year, month - 1, day);
 
-        // Get all exception date rows
-        $('#exception-dates-container .exception-date-row:not(.d-none)').each(function() {
-            const date = $(this).find('input[name="exception_dates[]"]').val();
-            if (date) {
-                dates.push(date);
-            }
-        });
+                if (holidayDate >= startDateObj && holidayDate <= endDateObj) {
+                    // Check if this holiday has been overridden
+                    let isOverridden = false;
+                    if (typeof holidayOverrides === 'object' && holidayOverrides[holiday.start]) {
+                        isOverridden = holidayOverrides[holiday.start].override;
+                    }
 
-        return dates;
-    }
+                    // Check if this holiday conflicts with the schedule
+                    const dayName = holidayDate.toLocaleDateString('en-US', { weekday: 'long' });
+                    const conflictsWithSchedule = (pattern === 'weekly' || pattern === 'biweekly') && selectedDays.includes(dayName);
 
-    /**
-     * Check if a date is an exception date or public holiday
-     */
-    function isExceptionDate(date, exceptionDates) {
-        // Check if it's an exception date
-        if (exceptionDates.includes(date)) {
-            return true;
-        }
-
-        // Check if it's a public holiday
-        if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
-            // Check if this holiday has been overridden
-            const isHoliday = wecozaPublicHolidays.events.some(holiday => {
-                // Direct string comparison
-                return holiday.start === date;
+                    holidays.push({
+                        date: holiday.start,
+                        name: holiday.title,
+                        isOverridden: isOverridden,
+                        conflictsWithSchedule: conflictsWithSchedule
+                    });
+                }
             });
-
-            // If it's a holiday, check if it's been overridden
-            if (isHoliday && typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[date]) {
-                // If override is true, we don't treat it as an exception date
-                return !holidayOverrides[date].override;
-            }
-
-            return isHoliday;
         }
 
-        return false;
+        // Create the complete JSON data structure
+        const jsonData = {
+            schedule: {
+                pattern: pattern,
+                startDate: startDate,
+                endDate: endDate,
+                selectedDays: selectedDays,
+                classTime: {
+                    start: startTime,
+                    end: endTime
+                }
+            },
+            exceptionDates: exceptionDates,
+            holidays: holidays,
+            metadata: {
+                lastUpdated: new Date().toISOString(),
+                version: "1.0"
+            }
+        };
+
+        // Update the debug JSON display
+        $('#debug-json-display').text(JSON.stringify(jsonData, null, 4));
     }
+
+
+
+
 
     /**
      * Initialize holiday override functionality
@@ -1367,9 +1079,18 @@ function getClassTypeHours(classTypeId) {
             // Recalculate end date with the new overrides
             recalculateEndDate();
 
-            // Update calendar if visible
-            if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
-                updateCalendarEvents();
+            // Update schedule tables if visible
+            if (!$('#calendar-reference-container').hasClass('d-none')) {
+                updateScheduleTables();
+            } else {
+                // Always update the debug JSON display even if the tables aren't visible
+                const pattern = $('#schedule_pattern').val();
+                const startDate = $('#schedule_start_date').val();
+                const endDate = $('#schedule_end_date').val();
+                const startTime = $('#schedule_start_time').val();
+                const endTime = $('#schedule_end_time').val();
+                const selectedDays = getSelectedDays();
+                updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
             }
         });
 
@@ -1404,7 +1125,7 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Check for public holidays in date range and show only those that conflict with the class schedule
+     * Check for public holidays in date range and show only holidays that conflict with the schedule
      */
     function checkForHolidays(startDate, endDate) {
         // If no public holidays data, return
@@ -1426,23 +1147,7 @@ function getClassTypeHours(classTypeId) {
 
         // Get schedule pattern and related data
         const pattern = $('#schedule_pattern').val();
-        const scheduleDay = $('#schedule_day').val();
-        const dayOfMonth = $('#schedule_day_of_month').val();
-
-        // If pattern is not set, we can't determine conflicts
-        if (!pattern) {
-            return;
-        }
-
-        // For weekly/biweekly patterns, we need the day of week
-        if ((pattern === 'weekly' || pattern === 'biweekly') && !scheduleDay) {
-            return;
-        }
-
-        // For monthly pattern, we need the day of month
-        if (pattern === 'monthly' && !dayOfMonth) {
-            return;
-        }
+        const selectedDays = getSelectedDays();
 
         // Convert dates to Date objects for comparison
         const startDateObj = new Date(startDate);
@@ -1456,26 +1161,30 @@ function getClassTypeHours(classTypeId) {
             return holidayDate >= startDateObj && holidayDate <= endDateObj;
         });
 
-        // If no holidays in range, return
+        // If no holidays in range, show the no holidays message
         if (allHolidaysInRange.length === 0) {
+            $('#holidays-table-container').addClass('d-none');
+            $('#no-holidays-message').removeClass('d-none');
             return;
         }
 
         console.log('All holidays in range:', allHolidaysInRange);
 
-        // Filter to only include holidays that conflict with the class schedule
-        const conflictingHolidays = allHolidaysInRange.filter(holiday => {
-            return holidayConflictsWithSchedule(holiday.start, pattern, scheduleDay, dayOfMonth, startDate);
+        // Check which holidays conflict with the class schedule
+        allHolidaysInRange.forEach(holiday => {
+            // Mark if this holiday conflicts with the schedule
+            const holidayDate = new Date(holiday.start);
+            const dayName = holidayDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+            // For weekly/biweekly patterns, check if the holiday falls on a selected day
+            if ((pattern === 'weekly' || pattern === 'biweekly') && selectedDays.includes(dayName)) {
+                holiday.conflictsWithSchedule = true;
+            } else {
+                holiday.conflictsWithSchedule = false;
+            }
         });
 
-        console.log('Conflicting holidays:', conflictingHolidays);
-
-        // If no conflicting holidays, hide the holidays table and show the no holidays message
-        if (conflictingHolidays.length === 0) {
-            $('#holidays-table-container').addClass('d-none');
-            $('#no-holidays-message').removeClass('d-none');
-            return;
-        }
+        console.log('Holidays with conflict status:', allHolidaysInRange);
 
         // Load any saved overrides from session storage
         try {
@@ -1489,6 +1198,16 @@ function getClassTypeHours(classTypeId) {
             console.error('Error parsing saved holiday overrides:', e);
         }
 
+        // Filter to only include holidays that conflict with the schedule
+        const conflictingHolidays = allHolidaysInRange.filter(holiday => holiday.conflictsWithSchedule);
+
+        // If no conflicting holidays, show the no holidays message
+        if (conflictingHolidays.length === 0) {
+            $('#holidays-table-container').addClass('d-none');
+            $('#no-holidays-message').removeClass('d-none');
+            return;
+        }
+
         // Populate the holidays list with only conflicting holidays
         populateHolidaysList(conflictingHolidays);
 
@@ -1499,6 +1218,7 @@ function getClassTypeHours(classTypeId) {
 
     /**
      * Check if a holiday conflicts with the class schedule
+     * Note: This function is no longer used as we now handle conflicts directly in checkForHolidays
      */
     function holidayConflictsWithSchedule(holidayDate, pattern, scheduleDay, dayOfMonth, startDate) {
         // Parse the holiday date
@@ -1596,7 +1316,7 @@ function getClassTypeHours(classTypeId) {
             });
 
             // Replace placeholders
-            const rowHtml = templateHtml
+            let rowHtml = templateHtml
                 .replace(/{id}/g, index)
                 .replace(/{date}/g, holiday.start)
                 .replace(/{formatted_date}/g, formattedDate)
@@ -1605,16 +1325,24 @@ function getClassTypeHours(classTypeId) {
             // Add to list
             $holidaysList.append(rowHtml);
 
-            // Check if this holiday has an existing override
-            if (holidayOverrides[holiday.start]) {
-                const $row = $holidaysList.find(`[data-date="${holiday.start}"]`).closest('tr');
-                const isOverridden = holidayOverrides[holiday.start].override;
+            // Get the row we just added
+            const $row = $holidaysList.find(`[data-date="${holiday.start}"]`).closest('tr');
 
-                // Update checkbox and status
+            // Check if this holiday has an existing override
+            let isOverridden = false;
+            if (holidayOverrides[holiday.start]) {
+                isOverridden = holidayOverrides[holiday.start].override;
+
+                // Update checkbox
                 $row.find('.holiday-override-checkbox').prop('checked', isOverridden);
-                $row.find('.holiday-skipped').toggleClass('d-none', isOverridden);
-                $row.find('.holiday-overridden').toggleClass('d-none', !isOverridden);
             }
+
+            // Update status badges based on override status
+            $row.find('.holiday-skipped').toggleClass('d-none', isOverridden);
+            $row.find('.holiday-overridden').toggleClass('d-none', !isOverridden);
+
+            // Add highlight for all rows (all are conflicts now)
+            // $row.addClass('table-warning');
         });
 
         // Update "Override All" checkbox state
@@ -1639,6 +1367,157 @@ function getClassTypeHours(classTypeId) {
     function getDayIndex(dayName) {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days.indexOf(dayName);
+    }
+
+    /**
+     * Update exception dates table
+     */
+    function updateExceptionDatesTable() {
+        const $exceptionDatesTable = $('#exception-dates-table');
+        const $noExceptionDatesRow = $('#no-exception-dates-row');
+
+        // Get all exception date rows
+        const exceptionDates = [];
+        $('#exception-dates-container .exception-date-row:not(.d-none)').each(function() {
+            const $row = $(this);
+            const date = $row.find('input[name="exception_dates[]"]').val();
+            const reason = $row.find('select[name="exception_reasons[]"]').val();
+
+            if (date) {
+                exceptionDates.push({
+                    date: date,
+                    reason: reason || ''
+                });
+            }
+        });
+
+        // Clear existing rows except the "no exception dates" row
+        $exceptionDatesTable.find('tr:not(#no-exception-dates-row)').remove();
+
+        // Show/hide "no exception dates" row
+        if (exceptionDates.length === 0) {
+            $noExceptionDatesRow.show();
+            return;
+        } else {
+            $noExceptionDatesRow.hide();
+        }
+
+        // Format dates for display
+        const formatDate = function(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-ZA', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        };
+
+        // Add a row for each exception date
+        exceptionDates.forEach(function(exceptionDate) {
+            const formattedDate = formatDate(exceptionDate.date);
+            const reasonText = exceptionDate.reason || 'No reason specified';
+
+            const $row = $('<tr></tr>');
+            $row.append('<td>' + formattedDate + '</td>');
+            $row.append('<td>' + reasonText + '</td>');
+
+            $exceptionDatesTable.append($row);
+        });
+    }
+
+    /**
+     * Update holidays table
+     */
+    function updateHolidaysTable(startDate, endDate) {
+        const $holidaysTable = $('#holidays-table');
+        const $noHolidaysRow = $('#no-holidays-row');
+        const selectedDays = getSelectedDays();
+        const pattern = $('#schedule_pattern').val();
+
+        // If no public holidays data, show "no holidays" row and return
+        if (typeof wecozaPublicHolidays === 'undefined' || !wecozaPublicHolidays.events) {
+            $holidaysTable.find('tr:not(#no-holidays-row)').remove();
+            $noHolidaysRow.show();
+            return;
+        }
+
+        // If no start date or end date, show "no holidays" row and return
+        if (!startDate || !endDate) {
+            $holidaysTable.find('tr:not(#no-holidays-row)').remove();
+            $noHolidaysRow.show();
+            return;
+        }
+
+        // Convert dates to Date objects for comparison
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+
+        // Filter holidays to only include those within the date range
+        const holidaysInRange = wecozaPublicHolidays.events.filter(holiday => {
+            // Parse the date parts to ensure correct date (avoid timezone issues)
+            const [year, month, day] = holiday.start.split('-').map(Number);
+            const holidayDate = new Date(year, month - 1, day);
+            return holidayDate >= startDateObj && holidayDate <= endDateObj;
+        });
+
+        // Filter to only include holidays that conflict with the schedule
+        const conflictingHolidays = holidaysInRange.filter(holiday => {
+            const holidayDate = new Date(holiday.start);
+            const dayName = holidayDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+            // For weekly/biweekly patterns, check if the holiday falls on a selected day
+            return (pattern === 'weekly' || pattern === 'biweekly') && selectedDays.includes(dayName);
+        });
+
+        // Clear existing rows except the "no holidays" row
+        $holidaysTable.find('tr:not(#no-holidays-row)').remove();
+
+        // Show/hide "no holidays" row
+        if (conflictingHolidays.length === 0) {
+            $noHolidaysRow.show();
+            return;
+        } else {
+            $noHolidaysRow.hide();
+        }
+
+        // Format dates for display
+        const formatDate = function(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-ZA', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        };
+
+        // Add a row for each holiday
+        // conflictingHolidays.forEach(function(holiday) {
+        //     const formattedDate = formatDate(holiday.start);
+        //     const holidayName = holiday.title;
+
+        //     // Check if this holiday has been overridden
+        //     let isOverridden = false;
+        //     if (typeof holidayOverrides === 'object' && holidayOverrides[holiday.start]) {
+        //         isOverridden = holidayOverrides[holiday.start].override;
+        //     }
+
+        //     const $row = $('<tr></tr>');
+        //     $row.append('<td>' + formattedDate + '</td>');
+        //     $row.append('<td>' + holidayName + '</td>');
+
+        //     // Add status badge
+        //     if (isOverridden) {
+        //         $row.append('<td><span class="badge bg-warning text-dark">Included</span></td>');
+        //     } else {
+        //         $row.append('<td><span class="badge bg-danger">Skipped</span></td>');
+        //     }
+
+        //     $holidaysTable.append($row);
+        // });
     }
 
     /**
@@ -1735,10 +1614,13 @@ function getClassTypeHours(classTypeId) {
             $container.append('<input type="hidden" name="schedule_data[exception_dates]" value=\'' + JSON.stringify(exceptionDates) + '\'>');
         }
 
-        // Update calendar if initialized
-        if (calendarInitialized && !$('#calendar-reference-container').hasClass('d-none')) {
-            console.log('Updating calendar events after schedule data change');
-            updateCalendarEvents();
+        // Update schedule tables if visible
+        if (!$('#calendar-reference-container').hasClass('d-none')) {
+            console.log('Updating schedule tables after schedule data change');
+            updateScheduleTables();
+        } else {
+            // Always update the debug JSON display even if the tables aren't visible
+            updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
         }
     }
 
@@ -1859,6 +1741,20 @@ function getClassTypeHours(classTypeId) {
         initFeedbackMessages();
         initClassScheduleForm();
         initOriginalStartDateValidation();
+
+        // Initialize debug JSON display
+        const pattern = $('#schedule_pattern').val();
+        const startDate = $('#schedule_start_date').val();
+        const endDate = $('#schedule_end_date').val();
+        const startTime = $('#schedule_start_time').val();
+        const endTime = $('#schedule_end_time').val();
+        const selectedDays = getSelectedDays();
+        updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
+
+        // Check for holidays if we have start and end dates
+        if (startDate && endDate) {
+            checkForHolidays(startDate, endDate);
+        }
 
         // Add form validation before submission
         $('form').on('submit', function(e) {

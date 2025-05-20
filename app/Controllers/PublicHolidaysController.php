@@ -145,7 +145,7 @@ class PublicHolidaysController {
             $date = $holiday->getDate();
 
             // Debug log
-            error_log("Preparing holiday for calendar: {$holiday->getName()} on {$date}");
+            error_log("Preparing holiday for Table: {$holiday->getName()} on {$date}");
 
             // IMPORTANT: DO NOT CHANGE THIS ADJUSTMENT!
             // Subtract one day from the date to compensate for the timezone shift
@@ -171,7 +171,7 @@ class PublicHolidaysController {
         }
 
         // Debug log
-        error_log("Total holidays prepared for calendar: " . count($events));
+        error_log("Total holidays prepared for Table: " . count($events));
 
         return $events;
     }

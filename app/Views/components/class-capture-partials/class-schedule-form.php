@@ -180,7 +180,7 @@
       <div id="exception-dates-container"></div>
 
       <!-- Hidden Template Row (initially d-none) -->
-      <div class="row exception-date-row d-none" id="exception-date-row-template">
+      <div class="row exception-date-row align-items-center d-none" id="exception-date-row-template">
          <!-- Exception Date -->
          <div class="col-md-4 mb-2">
             <div class="form-floating">
@@ -221,29 +221,6 @@
       </button>
    </div>
 
-   <!-- Calendar Legend -->
-   <div class="mb-4 d-none" id="calendar-legend">
-      <h6 class="mb-2">Calendar Legend</h6>
-      <div class="d-flex flex-wrap gap-3">
-         <div class="d-flex align-items-center">
-            <span class="color-box" style="background-color: #f44336;"></span>
-            <span>Public Holiday</span>
-         </div>
-         <div class="d-flex align-items-center">
-            <span class="color-box" style="background-color: #ff9800;"></span>
-            <span>Overridden Holiday</span>
-         </div>
-         <div class="d-flex align-items-center">
-            <span class="color-box" style="background-color: #f44336; opacity: 0.1;"></span>
-            <span>Holiday Date</span>
-         </div>
-         <div class="d-flex align-items-center">
-            <span class="color-box" style="background-color: #ff9800; opacity: 0.1;"></span>
-            <span>Overridden Holiday Date</span>
-         </div>
-      </div>
-   </div>
-
    <!-- Public Holidays Section -->
    <div class="mb-4">
       <h6 class="mb-2">Public Holidays in Schedule</h6>
@@ -255,16 +232,13 @@
       </div>
 
       <!-- Holidays table container -->
-      <div id="holidays-table-container" class="d-none">
+      <div id="holidays-table-container" class="card-body card-body card px-5 d-none" >
          <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-sm fs-9 mb-0 table-hover">
                <thead>
                   <tr>
                      <th style="width: 50px;">
-                        <div class="form-check">
-                           <input class="form-check-input" type="checkbox" id="override-all-holidays">
-                           <label class="form-check-label" for="override-all-holidays"></label>
-                        </div>
+                        <div class="form-check">&nbsp;</div>
                      </th>
                      <th>Date</th>
                      <th>Holiday</th>
@@ -299,7 +273,7 @@
          <td class="holiday-name">{name}</td>
          <td class="holiday-status">
             <span class="badge bg-danger holiday-skipped">Skipped</span>
-            <span class="badge bg-warning text-dark holiday-overridden d-none">Included</span>
+            <span class="badge bg-info holiday-overridden d-none">Included</span>
          </td>
       </tr>
    </template>
@@ -310,6 +284,15 @@
    <!-- Hidden inputs to store schedule data in the format expected by the backend -->
    <div id="schedule-data-container">
       <!-- These will be populated dynamically via JavaScript -->
+   </div>
+
+
+   <!-- Debug JSON Data Display -->
+   <div id="debug-json-container" class="mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+         <button type="button" id="toggle-debug-json-btn" class="btn btn-sm btn-outline-secondary">Debug Dev. Data</button>
+      </div>
+      <pre id="debug-json-display" class="p-3 fs-10 bg-light border rounded d-none" style="max-height: 300px; overflow-y: auto;"></pre>
    </div>
 
 </div>
