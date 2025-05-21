@@ -11,6 +11,58 @@ Currently, in the class schedule form, when selecting weekly or biweekly pattern
 - Ensure the end date calculation accounts for multiple days per week
 - Maintain backward compatibility with existing classes
 
+## Calendar Implementation Notes
+
+### Why We Removed FullCalendar in Favor of a Simplified Table-Based Approach
+
+After evaluating the FullCalendar implementation, we decided to replace it with a simplified table-based approach for the following reasons:
+
+1. **Date Handling Issues**:
+   - FullCalendar had persistent timezone-related problems causing holidays and events to display on incorrect dates
+   - Required complex workarounds (e.g., subtracting one day from dates to compensate for timezone shifts)
+   - These workarounds created technical debt and made the code harder to maintain
+
+2. **UI/UX Problems**:
+   - The "+more" popovers for days with multiple events displayed incorrect dates
+   - Multiple attempted fixes were unsuccessful
+   - Users found the interface confusing when dates didn't align with expectations
+
+3. **Complexity vs. Needs**:
+   - FullCalendar is a powerful but complex library with many features not needed for our use case
+   - The initialization required complex configuration and multiple view options
+   - Our specific needs (showing schedule summary, exceptions, and holidays) didn't require a full calendar widget
+
+4. **Performance Considerations**:
+   - FullCalendar adds significant JavaScript overhead
+   - The simplified approach reduces page load time and improves responsiveness
+
+5. **Maintenance Benefits**:
+   - Simpler code is easier to maintain and extend
+   - Reduced dependency on external libraries
+   - Better alignment with our MVC architecture
+
+### Benefits of the New Table-Based Approach
+
+1. **Clarity and Focus**:
+   - Provides a clear, straightforward representation of the schedule
+   - Focuses only on essential information (schedule summary, exceptions, holidays)
+   - Eliminates confusion by presenting data in a familiar tabular format
+
+2. **Improved Reliability**:
+   - Eliminates date handling issues by using simple tables
+   - No more timezone-related display problems
+   - More predictable behavior across browsers and devices
+
+3. **Better User Experience**:
+   - Hidden by default and shown only when needed ("View Schedule" button)
+   - Faster loading and response times
+   - Clearer presentation of schedule conflicts with holidays
+
+4. **Enhanced Debugging**:
+   - Includes a JSON data structure for debugging purposes
+   - Makes it easier to troubleshoot schedule generation issues
+   - Provides a clear view of all schedule parameters in one place
+
 ## Implementation Details
 
 ### UI Changes

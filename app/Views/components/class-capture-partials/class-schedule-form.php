@@ -286,13 +286,100 @@
       <!-- These will be populated dynamically via JavaScript -->
    </div>
 
+   <!-- Schedule Statistics Section -->
+   <!-- Schedule Statistics Toggle Button -->
+   <div class="mt-3 mb-3">
+      <button type="button" class="btn btn-outline-primary btn-sm" id="toggle-statistics-btn">
+         <i class="bi bi-bar-chart-line me-1"></i> View Schedule Statistics
+      </button>
+      <small class="text-muted ms-2">Click to view detailed statistics about the training schedule</small>
+   </div>
+
+   <!-- Schedule Statistics Section (hidden by default) -->
+   <div class="card shadow-none border mb-3 d-none" id="schedule-statistics-section" data-component-card="data-component-card">
+   <div class="card-header p-4 border-bottom bg-body">
+      <h4 class="text-body mb-0" data-anchor="schedule-statistics" id="schedule-statistics">
+         Schedule Statistics
+         <a class="anchorjs-link" aria-label="Anchor" data-anchorjs-icon="#" href="#schedule-statistics" style="margin-left:0.1875em; padding:0 0.1875em;"></a>
+      </h4>
+   </div>
+   <div class="card-body p-0">
+      <div class="table-responsive scrollbar mb-3">
+         <table class="table table-sm fs-9 mb-0 overflow-hidden">
+         <thead class="text-body">
+            <tr>
+               <th class="sort pe-1 align-middle white-space-nowrap">Category</th>
+               <th class="sort pe-1 align-middle white-space-nowrap">Metric</th>
+               <th class="sort pe-1 align-middle white-space-nowrap">Value</th>
+            </tr>
+         </thead>
+         <tbody id="schedule-statistics-table">
+            <!-- Training Duration Statistics -->
+            <tr class="ydcoza-table-subheader">
+               <th colspan="3">Training Duration</th>
+            </tr>
+            <tr>
+               <td rowspan="3" class="align-middle">Time Period</td>
+               <td>Total Calendar Days</td>
+               <td id="stat-total-days">-</td>
+            </tr>
+            <tr>
+               <td>Total Weeks</td>
+               <td id="stat-total-weeks">-</td>
+            </tr>
+            <tr>
+               <td>Total Months</td>
+               <td id="stat-total-months">-</td>
+            </tr>
+
+            <!-- Class Session Statistics -->
+            <tr class="ydcoza-table-subheader">
+               <th colspan="3">Class Sessions</th>
+            </tr>
+            <tr>
+               <td rowspan="3" class="align-middle">Sessions</td>
+               <td>Total Scheduled Classes</td>
+               <td id="stat-total-classes">-</td>
+            </tr>
+            <tr>
+               <td>Total Training Hours</td>
+               <td id="stat-total-hours">-</td>
+            </tr>
+            <tr>
+               <td>Average Hours per Month</td>
+               <td id="stat-avg-hours-month">-</td>
+            </tr>
+
+            <!-- Attendance Impact Statistics -->
+            <tr class="ydcoza-table-subheader">
+               <th colspan="3">Attendance Impact</th>
+            </tr>
+            <tr>
+               <td rowspan="3" class="align-middle">Adjustments</td>
+               <td>Holidays Affecting Classes</td>
+               <td id="stat-holidays-affecting">-</td>
+            </tr>
+            <tr>
+               <td>Exception Dates</td>
+               <td id="stat-exception-dates">-</td>
+            </tr>
+            <tr>
+               <td>Actual Training Days</td>
+               <td id="stat-actual-days">-</td>
+            </tr>
+         </tbody>
+         </table>
+      </div>
+   </div>
+   </div>
+
 
    <!-- Debug JSON Data Display -->
-   <div id="debug-json-container" class="mb-4">
+   <!-- <div id="debug-json-container" class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
          <button type="button" id="toggle-debug-json-btn" class="btn btn-sm btn-outline-secondary">Debug Dev. Data</button>
       </div>
       <pre id="debug-json-display" class="p-3 fs-10 bg-light border rounded d-none" style="max-height: 300px; overflow-y: auto;"></pre>
-   </div>
+   </div> -->
 
 </div>

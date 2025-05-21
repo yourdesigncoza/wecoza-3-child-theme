@@ -255,3 +255,10 @@ html[data-bs-theme="dark"] .fc .fc-multimonth {
     display: block;
     margin-top: 0.5rem;
 }
+
+.ydcoza-table-subheader {
+    background-color: var(--phoenix-emphasis-bg);
+}
+.ydcoza-table-subheader th {
+    padding-left: 0.5rem;
+}

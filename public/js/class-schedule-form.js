@@ -34,6 +34,34 @@
 
         // Initialize debug JSON toggle
         initDebugJsonToggle();
+
+        // Initialize statistics toggle
+        initStatisticsToggle();
+    }
+
+    /**
+     * Initialize statistics toggle button
+     */
+    function initStatisticsToggle() {
+        const $toggleBtn = $('#toggle-statistics-btn');
+        const $statisticsSection = $('#schedule-statistics-section');
+
+        $toggleBtn.on('click', function() {
+            if ($statisticsSection.hasClass('d-none')) {
+                // Show the statistics section
+                $statisticsSection.removeClass('d-none');
+                $toggleBtn.html('<i class="bi bi-bar-chart-line me-1"></i> Hide Schedule Statistics');
+                $toggleBtn.addClass('btn-primary').removeClass('btn-outline-primary');
+
+                // Update statistics data
+                updateScheduleData();
+            } else {
+                // Hide the statistics section
+                $statisticsSection.addClass('d-none');
+                $toggleBtn.html('<i class="bi bi-bar-chart-line me-1"></i> View Schedule Statistics');
+                $toggleBtn.removeClass('btn-primary').addClass('btn-outline-primary');
+            }
+        });
     }
 
     /**
@@ -852,6 +880,9 @@ function getClassTypeHours(classTypeId) {
 
             // Update schedule tables with current data
             updateScheduleTables();
+
+            // Update schedule data to trigger statistics calculation
+            updateScheduleData();
         });
 
         // Hide schedule view when hide button is clicked
@@ -997,6 +1028,234 @@ function getClassTypeHours(classTypeId) {
 
         // Update the debug JSON display
         $('#debug-json-display').text(JSON.stringify(jsonData, null, 4));
+
+        // Update schedule statistics
+        updateScheduleStatistics(jsonData);
+    }
+
+    /**
+     * Update schedule statistics based on JSON data
+     */
+    function updateScheduleStatistics(jsonData) {
+        if (!jsonData.schedule.startDate || !jsonData.schedule.endDate) {
+            return; // Skip if no date range
+        }
+
+        // Parse dates
+        const startDate = new Date(jsonData.schedule.startDate);
+        const endDate = new Date(jsonData.schedule.endDate);
+
+        // 1. Training Duration Statistics
+
+        // Calculate total calendar days
+        const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        $('#stat-total-days').text(totalDays + ' days');
+
+        // Calculate total weeks
+        const totalWeeks = Math.round(totalDays / 7 * 10) / 10; // Round to 1 decimal place
+        $('#stat-total-weeks').text(totalWeeks.toFixed(1) + ' weeks');
+
+        // Calculate total months
+        const totalMonths = Math.round((totalDays / 30.44) * 10) / 10; // Average days in a month
+        $('#stat-total-months').text(totalMonths.toFixed(1) + ' months');
+
+        // 2. Class Session Statistics
+
+        // Calculate total scheduled classes
+        let totalClasses = 0;
+        const selectedDays = jsonData.schedule.selectedDays;
+        const pattern = jsonData.schedule.pattern;
+
+        if (pattern === 'weekly') {
+            // For weekly pattern, count the number of occurrences of each selected day
+            totalClasses = countScheduledClasses(startDate, endDate, selectedDays, 7, jsonData);
+        } else if (pattern === 'biweekly') {
+            // For biweekly pattern, count every other week
+            totalClasses = countScheduledClasses(startDate, endDate, selectedDays, 14, jsonData);
+        } else if (pattern === 'monthly') {
+            // For monthly pattern, count once per month
+            totalClasses = countMonthlyClasses(startDate, endDate, jsonData);
+        }
+
+        $('#stat-total-classes').text(totalClasses + ' sessions');
+
+        // Calculate total training hours
+        const startTime = jsonData.schedule.classTime.start;
+        const endTime = jsonData.schedule.classTime.end;
+        let sessionHours = 0;
+
+        if (startTime && endTime) {
+            // Parse times
+            const [startHour, startMinute] = startTime.split(':').map(Number);
+            const [endHour, endMinute] = endTime.split(':').map(Number);
+
+            // Calculate duration in hours
+            let durationHours = endHour - startHour;
+            let durationMinutes = endMinute - startMinute;
+
+            if (durationMinutes < 0) {
+                durationHours--;
+                durationMinutes += 60;
+            }
+
+            // Format duration
+            sessionHours = durationHours + (durationMinutes / 60);
+        }
+
+        const totalHours = Math.round(totalClasses * sessionHours * 10) / 10;
+        $('#stat-total-hours').text(totalHours.toFixed(1) + ' hours');
+
+        // Calculate average hours per month
+        const avgHoursPerMonth = totalMonths > 0 ? Math.round((totalHours / totalMonths) * 10) / 10 : 0;
+        $('#stat-avg-hours-month').text(avgHoursPerMonth.toFixed(1) + ' hours/month');
+
+        // 3. Attendance Impact Statistics
+
+        // Count holidays affecting classes
+        const holidaysAffectingClasses = countHolidaysAffectingClasses(jsonData);
+        $('#stat-holidays-affecting').text(holidaysAffectingClasses + ' holidays');
+
+        // Count exception dates
+        const exceptionDatesCount = jsonData.exceptionDates.length;
+        $('#stat-exception-dates').text(exceptionDatesCount + ' dates');
+
+        // Use totalClasses directly as actual training days since it already accounts for
+        // both exception dates and holiday overrides correctly
+        const actualTrainingDays = totalClasses;
+        $('#stat-actual-days').text(actualTrainingDays + ' days');
+    }
+
+    /**
+     * Count scheduled classes between start and end dates
+     */
+    function countScheduledClasses(startDate, endDate, selectedDays, interval, jsonData) {
+        let count = 0;
+        const current = new Date(startDate);
+        const dayIndices = selectedDays.map(day => getDayIndex(day));
+
+        // Get exception dates
+        const exceptionDates = jsonData.exceptionDates.map(exception => exception.date);
+
+        // Loop through each day in the range
+        while (current <= endDate) {
+            const dateStr = current.toISOString().split('T')[0];
+            const dayOfWeek = current.getDay();
+
+            // Check if this day is in our selected days
+            if (dayIndices.includes(dayOfWeek)) {
+                // Check if this is a scheduled class day (based on interval)
+                const daysSinceStart = Math.round((current - startDate) / (1000 * 60 * 60 * 24));
+
+                if (daysSinceStart % interval === 0 || interval === 7) {
+                    // Skip exception dates and public holidays (unless overridden)
+                    if (!isExceptionDateOrHoliday(dateStr, exceptionDates, jsonData.holidays)) {
+                        count++;
+                    }
+                }
+            }
+
+            // Move to next day
+            current.setDate(current.getDate() + 1);
+        }
+
+        return count;
+    }
+
+    /**
+     * Count monthly classes between start and end dates
+     */
+    function countMonthlyClasses(startDate, endDate, jsonData) {
+        let count = 0;
+        const current = new Date(startDate);
+
+        // Get exception dates
+        const exceptionDates = jsonData.exceptionDates.map(exception => exception.date);
+
+        // Loop through each month in the range
+        while (current <= endDate) {
+            const dateStr = current.toISOString().split('T')[0];
+
+            // Skip exception dates and public holidays (unless overridden)
+            if (!isExceptionDateOrHoliday(dateStr, exceptionDates, jsonData.holidays)) {
+                count++;
+            }
+
+            // Move to next month
+            current.setMonth(current.getMonth() + 1);
+        }
+
+        return count;
+    }
+
+    /**
+     * Check if a date is an exception date or holiday
+     */
+    function isExceptionDateOrHoliday(dateStr, exceptionDates, holidays) {
+        // Check if it's an exception date
+        if (exceptionDates.includes(dateStr)) {
+            return true;
+        }
+
+        // Check if it's a public holiday that hasn't been overridden
+        const holiday = holidays.find(h => h.date === dateStr);
+        if (holiday && !holiday.isOverridden) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Count holidays that affect class schedule
+     */
+    function countHolidaysAffectingClasses(jsonData) {
+        if (!jsonData.holidays || !jsonData.schedule.selectedDays) {
+            return 0;
+        }
+
+        let count = 0;
+        const selectedDays = jsonData.schedule.selectedDays;
+        const dayIndices = selectedDays.map(day => getDayIndex(day));
+
+        // Loop through each holiday
+        jsonData.holidays.forEach(holiday => {
+            const holidayDate = new Date(holiday.date);
+            const dayOfWeek = holidayDate.getDay();
+
+            // Check if this holiday falls on a selected day
+            if (dayIndices.includes(dayOfWeek) && !holiday.isOverridden) {
+                count++;
+            }
+        });
+
+        return count;
+    }
+
+    /**
+     * Count overridden holidays
+     */
+    function countOverriddenHolidays(jsonData) {
+        if (!jsonData.holidays) {
+            return 0;
+        }
+
+        // Count holidays that are overridden and fall on selected days
+        let count = 0;
+        const selectedDays = jsonData.schedule.selectedDays;
+        const dayIndices = selectedDays.map(day => getDayIndex(day));
+
+        jsonData.holidays.forEach(holiday => {
+            if (holiday.isOverridden) {
+                const holidayDate = new Date(holiday.date);
+                const dayOfWeek = holidayDate.getDay();
+
+                if (dayIndices.includes(dayOfWeek)) {
+                    count++;
+                }
+            }
+        });
+
+        return count;
     }
 
 
@@ -1618,10 +1877,71 @@ function getClassTypeHours(classTypeId) {
         if (!$('#calendar-reference-container').hasClass('d-none')) {
             console.log('Updating schedule tables after schedule data change');
             updateScheduleTables();
+
+            // Create JSON data for statistics
+            const jsonData = {
+                schedule: {
+                    pattern: pattern,
+                    startDate: startDate,
+                    endDate: endDate,
+                    selectedDays: selectedDays,
+                    classTime: {
+                        start: startTime,
+                        end: endTime
+                    }
+                },
+                exceptionDates: exceptionDates,
+                holidays: getHolidaysInRange(startDate, endDate),
+                metadata: {
+                    lastUpdated: new Date().toISOString(),
+                    version: "1.0"
+                }
+            };
+
+            // Update schedule statistics if the statistics section is visible
+            if (!$('#schedule-statistics-section').hasClass('d-none')) {
+                updateScheduleStatistics(jsonData);
+            }
         } else {
             // Always update the debug JSON display even if the tables aren't visible
             updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
         }
+    }
+
+    /**
+     * Get holidays in date range
+     */
+    function getHolidaysInRange(startDate, endDate) {
+        const holidays = [];
+
+        if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events && startDate && endDate) {
+            // Convert dates to Date objects for comparison
+            const startDateObj = new Date(startDate);
+            const endDateObj = new Date(endDate);
+
+            // Filter holidays to only include those within the date range
+            wecozaPublicHolidays.events.forEach(holiday => {
+                // Parse the date parts to ensure correct date (avoid timezone issues)
+                const [year, month, day] = holiday.start.split('-').map(Number);
+                const holidayDate = new Date(year, month - 1, day);
+
+                if (holidayDate >= startDateObj && holidayDate <= endDateObj) {
+                    // Check if this holiday has been overridden
+                    let isOverridden = false;
+                    if (typeof holidayOverrides === 'object' && holidayOverrides[holiday.start]) {
+                        isOverridden = holidayOverrides[holiday.start].override;
+                    }
+
+                    holidays.push({
+                        date: holiday.start,
+                        name: holiday.title,
+                        isOverridden: isOverridden
+                    });
+                }
+            });
+        }
+
+        return holidays;
     }
 
     /**
