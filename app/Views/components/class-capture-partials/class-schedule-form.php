@@ -292,7 +292,8 @@
       <button type="button" class="btn btn-outline-primary btn-sm" id="toggle-statistics-btn">
          <i class="bi bi-bar-chart-line me-1"></i> View Schedule Statistics
       </button>
-      <small class="text-muted ms-2">Click to view detailed statistics about the training schedule</small>
+      <div class="clearfix"></div>
+      <small class="text-muted">Click to view detailed statistics about the training schedule</small>
    </div>
 
    <!-- Schedule Statistics Section (hidden by default) -->

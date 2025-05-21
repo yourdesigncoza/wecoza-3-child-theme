@@ -112,6 +112,9 @@ function showCustomAlert(message) {
      * Initialize the class capture form
      */
     window.initClassCaptureForm = function() {
+        // Initialize the client-site relationship
+        initializeClientSiteRelationship();
+
         // Initialize the site address lookup
         initializeSiteAddressLookup();
 
@@ -203,6 +206,47 @@ function showCustomAlert(message) {
 
         // Initial check
         restrictStartDateByDay();
+    }
+
+    /**
+     * Initialize the client-site relationship
+     * Filters the site_id dropdown based on the selected client_id
+     */
+    function initializeClientSiteRelationship() {
+        // Get the client and site dropdowns
+        const $clientDropdown = $("#client_id");
+        const $siteDropdown = $("#site_id");
+
+        // Add event listener to client dropdown
+        $clientDropdown.on("change", function() {
+            const selectedClientId = $(this).val();
+            const selectedClientName = $(this).find("option:selected").text();
+
+            // Reset site selection
+            $siteDropdown.val("");
+
+            // Show all optgroups and options initially
+            $siteDropdown.find("optgroup").show();
+            $siteDropdown.find("option").prop("disabled", false);
+
+            // If a client is selected, hide other optgroups and disable their options
+            if (selectedClientId) {
+                $siteDropdown.find("optgroup").each(function() {
+                    if ($(this).attr("label") !== selectedClientName) {
+                        $(this).hide();
+                        $(this).find("option").prop("disabled", true);
+                    }
+                });
+            }
+
+            // Trigger change event on site dropdown to update any dependent fields
+            $siteDropdown.trigger("change");
+        });
+
+        // Initial filtering on page load if a client is already selected
+        if ($clientDropdown.val()) {
+            $clientDropdown.trigger("change");
+        }
     }
 
     /**
