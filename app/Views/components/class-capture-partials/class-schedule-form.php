@@ -298,7 +298,7 @@
 
    <!-- Schedule Statistics Section (hidden by default) -->
    <div class="card shadow-none border mb-3 d-none" id="schedule-statistics-section" data-component-card="data-component-card">
-   <div class="card-header p-4 border-bottom bg-body">
+   <div class="card-header p-3 border-bottom bg-body">
       <h4 class="text-body mb-0" data-anchor="schedule-statistics" id="schedule-statistics">
          Schedule Statistics
          <a class="anchorjs-link" aria-label="Anchor" data-anchorjs-icon="#" href="#schedule-statistics" style="margin-left:0.1875em; padding:0 0.1875em;"></a>
