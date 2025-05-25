@@ -1290,18 +1290,18 @@ function getClassTypeHours(classTypeId) {
 
         // Handle "Override All" button click
         $overrideAllBtn.on('click', function() {
-            $('.holiday-override-checkbox').prop('checked', true).trigger('change');
+            batchUpdateHolidayOverrides(true);
         });
 
         // Handle "Skip All" button click
         $skipAllBtn.on('click', function() {
-            $('.holiday-override-checkbox').prop('checked', false).trigger('change');
+            batchUpdateHolidayOverrides(false);
         });
 
         // Handle "Override All" checkbox
         $overrideAllCheckbox.on('change', function() {
             const isChecked = $(this).prop('checked');
-            $('.holiday-override-checkbox').prop('checked', isChecked).trigger('change');
+            batchUpdateHolidayOverrides(isChecked);
         });
 
         // Handle individual holiday checkbox changes - CONSOLIDATED HANDLER
@@ -1379,6 +1379,68 @@ function getClassTypeHours(classTypeId) {
                 $overrideAllCheckbox.prop('indeterminate', false);
             } else {
                 $overrideAllCheckbox.prop('indeterminate', true);
+            }
+        }
+
+        /**
+         * Batch update all holiday overrides - fixes issue where "Override All" only affected first holiday
+         * @param {boolean} isChecked - Whether to check (override) or uncheck (skip) all holidays
+         */
+        function batchUpdateHolidayOverrides(isChecked) {
+            const $checkboxes = $('.holiday-override-checkbox');
+
+            // If no checkboxes found, return early
+            if ($checkboxes.length === 0) {
+                return;
+            }
+
+            // Set all checkboxes to the desired state without triggering change events
+            $checkboxes.prop('checked', isChecked);
+
+            // Update all holiday overrides and visual states in one batch
+            $checkboxes.each(function() {
+                const $checkbox = $(this);
+                const date = $checkbox.data('date');
+                const $row = $checkbox.closest('tr');
+
+                // Update the visual status
+                $row.find('.holiday-skipped').toggleClass('d-none', isChecked);
+                $row.find('.holiday-overridden').toggleClass('d-none', !isChecked);
+
+                // Update the overrides object
+                if (!holidayOverrides[date]) {
+                    const holidayName = $row.find('.holiday-name').text();
+                    holidayOverrides[date] = {
+                        date: date,
+                        name: holidayName,
+                        override: isChecked
+                    };
+                } else {
+                    holidayOverrides[date].override = isChecked;
+                }
+            });
+
+            // Save overrides to hidden input (once for all changes)
+            $holidayOverridesInput.val(JSON.stringify(holidayOverrides));
+
+            // Update "Override All" checkbox state
+            updateOverrideAllCheckbox();
+
+            // Recalculate end date with the new overrides (once for all changes)
+            recalculateEndDate();
+
+            // Update schedule tables if visible (once for all changes)
+            if (!$('#calendar-reference-container').hasClass('d-none')) {
+                updateScheduleTables();
+            } else {
+                // Always update the debug JSON display even if the tables aren't visible
+                const pattern = $('#schedule_pattern').val();
+                const startDate = $('#schedule_start_date').val();
+                const endDate = $('#schedule_end_date').val();
+                const startTime = $('#schedule_start_time').val();
+                const endTime = $('#schedule_end_time').val();
+                const selectedDays = getSelectedDays();
+                updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
             }
         }
     }
