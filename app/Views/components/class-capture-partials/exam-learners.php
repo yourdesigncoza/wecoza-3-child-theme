@@ -20,11 +20,11 @@
          <!-- Exam Learner Selection -->
          <div class="col-md-4">
             <!-- For multi-select with floating labels, we need a custom approach -->
-            <div class="form-floating mb-3">
+            <div class="mb-3">
+               <label for="add_learner" class="form-label">Select Learners</label>
                <select id="exam_learner_select" name="exam_learner_select[]" class="form-select" aria-label="Exam learner selection" multiple>
                   <!-- Will be populated dynamically with class learners -->
                </select>
-               <label for="exam_learner_select">Select Learners Taking Exams <span class="text-danger">*</span></label>
                <div class="form-text">Select learners who will take exams in this class. Hold Ctrl/Cmd to select multiple.</div>
                <div class="invalid-feedback">Please select at least one learner for exams.</div>
                <div class="valid-feedback">Looks good!</div>

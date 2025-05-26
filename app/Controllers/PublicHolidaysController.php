@@ -145,7 +145,7 @@ class PublicHolidaysController {
             $date = $holiday->getDate();
 
             // Debug log
-            error_log("Preparing holiday for Table: {$holiday->getName()} on {$date}");
+            // error_log("Preparing holiday for Table: {$holiday->getName()} on {$date}");
 
             // IMPORTANT: DO NOT CHANGE THIS ADJUSTMENT!
             // Subtract one day from the date to compensate for the timezone shift
@@ -155,7 +155,7 @@ class PublicHolidaysController {
             $adjustedDate = $dateObj->format('Y-m-d');
 
             // Debug log
-            error_log("Adjusted holiday date: {$date} -> {$adjustedDate}");
+            // error_log("Adjusted holiday date: {$date} -> {$adjustedDate}");
 
             $events[] = [
                 'title' => $holiday->getName(),
@@ -171,7 +171,7 @@ class PublicHolidaysController {
         }
 
         // Debug log
-        error_log("Total holidays prepared for Table: " . count($events));
+        // error_log("Total holidays prepared for Table: " . count($events));
 
         return $events;
     }

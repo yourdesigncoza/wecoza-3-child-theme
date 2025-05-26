@@ -1,21 +1,21 @@
-<?php 
+<?php
 /**
  * Learner Database Handler
- * 
+ *
  * This class handles all database operations for learner management including:
  * - CRUD operations for learner records
  * - Portfolio file management
  * - Data validation and sanitization
  * - Transaction management
  * - Caching with WordPress transients
- * 
+ *
  * Key Features:
  * - Secure database interactions using prepared statements
  * - Comprehensive error handling and logging
  * - Support for file uploads and storage
  * - Data integrity checks
  * - Transaction rollback on failures
- * 
+ *
  * @package Wecoza
  * @subpackage Learners
  * @since 1.0.0
@@ -40,7 +40,7 @@ class learner_DB {
             return false;
         }
     }
-    
+
     /*------------------YDCOZA-----------------------*/
     /* Example method to fetch all agents            */
     /* Demonstrates a simple query execution         */
@@ -63,57 +63,57 @@ class learner_DB {
     public function get_locations() {
         try {
             $pdo = $this->db->get_pdo();
-            
+
             // Get distinct cities
             $cities_query = "
-                SELECT DISTINCT ON (LOWER(town)) 
+                SELECT DISTINCT ON (LOWER(town))
                     location_id,
                     town
-                FROM locations 
-                WHERE town IS NOT NULL 
+                FROM locations
+                WHERE town IS NOT NULL
                     AND town != ''
                 ORDER BY LOWER(town), location_id ASC
             ";
-            
+
             // Get distinct provinces
             $provinces_query = "
-                SELECT DISTINCT ON (LOWER(province)) 
+                SELECT DISTINCT ON (LOWER(province))
                     location_id,
                     province
-                FROM locations 
-                WHERE province IS NOT NULL 
+                FROM locations
+                WHERE province IS NOT NULL
                     AND province != ''
                 ORDER BY LOWER(province), location_id ASC
             ";
-            
+
             // For databases that don't support DISTINCT ON, use this alternative:
             if (!$this->supports_distinct_on()) {
                 $cities_query = "
                     SELECT MIN(location_id) as location_id, town
-                    FROM locations 
-                    WHERE town IS NOT NULL 
+                    FROM locations
+                    WHERE town IS NOT NULL
                         AND town != ''
                     GROUP BY LOWER(town)
                     ORDER BY LOWER(town) ASC
                 ";
-                
+
                 $provinces_query = "
                     SELECT MIN(location_id) as location_id, province
-                    FROM locations 
-                    WHERE province IS NOT NULL 
+                    FROM locations
+                    WHERE province IS NOT NULL
                         AND province != ''
                     GROUP BY LOWER(province)
                     ORDER BY LOWER(province) ASC
                 ";
             }
-            
+
             // Execute queries
             $cities_stmt = $pdo->prepare($cities_query);
             $provinces_stmt = $pdo->prepare($provinces_query);
-            
+
             $cities_stmt->execute();
             $provinces_stmt->execute();
-            
+
             return [
                 'cities' => $cities_stmt->fetchAll(PDO::FETCH_ASSOC),
                 'provinces' => $provinces_stmt->fetchAll(PDO::FETCH_ASSOC)
@@ -166,7 +166,7 @@ class learner_DB {
     public function insert_learner($data) {
         try {
             $pdo = $this->db->get_pdo();
-            
+
             // Start transaction
             $pdo->beginTransaction();
 
@@ -182,37 +182,37 @@ class learner_DB {
             // Prepare and execute the insert query
             $stmt = $pdo->prepare("
                 INSERT INTO learners (
-                    first_name, initials, surname, gender, race, 
-                    sa_id_no, passport_number, tel_number, alternative_tel_number, 
-                    email_address, address_line_1, address_line_2, city_town_id, 
-                    province_region_id, postal_code, highest_qualification, 
+                    first_name, initials, surname, gender, race,
+                    sa_id_no, passport_number, tel_number, alternative_tel_number,
+                    email_address, address_line_1, address_line_2, city_town_id,
+                    province_region_id, postal_code, highest_qualification,
                     assessment_status, placement_assessment_date, numeracy_level, communication_level,
-                    employment_status, employer_id, disability_status, scanned_portfolio, 
+                    employment_status, employer_id, disability_status, scanned_portfolio,
                     created_at, updated_at
                 ) VALUES (
-                    :first_name, :initials, :surname, :gender, :race, 
-                    :sa_id_no, :passport_number, :tel_number, :alternative_tel_number, 
-                    :email_address, :address_line_1, :address_line_2, :city_town_id, 
-                    :province_region_id, :postal_code, :highest_qualification, 
+                    :first_name, :initials, :surname, :gender, :race,
+                    :sa_id_no, :passport_number, :tel_number, :alternative_tel_number,
+                    :email_address, :address_line_1, :address_line_2, :city_town_id,
+                    :province_region_id, :postal_code, :highest_qualification,
                     :assessment_status, :placement_assessment_date, :numeracy_level, :communication_level,
-                    :employment_status, :employer_id, :disability_status, :scanned_portfolio, 
+                    :employment_status, :employer_id, :disability_status, :scanned_portfolio,
                     :created_at, :updated_at
                 ) RETURNING id;
             ");
-            
+
             $stmt->execute($data);
 
             // Clear the transient cache
             delete_transient('learner_db_get_learners_mappings');
-            
+
             // Get the inserted ID
             $learner_id = $stmt->fetchColumn();
-            
+
             // Commit transaction
             $pdo->commit();
-            
+
             return $learner_id;
-            
+
         } catch (Exception $e) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
@@ -245,13 +245,13 @@ public function get_learners_mappings() {
 
 $query = "
     WITH portfolio_info AS (
-        SELECT 
+        SELECT
             learner_id,
             string_agg(file_path || '|' || upload_date::text, ', ' ORDER BY upload_date DESC) as portfolio_details
         FROM learner_portfolios
         GROUP BY learner_id
     )
-    SELECT 
+    SELECT
         learners.*,
         learner_qualifications.qualification AS highest_qualification,
         locations.suburb AS suburb,
@@ -265,11 +265,11 @@ $query = "
         CASE WHEN learners.disability_status = true THEN 'Yes' ELSE 'No' END AS disability_status,
         portfolio_info.portfolio_details
     FROM learners
-    LEFT JOIN learner_qualifications 
+    LEFT JOIN learner_qualifications
         ON learners.highest_qualification = learner_qualifications.id
-    LEFT JOIN locations 
+    LEFT JOIN locations
         ON learners.city_town_id = locations.location_id
-    LEFT JOIN employers 
+    LEFT JOIN employers
         ON learners.employer_id = employers.employer_id
     LEFT JOIN learner_placement_level AS numeracy_level_table
         ON learners.numeracy_level = numeracy_level_table.placement_level_id
@@ -284,15 +284,15 @@ $query = "
     try {
         $lrner = $db->prepare($query);
         $lrner->execute();
-        
+
         $results = $lrner->fetchAll(PDO::FETCH_OBJ);
-        
+
         // Process portfolio details for each learner
         foreach ($results as $learner) {
             if (!empty($learner->portfolio_details)) {
                 $portfolios = [];
                 $dates = [];
-                
+
                 // Split the combined portfolio details
                 $portfolio_items = explode(', ', $learner->portfolio_details);
                 foreach ($portfolio_items as $item) {
@@ -300,7 +300,7 @@ $query = "
                     $portfolios[] = $path;
                     $dates[] = $date;
                 }
-                
+
                 $learner->scanned_portfolio = implode(', ', $portfolios);
                 $learner->portfolio_upload_dates = $dates;
             } else {
@@ -332,13 +332,13 @@ public function get_learner_by_id($id) {
 
     $query = "
         WITH portfolio_info AS (
-            SELECT 
+            SELECT
                 learner_id,
                 string_agg(file_path || '|' || upload_date::text, ', ' ORDER BY upload_date DESC) as portfolio_details
             FROM learner_portfolios
             GROUP BY learner_id
         )
-        SELECT 
+        SELECT
             learners.*,
             learner_qualifications.qualification AS highest_qualification,
             locations.suburb AS suburb,
@@ -352,11 +352,11 @@ public function get_learner_by_id($id) {
             CASE WHEN learners.disability_status = true THEN 'Yes' ELSE 'No' END AS disability_status,
             portfolio_info.portfolio_details
         FROM learners
-        LEFT JOIN learner_qualifications 
+        LEFT JOIN learner_qualifications
             ON learners.highest_qualification = learner_qualifications.id
-        LEFT JOIN locations 
+        LEFT JOIN locations
             ON learners.city_town_id = locations.location_id
-        LEFT JOIN employers 
+        LEFT JOIN employers
             ON learners.employer_id = employers.employer_id
         LEFT JOIN learner_placement_level AS numeracy_level_table
             ON learners.numeracy_level = numeracy_level_table.placement_level_id
@@ -371,15 +371,15 @@ public function get_learner_by_id($id) {
         $stmt = $db->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         $learner = $stmt->fetch(PDO::FETCH_OBJ);
-        
+
         if ($learner) {
             // Process portfolio details for the learner
             if (!empty($learner->portfolio_details)) {
                 $portfolios = [];
                 $dates = [];
-                
+
                 // Split the combined portfolio details
                 $portfolio_items = explode(', ', $learner->portfolio_details);
                 foreach ($portfolio_items as $item) {
@@ -387,7 +387,7 @@ public function get_learner_by_id($id) {
                     $portfolios[] = $path;
                     $dates[] = $date;
                 }
-                
+
                 $learner->scanned_portfolio = implode(', ', $portfolios);
                 $learner->portfolio_upload_dates = $dates;
             } else {
@@ -404,7 +404,7 @@ public function get_learner_by_id($id) {
 }
 
 
-    
+
         /*------------------YDCOZA-----------------------*/
         /* Update Learner Function                        */
         /* Updates learner details in the database using  */
@@ -415,7 +415,7 @@ public function get_learner_by_id($id) {
 
         /**
          * Update learner information in the database
-         * 
+         *
          * @param array $data Associative array of learner data
          * @return bool True on success, False on failure
          */
@@ -473,7 +473,7 @@ public function get_learner_by_id($id) {
 
                 // Construct the final SQL query
                 $sql = "UPDATE learners SET " . implode(', ', $sql_parts) . " WHERE id = :id";
-                
+
                     // Log the final SQL query (for debugging)
                     // error_log("Update SQL: " . $sql);
                     // error_log("Parameters: " . print_r($params, true));
@@ -506,7 +506,7 @@ public function get_learner_by_id($id) {
 
         /**
          * Validate a learner ID exists in the database
-         * 
+         *
          * @param int $id Learner ID to validate
          * @return bool True if learner exists, False otherwise
          */
@@ -515,7 +515,7 @@ public function get_learner_by_id($id) {
                 $pdo = $this->db->get_pdo();
                 $stmt = $pdo->prepare("SELECT COUNT(*) FROM learners WHERE id = :id");
                 $stmt->execute(['id' => $id]);
-                
+
                 return (bool)$stmt->fetchColumn();
             } catch (Exception $e) {
                 error_log("Error validating learner existence: " . $e->getMessage());
@@ -532,7 +532,7 @@ public function get_learner_by_id($id) {
         public function delete_learner($learner_id) {
             try {
                 $pdo = $this->db->get_pdo();
-                
+
                 // Start transaction
                 $pdo->beginTransaction();
 
@@ -584,7 +584,7 @@ public function get_learner_by_id($id) {
         $upload_dir = wp_upload_dir();
         $portfolio_dir = $upload_dir['basedir'] . '/portfolios/';
         $portfolio_paths = [];
-        
+
         // Ensure the portfolios directory exists
         if (!file_exists($portfolio_dir)) {
             wp_mkdir_p($portfolio_dir);
@@ -603,7 +603,7 @@ public function get_learner_by_id($id) {
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
                 $filename = $files['name'][$i];
                 $file_ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                
+
                 if ($file_ext === 'pdf') {
                     $new_filename = uniqid('portfolio_', true) . '.pdf';
                     $file_path = $portfolio_dir . $new_filename;
@@ -611,18 +611,18 @@ public function get_learner_by_id($id) {
 
                     if (move_uploaded_file($files['tmp_name'][$i], $file_path)) {
                         $portfolio_paths[] = $relative_path;
-                        
+
                         // Insert into learner_portfolios
                         $stmt = $pdo->prepare("
                             INSERT INTO learner_portfolios (
-                                learner_id, 
+                                learner_id,
                                 file_path
                             ) VALUES (
-                                :learner_id, 
+                                :learner_id,
                                 :file_path
                             )
                         ");
-                        
+
                         $stmt->execute([
                             ':learner_id' => $learner_id,
                             ':file_path' => $relative_path
@@ -636,33 +636,29 @@ public function get_learner_by_id($id) {
         if (!empty($portfolio_paths)) {
             // Convert array of paths to comma-separated string
             $portfolio_list = implode(', ', $portfolio_paths);
-            
+
             // Log the update attempt
             // error_log("Updating learner ID: " . $learner_id . " with portfolio paths: " . $portfolio_list);
-            
+
             // Update learners table
             $update_stmt = $pdo->prepare("
-                UPDATE learners 
-                SET scanned_portfolio = :portfolio_paths 
+                UPDATE learners
+                SET scanned_portfolio = :portfolio_paths
                 WHERE id = :learner_id
             ");
-            
+
             $update_result = $update_stmt->execute([
                 ':portfolio_paths' => $portfolio_list,
                 ':learner_id' => $learner_id
             ]);
-            
-            // Log the update result
-            if ($update_result) {
-                error_log("Successfully updated scanned_portfolio for learner ID: " . $learner_id);
-            } else {
-                error_log("Failed to update scanned_portfolio. Error: " . print_r($update_stmt->errorInfo(), true));
-            }
+
+            // Note: Removed verbose logging to keep debug.log clean
+            // Update result is handled by transaction success/failure below
         }
 
         // Commit transaction
         $pdo->commit();
-        
+
         return [
             'success' => true,
             'message' => 'Files uploaded and paths updated successfully',
@@ -686,16 +682,16 @@ public function get_learner_by_id($id) {
         try {
             $pdo = $this->db->get_pdo();
             $stmt = $pdo->prepare("
-                SELECT scanned_portfolio 
-                FROM learners 
+                SELECT scanned_portfolio
+                FROM learners
                 WHERE id = :learner_id
             ");
-            
+
             $stmt->execute([':learner_id' => $learner_id]);
             $result = $stmt->fetch(PDO::FETCH_COLUMN);
-            
+
             // error_log("Current scanned_portfolio value for learner ID {$learner_id}: " . ($result ?: 'NULL'));
-            
+
             return $result;
         } catch (Exception $e) {
             error_log("Error verifying portfolio update: " . $e->getMessage());
@@ -707,34 +703,34 @@ public function get_learner_by_id($id) {
         // learners-db.php
         public function get_learner_portfolios($learner_id) {
             $pdo = $this->db->get_pdo();
-            
+
             $stmt = $pdo->prepare("
-                SELECT portfolio_id, file_path, upload_date 
-                FROM learner_portfolios 
-                WHERE learner_id = :learner_id 
+                SELECT portfolio_id, file_path, upload_date
+                FROM learner_portfolios
+                WHERE learner_id = :learner_id
                 ORDER BY upload_date DESC
             ");
-            
+
             $stmt->execute([':learner_id' => $learner_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
 
 
-        // Use Proper File Permissions 
+        // Use Proper File Permissions
         // sudo chmod -R 666 /opt/lampp/htdocs/wecoza/wp-content/uploads/portfolios/*
         // sudo chmod 777 /opt/lampp/htdocs/wecoza/wp-content/uploads/portfolios
 
         public function deletePortfolioFile($portfolio_id) {
             try {
                 $pdo = $this->db->get_pdo();
-                
+
                 // Start transaction
                 $pdo->beginTransaction();
 
                 $stmt = $pdo->prepare("
-                    SELECT file_path, learner_id 
-                    FROM learner_portfolios 
+                    SELECT file_path, learner_id
+                    FROM learner_portfolios
                     WHERE portfolio_id = :portfolio_id
                 ");
                 $stmt->execute([':portfolio_id' => $portfolio_id]);
@@ -744,9 +740,9 @@ public function get_learner_by_id($id) {
                     // Get WordPress upload directory info
                     $upload_dir = wp_upload_dir();
                     $file_path = $upload_dir['basedir'] . '/' . $file['file_path'];
-                    
+
                     // error_log("Processing deletion for file: " . $file_path);
-                    
+
                     // Try to delete file if it exists
                     if (file_exists($file_path)) {
                         try {
@@ -762,16 +758,16 @@ public function get_learner_by_id($id) {
 
                     // Delete from learner_portfolios table
                     $deleteStmt = $pdo->prepare("
-                        DELETE FROM learner_portfolios 
+                        DELETE FROM learner_portfolios
                         WHERE portfolio_id = :portfolio_id
                     ");
                     $deleteStmt->execute([':portfolio_id' => $portfolio_id]);
 
                     // Get remaining portfolios for this learner
                     $remainingStmt = $pdo->prepare("
-                        SELECT file_path 
-                        FROM learner_portfolios 
-                        WHERE learner_id = :learner_id 
+                        SELECT file_path
+                        FROM learner_portfolios
+                        WHERE learner_id = :learner_id
                         ORDER BY upload_date DESC
                     ");
                     $remainingStmt->execute([':learner_id' => $file['learner_id']]);
@@ -779,8 +775,8 @@ public function get_learner_by_id($id) {
 
                     // Update learners table
                     $updateLearnerStmt = $pdo->prepare("
-                        UPDATE learners 
-                        SET scanned_portfolio = :portfolio_paths 
+                        UPDATE learners
+                        SET scanned_portfolio = :portfolio_paths
                         WHERE id = :learner_id
                     ");
                     $updateLearnerStmt->execute([

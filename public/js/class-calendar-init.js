@@ -39,14 +39,12 @@
 
     // Override the global initializeClassCalendar function to ensure multiMonthYear view is used
     window.initializeClassCalendar = function() {
-        console.log('Manual calendar initialization triggered with multiMonthYear view');
         if (typeof initializeCalendarInTab === 'function') {
             initializeCalendarInTab();
 
             // Ensure the calendar is using multiMonthYear view
             if (window.calendar && typeof window.calendar.changeView === 'function') {
                 window.calendar.changeView('multiMonthYear');
-                console.log('Calendar view set to multiMonthYear');
 
                 // Add public holidays to the calendar if available
                 if (typeof wecozaPublicHolidays !== 'undefined' && wecozaPublicHolidays.events) {
@@ -61,14 +59,8 @@
      */
     function addPublicHolidaysToCalendar() {
         if (!window.calendar || !wecozaPublicHolidays || !wecozaPublicHolidays.events) {
-            console.log('Cannot add public holidays: calendar or holiday data not available');
             return;
         }
-
-        console.log('Adding public holidays to calendar');
-
-        // Debug: Log all holidays
-        console.log('All holidays:', JSON.stringify(wecozaPublicHolidays.events));
 
         // Remove existing public holiday events to avoid duplicates
         const existingEvents = window.calendar.getEvents();
@@ -83,16 +75,12 @@
             // Get the date string from the event (YYYY-MM-DD)
             const holidayDate = holiday.start;
 
-            console.log('Adding public holiday:', holiday.title, 'on date:', holidayDate);
-
             // Parse the date parts to ensure correct date (avoid timezone issues)
             const [year, month, day] = holidayDate.split('-').map(Number);
 
             // Create a date object using the date parts
             // This preserves the day regardless of timezone
             const eventDate = new Date(year, month - 1, day);
-
-            console.log('Holiday date object:', eventDate.toDateString());
 
             // Check if this holiday has been overridden
             let isOverridden = false;
@@ -133,8 +121,6 @@
                 }
             });
         });
-
-        console.log('Added ' + wecozaPublicHolidays.events.length + ' public holidays to calendar');
     }
 
 })(jQuery);

@@ -38,9 +38,6 @@ function wecoza3_sql_query_admin_page() {
         $query_description = sanitize_textarea_field($_POST['query_description']);
         $sql_query = sanitize_textarea_field($_POST['sql_query']);
 
-        // Debugging: Log the form submission
-        error_log("Form submitted: Name = " . $query_name . ", Description = " . $query_description . ", SQL = " . $sql_query);
-
         // Call the add_query function
         Wecoza3_Logger::add_query($query_name, $query_description, $sql_query);
     }
@@ -135,10 +132,10 @@ function wecoza3_handle_sql_query_actions() {
         if ($_POST['wecoza3_action'] === 'edit_query' && isset($_POST['query_id'])) {
             // Update existing query
             $query_id = intval($_POST['query_id']);
-            
+
             // Encode the SQL query before saving it
             $encoded_sql_query = base64_encode(sanitize_textarea_field($_POST['sql_query']));
-            
+
             // Update the query in the database
             Wecoza3_Logger::update_query($query_id, $query_name, $query_description, $encoded_sql_query);
         } elseif ($_POST['wecoza3_action'] === 'edit_query' && isset($_POST['query_id'])) {

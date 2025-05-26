@@ -98,7 +98,7 @@ class PublicHolidayRepository {
         $formattedDate = $dateObj->format('Y-m-d');
 
         // Debug log
-        error_log("Adding holiday: {$name} on {$formattedDate}");
+        // error_log("Adding holiday: {$name} on {$formattedDate}");
 
         $this->holidays[] = new PublicHolidayModel(
             $formattedDate,
@@ -223,7 +223,7 @@ class PublicHolidayRepository {
 
             return true;
         } catch (\Exception $e) {
-            error_log("Error adding holiday: " . $e->getMessage());
+            // error_log("Error adding holiday: " . $e->getMessage());
             return false;
         }
     }

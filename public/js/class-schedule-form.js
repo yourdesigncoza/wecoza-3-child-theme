@@ -567,7 +567,6 @@ function getClassTypeHours(classTypeId) {
      * Recalculate end date based on class type, start date, and exception dates
      */
     function recalculateEndDate() {
-        console.log('Recalculating end date...');
         const startDate = $('#schedule_start_date').val();
         const classType = $('#class_type').val();
         const pattern = $('#schedule_pattern').val();
@@ -768,14 +767,7 @@ function getClassTypeHours(classTypeId) {
                                 !exceptionDates.includes(dateStr) &&
                                 (!isPublicHoliday || isHolidayOverridden)) {
                                 sessionsScheduled++;
-                                console.log('Session scheduled on:', dateStr, 'Sessions so far:', sessionsScheduled);
-                                if (isHolidayOverridden) {
-                                    console.log('Holiday overridden:', dateStr);
-                                }
-                            } else if (isPublicHoliday) {
-                                console.log('Public holiday skipped:', dateStr);
-                            } else if (exceptionDates.includes(dateStr)) {
-                                console.log('Exception date skipped:', dateStr);
+                                // Note: Removed verbose session logging to keep console clean
                             }
 
                             // Move to next day
@@ -1282,7 +1274,6 @@ function getClassTypeHours(classTypeId) {
             const existingOverrides = $holidayOverridesInput.val();
             if (existingOverrides) {
                 holidayOverrides = JSON.parse(existingOverrides);
-                console.log('Loaded existing holiday overrides:', holidayOverrides);
             }
         } catch (e) {
             console.error('Error parsing holiday overrides:', e);
@@ -1489,7 +1480,7 @@ function getClassTypeHours(classTypeId) {
             return;
         }
 
-        console.log('All holidays in range:', allHolidaysInRange);
+        // Note: Removed verbose holiday logging to keep console clean
 
         // Check which holidays conflict with the class schedule
         allHolidaysInRange.forEach(holiday => {
@@ -1866,7 +1857,6 @@ function getClassTypeHours(classTypeId) {
      * Update hidden schedule data fields
      */
     function updateScheduleData() {
-        console.log('Updating schedule data...');
         const $container = $('#schedule-data-container');
         $container.empty();
 
@@ -1937,7 +1927,6 @@ function getClassTypeHours(classTypeId) {
 
         // Update schedule tables if visible
         if (!$('#calendar-reference-container').hasClass('d-none')) {
-            console.log('Updating schedule tables after schedule data change');
             updateScheduleTables();
 
             // Create JSON data for statistics
