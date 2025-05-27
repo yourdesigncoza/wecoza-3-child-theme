@@ -49,7 +49,7 @@ function register_ajax_handlers() {
         $controller = new WeCoza\Controllers\ClassController();
         $controller->getClassSubjectsAjax();
     });
-    
+
     // Contact form AJAX handler
     \add_action('wp_ajax_wecoza_save_contact', 'WeCoza\\Controllers\\ContactController::saveContactAjax');
     \add_action('wp_ajax_nopriv_wecoza_save_contact', 'WeCoza\\Controllers\\ContactController::saveContactAjax');
@@ -66,7 +66,11 @@ function register_shortcodes() {
     $classController = new WeCoza\Controllers\ClassController();
     \add_shortcode('wecoza_capture_class', [$classController, 'captureClassShortcode']);
     \add_shortcode('wecoza_display_class', [$classController, 'displayClassShortcode']);
-    
+
+    // Phase 1: New shortcodes for create/update modes
+    \add_shortcode('wecoza_create_class', [$classController, 'createClassShortcode']);
+    \add_shortcode('wecoza_update_class', [$classController, 'updateClassShortcode']);
+
 }
 
 // Register shortcodes

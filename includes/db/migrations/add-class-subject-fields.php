@@ -43,5 +43,5 @@ if ($table_exists) {
 
     error_log('Database migration for class subject fields completed.');
 } else {
-    error_log('Table ' . $table_name . ' does not exist. Migration skipped.');
+    // error_log('Table ' . $table_name . ' does not exist. Migration skipped.');
 }

@@ -289,8 +289,34 @@ require_once WECOZA_CHILD_DIR . '/includes/db/migrations/add-class-subject-field
 ## WordPress Integration
 
 ### Shortcodes
-- **`[wecoza_capture_class]`** - Renders class capture form
+
+#### Class Form Shortcodes
+- **`[wecoza_capture_class]`** - Enhanced form with mode detection via URL parameters
+  - `?mode=create` - Create mode (default)
+  - `?mode=update&class_id=123` - Update mode with specific class
+- **`[wecoza_create_class]`** - Dedicated create form (always create mode)
+- **`[wecoza_update_class]`** - Dedicated update form (always update mode)
+  - `class_id="123"` attribute or `?class_id=123` URL parameter
+
+#### Class Display Shortcodes
 - **`[wecoza_display_class class_id="1"]`** - Displays specific class information
+
+#### Usage Examples
+```html
+<!-- Create-only page -->
+[wecoza_create_class redirect_url="/success/"]
+
+<!-- Update-only page -->
+[wecoza_update_class]
+<!-- Use with URL: ?class_id=123 -->
+
+<!-- Flexible page (backward compatible) -->
+[wecoza_capture_class]
+<!-- Use with URLs:
+     /page/ - Create mode
+     /page/?mode=update&class_id=123 - Update mode
+-->
+```
 
 ### Hooks & Filters
 - **`wp_enqueue_scripts`** - Enqueues class-related assets

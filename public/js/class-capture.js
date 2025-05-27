@@ -105,6 +105,9 @@ function showCustomAlert(message) {
 (function($) {
     'use strict';
 
+    // Global variables for holiday overrides
+    var holidayOverrides = {};
+
     // These variables are now declared globally at the top of the file
     // to make them accessible outside the IIFE
 
@@ -279,7 +282,9 @@ function showCustomAlert(message) {
      */
     function initializeSetaToggle() {
         // Handle SETA Funded selection change
-        document.getElementById('seta_funded').addEventListener('change', function() {
+        const setaFundedElement = document.getElementById('seta_funded');
+        if (setaFundedElement) {
+            setaFundedElement.addEventListener('change', function() {
             var setaContainer = document.getElementById('seta_container');
             var setaSelect = document.getElementById('seta_id');
 
@@ -294,15 +299,18 @@ function showCustomAlert(message) {
                 // Reset the SETA selection
                 setaSelect.value = '';
             }
-        });
+            });
+        }
 
         // Check initial state on page load
         var setaFunded = document.getElementById('seta_funded');
-        if (setaFunded.value === 'Yes') {
+        if (setaFunded && setaFunded.value === 'Yes') {
             var setaContainer = document.getElementById('seta_container');
             var setaSelect = document.getElementById('seta_id');
-            setaContainer.style.display = 'block';
-            setaSelect.setAttribute('required', 'required');
+            if (setaContainer && setaSelect) {
+                setaContainer.style.display = 'block';
+                setaSelect.setAttribute('required', 'required');
+            }
         }
     }
 
@@ -324,7 +332,9 @@ function showCustomAlert(message) {
         let examLearners = [];
 
         // Handle exam class selection change
-        document.getElementById('exam_class').addEventListener('change', function() {
+        const examClassElement = document.getElementById('exam_class');
+        if (examClassElement) {
+            examClassElement.addEventListener('change', function() {
             if (this.value === 'Yes') {
                 // Show exam type field and make it required
                 $examTypeContainer.show();
@@ -356,7 +366,8 @@ function showCustomAlert(message) {
                 $('#exam_learners_container').removeClass('border-danger');
                 $('#no-exam-learners-message').removeClass('alert-danger').addClass('alert-info');
             }
-        });
+            });
+        }
 
         // Function to update the exam learner select options based on class learners
         function updateExamLearnerOptions() {

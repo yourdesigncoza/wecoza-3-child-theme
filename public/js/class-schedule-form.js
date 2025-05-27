@@ -819,7 +819,7 @@ function getClassTypeHours(classTypeId) {
                                     isPublicHoliday = true;
 
                                     // Check if this holiday has been overridden
-                                    if (typeof holidayOverrides === 'object' && holidayOverrides[dateStr] && holidayOverrides[dateStr].override === true) {
+                                    if (typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[dateStr] && holidayOverrides[dateStr].override === true) {
                                         isHolidayOverridden = true;
                                     }
                                 }
@@ -980,7 +980,7 @@ function getClassTypeHours(classTypeId) {
                 if (holidayDate >= startDateObj && holidayDate <= endDateObj) {
                     // Check if this holiday has been overridden
                     let isOverridden = false;
-                    if (typeof holidayOverrides === 'object' && holidayOverrides[holiday.start]) {
+                    if (typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[holiday.start]) {
                         isOverridden = holidayOverrides[holiday.start].override;
                     }
 
@@ -1642,7 +1642,7 @@ function getClassTypeHours(classTypeId) {
 
             // Check if this holiday has an existing override
             let isOverridden = false;
-            if (holidayOverrides[holiday.start]) {
+            if (typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[holiday.start]) {
                 isOverridden = holidayOverrides[holiday.start].override;
 
                 // Update checkbox
@@ -1979,7 +1979,7 @@ function getClassTypeHours(classTypeId) {
                 if (holidayDate >= startDateObj && holidayDate <= endDateObj) {
                     // Check if this holiday has been overridden
                     let isOverridden = false;
-                    if (typeof holidayOverrides === 'object' && holidayOverrides[holiday.start]) {
+                    if (typeof holidayOverrides === 'object' && holidayOverrides !== null && holidayOverrides[holiday.start]) {
                         isOverridden = holidayOverrides[holiday.start].override;
                     }
 
