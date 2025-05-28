@@ -473,7 +473,7 @@ class ClassModel {
                 'date' => true
             ],
             'learner_ids' => [
-                'required' => false,
+                'required' => true,
                 'array' => true
             ]
         ];

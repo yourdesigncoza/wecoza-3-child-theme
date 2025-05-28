@@ -281,11 +281,7 @@ class ClassController {
         $validator = ClassModel::validate($validationData);
         $isValid = $validator->validate($validationData);
 
-        // Add custom validation for learners
-        if (empty($formData['learnerIds'])) {
-            $validator->addCustomError('learner_ids', 'At least one learner must be added to the class.');
-            $isValid = false;
-        }
+        // Additional custom validation can be added here if needed
 
         if (!$isValid) {
             error_log('Validation failed: ' . print_r($validator->getErrors(), true));

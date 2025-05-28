@@ -117,8 +117,21 @@ class ValidationService {
                     break;
 
                 case 'array':
+                    // Only validate array rule if the field is not already marked as required and empty
+                    // This prevents duplicate error messages for required array fields
                     if ($ruleValue && (!is_array($value) || empty($value))) {
-                        $this->addError($field, 'The ' . $this->formatFieldName($field) . ' field must contain at least one selection.');
+                        // Check if this field is also required and already has a required error
+                        $fieldRules = isset($this->rules[$field]) ? $this->rules[$field] : [];
+                        $isRequired = isset($fieldRules['required']) && $fieldRules['required'];
+                        $hasRequiredError = isset($this->errors[$field]) &&
+                            !empty(array_filter($this->errors[$field], function($error) {
+                                return strpos($error, 'field is required') !== false;
+                            }));
+
+                        // Only add array error if it's not a required field or doesn't have required error
+                        if (!$isRequired || !$hasRequiredError) {
+                            $this->addError($field, 'The ' . $this->formatFieldName($field) . ' field must contain at least one selection.');
+                        }
                     }
                     break;
 
