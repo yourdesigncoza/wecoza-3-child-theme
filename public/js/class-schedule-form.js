@@ -447,6 +447,7 @@ function getClassTypeHours(classTypeId) {
             // Update schedule data when date or reason changes
             $newRow.find('input, select').on('change', function() {
                 console.log('Exception date or reason changed');
+                console.log('Current exception date value:', $newRow.find('input[name="exception_dates[]"]').val());
 
                 // Validate exception date against class start date
                 const exceptionDate = $newRow.find('input[name="exception_dates[]"]').val();
@@ -588,6 +589,7 @@ function getClassTypeHours(classTypeId) {
                 });
 
                 console.log('Exception dates:', exceptionDates);
+                console.log('Exception date rows found:', $('#exception-dates-container .exception-date-row:not(.d-none)').length);
 
                 // Check for public holidays in the date range
                 // We'll calculate a rough end date first to determine the date range
@@ -626,7 +628,7 @@ function getClassTypeHours(classTypeId) {
 
                 // Calculate end date based on schedule pattern and exception dates
                 if (pattern && startDate) {
-                    const date = new Date(startDate);
+                    let date = new Date(startDate);
                     let sessionsScheduled = 0;
 
                     // Weekly pattern
