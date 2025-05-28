@@ -381,14 +381,18 @@ class ClassController {
         error_log('Raw class_learners_data: ' . (isset($data['class_learners_data']) ? $data['class_learners_data'] : 'NOT SET'));
 
         if (isset($data['class_learners_data']) && !empty($data['class_learners_data'])) {
-            $learnerData = json_decode($data['class_learners_data'], true);
+            // Decode HTML entities first (handles &quot; -> ")
+            $decodedJson = html_entity_decode($data['class_learners_data'], ENT_QUOTES, 'UTF-8');
+            error_log('HTML decoded JSON: ' . $decodedJson);
+
+            $learnerData = json_decode($decodedJson, true);
             error_log('Decoded learner data: ' . print_r($learnerData, true));
 
             if (is_array($learnerData)) {
                 $processed['learnerIds'] = array_map('intval', array_column($learnerData, 'id'));
                 error_log('Processed learner IDs: ' . print_r($processed['learnerIds'], true));
             } else {
-                error_log('Learner data is not an array after JSON decode');
+                error_log('Learner data is not an array after JSON decode. JSON error: ' . json_last_error_msg());
             }
         } else {
             error_log('class_learners_data field is empty or not set');
