@@ -80,8 +80,114 @@ class ClassController {
             'redirect_url' => '',
         ], $atts);
 
+        // Check for URL parameters to determine mode
+        $mode = isset($_GET['mode']) ? sanitize_text_field($_GET['mode']) : 'create';
+        $class_id = isset($_GET['class_id']) ? intval($_GET['class_id']) : 0;
+
+
+
+        // Handle different modes
+        if ($mode === 'update') {
+            // For testing: allow update mode without class_id to see all fields
+            if ($class_id <= 0) {
+                return $this->handleUpdateMode($atts, null); // Pass null for testing
+            }
+            return $this->handleUpdateMode($atts, $class_id);
+        } else {
+            return $this->handleCreateMode($atts);
+        }
+    }
+
+    /**
+     * Handle create class shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function createClassShortcode($atts) {
+        // Process shortcode attributes
+        $atts = \shortcode_atts([
+            'redirect_url' => '',
+        ], $atts);
+
+        return $this->handleCreateMode($atts);
+    }
+
+    /**
+     * Handle update class shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function updateClassShortcode($atts) {
+        // Process shortcode attributes
+        $atts = \shortcode_atts([
+            'class_id' => 0,
+            'redirect_url' => '',
+        ], $atts);
+
+        // Try to get class_id from shortcode attribute first, then URL parameter
+        $class_id = intval($atts['class_id']);
+        if ($class_id <= 0 && isset($_GET['class_id'])) {
+            $class_id = intval($_GET['class_id']);
+        }
+
+        // For testing: allow update mode without class_id
+        if ($class_id <= 0) {
+            return $this->handleUpdateMode($atts, null); // Pass null for testing
+        }
+
+        return $this->handleUpdateMode($atts, $class_id);
+    }
+
+    /**
+     * Handle create mode logic
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    private function handleCreateMode($atts) {
         // Get data for the view
         $viewData = [
+            'mode' => 'create',
+            'class_data' => null,
+            'clients' => $this->getClients(),
+            'sites' => $this->getSites(),
+            'agents' => $this->getAgents(),
+            'supervisors' => $this->getSupervisors(),
+            'learners' => $this->getLearnersExam(),
+            'setas' => MainController::getSeta(),
+            'class_types' => MainController::getClassType(),
+            'yes_no_options' => MainController::getYesNoOptions(),
+            'class_notes_options' => MainController::getClassNotesOptions(),
+            'redirect_url' => $atts['redirect_url']
+        ];
+
+        // Render the view
+        return \WeCoza\view('components/class-capture-form', $viewData);
+    }
+
+    /**
+     * Handle update mode logic
+     *
+     * @param array $atts Shortcode attributes
+     * @param int|null $class_id Class ID to update (null for testing)
+     * @return string HTML output
+     */
+    private function handleUpdateMode($atts, $class_id) {
+        // Get the class data (null for testing mode)
+        $class = null;
+        if ($class_id !== null) {
+            $class = ClassModel::getById($class_id);
+            if (!$class) {
+                return '<div class="alert alert-danger">Error: Class not found.</div>';
+            }
+        }
+
+        // Get data for the view
+        $viewData = [
+            'mode' => 'update',
+            'class_data' => $class,
             'clients' => $this->getClients(),
             'sites' => $this->getSites(),
             'agents' => $this->getAgents(),

@@ -11,7 +11,19 @@
 <!-- Class Schedule Form Section -->
 <div class="mb-4 mt-3">
    <h5 class="mb-3">Class Schedule</h5>
-   <p class="text-muted small mb-3">Set up the recurring schedule for this class.</p>
+
+   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
+      <!-- UPDATE MODE: Display existing schedule info -->
+      <div class="alert alert-success mb-3">
+         <h6 class="mb-2">Current Schedule</h6>
+         <p class="mb-1"><strong>Pattern:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html($data['class_data']->schedule_pattern ?? 'Not specified') : 'Loading...'; ?></p>
+         <p class="mb-1"><strong>Days:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html($data['class_data']->schedule_days ?? 'Not specified') : 'Loading...'; ?></p>
+         <p class="mb-0"><strong>Time:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html(($data['class_data']->start_time ?? '') . ' - ' . ($data['class_data']->end_time ?? '')) : 'Loading...'; ?></p>
+      </div>
+      <p class="text-muted small mb-3">Schedule is set. Use exception dates below to manage individual class cancellations.</p>
+   <?php else: ?>
+      <!-- CREATE MODE: Full schedule setup -->
+      <p class="text-muted small mb-3">Set up the recurring schedule for this class.</p>
 
    <!-- Schedule Pattern Selection -->
    <div class="row mb-3">
@@ -170,8 +182,10 @@
          </div>
       </div>
    </div>
+   <?php endif; ?>
 
-   <!-- Exception Dates -->
+   <!-- Exception Dates - UPDATE MODE ONLY -->
+   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
    <div class="mb-4">
       <h6 class="mb-2">Exception Dates</h6>
       <p class="text-muted small mb-3">Add dates when classes will not occur (e.g., holidays, client cancellations).</p>
@@ -220,8 +234,10 @@
       + Add Exception Date
       </button>
    </div>
+   <?php endif; ?>
 
-   <!-- Public Holidays Section -->
+   <!-- Public Holidays Section - UPDATE MODE ONLY -->
+   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
    <div class="mb-4">
       <h6 class="mb-2">Public Holidays in Schedule</h6>
       <p class="text-muted small mb-3">By default, classes are not scheduled on public holidays. The system will only show holidays that conflict with your class schedule (when a holiday falls on a scheduled class day). You can override specific holidays to include them in the schedule.</p>
@@ -259,6 +275,7 @@
          </div>
       </div>
    </div>
+   <?php endif; ?>
 
    <!-- Holiday Row Template (for JavaScript) -->
    <template id="holiday-row-template">
@@ -286,7 +303,8 @@
       <!-- These will be populated dynamically via JavaScript -->
    </div>
 
-   <!-- Schedule Statistics Section -->
+   <!-- Schedule Statistics Section - UPDATE MODE ONLY -->
+   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
    <!-- Schedule Statistics Toggle Button -->
    <div class="mt-3 mb-3">
       <button type="button" class="btn btn-outline-primary btn-sm" id="toggle-statistics-btn">
@@ -373,7 +391,7 @@
       </div>
    </div>
    </div>
-
+   <?php endif; ?>
 
    <!-- Debug JSON Data Display -->
    <!-- <div id="debug-json-container" class="mb-4">

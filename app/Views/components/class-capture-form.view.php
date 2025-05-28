@@ -71,8 +71,10 @@
       <!-- Class Schedule Form Section -->
       <?php include_once('class-capture-partials/class-schedule-form.php'); ?>
 
-      <!-- Class Date History Section -->
-      <?php include_once('class-capture-partials/date-history.php'); ?>
+      <!-- Class Date History Section - UPDATE MODE ONLY -->
+      <?php if ($data['mode'] === 'update'): ?>
+         <?php include_once('class-capture-partials/date-history.php'); ?>
+      <?php endif; ?>
 
       <!-- YDCOZA Replace With TableView -->
       <!-- Calendar Reference View (hidden by default) -->
@@ -99,10 +101,14 @@
       <?php include_once('class-capture-partials/assignments-dates.php'); ?>
 
       <?php echo section_divider(); ?>
-      <!-- Submit Button -->
+      <!-- Submit Button - Mode-aware text -->
       <div class="row mt-4">
          <div class="col-md-3">
-            <?php echo button('Add New Class', 'submit', 'primary'); ?>
+            <?php if ($data['mode'] === 'update'): ?>
+               <?php echo button('Update Class', 'submit', 'primary'); ?>
+            <?php else: ?>
+               <?php echo button('Add New Class', 'submit', 'primary'); ?>
+            <?php endif; ?>
          </div>
       </div>
    </div>
