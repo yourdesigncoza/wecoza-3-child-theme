@@ -89,7 +89,7 @@
    </button>
 </div>
 
-<!-- Project Supervisor -->
+<!-- Project Supervisor and Delivery Date -->
 <div class="row mb-4">
    <div class="col-md-5 mb-3">
       <div class="form-floating">
@@ -101,6 +101,15 @@
          </select>
          <label for="project_supervisor">Project Supervisor <span class="text-danger">*</span></label>
          <div class="invalid-feedback">Please select a project supervisor.</div>
+         <div class="valid-feedback">Looks good!</div>
+      </div>
+   </div>
+
+   <div class="col-md-5 mb-3">
+      <div class="form-floating">
+         <input type="date" id="delivery_date" name="delivery_date" class="form-control" placeholder="YYYY-MM-DD" required>
+         <label for="delivery_date">Delivery Date <span class="text-danger">*</span></label>
+         <div class="invalid-feedback">Please select the delivery date.</div>
          <div class="valid-feedback">Looks good!</div>
       </div>
    </div>

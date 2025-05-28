@@ -1,8 +1,9 @@
 <?php
 /**
- * ClassModel.php
+ * ClassesModel_beta.php
  *
- * Model for class/training session data
+ * Beta version of ClassModel optimized for the new single-table schema
+ * Uses the optimized 'classes' table with JSONB columns instead of separate tables
  */
 
 namespace WeCoza\Models\Assessment;
@@ -12,31 +13,32 @@ use WeCoza\Services\Validation\ValidationService;
 
 class ClassModel {
     /**
-     * Class properties
+     * Class properties - mapped to optimized schema
      */
     private $id;
     private $clientId;
     private $siteId;
-    private $siteAddress;
+    private $classAddressLine;
     private $classType;
     private $classSubject;
     private $classCode;
     private $classDuration;
-    private $classStartDate;
-    private $classNotes = [];
+    private $originalStartDate;
     private $setaFunded;
-    private $setaId;
+    private $seta;
     private $examClass;
     private $examType;
     private $qaVisitDates;
     private $classAgent;
-    private $projectSupervisor;
-    private $learnerIds = [];
+    private $initialClassAgent;
+    private $initialAgentStartDate;
+    private $projectSupervisorId;
     private $deliveryDate;
+    private $learnerIds = [];
     private $backupAgentIds = [];
     private $scheduleData = [];
-    private $stopDates = [];
-    private $restartDates = [];
+    private $stopRestartDates = [];
+    private $classNotesData = [];
     private $createdAt;
     private $updatedAt;
 
@@ -50,41 +52,60 @@ class ClassModel {
     }
 
     /**
-     * Hydrate model with data
-     *
-     * @param array $data Data to populate model
+     * Hydrate model from database row or form data
      */
-    public function hydrate($data) {
-        foreach ($data as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (method_exists($this, $method)) {
-                $this->$method($value);
-            }
+    private function hydrate($data) {
+        // Map database fields to properties
+        $this->setId($data['class_id'] ?? $data['id'] ?? null);
+        $this->setClientId($data['client_id'] ?? null);
+        $this->setSiteId($data['site_id'] ?? null);
+        $this->setClassAddressLine($data['class_address_line'] ?? $data['site_address'] ?? null);
+        $this->setClassType($data['class_type'] ?? null);
+        $this->setClassSubject($data['class_subject'] ?? null);
+        $this->setClassCode($data['class_code'] ?? null);
+        $this->setClassDuration($data['class_duration'] ?? null);
+        $this->setOriginalStartDate($data['original_start_date'] ?? $data['class_start_date'] ?? null);
+        $this->setSetaFunded($data['seta_funded'] ?? null);
+        $this->setSeta($data['seta'] ?? $data['seta_id'] ?? null);
+        $this->setExamClass($data['exam_class'] ?? null);
+        $this->setExamType($data['exam_type'] ?? null);
+        $this->setQaVisitDates($data['qa_visit_dates'] ?? null);
+        $this->setClassAgent($data['class_agent'] ?? null);
+        $this->setInitialClassAgent($data['initial_class_agent'] ?? null);
+        $this->setInitialAgentStartDate($data['initial_agent_start_date'] ?? null);
+        $this->setProjectSupervisorId($data['project_supervisor_id'] ?? $data['project_supervisor'] ?? null);
+        $this->setDeliveryDate($data['delivery_date'] ?? null);
+        $this->setCreatedAt($data['created_at'] ?? null);
+        $this->setUpdatedAt($data['updated_at'] ?? null);
+
+        // Handle JSONB arrays
+        $this->setLearnerIds($this->parseJsonField($data['learner_ids'] ?? $data['add_learner'] ?? []));
+        $this->setBackupAgentIds($this->parseJsonField($data['backup_agent_ids'] ?? $data['backup_agent'] ?? []));
+        $this->setScheduleData($this->parseJsonField($data['schedule_data'] ?? $data['scheduleData'] ?? []));
+        $this->setStopRestartDates($this->parseJsonField($data['stop_restart_dates'] ?? []));
+        $this->setClassNotesData($this->parseJsonField($data['class_notes_data'] ?? $data['class_notes'] ?? []));
+    }
+
+    /**
+     * Parse JSON field from database or form data
+     */
+    private function parseJsonField($field) {
+        if (is_string($field)) {
+            return json_decode($field, true) ?: [];
         }
+        return is_array($field) ? $field : [];
     }
 
     /**
      * Get class by ID
-     *
-     * @param int $id Class ID
-     * @return ClassModel|null
      */
     public static function getById($id) {
         try {
             $db = DatabaseService::getInstance();
-            $stmt = $db->query("SELECT * FROM wecoza_classes WHERE id = ?", [$id]);
+            $stmt = $db->query("SELECT * FROM classes WHERE class_id = ?", [$id]);
 
             if ($row = $stmt->fetch()) {
-                $class = new self($row);
-
-                // Load related data
-                $class->loadScheduleData();
-                $class->loadStopRestartDates();
-                $class->loadLearners();
-                $class->loadBackupAgents();
-                $class->loadClassNotes();
-
-                return $class;
+                return new self($row);
             }
 
             return null;
@@ -95,63 +116,81 @@ class ClassModel {
     }
 
     /**
-     * Save class data
-     *
-     * @return bool Success status
+     * Save class data to optimized schema
      */
     public function save() {
+        error_log('=== ClassModel::save() START ===');
         try {
             $db = DatabaseService::getInstance();
+            error_log('Database instance obtained');
+
             $db->beginTransaction();
+            error_log('Transaction started');
 
             $now = date('Y-m-d H:i:s');
             $this->setCreatedAt($now);
             $this->setUpdatedAt($now);
 
-            // Insert main class record
-            $sql = "INSERT INTO wecoza_classes (
-                client_id, site_id, site_address, class_type, class_subject, class_code, class_duration,
-                class_start_date, seta_funded, seta_id, exam_class, exam_type, qa_visit_dates,
-                class_agent, project_supervisor, delivery_date, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Prepare stop/restart dates as JSONB
+            $stopRestartJson = $this->prepareStopRestartDates();
+            error_log('Stop/restart dates prepared: ' . $stopRestartJson);
+
+            // Insert into single classes table
+            $sql = "INSERT INTO classes (
+                client_id, site_id, class_address_line, class_type, class_subject,
+                class_code, class_duration, original_start_date, seta_funded, seta,
+                exam_class, exam_type, qa_visit_dates, class_agent, initial_class_agent,
+                initial_agent_start_date, project_supervisor_id, delivery_date,
+                learner_ids, backup_agent_ids, schedule_data, stop_restart_dates,
+                class_notes_data, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $params = [
                 $this->getClientId(),
                 $this->getSiteId(),
-                $this->getSiteAddress(),
+                $this->getClassAddressLine(),
                 $this->getClassType(),
                 $this->getClassSubject(),
                 $this->getClassCode(),
                 $this->getClassDuration(),
-                $this->getClassStartDate(),
+                $this->getOriginalStartDate(),
                 $this->getSetaFunded(),
-                $this->getSetaId(),
+                $this->getSeta(),
                 $this->getExamClass(),
                 $this->getExamType(),
                 $this->getQaVisitDates(),
                 $this->getClassAgent(),
-                $this->getProjectSupervisor(),
+                $this->getInitialClassAgent(),
+                $this->getInitialAgentStartDate(),
+                $this->getProjectSupervisorId(),
                 $this->getDeliveryDate(),
+                json_encode($this->getLearnerIds()),
+                json_encode($this->getBackupAgentIds()),
+                json_encode($this->getScheduleData()),
+                $stopRestartJson,
+                json_encode($this->getClassNotesData()),
                 $this->getCreatedAt(),
                 $this->getUpdatedAt()
             ];
+
+            error_log('Executing SQL: ' . $sql);
+            error_log('With params: ' . print_r($params, true));
 
             $db->query($sql, $params);
             $classId = $db->lastInsertId();
             $this->setId($classId);
 
-            // Save related data
-            $this->saveScheduleData($classId);
-            $this->saveStopRestartDates($classId);
-            $this->saveLearners($classId);
-            $this->saveBackupAgents($classId);
-            $this->saveClassNotes($classId);
+            error_log('Class inserted with ID: ' . $classId);
 
             $db->commit();
+            error_log('Transaction committed successfully');
             return true;
         } catch (\Exception $e) {
+            error_log('Exception in ClassModel::save(): ' . $e->getMessage());
+            error_log('Exception trace: ' . $e->getTraceAsString());
             if ($db->inTransaction()) {
                 $db->rollback();
+                error_log('Transaction rolled back');
             }
             error_log('Error saving class: ' . $e->getMessage());
             return false;
@@ -160,8 +199,6 @@ class ClassModel {
 
     /**
      * Update class data
-     *
-     * @return bool Success status
      */
     public function update() {
         try {
@@ -169,49 +206,31 @@ class ClassModel {
             $db->beginTransaction();
 
             $this->setUpdatedAt(date('Y-m-d H:i:s'));
+            $stopRestartJson = $this->prepareStopRestartDates();
 
-            // Update main class record
-            $sql = "UPDATE wecoza_classes SET
-                client_id = ?, site_id = ?, site_address = ?, class_type = ?,
-                class_subject = ?, class_code = ?, class_duration = ?,
-                class_start_date = ?, seta_funded = ?, seta_id = ?, exam_class = ?,
-                exam_type = ?, qa_visit_dates = ?, class_agent = ?, project_supervisor = ?,
-                delivery_date = ?, updated_at = ?
-                WHERE id = ?";
+            $sql = "UPDATE classes SET
+                client_id = ?, site_id = ?, class_address_line = ?, class_type = ?,
+                class_subject = ?, class_code = ?, class_duration = ?, original_start_date = ?,
+                seta_funded = ?, seta = ?, exam_class = ?, exam_type = ?, qa_visit_dates = ?,
+                class_agent = ?, initial_class_agent = ?, initial_agent_start_date = ?,
+                project_supervisor_id = ?, delivery_date = ?, learner_ids = ?, backup_agent_ids = ?,
+                schedule_data = ?, stop_restart_dates = ?, class_notes_data = ?, updated_at = ?
+                WHERE class_id = ?";
 
             $params = [
-                $this->getClientId(),
-                $this->getSiteId(),
-                $this->getSiteAddress(),
-                $this->getClassType(),
-                $this->getClassSubject(),
-                $this->getClassCode(),
-                $this->getClassDuration(),
-                $this->getClassStartDate(),
-                $this->getSetaFunded(),
-                $this->getSetaId(),
-                $this->getExamClass(),
-                $this->getExamType(),
-                $this->getQaVisitDates(),
-                $this->getClassAgent(),
-                $this->getProjectSupervisor(),
-                $this->getDeliveryDate(),
-                $this->getUpdatedAt(),
-                $this->getId()
+                $this->getClientId(), $this->getSiteId(), $this->getClassAddressLine(),
+                $this->getClassType(), $this->getClassSubject(), $this->getClassCode(),
+                $this->getClassDuration(), $this->getOriginalStartDate(), $this->getSetaFunded(),
+                $this->getSeta(), $this->getExamClass(), $this->getExamType(),
+                $this->getQaVisitDates(), $this->getClassAgent(), $this->getInitialClassAgent(),
+                $this->getInitialAgentStartDate(), $this->getProjectSupervisorId(),
+                $this->getDeliveryDate(), json_encode($this->getLearnerIds()),
+                json_encode($this->getBackupAgentIds()), json_encode($this->getScheduleData()),
+                $stopRestartJson, json_encode($this->getClassNotesData()),
+                $this->getUpdatedAt(), $this->getId()
             ];
 
             $db->query($sql, $params);
-
-            // Update related data - first delete existing
-            $this->deleteRelatedData();
-
-            // Then save new data
-            $this->saveScheduleData($this->getId());
-            $this->saveStopRestartDates($this->getId());
-            $this->saveLearners($this->getId());
-            $this->saveBackupAgents($this->getId());
-            $this->saveClassNotes($this->getId());
-
             $db->commit();
             return true;
         } catch (\Exception $e) {
@@ -225,486 +244,181 @@ class ClassModel {
 
     /**
      * Delete class
-     *
-     * @return bool Success status
      */
     public function delete() {
         try {
             $db = DatabaseService::getInstance();
-            $db->beginTransaction();
-
-            // Delete related data
-            $this->deleteRelatedData();
-
-            // Delete main class record
-            $db->query("DELETE FROM wecoza_classes WHERE id = ?", [$this->getId()]);
-
-            $db->commit();
+            $db->query("DELETE FROM classes WHERE class_id = ?", [$this->getId()]);
             return true;
         } catch (\Exception $e) {
-            if ($db->inTransaction()) {
-                $db->rollback();
-            }
             error_log('Error deleting class: ' . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Delete related data
+     * Prepare stop/restart dates for JSONB storage
      */
-    private function deleteRelatedData() {
-        $db = DatabaseService::getInstance();
-        $classId = $this->getId();
-
-        $db->query("DELETE FROM wecoza_class_schedule WHERE class_id = ?", [$classId]);
-        $db->query("DELETE FROM wecoza_class_dates WHERE class_id = ?", [$classId]);
-        $db->query("DELETE FROM wecoza_class_learners WHERE class_id = ?", [$classId]);
-        $db->query("DELETE FROM wecoza_class_backup_agents WHERE class_id = ?", [$classId]);
-        $db->query("DELETE FROM wecoza_class_notes WHERE class_id = ?", [$classId]);
-    }
-
-    /**
-     * Load schedule data
-     */
-    private function loadScheduleData() {
-        $db = DatabaseService::getInstance();
-        $stmt = $db->query("SELECT * FROM wecoza_class_schedule WHERE class_id = ?", [$this->getId()]);
-        $scheduleData = [];
-
-        while ($row = $stmt->fetch()) {
-            $scheduleData[] = [
-                'day' => $row['day'],
-                'date' => $row['date'],
-                'start_time' => $row['start_time'],
-                'end_time' => $row['end_time'],
-                'notes' => $row['notes'],
-                'type' => $row['type']
-            ];
-        }
-
-        $this->setScheduleData($scheduleData);
-    }
-
-    /**
-     * Save schedule data
-     *
-     * @param int $classId Class ID
-     */
-    private function saveScheduleData($classId) {
-        $db = DatabaseService::getInstance();
-        $scheduleData = $this->getScheduleData();
-
-        if (empty($scheduleData)) {
-            return;
-        }
-
-        $sql = "INSERT INTO wecoza_class_schedule (class_id, day, date, start_time, end_time, notes, type)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        foreach ($scheduleData as $schedule) {
-            $params = [
-                $classId,
-                $schedule['day'],
-                $schedule['date'],
-                $schedule['start_time'],
-                $schedule['end_time'],
-                $schedule['notes'],
-                $schedule['type']
-            ];
-
-            $db->query($sql, $params);
-        }
-    }
-
-    /**
-     * Load stop/restart dates
-     */
-    private function loadStopRestartDates() {
-        $db = DatabaseService::getInstance();
-        $stmt = $db->query("SELECT * FROM wecoza_class_dates WHERE class_id = ?", [$this->getId()]);
-        $stopDates = [];
-        $restartDates = [];
-
-        while ($row = $stmt->fetch()) {
-            $stopDates[] = $row['stop_date'];
-            $restartDates[] = $row['restart_date'];
-        }
-
-        $this->setStopDates($stopDates);
-        $this->setRestartDates($restartDates);
-    }
-
-    /**
-     * Save stop/restart dates
-     *
-     * @param int $classId Class ID
-     */
-    private function saveStopRestartDates($classId) {
-        $db = DatabaseService::getInstance();
+    private function prepareStopRestartDates() {
         $stopDates = $this->getStopDates();
         $restartDates = $this->getRestartDates();
+        $combined = [];
 
-        if (empty($stopDates) || empty($restartDates)) {
-            return;
-        }
-
-        $sql = "INSERT INTO wecoza_class_dates (class_id, stop_date, restart_date) VALUES (?, ?, ?)";
-
-        for ($i = 0; $i < count($stopDates); $i++) {
-            if (empty($stopDates[$i]) || empty($restartDates[$i])) {
-                continue;
+        if (!empty($stopDates) && !empty($restartDates)) {
+            for ($i = 0; $i < max(count($stopDates), count($restartDates)); $i++) {
+                if (!empty($stopDates[$i]) || !empty($restartDates[$i])) {
+                    $combined[] = [
+                        'stop_date' => $stopDates[$i] ?? null,
+                        'restart_date' => $restartDates[$i] ?? null
+                    ];
+                }
             }
-
-            $params = [
-                $classId,
-                $stopDates[$i],
-                $restartDates[$i]
-            ];
-
-            $db->query($sql, $params);
-        }
-    }
-
-    /**
-     * Load learners
-     */
-    private function loadLearners() {
-        $db = DatabaseService::getInstance();
-        $stmt = $db->query("SELECT learner_id FROM wecoza_class_learners WHERE class_id = ?", [$this->getId()]);
-        $learnerIds = [];
-
-        while ($row = $stmt->fetch()) {
-            $learnerIds[] = $row['learner_id'];
         }
 
-        $this->setLearnerIds($learnerIds);
+        return json_encode($combined);
     }
 
-    /**
-     * Save learners
-     *
-     * @param int $classId Class ID
-     */
-    private function saveLearners($classId) {
-        $db = DatabaseService::getInstance();
-        $learnerIds = $this->getLearnerIds();
+    // Getters and Setters for all properties
+    public function getId() { return $this->id; }
+    public function setId($id) { $this->id = $id; return $this; }
 
-        if (empty($learnerIds)) {
-            return;
-        }
-
-        $sql = "INSERT INTO wecoza_class_learners (class_id, learner_id) VALUES (?, ?)";
-
-        foreach ($learnerIds as $learnerId) {
-            $db->query($sql, [$classId, $learnerId]);
-        }
-    }
-
-    /**
-     * Load backup agents
-     */
-    private function loadBackupAgents() {
-        $db = DatabaseService::getInstance();
-        $stmt = $db->query("SELECT agent_id FROM wecoza_class_backup_agents WHERE class_id = ?", [$this->getId()]);
-        $agentIds = [];
-
-        while ($row = $stmt->fetch()) {
-            $agentIds[] = $row['agent_id'];
-        }
-
-        $this->setBackupAgentIds($agentIds);
-    }
-
-    /**
-     * Save backup agents
-     *
-     * @param int $classId Class ID
-     */
-    private function saveBackupAgents($classId) {
-        $db = DatabaseService::getInstance();
-        $agentIds = $this->getBackupAgentIds();
-
-        if (empty($agentIds)) {
-            return;
-        }
-
-        $sql = "INSERT INTO wecoza_class_backup_agents (class_id, agent_id) VALUES (?, ?)";
-
-        foreach ($agentIds as $agentId) {
-            $db->query($sql, [$classId, $agentId]);
-        }
-    }
-
-
-
-    /**
-     * Load class notes
-     */
-    private function loadClassNotes() {
-        $db = DatabaseService::getInstance();
-        $stmt = $db->query("SELECT note_id FROM wecoza_class_notes WHERE class_id = ?", [$this->getId()]);
-        $noteIds = [];
-
-        while ($row = $stmt->fetch()) {
-            $noteIds[] = $row['note_id'];
-        }
-
-        $this->setClassNotes($noteIds);
-    }
-
-    /**
-     * Save class notes
-     *
-     * @param int $classId Class ID
-     */
-    private function saveClassNotes($classId) {
-        $db = DatabaseService::getInstance();
-        $noteIds = $this->getClassNotes();
-
-        if (empty($noteIds)) {
-            return;
-        }
-
-        $sql = "INSERT INTO wecoza_class_notes (class_id, note_id) VALUES (?, ?)";
-
-        foreach ($noteIds as $noteId) {
-            $db->query($sql, [$classId, $noteId]);
-        }
-    }
-
-    // Getters and setters
-    public function getId() {
-        return $this->id;
-    }
-
-    public function setId($id) {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function getClientId() {
-        return $this->clientId;
-    }
-
+    public function getClientId() { return $this->clientId; }
     public function setClientId($clientId) {
-        $this->clientId = $clientId;
+        $this->clientId = is_numeric($clientId) ? intval($clientId) : null;
         return $this;
     }
 
-    public function getSiteId() {
-        return $this->siteId;
-    }
-
+    public function getSiteId() { return $this->siteId; }
     public function setSiteId($siteId) {
-        $this->siteId = $siteId;
+        $this->siteId = is_string($siteId) || is_numeric($siteId) ? $siteId : null;
         return $this;
     }
 
-    public function getSiteAddress() {
-        return $this->siteAddress;
-    }
+    public function getClassAddressLine() { return $this->classAddressLine; }
+    public function setClassAddressLine($classAddressLine) { $this->classAddressLine = $classAddressLine; return $this; }
 
-    public function setSiteAddress($siteAddress) {
-        $this->siteAddress = $siteAddress;
-        return $this;
-    }
+    public function getClassType() { return $this->classType; }
+    public function setClassType($classType) { $this->classType = $classType; return $this; }
 
-    public function getClassType() {
-        return $this->classType;
-    }
+    public function getClassSubject() { return $this->classSubject; }
+    public function setClassSubject($classSubject) { $this->classSubject = $classSubject; return $this; }
 
-    public function setClassType($classType) {
-        $this->classType = $classType;
-        return $this;
-    }
+    public function getClassCode() { return $this->classCode; }
+    public function setClassCode($classCode) { $this->classCode = $classCode; return $this; }
 
-    public function getClassSubject() {
-        return $this->classSubject;
-    }
+    public function getClassDuration() { return $this->classDuration; }
+    public function setClassDuration($classDuration) { $this->classDuration = $classDuration; return $this; }
 
-    public function setClassSubject($classSubject) {
-        $this->classSubject = $classSubject;
-        return $this;
-    }
+    public function getOriginalStartDate() { return $this->originalStartDate; }
+    public function setOriginalStartDate($originalStartDate) { $this->originalStartDate = $originalStartDate; return $this; }
 
-    public function getClassCode() {
-        return $this->classCode;
-    }
-
-    public function setClassCode($classCode) {
-        $this->classCode = $classCode;
-        return $this;
-    }
-
-    public function getClassDuration() {
-        return $this->classDuration;
-    }
-
-    public function setClassDuration($classDuration) {
-        $this->classDuration = $classDuration;
-        return $this;
-    }
-
-    public function getClassStartDate() {
-        return $this->classStartDate;
-    }
-
-    public function setClassStartDate($classStartDate) {
-        $this->classStartDate = $classStartDate;
-        return $this;
-    }
-
-
-
-    public function getClassNotes() {
-        return $this->classNotes;
-    }
-
-    public function setClassNotes($classNotes) {
-        $this->classNotes = $classNotes;
-        return $this;
-    }
-
-    public function getSetaFunded() {
-        return $this->setaFunded;
-    }
-
+    public function getSetaFunded() { return $this->setaFunded; }
     public function setSetaFunded($setaFunded) {
-        $this->setaFunded = $setaFunded;
+        // Convert Yes/No to boolean for database
+        if ($setaFunded === 'Yes') {
+            $this->setaFunded = true;
+        } elseif ($setaFunded === 'No') {
+            $this->setaFunded = false;
+        } else {
+            $this->setaFunded = is_bool($setaFunded) ? $setaFunded : null;
+        }
         return $this;
     }
 
-    public function getSetaId() {
-        return $this->setaId;
-    }
-
-    public function setSetaId($setaId) {
-        $this->setaId = $setaId;
+    public function getSeta() { return $this->seta; }
+    public function setSeta($seta) {
+        $this->seta = is_string($seta) ? $seta : null;
         return $this;
     }
 
-    public function getExamClass() {
-        return $this->examClass;
-    }
-
+    public function getExamClass() { return $this->examClass; }
     public function setExamClass($examClass) {
-        $this->examClass = $examClass;
+        // Convert Yes/No to boolean for database
+        if ($examClass === 'Yes') {
+            $this->examClass = true;
+        } elseif ($examClass === 'No') {
+            $this->examClass = false;
+        } else {
+            $this->examClass = is_bool($examClass) ? $examClass : null;
+        }
         return $this;
     }
 
-    public function getExamType() {
-        return $this->examType;
-    }
+    public function getExamType() { return $this->examType; }
+    public function setExamType($examType) { $this->examType = $examType; return $this; }
 
-    public function setExamType($examType) {
-        $this->examType = $examType;
-        return $this;
-    }
+    public function getQaVisitDates() { return $this->qaVisitDates; }
+    public function setQaVisitDates($qaVisitDates) { $this->qaVisitDates = $qaVisitDates; return $this; }
 
-    public function getQaVisitDates() {
-        return $this->qaVisitDates;
-    }
-
-    public function setQaVisitDates($qaVisitDates) {
-        $this->qaVisitDates = $qaVisitDates;
-        return $this;
-    }
-
-    public function getClassAgent() {
-        return $this->classAgent;
-    }
-
+    public function getClassAgent() { return $this->classAgent; }
     public function setClassAgent($classAgent) {
-        $this->classAgent = $classAgent;
+        $this->classAgent = is_numeric($classAgent) ? intval($classAgent) : null;
         return $this;
     }
 
-    public function getProjectSupervisor() {
-        return $this->projectSupervisor;
-    }
-
-    public function setProjectSupervisor($projectSupervisor) {
-        $this->projectSupervisor = $projectSupervisor;
+    public function getInitialClassAgent() { return $this->initialClassAgent; }
+    public function setInitialClassAgent($initialClassAgent) {
+        $this->initialClassAgent = is_numeric($initialClassAgent) ? intval($initialClassAgent) : null;
         return $this;
     }
 
-    public function getLearnerIds() {
-        return $this->learnerIds;
-    }
-
-    public function setLearnerIds($learnerIds) {
-        $this->learnerIds = $learnerIds;
+    public function getInitialAgentStartDate() { return $this->initialAgentStartDate; }
+    public function setInitialAgentStartDate($initialAgentStartDate) {
+        $this->initialAgentStartDate = is_string($initialAgentStartDate) ? $initialAgentStartDate : null;
         return $this;
     }
 
-    public function getDeliveryDate() {
-        return $this->deliveryDate;
-    }
-
-    public function setDeliveryDate($deliveryDate) {
-        $this->deliveryDate = $deliveryDate;
+    public function getProjectSupervisorId() { return $this->projectSupervisorId; }
+    public function setProjectSupervisorId($projectSupervisorId) {
+        $this->projectSupervisorId = is_numeric($projectSupervisorId) ? intval($projectSupervisorId) : null;
         return $this;
     }
 
-    public function getBackupAgentIds() {
-        return $this->backupAgentIds;
-    }
+    public function getDeliveryDate() { return $this->deliveryDate; }
+    public function setDeliveryDate($deliveryDate) { $this->deliveryDate = $deliveryDate; return $this; }
 
-    public function setBackupAgentIds($backupAgentIds) {
-        $this->backupAgentIds = $backupAgentIds;
-        return $this;
-    }
+    public function getLearnerIds() { return $this->learnerIds; }
+    public function setLearnerIds($learnerIds) { $this->learnerIds = is_array($learnerIds) ? $learnerIds : []; return $this; }
 
-    public function getScheduleData() {
-        return $this->scheduleData;
-    }
+    public function getBackupAgentIds() { return $this->backupAgentIds; }
+    public function setBackupAgentIds($backupAgentIds) { $this->backupAgentIds = is_array($backupAgentIds) ? $backupAgentIds : []; return $this; }
 
-    public function setScheduleData($scheduleData) {
-        $this->scheduleData = $scheduleData;
-        return $this;
-    }
+    public function getScheduleData() { return $this->scheduleData; }
+    public function setScheduleData($scheduleData) { $this->scheduleData = is_array($scheduleData) ? $scheduleData : []; return $this; }
 
+    public function getStopRestartDates() { return $this->stopRestartDates; }
+    public function setStopRestartDates($stopRestartDates) { $this->stopRestartDates = is_array($stopRestartDates) ? $stopRestartDates : []; return $this; }
+
+    // Helper methods for stop/restart dates (for backward compatibility)
     public function getStopDates() {
-        return $this->stopDates;
+        return array_column($this->stopRestartDates, 'stop_date');
     }
 
     public function setStopDates($stopDates) {
-        $this->stopDates = $stopDates;
+        // This will be handled by prepareStopRestartDates()
         return $this;
     }
 
     public function getRestartDates() {
-        return $this->restartDates;
+        return array_column($this->stopRestartDates, 'restart_date');
     }
 
     public function setRestartDates($restartDates) {
-        $this->restartDates = $restartDates;
+        // This will be handled by prepareStopRestartDates()
         return $this;
     }
 
-    public function getCreatedAt() {
-        return $this->createdAt;
-    }
+    public function getClassNotesData() { return $this->classNotesData; }
+    public function setClassNotesData($classNotesData) { $this->classNotesData = is_array($classNotesData) ? $classNotesData : []; return $this; }
 
-    public function setCreatedAt($createdAt) {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
+    public function getCreatedAt() { return $this->createdAt; }
+    public function setCreatedAt($createdAt) { $this->createdAt = $createdAt; return $this; }
 
-    public function getUpdatedAt() {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt($updatedAt) {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
+    public function getUpdatedAt() { return $this->updatedAt; }
+    public function setUpdatedAt($updatedAt) { $this->updatedAt = $updatedAt; return $this; }
 
     /**
-     * Get validation rules for class data
-     *
-     * @return array Validation rules
+     * Get validation rules for class data (updated for new schema)
      */
     public static function getValidationRules() {
         return [
@@ -713,8 +427,7 @@ class ClassModel {
                 'numeric' => true
             ],
             'site_id' => [
-                'required' => true,
-                'numeric' => true
+                'required' => true
             ],
             'class_type' => [
                 'required' => true
@@ -723,7 +436,7 @@ class ClassModel {
                 'required' => true
             ],
             'class_code' => [
-                'required' => true
+                'required' => false
             ],
             'class_start_date' => [
                 'required' => true,
@@ -733,7 +446,7 @@ class ClassModel {
                 'required' => true,
                 'in_array' => ['Yes', 'No']
             ],
-            'seta_id' => [
+            'seta' => [
                 'required' => function($value, $data) {
                     return isset($data['seta_funded']) && $data['seta_funded'] === 'Yes';
                 }
@@ -759,102 +472,90 @@ class ClassModel {
                 'required' => true,
                 'date' => true
             ],
-            'add_learner' => [
-                'required' => true,
+            'learner_ids' => [
+                'required' => false,
                 'array' => true
-            ],
-            'backup_agent' => [
-                'required' => true,
-                'array' => true
-            ],
-            // Add custom validation for stop/restart dates
-            'stop_dates' => [
-                'custom' => function($value, $data) {
-                    if (!is_array($value)) {
-                        return 'Stop dates must be an array';
-                    }
-
-                    if (isset($data['restart_dates']) && is_array($data['restart_dates'])) {
-                        // Check that each restart date is after its corresponding stop date
-                        foreach ($value as $index => $stopDate) {
-                            if (empty($stopDate)) {
-                                continue;
-                            }
-
-                            if (isset($data['restart_dates'][$index]) && !empty($data['restart_dates'][$index])) {
-                                $stopTimestamp = strtotime($stopDate);
-                                $restartTimestamp = strtotime($data['restart_dates'][$index]);
-
-                                if ($restartTimestamp <= $stopTimestamp) {
-                                    return 'Each restart date must be after its corresponding stop date';
-                                }
-                            }
-                        }
-                    }
-
-                    return true;
-                }
-            ],
-            // Add validation for exception dates
-            'scheduleData' => [
-                'custom' => function($value, $data) {
-                    // If no schedule data or no class start date, skip validation
-                    if (!is_array($value) || empty($data['class_start_date'])) {
-                        return true;
-                    }
-
-                    // Get class start date
-                    $classStartDate = $data['class_start_date'];
-                    $classStartTimestamp = strtotime($classStartDate);
-
-                    // Validate schedule start date against class original start date
-                    if (isset($value['start_date']) && !empty($value['start_date'])) {
-                        $scheduleStartDate = $value['start_date'];
-                        $scheduleStartTimestamp = strtotime($scheduleStartDate);
-
-                        if ($scheduleStartTimestamp < $classStartTimestamp) {
-                            return 'Schedule start date cannot be before the class original start date';
-                        }
-                    }
-
-                    // Check exception dates if they exist
-                    if (isset($value['exception_dates'])) {
-                        $exceptionDates = $value['exception_dates'];
-
-                        // Handle JSON string
-                        if (is_string($exceptionDates)) {
-                            $exceptionDates = json_decode($exceptionDates, true);
-                        }
-
-                        // Validate each exception date
-                        if (is_array($exceptionDates)) {
-                            foreach ($exceptionDates as $exception) {
-                                if (isset($exception['date']) && !empty($exception['date'])) {
-                                    $exceptionTimestamp = strtotime($exception['date']);
-
-                                    if ($exceptionTimestamp < $classStartTimestamp) {
-                                        return 'Exception dates cannot be before the class start date';
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    return true;
-                }
             ]
         ];
     }
 
     /**
      * Validate class data
-     *
-     * @param array $data Data to validate
-     * @return ValidationService Validation service with results
      */
     public static function validate($data) {
         $validator = new ValidationService(self::getValidationRules());
         $validator->validate($data);
         return $validator;
+    }
+
+    /**
+     * Get all classes (for listing)
+     */
+    public static function getAll($limit = null, $offset = 0) {
+        try {
+            $db = DatabaseService::getInstance();
+            $sql = "SELECT * FROM classes ORDER BY created_at DESC";
+
+            if ($limit) {
+                $sql .= " LIMIT ? OFFSET ?";
+                $stmt = $db->query($sql, [$limit, $offset]);
+            } else {
+                $stmt = $db->query($sql);
+            }
+
+            $classes = [];
+            while ($row = $stmt->fetch()) {
+                $classes[] = new self($row);
+            }
+
+            return $classes;
+        } catch (\Exception $e) {
+            error_log('Error fetching classes: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Search classes by criteria
+     */
+    public static function search($criteria = []) {
+        try {
+            $db = DatabaseService::getInstance();
+            $where = [];
+            $params = [];
+
+            if (!empty($criteria['client_id'])) {
+                $where[] = "client_id = ?";
+                $params[] = $criteria['client_id'];
+            }
+
+            if (!empty($criteria['class_type'])) {
+                $where[] = "class_type = ?";
+                $params[] = $criteria['class_type'];
+            }
+
+            if (!empty($criteria['class_agent'])) {
+                $where[] = "class_agent = ?";
+                $params[] = $criteria['class_agent'];
+            }
+
+            $sql = "SELECT * FROM classes";
+            if (!empty($where)) {
+                $sql .= " WHERE " . implode(' AND ', $where);
+            }
+            $sql .= " ORDER BY created_at DESC";
+
+            $stmt = $db->query($sql, $params);
+            $classes = [];
+
+            while ($row = $stmt->fetch()) {
+                $classes[] = new self($row);
+            }
+
+            return $classes;
+        } catch (\Exception $e) {
+            error_log('Error searching classes: ' . $e->getMessage());
+            return [];
+        }
     }
 }

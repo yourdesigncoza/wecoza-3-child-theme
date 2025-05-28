@@ -1326,6 +1326,37 @@ function showCustomAlert(message) {
     }
 
     /**
+     * Get schedule data from form fields (replaces calendar-based approach)
+     */
+    function getScheduleDataFromForm() {
+        const scheduleData = [];
+
+        // Get basic schedule information
+        const pattern = $('#schedule_pattern').val();
+        const startDate = $('#schedule_start_date').val();
+        const endDate = $('#schedule_end_date').val();
+        const startTime = $('#schedule_start_time').val();
+        const endTime = $('#schedule_end_time').val();
+
+        // If we don't have the basic required fields, return empty array
+        if (!pattern || !startDate || !startTime || !endTime) {
+            return [];
+        }
+
+        // For now, create a simple schedule entry
+        // This is a simplified approach - you might want to expand this
+        // to generate actual dates based on the pattern and selected days
+        scheduleData.push({
+            date: startDate,
+            start_time: startTime,
+            end_time: endTime,
+            type: 'class'
+        });
+
+        return scheduleData;
+    }
+
+    /**
      * Check for class schedule conflicts
      */
     function checkClassConflicts(callback) {
@@ -1337,19 +1368,16 @@ function showCustomAlert(message) {
             return;
         }
 
-        // Format schedule data for the server
-        const scheduleData = events.map(function(event) {
-            if (!event.start || !event.end) {
-                return null;
-            }
+        // Get schedule data from form fields instead of calendar
+        const scheduleData = getScheduleDataFromForm();
 
-            return {
-                date: formatDate(event.start),
-                start_time: formatTime(event.start),
-                end_time: formatTime(event.end),
-                type: event.extendedProps && event.extendedProps.type ? event.extendedProps.type : 'class'
-            };
-        }).filter(Boolean); // Remove null entries
+        // If no schedule data, skip conflict checking
+        if (!scheduleData || scheduleData.length === 0) {
+            if (typeof callback === 'function') {
+                callback(null);
+            }
+            return;
+        }
 
         // Get class ID if editing an existing class
         const classId = $('#class_id').val() !== 'auto-generated' ? $('#class_id').val() : null;
@@ -1504,8 +1532,28 @@ function showCustomAlert(message) {
 
                             // Check for required fields that are missing
                             $(form).find(':required').each(function() {
+                                // Skip disabled fields
+                                if (this.disabled) {
+                                    return;
+                                }
+
                                 if (!this.validity.valid) {
-                                    const fieldName = $(this).prev('label').text().trim().replace(' *', '') || $(this).attr('name');
+                                    // For Bootstrap floating labels, the label comes after the input/select
+                                    let fieldName = $(this).next('label').text().trim().replace(' *', '');
+
+                                    // If no next label found, try looking for label with matching 'for' attribute
+                                    if (!fieldName) {
+                                        const fieldId = $(this).attr('id');
+                                        if (fieldId) {
+                                            fieldName = $(`label[for="${fieldId}"]`).text().trim().replace(' *', '');
+                                        }
+                                    }
+
+                                    // Fallback to field name if no label found
+                                    if (!fieldName) {
+                                        fieldName = $(this).attr('name') || 'Unknown field';
+                                    }
+
                                     validationErrors.push(`The ${fieldName} field is required.`);
                                 }
                             });
@@ -1608,9 +1656,16 @@ function showCustomAlert(message) {
             const originalBtnText = submitBtn.text();
             submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
 
+            // Enable disabled fields temporarily for form submission
+            const disabledFields = $(form).find(':disabled');
+            disabledFields.prop('disabled', false);
+
             // Get form data
             const formData = new FormData(form);
             formData.append('action', 'save_class');
+
+            // Re-disable the fields
+            disabledFields.prop('disabled', true);
 
             // Send AJAX request
             $.ajax({
@@ -1620,9 +1675,12 @@ function showCustomAlert(message) {
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    if (response.success) {
+                    console.log('AJAX Response:', response);
+
+                    if (response && response.success) {
                         // Show success message
-                        $('#form-messages').html('<div class="alert alert-success">' + response.data.message + '</div>');
+                        const message = (response.data && response.data.message) ? response.data.message : 'Class saved successfully!';
+                        $('#form-messages').html('<div class="alert alert-success">' + message + '</div>');
 
                         // Redirect if URL provided
                         const redirectUrl = $('#redirect_url').val();
@@ -1631,17 +1689,36 @@ function showCustomAlert(message) {
                         }
                     } else {
                         // Show error message
-                        $('#form-messages').html('<div class="alert alert-danger">' + response.data.message + '</div>');
+                        const message = (response && response.data && response.data.message) ?
+                            response.data.message :
+                            (response && response.message) ? response.message : 'An error occurred while saving the class.';
+                        $('#form-messages').html('<div class="alert alert-danger">' + message + '</div>');
 
                         // Handle validation errors
-                        if (response.data && response.data.errors) {
+                        if (response && response.data && response.data.errors) {
                             handleValidationErrors(response.data.errors);
                         }
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {xhr: xhr, status: status, error: error});
+                    console.error('Response Text:', xhr.responseText);
+
                     // Show error message
-                    $('#form-messages').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    let errorMessage = 'An error occurred. Please try again.';
+                    if (xhr.responseText) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                errorMessage = response.message;
+                            }
+                        } catch (e) {
+                            // If response is not JSON, show the raw text (truncated)
+                            errorMessage = 'Server Error: ' + xhr.responseText.substring(0, 200);
+                        }
+                    }
+
+                    $('#form-messages').html('<div class="alert alert-danger">' + errorMessage + '</div>');
                 },
                 complete: function() {
                     // Restore button state

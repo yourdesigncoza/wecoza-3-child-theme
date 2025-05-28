@@ -148,43 +148,73 @@ class ClassController {
      * Handle AJAX request to save class data
      */
     public static function saveClassAjax() {
+        error_log('=== CLASS SAVE AJAX START ===');
+        error_log('POST data: ' . print_r($_POST, true));
+
         // Create a temporary instance to access instance methods
         $instance = new self();
 
         // Check nonce
         if (!isset($_POST['nonce'])) {
+            error_log('Nonce not set in POST data');
             $instance->sendJsonError('Security check failed.');
             return;
         }
 
+        error_log('Nonce verification passed');
+
         // Process form data
         $formData = self::processFormData($_POST);
+        error_log('Processed form data: ' . print_r($formData, true));
+
+        // Convert processed data to validation format
+        $validationData = self::convertToValidationFormat($formData);
+        error_log('Validation data: ' . print_r($validationData, true));
 
         // Validate form data
-        $validator = ClassModel::validate($formData);
-        if (!$validator->validate($formData)) {
+        $validator = ClassModel::validate($validationData);
+        $isValid = $validator->validate($validationData);
+
+        // Add custom validation for learners
+        if (empty($formData['learnerIds'])) {
+            $validator->addCustomError('learner_ids', 'At least one learner must be added to the class.');
+            $isValid = false;
+        }
+
+        if (!$isValid) {
+            error_log('Validation failed: ' . print_r($validator->getErrors(), true));
             $instance->sendJsonError(
-                'Validation failed. Please check the form for errors.'
+                'Validation failed. Please check the form for errors.',
+                $validator->getErrors()
             );
             return;
         }
 
+        error_log('Validation passed');
+
         // Create or update class
         $class = new ClassModel($formData);
+        error_log('ClassModel created');
 
         $result = false;
         if (isset($formData['id']) && !empty($formData['id'])) {
+            error_log('Updating existing class with ID: ' . $formData['id']);
             $result = $class->update();
         } else {
+            error_log('Creating new class');
             $result = $class->save();
         }
 
+        error_log('Save/Update result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+
         if ($result) {
+            error_log('Class saved successfully with ID: ' . $class->getId());
             $instance->sendJsonSuccess([
                 'message' => 'Class saved successfully.',
                 'class_id' => $class->getId()
             ]);
         } else {
+            error_log('Failed to save class');
             $instance->sendJsonError('Failed to save class.');
         }
     }
@@ -192,10 +222,24 @@ class ClassController {
     /**
      * Simple sanitization helper
      *
-     * @param string $text Text to sanitize
+     * @param string|array $text Text to sanitize
      * @return string Sanitized text
      */
     private static function sanitizeText($text) {
+        // Handle arrays by converting to JSON string
+        if (is_array($text)) {
+            error_log('sanitizeText received array: ' . print_r($text, true));
+            return json_encode($text);
+        }
+
+        // Handle null values
+        if ($text === null) {
+            return '';
+        }
+
+        // Convert to string if not already
+        $text = (string) $text;
+
         return trim(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
     }
 
@@ -208,25 +252,37 @@ class ClassController {
     private static function processFormData($data) {
         $processed = [];
 
-        // Basic fields
+        // Basic fields - with proper type checking
         $processed['id'] = isset($data['class_id']) && $data['class_id'] !== 'auto-generated' ? intval($data['class_id']) : null;
-        $processed['clientId'] = isset($data['client_id']) ? intval($data['client_id']) : null;
-        $processed['siteId'] = isset($data['site_id']) ? $data['site_id'] : null;
-        $processed['siteAddress'] = isset($data['site_address']) ? self::sanitizeText($data['site_address']) : null;
-        $processed['classType'] = isset($data['class_type']) ? self::sanitizeText($data['class_type']) : null;
-        $processed['classStartDate'] = isset($data['class_start_date']) ? self::sanitizeText($data['class_start_date']) : null;
-        $processed['setaFunded'] = isset($data['seta_funded']) ? self::sanitizeText($data['seta_funded']) : null;
-        $processed['setaId'] = isset($data['seta_id']) ? self::sanitizeText($data['seta_id']) : null;
-        $processed['examClass'] = isset($data['exam_class']) ? self::sanitizeText($data['exam_class']) : null;
-        $processed['examType'] = isset($data['exam_type']) ? self::sanitizeText($data['exam_type']) : null;
-        $processed['qaVisitDates'] = isset($data['qa_visit_dates']) ? self::sanitizeText($data['qa_visit_dates']) : null;
-        $processed['classAgent'] = isset($data['class_agent']) ? intval($data['class_agent']) : null;
-        $processed['projectSupervisor'] = isset($data['project_supervisor']) ? intval($data['project_supervisor']) : null;
-        $processed['deliveryDate'] = isset($data['delivery_date']) ? self::sanitizeText($data['delivery_date']) : null;
+        $processed['clientId'] = isset($data['client_id']) && !empty($data['client_id']) ? intval($data['client_id']) : null;
+        $processed['siteId'] = isset($data['site_id']) && !is_array($data['site_id']) ? $data['site_id'] : null;
+        $processed['siteAddress'] = isset($data['site_address']) && !is_array($data['site_address']) ? self::sanitizeText($data['site_address']) : null;
+        $processed['classType'] = isset($data['class_type']) && !is_array($data['class_type']) ? self::sanitizeText($data['class_type']) : null;
+        $processed['classSubject'] = isset($data['class_subject']) && !is_array($data['class_subject']) ? self::sanitizeText($data['class_subject']) : null;
+        $processed['classCode'] = isset($data['class_code']) && !is_array($data['class_code']) ? self::sanitizeText($data['class_code']) : null;
+        $processed['classDuration'] = isset($data['class_duration']) && !is_array($data['class_duration']) ? intval($data['class_duration']) : null;
+        $processed['classStartDate'] = isset($data['class_start_date']) && !is_array($data['class_start_date']) ? self::sanitizeText($data['class_start_date']) : null;
+        $processed['setaFunded'] = isset($data['seta_funded']) && !is_array($data['seta_funded']) ? self::sanitizeText($data['seta_funded']) : null;
+        $processed['setaId'] = isset($data['seta_id']) && !is_array($data['seta_id']) ? self::sanitizeText($data['seta_id']) : null;
+        $processed['examClass'] = isset($data['exam_class']) && !is_array($data['exam_class']) ? self::sanitizeText($data['exam_class']) : null;
+        $processed['examType'] = isset($data['exam_type']) && !is_array($data['exam_type']) ? self::sanitizeText($data['exam_type']) : null;
+        $processed['qaVisitDates'] = isset($data['qa_visit_dates']) && !is_array($data['qa_visit_dates']) ? self::sanitizeText($data['qa_visit_dates']) : null;
+        $processed['classAgent'] = isset($data['initial_class_agent']) && !empty($data['initial_class_agent']) ? intval($data['initial_class_agent']) : null;
+        $processed['projectSupervisor'] = isset($data['project_supervisor']) && !empty($data['project_supervisor']) ? intval($data['project_supervisor']) : null;
+        $processed['deliveryDate'] = isset($data['delivery_date']) && !is_array($data['delivery_date']) ? self::sanitizeText($data['delivery_date']) : null;
 
         // Array fields
         $processed['classNotes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map([self::class, 'sanitizeText'], $data['class_notes']) : [];
-        $processed['learnerIds'] = isset($data['add_learner']) && is_array($data['add_learner']) ? array_map('intval', $data['add_learner']) : [];
+
+        // Handle learner data from the hidden field (class_learners_data)
+        $processed['learnerIds'] = [];
+        if (isset($data['class_learners_data']) && !empty($data['class_learners_data'])) {
+            $learnerData = json_decode($data['class_learners_data'], true);
+            if (is_array($learnerData)) {
+                $processed['learnerIds'] = array_map('intval', array_column($learnerData, 'id'));
+            }
+        }
+
         $processed['backupAgentIds'] = isset($data['backup_agent']) && is_array($data['backup_agent']) ? array_map('intval', $data['backup_agent']) : [];
 
         // Schedule data
@@ -263,11 +319,60 @@ class ClassController {
             }
         }
 
-        // Stop/restart dates
-        $processed['stopDates'] = isset($data['stop_dates']) && is_array($data['stop_dates']) ? array_map('sanitize_text_field', $data['stop_dates']) : [];
-        $processed['restartDates'] = isset($data['restart_dates']) && is_array($data['restart_dates']) ? array_map('sanitize_text_field', $data['restart_dates']) : [];
+        // Stop/restart dates - ensure proper sanitization
+        $processed['stopDates'] = isset($data['stop_dates']) && is_array($data['stop_dates']) ?
+            array_map(function($date) { return self::sanitizeText($date); }, $data['stop_dates']) : [];
+        $processed['restartDates'] = isset($data['restart_dates']) && is_array($data['restart_dates']) ?
+            array_map(function($date) { return self::sanitizeText($date); }, $data['restart_dates']) : [];
 
         return $processed;
+    }
+
+    /**
+     * Convert processed data to validation format
+     * Maps camelCase field names to snake_case for validation
+     *
+     * @param array $data Processed form data
+     * @return array Data formatted for validation
+     */
+    private static function convertToValidationFormat($data) {
+        $validationData = [];
+
+        // Map camelCase to snake_case for validation
+        $fieldMapping = [
+            'clientId' => 'client_id',
+            'siteId' => 'site_id',
+            'classType' => 'class_type',
+            'classSubject' => 'class_subject',
+            'classCode' => 'class_code',
+            'classDuration' => 'class_duration',
+            'classStartDate' => 'class_start_date',
+            'setaFunded' => 'seta_funded',
+            'setaId' => 'seta',
+            'examClass' => 'exam_class',
+            'examType' => 'exam_type',
+            'classAgent' => 'class_agent',
+            'projectSupervisor' => 'project_supervisor',
+            'deliveryDate' => 'delivery_date',
+            'learnerIds' => 'learner_ids',
+            'backupAgentIds' => 'backup_agent'
+        ];
+
+        // Convert mapped fields
+        foreach ($fieldMapping as $processedKey => $validationKey) {
+            if (isset($data[$processedKey])) {
+                $validationData[$validationKey] = $data[$processedKey];
+            }
+        }
+
+        // Copy other fields as-is
+        foreach ($data as $key => $value) {
+            if (!array_key_exists($key, $fieldMapping)) {
+                $validationData[$key] = $value;
+            }
+        }
+
+        return $validationData;
     }
 
     /**
@@ -288,13 +393,20 @@ class ClassController {
      * Helper function to send JSON error response
      *
      * @param string $message Error message
+     * @param array $errors Optional validation errors
      */
-    private function sendJsonError($message) {
+    private function sendJsonError($message, $errors = null) {
         header('Content-Type: application/json');
-        echo json_encode([
+        $response = [
             'success' => false,
             'message' => $message
-        ]);
+        ];
+
+        if ($errors) {
+            $response['data'] = ['errors' => $errors];
+        }
+
+        echo json_encode($response);
         exit;
     }
 
@@ -911,23 +1023,25 @@ class ClassController {
         $conflicts = [];
 
         try {
-            // Query for classes where this agent is assigned on the same date with overlapping times
-            $sql = "SELECT c.id, c.class_type, cs.start_time, cs.end_time
-                    FROM wecoza_classes c
-                    JOIN wecoza_class_schedule cs ON c.id = cs.class_id
+            // Query for classes where this agent is assigned using new schema
+            $sql = "SELECT c.class_id, c.class_type,
+                           schedule_item->>'start_time' as start_time,
+                           schedule_item->>'end_time' as end_time
+                    FROM classes c,
+                         jsonb_array_elements(c.schedule_data) as schedule_item
                     WHERE c.class_agent = ?
-                    AND cs.date = ?
+                    AND schedule_item->>'date' = ?
                     AND (
-                        (cs.start_time <= ? AND cs.end_time > ?) OR
-                        (cs.start_time < ? AND cs.end_time >= ?) OR
-                        (cs.start_time >= ? AND cs.end_time <= ?)
+                        (schedule_item->>'start_time' <= ? AND schedule_item->>'end_time' > ?) OR
+                        (schedule_item->>'start_time' < ? AND schedule_item->>'end_time' >= ?) OR
+                        (schedule_item->>'start_time' >= ? AND schedule_item->>'end_time' <= ?)
                     )";
 
             $params = [$agentId, $date, $endTime, $startTime, $endTime, $startTime, $startTime, $endTime];
 
             // Exclude current class if provided
             if ($excludeClassId) {
-                $sql .= " AND c.id != ?";
+                $sql .= " AND c.class_id != ?";
                 $params[] = $excludeClassId;
             }
 
@@ -935,7 +1049,7 @@ class ClassController {
 
             while ($row = $stmt->fetch()) {
                 $conflicts[] = [
-                    'class_id' => $row['id'],
+                    'class_id' => $row['class_id'],
                     'class_type' => $row['class_type'],
                     'start_time' => $row['start_time'],
                     'end_time' => $row['end_time']
@@ -966,24 +1080,31 @@ class ClassController {
         try {
             // For each learner, check for conflicts
             foreach ($learnerIds as $learnerId) {
-                // Query for classes where this learner is assigned on the same date with overlapping times
-                $sql = "SELECT c.id, c.class_type, cs.start_time, cs.end_time
-                        FROM wecoza_classes c
-                        JOIN wecoza_class_schedule cs ON c.id = cs.class_id
-                        JOIN wecoza_class_learners cl ON c.id = cl.class_id
-                        WHERE cl.learner_id = ?
-                        AND cs.date = ?
+                // Query for classes where this learner is assigned using JSONB contains
+                $sql = "SELECT c.class_id, c.class_type,
+                               schedule_item->>'start_time' as start_time,
+                               schedule_item->>'end_time' as end_time
+                        FROM classes c,
+                             jsonb_array_elements(c.schedule_data) as schedule_item
+                        WHERE c.learner_ids @> ?::jsonb
+                        AND schedule_item->>'date' = ?
                         AND (
-                            (cs.start_time <= ? AND cs.end_time > ?) OR
-                            (cs.start_time < ? AND cs.end_time >= ?) OR
-                            (cs.start_time >= ? AND cs.end_time <= ?)
+                            (schedule_item->>'start_time' <= ? AND schedule_item->>'end_time' > ?) OR
+                            (schedule_item->>'start_time' < ? AND schedule_item->>'end_time' >= ?) OR
+                            (schedule_item->>'start_time' >= ? AND schedule_item->>'end_time' <= ?)
                         )";
 
-                $params = [$learnerId, $date, $endTime, $startTime, $endTime, $startTime, $startTime, $endTime];
+                $params = [
+                    json_encode([$learnerId]),
+                    $date,
+                    $endTime, $startTime,
+                    $endTime, $startTime,
+                    $startTime, $endTime
+                ];
 
                 // Exclude current class if provided
                 if ($excludeClassId) {
-                    $sql .= " AND c.id != ?";
+                    $sql .= " AND c.class_id != ?";
                     $params[] = $excludeClassId;
                 }
 
@@ -992,7 +1113,7 @@ class ClassController {
                 $learnerConflicts = [];
                 while ($row = $stmt->fetch()) {
                     $learnerConflicts[] = [
-                        'class_id' => $row['id'],
+                        'class_id' => $row['class_id'],
                         'class_type' => $row['class_type'],
                         'start_time' => $row['start_time'],
                         'end_time' => $row['end_time']

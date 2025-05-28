@@ -158,6 +158,16 @@ class ValidationService {
     }
 
     /**
+     * Add a custom error message for a field (public method)
+     *
+     * @param string $field Field name
+     * @param string $message Error message
+     */
+    public function addCustomError($field, $message) {
+        $this->addError($field, $message);
+    }
+
+    /**
      * Format a field name for display in error messages
      *
      * @param string $field Field name
