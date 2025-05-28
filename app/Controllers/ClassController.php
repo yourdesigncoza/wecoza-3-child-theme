@@ -378,11 +378,20 @@ class ClassController {
 
         // Handle learner data from the hidden field (class_learners_data)
         $processed['learnerIds'] = [];
+        error_log('Raw class_learners_data: ' . (isset($data['class_learners_data']) ? $data['class_learners_data'] : 'NOT SET'));
+
         if (isset($data['class_learners_data']) && !empty($data['class_learners_data'])) {
             $learnerData = json_decode($data['class_learners_data'], true);
+            error_log('Decoded learner data: ' . print_r($learnerData, true));
+
             if (is_array($learnerData)) {
                 $processed['learnerIds'] = array_map('intval', array_column($learnerData, 'id'));
+                error_log('Processed learner IDs: ' . print_r($processed['learnerIds'], true));
+            } else {
+                error_log('Learner data is not an array after JSON decode');
             }
+        } else {
+            error_log('class_learners_data field is empty or not set');
         }
 
         $processed['backupAgentIds'] = isset($data['backup_agent']) && is_array($data['backup_agent']) ? array_map('intval', $data['backup_agent']) : [];
