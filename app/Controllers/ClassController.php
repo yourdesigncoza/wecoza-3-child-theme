@@ -285,9 +285,18 @@ class ClassController {
 
         if (!$isValid) {
             error_log('Validation failed: ' . print_r($validator->getErrors(), true));
+
+            // Add debug info to the error response
+            $debugInfo = [
+                'raw_learner_data' => isset($_POST['class_learners_data']) ? $_POST['class_learners_data'] : 'NOT SET',
+                'after_stripslashes' => isset($_POST['class_learners_data']) ? stripslashes($_POST['class_learners_data']) : 'NOT SET',
+                'processed_learner_ids' => isset($formData['learnerIds']) ? $formData['learnerIds'] : 'NOT SET',
+                'validation_learner_ids' => isset($validationData['learner_ids']) ? $validationData['learner_ids'] : 'NOT SET'
+            ];
+
             $instance->sendJsonError(
                 'Validation failed. Please check the form for errors.',
-                $validator->getErrors()
+                array_merge($validator->getErrors(), ['debug' => $debugInfo])
             );
             return;
         }
@@ -346,6 +355,33 @@ class ClassController {
     }
 
     /**
+     * Decode WordPress-escaped JSON data
+     *
+     * WordPress automatically applies addslashes() to POST data, which escapes JSON.
+     * This function properly handles the unescaping and decoding.
+     *
+     * @param string $jsonString WordPress-escaped JSON string
+     * @return array|null Decoded array or null if decoding fails
+     */
+    private static function decodeWordPressJson($jsonString) {
+        if (empty($jsonString)) {
+            return null;
+        }
+
+        // Step 1: Remove WordPress slashes
+        $unescaped = stripslashes($jsonString);
+
+        // Step 2: Decode HTML entities (handles &quot; -> ")
+        $decoded = html_entity_decode($unescaped, ENT_QUOTES, 'UTF-8');
+
+        // Step 3: Decode JSON
+        $result = json_decode($decoded, true);
+
+        // Return result only if JSON decoding was successful
+        return (json_last_error() === JSON_ERROR_NONE) ? $result : null;
+    }
+
+    /**
      * Process form data
      *
      * @param array $data Raw form data
@@ -354,76 +390,193 @@ class ClassController {
     private static function processFormData($data) {
         $processed = [];
 
-        // Basic fields - with proper type checking
+        // Basic fields - using snake_case field names that the model expects
         $processed['id'] = isset($data['class_id']) && $data['class_id'] !== 'auto-generated' ? intval($data['class_id']) : null;
-        $processed['clientId'] = isset($data['client_id']) && !empty($data['client_id']) ? intval($data['client_id']) : null;
-        $processed['siteId'] = isset($data['site_id']) && !is_array($data['site_id']) ? $data['site_id'] : null;
-        $processed['siteAddress'] = isset($data['site_address']) && !is_array($data['site_address']) ? self::sanitizeText($data['site_address']) : null;
-        $processed['classType'] = isset($data['class_type']) && !is_array($data['class_type']) ? self::sanitizeText($data['class_type']) : null;
-        $processed['classSubject'] = isset($data['class_subject']) && !is_array($data['class_subject']) ? self::sanitizeText($data['class_subject']) : null;
-        $processed['classCode'] = isset($data['class_code']) && !is_array($data['class_code']) ? self::sanitizeText($data['class_code']) : null;
-        $processed['classDuration'] = isset($data['class_duration']) && !is_array($data['class_duration']) ? intval($data['class_duration']) : null;
-        $processed['classStartDate'] = isset($data['class_start_date']) && !is_array($data['class_start_date']) ? self::sanitizeText($data['class_start_date']) : null;
-        $processed['setaFunded'] = isset($data['seta_funded']) && !is_array($data['seta_funded']) ? self::sanitizeText($data['seta_funded']) : null;
-        $processed['setaId'] = isset($data['seta_id']) && !is_array($data['seta_id']) ? self::sanitizeText($data['seta_id']) : null;
-        $processed['examClass'] = isset($data['exam_class']) && !is_array($data['exam_class']) ? self::sanitizeText($data['exam_class']) : null;
-        $processed['examType'] = isset($data['exam_type']) && !is_array($data['exam_type']) ? self::sanitizeText($data['exam_type']) : null;
-        $processed['qaVisitDates'] = isset($data['qa_visit_dates']) && !is_array($data['qa_visit_dates']) ? self::sanitizeText($data['qa_visit_dates']) : null;
-        $processed['classAgent'] = isset($data['initial_class_agent']) && !empty($data['initial_class_agent']) ? intval($data['initial_class_agent']) : null;
-        $processed['projectSupervisor'] = isset($data['project_supervisor']) && !empty($data['project_supervisor']) ? intval($data['project_supervisor']) : null;
-        $processed['deliveryDate'] = isset($data['delivery_date']) && !is_array($data['delivery_date']) ? self::sanitizeText($data['delivery_date']) : null;
+        $processed['client_id'] = isset($data['client_id']) && !empty($data['client_id']) ? intval($data['client_id']) : null;
+        $processed['site_id'] = isset($data['site_id']) && !is_array($data['site_id']) ? $data['site_id'] : null;
+        $processed['site_address'] = isset($data['site_address']) && !is_array($data['site_address']) ? self::sanitizeText($data['site_address']) : null;
+        $processed['class_type'] = isset($data['class_type']) && !is_array($data['class_type']) ? self::sanitizeText($data['class_type']) : null;
+        $processed['class_subject'] = isset($data['class_subject']) && !is_array($data['class_subject']) ? self::sanitizeText($data['class_subject']) : null;
+        $processed['class_code'] = isset($data['class_code']) && !is_array($data['class_code']) ? self::sanitizeText($data['class_code']) : null;
+        $processed['class_duration'] = isset($data['class_duration']) && !is_array($data['class_duration']) ? intval($data['class_duration']) : null;
+        $processed['class_start_date'] = isset($data['class_start_date']) && !is_array($data['class_start_date']) ? self::sanitizeText($data['class_start_date']) : null;
+        $processed['seta_funded'] = isset($data['seta_funded']) && !is_array($data['seta_funded']) ? self::sanitizeText($data['seta_funded']) : null;
+        $processed['seta_id'] = isset($data['seta_id']) && !is_array($data['seta_id']) ? self::sanitizeText($data['seta_id']) : null;
+        $processed['exam_class'] = isset($data['exam_class']) && !is_array($data['exam_class']) ? self::sanitizeText($data['exam_class']) : null;
+        $processed['exam_type'] = isset($data['exam_type']) && !is_array($data['exam_type']) ? self::sanitizeText($data['exam_type']) : null;
+        // QA Visit Dates - handle as array and convert to JSON string for database
+        error_log('=== QA VISIT DATES PROCESSING ===');
+        error_log('Raw qa_visit_dates data: ' . print_r($data['qa_visit_dates'] ?? 'NOT SET', true));
+
+        if (isset($data['qa_visit_dates']) && is_array($data['qa_visit_dates'])) {
+            // Filter out empty dates and sanitize
+            $qaVisitDates = array_filter(array_map([self::class, 'sanitizeText'], $data['qa_visit_dates']));
+            $processed['qa_visit_dates'] = !empty($qaVisitDates) ? json_encode($qaVisitDates) : null;
+        } else {
+            $processed['qa_visit_dates'] = null;
+        }
+
+        error_log('Processed qa_visit_dates: ' . ($processed['qa_visit_dates'] ?? 'NULL'));
+
+        // Class Agent - map initial_class_agent to class_agent for the model
+        error_log('=== CLASS AGENT PROCESSING ===');
+        error_log('Raw initial_class_agent data: ' . print_r($data['initial_class_agent'] ?? 'NOT SET', true));
+        $processed['class_agent'] = isset($data['initial_class_agent']) && !empty($data['initial_class_agent']) ? intval($data['initial_class_agent']) : null;
+        $processed['initial_class_agent'] = isset($data['initial_class_agent']) && !empty($data['initial_class_agent']) ? intval($data['initial_class_agent']) : null;
+        error_log('Processed class_agent: ' . ($processed['class_agent'] ?? 'NULL'));
+
+        $processed['initial_agent_start_date'] = isset($data['initial_agent_start_date']) && !is_array($data['initial_agent_start_date']) ? self::sanitizeText($data['initial_agent_start_date']) : null;
+        $processed['project_supervisor'] = isset($data['project_supervisor']) && !empty($data['project_supervisor']) ? intval($data['project_supervisor']) : null;
+        $processed['delivery_date'] = isset($data['delivery_date']) && !is_array($data['delivery_date']) ? self::sanitizeText($data['delivery_date']) : null;
 
         // Array fields
-        $processed['classNotes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map([self::class, 'sanitizeText'], $data['class_notes']) : [];
+        $processed['class_notes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map([self::class, 'sanitizeText'], $data['class_notes']) : [];
 
-        // Handle learner data from the hidden field (class_learners_data)
-        $processed['learnerIds'] = [];
+        // Handle learner data from the hidden field (class_learners_data) - WordPress escaping aware
+        $processed['learner_ids'] = [];
+        error_log('=== LEARNER DATA PROCESSING (WordPress Escaping Fix) ===');
         error_log('Raw class_learners_data: ' . (isset($data['class_learners_data']) ? $data['class_learners_data'] : 'NOT SET'));
 
         if (isset($data['class_learners_data']) && !empty($data['class_learners_data'])) {
-            // Decode HTML entities first (handles &quot; -> ")
-            $decodedJson = html_entity_decode($data['class_learners_data'], ENT_QUOTES, 'UTF-8');
-            error_log('HTML decoded JSON: ' . $decodedJson);
+            // Use the WordPress JSON decoder helper function
+            $learnerData = self::decodeWordPressJson($data['class_learners_data']);
 
-            $learnerData = json_decode($decodedJson, true);
-            error_log('Decoded learner data: ' . print_r($learnerData, true));
-
-            if (is_array($learnerData)) {
-                $processed['learnerIds'] = array_map('intval', array_column($learnerData, 'id'));
-                error_log('Processed learner IDs: ' . print_r($processed['learnerIds'], true));
+            if ($learnerData !== null && is_array($learnerData)) {
+                $processed['learner_ids'] = array_map('intval', array_column($learnerData, 'id'));
+                error_log('Successfully processed learner IDs: ' . print_r($processed['learner_ids'], true));
             } else {
-                error_log('Learner data is not an array after JSON decode. JSON error: ' . json_last_error_msg());
+                error_log('Failed to decode learner data using WordPress JSON decoder');
+                error_log('Attempting fallback processing...');
+
+                // Fallback: try manual processing
+                $rawJson = stripslashes($data['class_learners_data']);
+                $decodedJson = html_entity_decode($rawJson, ENT_QUOTES, 'UTF-8');
+                $learnerData = json_decode($decodedJson, true);
+
+                if (is_array($learnerData)) {
+                    $processed['learner_ids'] = array_map('intval', array_column($learnerData, 'id'));
+                    error_log('Fallback processing successful: ' . print_r($processed['learner_ids'], true));
+                } else {
+                    error_log('Fallback processing failed. JSON error: ' . json_last_error_msg());
+                    // Final fallback: try to extract IDs from malformed JSON
+                    if (preg_match_all('/"id":\s*(\d+)/', $decodedJson, $matches)) {
+                        $processed['learner_ids'] = array_map('intval', $matches[1]);
+                        error_log('Regex extraction successful: ' . print_r($processed['learner_ids'], true));
+                    }
+                }
             }
         } else {
             error_log('class_learners_data field is empty or not set');
         }
 
-        $processed['backupAgentIds'] = isset($data['backup_agent']) && is_array($data['backup_agent']) ? array_map('intval', $data['backup_agent']) : [];
+        // Debug backup agent processing - check both possible field names
+        error_log('=== BACKUP AGENT PROCESSING ===');
+        error_log('Raw backup_agent data: ' . print_r($data['backup_agent'] ?? 'NOT SET', true));
+        error_log('Raw backup_agent_ids data: ' . print_r($data['backup_agent_ids'] ?? 'NOT SET', true));
 
-        // Schedule data
-        $processed['scheduleData'] = [];
+        // Check both possible field names from the form
+        if (isset($data['backup_agent_ids']) && is_array($data['backup_agent_ids'])) {
+            $processed['backup_agent_ids'] = array_map('intval', array_filter($data['backup_agent_ids']));
+        } elseif (isset($data['backup_agent']) && is_array($data['backup_agent'])) {
+            $processed['backup_agent_ids'] = array_map('intval', array_filter($data['backup_agent']));
+        } else {
+            $processed['backup_agent_ids'] = [];
+        }
+
+        error_log('Processed backup_agent_ids: ' . print_r($processed['backup_agent_ids'], true));
+
+        // Schedule data - handle WordPress auto-escaping
+        $processed['schedule_data'] = [];
+        error_log('=== SCHEDULE DATA PROCESSING (WordPress Escaping Fix) ===');
 
         // Handle new schedule form data
         if (isset($data['schedule_data']) && is_array($data['schedule_data'])) {
-            // Store the schedule pattern data
-            $processed['schedulePattern'] = $data['schedule_data'];
+            // Deep copy and handle WordPress escaping for nested JSON strings
+            $scheduleData = $data['schedule_data'];
+            error_log('Raw schedule_data: ' . print_r($scheduleData, true));
 
-            // Store holiday overrides if present
-            if (isset($data['schedule_data']['holiday_overrides'])) {
-                $processed['schedulePattern']['holiday_overrides'] = $data['schedule_data']['holiday_overrides'];
+            // Handle exception_dates if it's a JSON string (WordPress escaped)
+            if (isset($scheduleData['exception_dates']) && is_string($scheduleData['exception_dates'])) {
+                error_log('Processing exception_dates as WordPress-escaped JSON string');
+                error_log('Original exception_dates: ' . $scheduleData['exception_dates']);
+
+                $decoded = self::decodeWordPressJson($scheduleData['exception_dates']);
+                if ($decoded !== null) {
+                    $scheduleData['exception_dates'] = $decoded;
+                    error_log('Successfully decoded exception_dates: ' . print_r($decoded, true));
+                } else {
+                    error_log('Failed to decode exception_dates JSON');
+                    $scheduleData['exception_dates'] = [];
+                }
             }
 
+            // Handle holiday_overrides if it's a JSON string (WordPress escaped)
+            if (isset($scheduleData['holiday_overrides']) && is_string($scheduleData['holiday_overrides'])) {
+                error_log('Processing holiday_overrides as WordPress-escaped JSON string');
+                error_log('Original holiday_overrides: ' . $scheduleData['holiday_overrides']);
+
+                $decoded = self::decodeWordPressJson($scheduleData['holiday_overrides']);
+                if ($decoded !== null) {
+                    $scheduleData['holiday_overrides'] = $decoded;
+                    error_log('Successfully decoded holiday_overrides: ' . print_r($decoded, true));
+                } else {
+                    error_log('Failed to decode holiday_overrides JSON');
+                    $scheduleData['holiday_overrides'] = [];
+                }
+            }
+
+            // Handle days if it's a JSON string (WordPress escaped)
+            if (isset($scheduleData['days']) && is_string($scheduleData['days'])) {
+                error_log('Processing days as WordPress-escaped JSON string');
+                error_log('Original days: ' . $scheduleData['days']);
+
+                $decoded = self::decodeWordPressJson($scheduleData['days']);
+                if ($decoded !== null) {
+                    $scheduleData['days'] = $decoded;
+                    error_log('Successfully decoded days: ' . print_r($decoded, true));
+                } else {
+                    error_log('Failed to decode days JSON, keeping as string');
+                    // Keep as string if decoding fails
+                }
+            }
+
+            // Handle any other potential JSON string fields in schedule data
+            $jsonFields = ['selected_days', 'class_times', 'schedule_notes'];
+            foreach ($jsonFields as $field) {
+                if (isset($scheduleData[$field]) && is_string($scheduleData[$field])) {
+                    // Check if it looks like JSON (starts with [ or {)
+                    $trimmed = trim($scheduleData[$field]);
+                    if (($trimmed[0] === '[' || $trimmed[0] === '{') && strlen($trimmed) > 1) {
+                        error_log("Processing {$field} as potential WordPress-escaped JSON string");
+                        error_log("Original {$field}: " . $scheduleData[$field]);
+
+                        $decoded = self::decodeWordPressJson($scheduleData[$field]);
+                        if ($decoded !== null) {
+                            $scheduleData[$field] = $decoded;
+                            error_log("Successfully decoded {$field}: " . print_r($decoded, true));
+                        } else {
+                            error_log("Failed to decode {$field} JSON, keeping as string");
+                        }
+                    }
+                }
+            }
+
+            // Store the cleaned schedule pattern data
+            $processed['schedule_data'] = $scheduleData;
+            error_log('Cleaned schedule_data: ' . print_r($processed['schedule_data'], true));
+
             // Generate schedule data based on pattern
-            $scheduleData = self::generateScheduleData($data['schedule_data']);
-            if (!empty($scheduleData)) {
-                $processed['scheduleData'] = $scheduleData;
+            $generatedSchedule = self::generateScheduleData($scheduleData);
+            if (!empty($generatedSchedule)) {
+                $processed['schedule_data'] = array_merge($processed['schedule_data'], $generatedSchedule);
+                error_log('Final schedule_data with generated events: ' . print_r($processed['schedule_data'], true));
             }
         }
         // Legacy format support
         else if (isset($data['schedule_day']) && is_array($data['schedule_day'])) {
             $count = count($data['schedule_day']);
             for ($i = 0; $i < $count; $i++) {
-                $processed['scheduleData'][] = [
+                $processed['schedule_data'][] = [
                     'day' => isset($data['schedule_day'][$i]) ? self::sanitizeText($data['schedule_day'][$i]) : '',
                     'date' => isset($data['schedule_date'][$i]) ? self::sanitizeText($data['schedule_date'][$i]) : '',
                     'start_time' => isset($data['start_time'][$i]) ? self::sanitizeText($data['start_time'][$i]) : '',
@@ -434,18 +587,39 @@ class ClassController {
             }
         }
 
-        // Stop/restart dates - ensure proper sanitization
-        $processed['stopDates'] = isset($data['stop_dates']) && is_array($data['stop_dates']) ?
+        // Debug stop/restart dates processing
+        error_log('=== STOP/RESTART DATES PROCESSING ===');
+        error_log('Raw stop_dates data: ' . print_r($data['stop_dates'] ?? 'NOT SET', true));
+        error_log('Raw restart_dates data: ' . print_r($data['restart_dates'] ?? 'NOT SET', true));
+
+        // Stop/restart dates - combine into proper format for model
+        $stopDates = isset($data['stop_dates']) && is_array($data['stop_dates']) ?
             array_map(function($date) { return self::sanitizeText($date); }, $data['stop_dates']) : [];
-        $processed['restartDates'] = isset($data['restart_dates']) && is_array($data['restart_dates']) ?
+        $restartDates = isset($data['restart_dates']) && is_array($data['restart_dates']) ?
             array_map(function($date) { return self::sanitizeText($date); }, $data['restart_dates']) : [];
+
+        error_log('Processed stopDates: ' . print_r($stopDates, true));
+        error_log('Processed restartDates: ' . print_r($restartDates, true));
+
+        // Combine stop and restart dates into the format expected by the model
+        $processed['stop_restart_dates'] = [];
+        for ($i = 0; $i < max(count($stopDates), count($restartDates)); $i++) {
+            if (!empty($stopDates[$i]) || !empty($restartDates[$i])) {
+                $processed['stop_restart_dates'][] = [
+                    'stop_date' => $stopDates[$i] ?? null,
+                    'restart_date' => $restartDates[$i] ?? null
+                ];
+            }
+        }
+
+        error_log('Final stop_restart_dates: ' . print_r($processed['stop_restart_dates'], true));
 
         return $processed;
     }
 
     /**
      * Convert processed data to validation format
-     * Maps camelCase field names to snake_case for validation
+     * Since we now use snake_case field names, this is mostly a pass-through
      *
      * @param array $data Processed form data
      * @return array Data formatted for validation
@@ -453,24 +627,11 @@ class ClassController {
     private static function convertToValidationFormat($data) {
         $validationData = [];
 
-        // Map camelCase to snake_case for validation
+        // Map any remaining field name differences for validation
         $fieldMapping = [
-            'clientId' => 'client_id',
-            'siteId' => 'site_id',
-            'classType' => 'class_type',
-            'classSubject' => 'class_subject',
-            'classCode' => 'class_code',
-            'classDuration' => 'class_duration',
-            'classStartDate' => 'class_start_date',
-            'setaFunded' => 'seta_funded',
-            'setaId' => 'seta',
-            'examClass' => 'exam_class',
-            'examType' => 'exam_type',
-            'classAgent' => 'class_agent',
-            'projectSupervisor' => 'project_supervisor',
-            'deliveryDate' => 'delivery_date',
-            'learnerIds' => 'learner_ids',
-            'backupAgentIds' => 'backup_agent'
+            'seta_id' => 'seta',  // Validation expects 'seta' not 'seta_id'
+            'initial_class_agent' => 'class_agent',  // Validation expects 'class_agent'
+            'backup_agent_ids' => 'backup_agent'  // Validation expects 'backup_agent'
         ];
 
         // Convert mapped fields

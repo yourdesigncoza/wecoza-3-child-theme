@@ -184,8 +184,7 @@
    </div>
    <?php endif; ?>
 
-   <!-- Exception Dates - UPDATE MODE ONLY -->
-   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
+   <!-- Exception Dates -->
    <div class="mb-4">
       <h6 class="mb-2">Exception Dates</h6>
       <p class="text-muted small mb-3">Add dates when classes will not occur (e.g., holidays, client cancellations).</p>
@@ -234,10 +233,8 @@
       + Add Exception Date
       </button>
    </div>
-   <?php endif; ?>
 
-   <!-- Public Holidays Section - UPDATE MODE ONLY -->
-   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
+   <!-- Public Holidays Section -->
    <div class="mb-4">
       <h6 class="mb-2">Public Holidays in Schedule</h6>
       <p class="text-muted small mb-3">By default, classes are not scheduled on public holidays. The system will only show holidays that conflict with your class schedule (when a holiday falls on a scheduled class day). You can override specific holidays to include them in the schedule.</p>
@@ -275,7 +272,6 @@
          </div>
       </div>
    </div>
-   <?php endif; ?>
 
    <!-- Holiday Row Template (for JavaScript) -->
    <template id="holiday-row-template">
@@ -303,8 +299,7 @@
       <!-- These will be populated dynamically via JavaScript -->
    </div>
 
-   <!-- Schedule Statistics Section - UPDATE MODE ONLY -->
-   <?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
+   <!-- Schedule Statistics Section -->
    <!-- Schedule Statistics Toggle Button -->
    <div class="mt-3 mb-3">
       <button type="button" class="btn btn-outline-primary btn-sm" id="toggle-statistics-btn">
@@ -391,7 +386,6 @@
       </div>
    </div>
    </div>
-   <?php endif; ?>
 
    <!-- Debug JSON Data Display -->
    <!-- <div id="debug-json-container" class="mb-4">

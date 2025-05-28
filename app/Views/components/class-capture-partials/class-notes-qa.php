@@ -40,8 +40,7 @@
    </div>
 </div>
 
-<!-- QA Visit Dates and Reports Section - UPDATE MODE ONLY -->
-<?php if (isset($data['mode']) && $data['mode'] === 'update'): ?>
+<!-- QA Visit Dates and Reports Section -->
 <div class="mt-4">
    <h6 class="mb-3">QA Visit Dates & Reports</h6>
    <p class="text-muted small mb-3">Add QA visit dates and upload corresponding reports for each visit.</p>
@@ -84,4 +83,3 @@
    + Add QA Visit Date
    </button>
 </div>
-<?php endif; ?>

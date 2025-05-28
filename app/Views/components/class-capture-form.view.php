@@ -71,10 +71,8 @@
       <!-- Class Schedule Form Section -->
       <?php include_once('class-capture-partials/class-schedule-form.php'); ?>
 
-      <!-- Class Date History Section - UPDATE MODE ONLY -->
-      <?php if ($data['mode'] === 'update'): ?>
-         <?php include_once('class-capture-partials/date-history.php'); ?>
-      <?php endif; ?>
+      <!-- Class Date History Section -->
+      <?php include_once('class-capture-partials/date-history.php'); ?>
 
       <!-- YDCOZA Replace With TableView -->
       <!-- Calendar Reference View (hidden by default) -->

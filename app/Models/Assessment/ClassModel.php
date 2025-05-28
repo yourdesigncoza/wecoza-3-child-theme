@@ -78,12 +78,17 @@ class ClassModel {
         $this->setCreatedAt($data['created_at'] ?? null);
         $this->setUpdatedAt($data['updated_at'] ?? null);
 
-        // Handle JSONB arrays
-        $this->setLearnerIds($this->parseJsonField($data['learner_ids'] ?? $data['add_learner'] ?? []));
-        $this->setBackupAgentIds($this->parseJsonField($data['backup_agent_ids'] ?? $data['backup_agent'] ?? []));
+        // Handle JSONB arrays - support both snake_case and camelCase
+        error_log('ClassModel constructor - learner data check:');
+        error_log('  learner_ids: ' . (isset($data['learner_ids']) ? print_r($data['learner_ids'], true) : 'NOT SET'));
+        error_log('  learnerIds: ' . (isset($data['learnerIds']) ? print_r($data['learnerIds'], true) : 'NOT SET'));
+        error_log('  add_learner: ' . (isset($data['add_learner']) ? print_r($data['add_learner'], true) : 'NOT SET'));
+
+        $this->setLearnerIds($this->parseJsonField($data['learner_ids'] ?? $data['learnerIds'] ?? $data['add_learner'] ?? []));
+        $this->setBackupAgentIds($this->parseJsonField($data['backup_agent_ids'] ?? $data['backupAgentIds'] ?? $data['backup_agent'] ?? []));
         $this->setScheduleData($this->parseJsonField($data['schedule_data'] ?? $data['scheduleData'] ?? []));
         $this->setStopRestartDates($this->parseJsonField($data['stop_restart_dates'] ?? []));
-        $this->setClassNotesData($this->parseJsonField($data['class_notes_data'] ?? $data['class_notes'] ?? []));
+        $this->setClassNotesData($this->parseJsonField($data['class_notes_data'] ?? $data['classNotes'] ?? $data['class_notes'] ?? []));
     }
 
     /**
@@ -145,32 +150,39 @@ class ClassModel {
                 class_notes_data, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+            // Debug the specific parameters we're focusing on
+            error_log('=== DEBUGGING PARAMETERS [19] and [21] ===');
+            error_log('Parameter [19] - BackupAgentIds raw: ' . print_r($this->getBackupAgentIds(), true));
+            error_log('Parameter [19] - BackupAgentIds JSON: ' . json_encode($this->getBackupAgentIds()));
+            error_log('Parameter [21] - StopRestartDates raw: ' . print_r($this->getStopRestartDates(), true));
+            error_log('Parameter [21] - StopRestartJson: ' . $stopRestartJson);
+
             $params = [
-                $this->getClientId(),
-                $this->getSiteId(),
-                $this->getClassAddressLine(),
-                $this->getClassType(),
-                $this->getClassSubject(),
-                $this->getClassCode(),
-                $this->getClassDuration(),
-                $this->getOriginalStartDate(),
-                $this->getSetaFunded(),
-                $this->getSeta(),
-                $this->getExamClass(),
-                $this->getExamType(),
-                $this->getQaVisitDates(),
-                $this->getClassAgent(),
-                $this->getInitialClassAgent(),
-                $this->getInitialAgentStartDate(),
-                $this->getProjectSupervisorId(),
-                $this->getDeliveryDate(),
-                json_encode($this->getLearnerIds()),
-                json_encode($this->getBackupAgentIds()),
-                json_encode($this->getScheduleData()),
-                $stopRestartJson,
-                json_encode($this->getClassNotesData()),
-                $this->getCreatedAt(),
-                $this->getUpdatedAt()
+                $this->getClientId(),                               // [0]
+                $this->getSiteId(),                                 // [1]
+                $this->getClassAddressLine(),                       // [2]
+                $this->getClassType(),                              // [3]
+                $this->getClassSubject(),                           // [4]
+                $this->getClassCode(),                              // [5]
+                $this->getClassDuration(),                          // [6]
+                $this->getOriginalStartDate(),                      // [7]
+                $this->getSetaFunded(),                             // [8]
+                $this->getSeta(),                                   // [9]
+                $this->getExamClass(),                              // [10]
+                $this->getExamType(),                               // [11]
+                $this->getQaVisitDates(),                           // [12]
+                $this->getClassAgent(),                             // [13]
+                $this->getInitialClassAgent(),                      // [14]
+                $this->getInitialAgentStartDate(),                  // [15]
+                $this->getProjectSupervisorId(),                    // [16]
+                $this->getDeliveryDate(),                           // [17]
+                json_encode($this->getLearnerIds()),                // [18]
+                json_encode($this->getBackupAgentIds()),            // [19] - FOCUS PARAMETER
+                json_encode($this->getScheduleData()),              // [20]
+                $stopRestartJson,                                   // [21] - FOCUS PARAMETER
+                json_encode($this->getClassNotesData()),            // [22]
+                $this->getCreatedAt(),                              // [23]
+                $this->getUpdatedAt()                               // [24]
             ];
 
             error_log('Executing SQL: ' . $sql);

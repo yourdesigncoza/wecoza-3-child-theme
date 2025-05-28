@@ -1807,9 +1807,18 @@ function showCustomAlert(message) {
         // Show a summary of errors at the top
         let errorSummary = '<div class="alert alert-danger"><strong>Please correct the following errors:</strong><ul>';
         for (const field in errors) {
-            errors[field].forEach(error => {
-                errorSummary += '<li>' + error + '</li>';
-            });
+            // Handle both arrays and non-arrays (like debug info)
+            if (Array.isArray(errors[field])) {
+                errors[field].forEach(error => {
+                    errorSummary += '<li>' + error + '</li>';
+                });
+            } else if (field === 'debug') {
+                // Skip debug info in error summary
+                console.log('Debug info:', errors[field]);
+            } else {
+                // Handle single error message
+                errorSummary += '<li>' + errors[field] + '</li>';
+            }
         }
         errorSummary += '</ul></div>';
 
