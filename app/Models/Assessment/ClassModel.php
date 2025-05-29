@@ -29,6 +29,7 @@ class ClassModel {
     private $examClass;
     private $examType;
     private $qaVisitDates;
+    private $qaReports = [];
     private $classAgent;
     private $initialClassAgent;
     private $initialAgentStartDate;
@@ -70,6 +71,7 @@ class ClassModel {
         $this->setExamClass($data['exam_class'] ?? null);
         $this->setExamType($data['exam_type'] ?? null);
         $this->setQaVisitDates($data['qa_visit_dates'] ?? null);
+        $this->setQaReports($this->parseJsonField($data['qa_reports'] ?? []));
         $this->setClassAgent($data['class_agent'] ?? null);
         $this->setInitialClassAgent($data['initial_class_agent'] ?? null);
         $this->setInitialAgentStartDate($data['initial_agent_start_date'] ?? null);
@@ -144,11 +146,11 @@ class ClassModel {
             $sql = "INSERT INTO classes (
                 client_id, site_id, class_address_line, class_type, class_subject,
                 class_code, class_duration, original_start_date, seta_funded, seta,
-                exam_class, exam_type, qa_visit_dates, class_agent, initial_class_agent,
+                exam_class, exam_type, qa_visit_dates, qa_reports, class_agent, initial_class_agent,
                 initial_agent_start_date, project_supervisor_id, delivery_date,
                 learner_ids, backup_agent_ids, schedule_data, stop_restart_dates,
                 class_notes_data, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             // Debug the specific parameters we're focusing on
             error_log('=== DEBUGGING PARAMETERS [19] and [21] ===');
@@ -171,18 +173,19 @@ class ClassModel {
                 $this->getExamClass(),                              // [10]
                 $this->getExamType(),                               // [11]
                 $this->getQaVisitDates(),                           // [12]
-                $this->getClassAgent(),                             // [13]
-                $this->getInitialClassAgent(),                      // [14]
-                $this->getInitialAgentStartDate(),                  // [15]
-                $this->getProjectSupervisorId(),                    // [16]
-                $this->getDeliveryDate(),                           // [17]
-                json_encode($this->getLearnerIds()),                // [18]
-                json_encode($this->getBackupAgentIds()),            // [19] - FOCUS PARAMETER
-                json_encode($this->getScheduleData()),              // [20]
-                $stopRestartJson,                                   // [21] - FOCUS PARAMETER
-                json_encode($this->getClassNotesData()),            // [22]
-                $this->getCreatedAt(),                              // [23]
-                $this->getUpdatedAt()                               // [24]
+                json_encode($this->getQaReports()),                 // [13] - NEW QA REPORTS
+                $this->getClassAgent(),                             // [14]
+                $this->getInitialClassAgent(),                      // [15]
+                $this->getInitialAgentStartDate(),                  // [16]
+                $this->getProjectSupervisorId(),                    // [17]
+                $this->getDeliveryDate(),                           // [18]
+                json_encode($this->getLearnerIds()),                // [19]
+                json_encode($this->getBackupAgentIds()),            // [20] - FOCUS PARAMETER
+                json_encode($this->getScheduleData()),              // [21]
+                $stopRestartJson,                                   // [22] - FOCUS PARAMETER
+                json_encode($this->getClassNotesData()),            // [23]
+                $this->getCreatedAt(),                              // [24]
+                $this->getUpdatedAt()                               // [25]
             ];
 
             error_log('Executing SQL: ' . $sql);
@@ -223,7 +226,7 @@ class ClassModel {
             $sql = "UPDATE classes SET
                 client_id = ?, site_id = ?, class_address_line = ?, class_type = ?,
                 class_subject = ?, class_code = ?, class_duration = ?, original_start_date = ?,
-                seta_funded = ?, seta = ?, exam_class = ?, exam_type = ?, qa_visit_dates = ?,
+                seta_funded = ?, seta = ?, exam_class = ?, exam_type = ?, qa_visit_dates = ?, qa_reports = ?,
                 class_agent = ?, initial_class_agent = ?, initial_agent_start_date = ?,
                 project_supervisor_id = ?, delivery_date = ?, learner_ids = ?, backup_agent_ids = ?,
                 schedule_data = ?, stop_restart_dates = ?, class_notes_data = ?, updated_at = ?
@@ -234,7 +237,7 @@ class ClassModel {
                 $this->getClassType(), $this->getClassSubject(), $this->getClassCode(),
                 $this->getClassDuration(), $this->getOriginalStartDate(), $this->getSetaFunded(),
                 $this->getSeta(), $this->getExamClass(), $this->getExamType(),
-                $this->getQaVisitDates(), $this->getClassAgent(), $this->getInitialClassAgent(),
+                $this->getQaVisitDates(), json_encode($this->getQaReports()), $this->getClassAgent(), $this->getInitialClassAgent(),
                 $this->getInitialAgentStartDate(), $this->getProjectSupervisorId(),
                 $this->getDeliveryDate(), json_encode($this->getLearnerIds()),
                 json_encode($this->getBackupAgentIds()), json_encode($this->getScheduleData()),
@@ -361,6 +364,9 @@ class ClassModel {
 
     public function getQaVisitDates() { return $this->qaVisitDates; }
     public function setQaVisitDates($qaVisitDates) { $this->qaVisitDates = $qaVisitDates; return $this; }
+
+    public function getQaReports() { return $this->qaReports; }
+    public function setQaReports($qaReports) { $this->qaReports = is_array($qaReports) ? $qaReports : []; return $this; }
 
     public function getClassAgent() { return $this->classAgent; }
     public function setClassAgent($classAgent) {

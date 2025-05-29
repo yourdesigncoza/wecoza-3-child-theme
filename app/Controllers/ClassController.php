@@ -256,6 +256,7 @@ class ClassController {
     public static function saveClassAjax() {
         error_log('=== CLASS SAVE AJAX START ===');
         error_log('POST data: ' . print_r($_POST, true));
+        error_log('FILES data: ' . print_r($_FILES, true));
 
         // Create a temporary instance to access instance methods
         $instance = new self();
@@ -269,8 +270,8 @@ class ClassController {
 
         error_log('Nonce verification passed');
 
-        // Process form data
-        $formData = self::processFormData($_POST);
+        // Process form data (including file uploads)
+        $formData = self::processFormData($_POST, $_FILES);
         error_log('Processed form data: ' . print_r($formData, true));
 
         // Convert processed data to validation format
@@ -385,9 +386,10 @@ class ClassController {
      * Process form data
      *
      * @param array $data Raw form data
+     * @param array $files Raw file data from $_FILES
      * @return array Processed data
      */
-    private static function processFormData($data) {
+    private static function processFormData($data, $files = []) {
         $processed = [];
 
         // Basic fields - using snake_case field names that the model expects
@@ -417,6 +419,11 @@ class ClassController {
         }
 
         error_log('Processed qa_visit_dates: ' . ($processed['qa_visit_dates'] ?? 'NULL'));
+
+        // QA Reports - handle file uploads
+        error_log('=== QA REPORTS PROCESSING ===');
+        $processed['qa_reports'] = self::processQAReports($files);
+        error_log('Processed qa_reports: ' . print_r($processed['qa_reports'], true));
 
         // Class Agent - map initial_class_agent to class_agent for the model
         error_log('=== CLASS AGENT PROCESSING ===');
@@ -615,6 +622,74 @@ class ClassController {
         error_log('Final stop_restart_dates: ' . print_r($processed['stop_restart_dates'], true));
 
         return $processed;
+    }
+
+    /**
+     * Process QA Reports file uploads
+     *
+     * @param array $files Raw file data from $_FILES
+     * @return array Array of uploaded file information
+     */
+    private static function processQAReports($files) {
+        $qaReports = [];
+
+        // Check if qa_reports files were uploaded
+        if (!isset($files['qa_reports']) || empty($files['qa_reports']['name'])) {
+            error_log('No QA reports files uploaded');
+            return $qaReports;
+        }
+
+        $qaFiles = $files['qa_reports'];
+        error_log('QA Reports files data: ' . print_r($qaFiles, true));
+
+        // Handle multiple file uploads
+        $fileCount = is_array($qaFiles['name']) ? count($qaFiles['name']) : 1;
+
+        // Use the FileUploadService
+        $uploadService = new \WeCoza\Services\FileUpload\FileUploadService();
+
+        for ($i = 0; $i < $fileCount; $i++) {
+            // Extract individual file data
+            $file = [
+                'name' => is_array($qaFiles['name']) ? $qaFiles['name'][$i] : $qaFiles['name'],
+                'type' => is_array($qaFiles['type']) ? $qaFiles['type'][$i] : $qaFiles['type'],
+                'tmp_name' => is_array($qaFiles['tmp_name']) ? $qaFiles['tmp_name'][$i] : $qaFiles['tmp_name'],
+                'error' => is_array($qaFiles['error']) ? $qaFiles['error'][$i] : $qaFiles['error'],
+                'size' => is_array($qaFiles['size']) ? $qaFiles['size'][$i] : $qaFiles['size']
+            ];
+
+            // Skip empty files
+            if (empty($file['name']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+
+            error_log("Processing QA report file {$i}: " . $file['name']);
+
+            // Upload the file
+            $uploadResult = $uploadService->uploadFile(
+                $file,
+                'qa-reports', // subdirectory
+                ['pdf' => 'application/pdf'], // only allow PDFs
+                10485760 // 10MB max size
+            );
+
+            if ($uploadResult['success']) {
+                $qaReports[] = [
+                    'original_name' => $file['name'],
+                    'file_path' => $uploadResult['file_path'],
+                    'file_url' => $uploadResult['file_url'],
+                    'upload_date' => current_time('mysql'),
+                    'file_size' => $file['size']
+                ];
+                error_log("QA report uploaded successfully: " . $uploadResult['file_path']);
+            } else {
+                error_log("QA report upload failed: " . $uploadResult['message']);
+                // You might want to handle this error differently
+                // For now, we'll continue with other files
+            }
+        }
+
+        return $qaReports;
     }
 
     /**
