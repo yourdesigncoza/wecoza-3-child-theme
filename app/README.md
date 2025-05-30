@@ -28,7 +28,6 @@ This directory contains the MVC (Model-View-Controller) architecture for the WeC
     /Database
     /FileUpload
     /Authentication
-    /Validation
 ```
 
 ## Models

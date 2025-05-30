@@ -9,7 +9,6 @@
 namespace WeCoza\Models\Assessment;
 
 use WeCoza\Services\Database\DatabaseService;
-use WeCoza\Services\Validation\ValidationService;
 
 class ClassModel {
     /**
@@ -448,11 +447,11 @@ class ClassModel {
     /**
      * Validate class data - DEPRECATED
      * Server-side validation has been removed. All validation is handled on the frontend.
-     * This method always returns a validator that passes validation.
+     * This method always returns true for backward compatibility.
      */
     public static function validate($data) {
         // Server-side validation disabled - using frontend validation only
-        return new ValidationService([]);
+        return true;
     }
 
     /**

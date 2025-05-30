@@ -105,7 +105,6 @@ Services implement business logic and handle complex operations. They manage ext
   /Database/
   /FileUpload/
   /Authentication/
-  /Validation/
   /Export/
 ```
 

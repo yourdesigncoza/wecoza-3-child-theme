@@ -58,7 +58,6 @@ mkdir -p "$PACKAGE_DIR/app/Models/Client"
 mkdir -p "$PACKAGE_DIR/app/Models/Portfolio"
 mkdir -p "$PACKAGE_DIR/app/Helpers"
 mkdir -p "$PACKAGE_DIR/app/Services/Database"
-mkdir -p "$PACKAGE_DIR/app/Services/Validation"
 mkdir -p "$PACKAGE_DIR/app/Services/Export"
 mkdir -p "$PACKAGE_DIR/app/Services/Authentication"
 mkdir -p "$PACKAGE_DIR/app/Services/FileUpload"
@@ -117,7 +116,6 @@ fi
 # Copy Helpers and Services
 cp app/Helpers/*.php "$PACKAGE_DIR/app/Helpers/" 2>/dev/null || true
 cp app/Services/Database/*.php "$PACKAGE_DIR/app/Services/Database/" 2>/dev/null || true
-cp app/Services/Validation/*.php "$PACKAGE_DIR/app/Services/Validation/" 2>/dev/null || true
 cp app/Services/Export/*.php "$PACKAGE_DIR/app/Services/Export/" 2>/dev/null || true
 
 # Copy additional Services if they exist

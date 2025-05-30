@@ -113,7 +113,6 @@ Complete getter/setter pairs for all properties following camelCase convention.
 
 ### Required Services
 - **`WeCoza\Services\Database\DatabaseService`** - Database operations
-- **`WeCoza\Services\Validation\ValidationService`** - Form validation
 
 ### Related Models
 - **`WeCoza\Models\Learner\LearnerModel`** - Learner data (referenced via learner_ids)
@@ -174,13 +173,10 @@ if ($class) {
 
 ### Validation Example
 ```php
-$validator = ClassModel::validate($formData);
-if (!$validator->isValid()) {
-    $errors = $validator->getErrors();
-    foreach ($errors as $field => $error) {
-        echo "Error in {$field}: {$error}";
-    }
-}
+// Server-side validation has been removed
+// All validation is now handled on the frontend using JavaScript and Bootstrap 5
+// This method always returns true for backward compatibility
+$isValid = ClassModel::validate($formData); // Always returns true
 ```
 
 ## Validation Rules
@@ -217,18 +213,18 @@ if (!$validator->isValid()) {
 - **`app/Controllers/PublicHolidaysController.php`** - Holiday data for scheduling
 
 ### Views
-- **`app/Views/components/class-capture-form.view.php`** - Main form view
-- **`app/Views/components/class-capture-partials/`** - Form partial components:
-  - `basic-details.php` - Client/site selection
-  - `class-info.php` - Class type/subject/dates
-  - `class-schedule-form.php` - Schedule management
-  - `funding-exam-details.php` - SETA/exam information
-  - `class-learners.php` - Learner management
-  - `exam-learners.php` - Exam learner selection
-  - `class-notes-qa.php` - Notes and QA visits
-  - `assignments-dates.php` - Agent assignments
-  - `date-history.php` - Stop/restart dates
-  - `export-options.php` - Calendar export
+- **`app/Views/components/class-capture-form.view.php`** - Consolidated form view containing all sections:
+  - Basic Details - Client/site selection
+  - Class Info - Class type/subject/dates
+  - Class Schedule - Schedule management with calendar integration
+  - Date History - Stop/restart dates management
+  - Funding & Exam Details - SETA/exam information
+  - Class Learners - Learner management with multi-select
+  - Exam Learners - Exam learner selection (conditionally displayed)
+  - Class Notes & QA - Notes and QA visits with file uploads
+  - Assignments & Dates - Agent assignments and backup management
+
+**Note**: Previously separate partial files have been consolidated into the main form view for easier maintenance and better performance.
 
 ### JavaScript Files
 - **`public/js/class-capture.js`** - Main form functionality
