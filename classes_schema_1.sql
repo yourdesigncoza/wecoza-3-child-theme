@@ -3,11 +3,12 @@
 --
 
 -- Dumped from database version 16.8
--- Dumped by pg_dump version 16.9 (Ubuntu 16.9-1.pgdg22.04+1)
+-- Dumped by pg_dump version 17.5 (Ubuntu 17.5-1.pgdg22.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -50,7 +51,8 @@ CREATE TABLE public.classes (
     stop_restart_dates jsonb DEFAULT '[]'::jsonb,
     class_notes_data jsonb DEFAULT '[]'::jsonb,
     initial_class_agent integer,
-    initial_agent_start_date date
+    initial_agent_start_date date,
+    qa_reports jsonb DEFAULT '[]'::jsonb
 );
 
 
@@ -155,6 +157,13 @@ COMMENT ON COLUMN public.classes.updated_at IS 'Timestamp when the class record 
 
 
 --
+-- Name: COLUMN classes.qa_reports; Type: COMMENT; Schema: public; Owner: doadmin
+--
+
+COMMENT ON COLUMN public.classes.qa_reports IS 'JSON array storing QA report file paths and metadata';
+
+
+--
 -- Name: classes_class_id_seq; Type: SEQUENCE; Schema: public; Owner: doadmin
 --
 
@@ -213,6 +222,13 @@ CREATE INDEX idx_classes_learner_ids ON public.classes USING gin (learner_ids);
 
 
 --
+-- Name: idx_classes_qa_reports; Type: INDEX; Schema: public; Owner: doadmin
+--
+
+CREATE INDEX idx_classes_qa_reports ON public.classes USING gin (qa_reports);
+
+
+--
 -- Name: idx_classes_schedule_data; Type: INDEX; Schema: public; Owner: doadmin
 --
 
@@ -253,4 +269,3 @@ ALTER TABLE ONLY public.classes
 --
 -- PostgreSQL database dump complete
 --
-
