@@ -72,15 +72,12 @@ function agents_capture_shortcode($atts) {
 
 
         /*------------------YDCOZA-----------------------*/
-        /* Validate SA ID or Passport                    */
-        /* Ensure that either SA ID or Passport is       */
-        /* provided. If both are missing, show error.    */
+        /* Server-side validation disabled               */
+        /* All validation is handled on the frontend     */
+        /* using JavaScript and Bootstrap validation     */
         /*-----------------------------------------------*/
 
-        if (empty($_POST['sa_id_no']) && empty($_POST['passport_number'])) {
-            $form_error = true;
-            $error_messages[] = 'You must provide either SA ID Number or Passport Number.';
-        }
+        // Server-side validation disabled - using frontend validation only
 
         // Proceed only if there are no errors
         // In learners-capture-shortcode.php, replace the form submission handling section:

@@ -1524,7 +1524,7 @@ function showCustomAlert(message) {
 
                         // Add custom validation for class learners
                         let classLearnersValid = true;
-                        if (typeof validateClassLearners === 'function') {
+                        if (typeof validateClassLearners === 'function' && $('#class_learners_data').length > 0) {
                             classLearnersValid = validateClassLearners();
                         }
 

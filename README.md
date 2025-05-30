@@ -59,7 +59,7 @@ This child theme extends the GeneratePress parent theme with custom functionalit
 The codebase follows a strict MVC architecture for better organization and maintainability:
 
 ### Models
-Models represent data structures and business logic. They handle data validation and relationships between entities.
+Models represent data structures and business logic. They handle data relationships between entities. Note: Server-side validation has been removed - all validation is handled on the frontend using JavaScript and Bootstrap validation.
 
 ```
 /app/Models/

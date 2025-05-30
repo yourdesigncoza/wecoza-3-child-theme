@@ -93,11 +93,8 @@ function wecoza_learners_update_form_shortcode($atts) {
             'updated_at' => date('Y-m-d H:i:s')
         ];
 
-        // Validate SA ID or Passport
-        if (empty($_POST['sa_id_no']) && empty($_POST['passport_number'])) {
-            $form_error = true;
-            $error_messages[] = 'You must provide either SA ID Number or Passport Number.';
-        }
+        // Server-side validation disabled - using frontend validation only
+        // All validation is handled by JavaScript and Bootstrap validation
 
 
     // Proceed only if there are no errors

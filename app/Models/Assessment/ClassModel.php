@@ -436,74 +436,23 @@ class ClassModel {
     public function setUpdatedAt($updatedAt) { $this->updatedAt = $updatedAt; return $this; }
 
     /**
-     * Get validation rules for class data (updated for new schema)
+     * Get validation rules for class data - DEPRECATED
+     * Server-side validation has been removed. All validation is handled on the frontend.
+     * This method is kept for backward compatibility but returns empty array.
      */
     public static function getValidationRules() {
-        return [
-            'client_id' => [
-                'required' => true,
-                'numeric' => true
-            ],
-            'site_id' => [
-                'required' => true
-            ],
-            'class_type' => [
-                'required' => true
-            ],
-            'class_subject' => [
-                'required' => true
-            ],
-            'class_code' => [
-                'required' => false
-            ],
-            'class_start_date' => [
-                'required' => true,
-                'date' => true
-            ],
-            'seta_funded' => [
-                'required' => true,
-                'in_array' => ['Yes', 'No']
-            ],
-            'seta' => [
-                'required' => function($value, $data) {
-                    return isset($data['seta_funded']) && $data['seta_funded'] === 'Yes';
-                }
-            ],
-            'exam_class' => [
-                'required' => true,
-                'in_array' => ['Yes', 'No']
-            ],
-            'exam_type' => [
-                'required' => function($value, $data) {
-                    return isset($data['exam_class']) && $data['exam_class'] === 'Yes';
-                }
-            ],
-            'class_agent' => [
-                'required' => true,
-                'numeric' => true
-            ],
-            'project_supervisor' => [
-                'required' => true,
-                'numeric' => true
-            ],
-            'delivery_date' => [
-                'required' => true,
-                'date' => true
-            ],
-            'learner_ids' => [
-                'required' => true,
-                'array' => true
-            ]
-        ];
+        // Server-side validation disabled - using frontend validation only
+        return [];
     }
 
     /**
-     * Validate class data
+     * Validate class data - DEPRECATED
+     * Server-side validation has been removed. All validation is handled on the frontend.
+     * This method always returns a validator that passes validation.
      */
     public static function validate($data) {
-        $validator = new ValidationService(self::getValidationRules());
-        $validator->validate($data);
-        return $validator;
+        // Server-side validation disabled - using frontend validation only
+        return new ValidationService([]);
     }
 
     /**

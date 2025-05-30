@@ -201,12 +201,25 @@ class ClassController {
         // Use direct model access for create or update
         try {
             if ($isUpdate) {
-                $class = ClassModel::updateClass($classId, $formData);
+                // Load existing class and update it
+                $class = ClassModel::getById($classId);
+                if (!$class) {
+                    error_log('Class not found for update: ' . $classId);
+                    $instance->sendJsonError('Class not found for update.');
+                    return;
+                }
+
+                // Update the class with new data
+                $class = self::populateClassModel($class, $formData);
+                $result = $class->update();
             } else {
-                $class = ClassModel::createClass($formData);
+                // Create new class instance and save it
+                $class = new ClassModel();
+                $class = self::populateClassModel($class, $formData);
+                $result = $class->save();
             }
 
-            if ($class) {
+            if ($result) {
                 error_log('Class saved successfully with ID: ' . $class->getId());
                 $instance->sendJsonSuccess([
                     'message' => $isUpdate ? 'Class updated successfully.' : 'Class created successfully.',
@@ -222,6 +235,43 @@ class ClassController {
             error_log('Exception during class save: ' . $e->getMessage());
             $instance->sendJsonError('An error occurred while saving the class: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Populate ClassModel instance with form data
+     *
+     * @param ClassModel $class Class model instance
+     * @param array $formData Processed form data
+     * @return ClassModel Populated class model
+     */
+    private static function populateClassModel($class, $formData) {
+        // Set basic properties
+        if (isset($formData['client_id'])) $class->setClientId($formData['client_id']);
+        if (isset($formData['site_id'])) $class->setSiteId($formData['site_id']);
+        if (isset($formData['site_address'])) $class->setClassAddressLine($formData['site_address']);
+        if (isset($formData['class_type'])) $class->setClassType($formData['class_type']);
+        if (isset($formData['class_subject'])) $class->setClassSubject($formData['class_subject']);
+        if (isset($formData['class_code'])) $class->setClassCode($formData['class_code']);
+        if (isset($formData['class_duration'])) $class->setClassDuration($formData['class_duration']);
+        if (isset($formData['class_start_date'])) $class->setOriginalStartDate($formData['class_start_date']);
+        if (isset($formData['seta_funded'])) $class->setSetaFunded($formData['seta_funded']);
+        if (isset($formData['seta_id'])) $class->setSeta($formData['seta_id']);
+        if (isset($formData['exam_class'])) $class->setExamClass($formData['exam_class']);
+        if (isset($formData['exam_type'])) $class->setExamType($formData['exam_type']);
+        if (isset($formData['qa_visit_dates'])) $class->setQaVisitDates($formData['qa_visit_dates']);
+        if (isset($formData['qa_reports'])) $class->setQaReports($formData['qa_reports']);
+        if (isset($formData['class_agent'])) $class->setClassAgent($formData['class_agent']);
+        if (isset($formData['initial_class_agent'])) $class->setInitialClassAgent($formData['initial_class_agent']);
+        if (isset($formData['initial_agent_start_date'])) $class->setInitialAgentStartDate($formData['initial_agent_start_date']);
+        if (isset($formData['project_supervisor'])) $class->setProjectSupervisorId($formData['project_supervisor']);
+        if (isset($formData['delivery_date'])) $class->setDeliveryDate($formData['delivery_date']);
+        if (isset($formData['learner_ids'])) $class->setLearnerIds($formData['learner_ids']);
+        if (isset($formData['backup_agent_ids'])) $class->setBackupAgentIds($formData['backup_agent_ids']);
+        if (isset($formData['schedule_data'])) $class->setScheduleData($formData['schedule_data']);
+        if (isset($formData['stop_restart_dates'])) $class->setStopRestartDates($formData['stop_restart_dates']);
+        if (isset($formData['class_notes'])) $class->setClassNotesData($formData['class_notes']);
+
+        return $class;
     }
 
     /**
@@ -586,37 +636,17 @@ class ClassController {
     }
 
     /**
-     * Convert processed data to validation format
-     * Since we now use snake_case field names, this is mostly a pass-through
+     * Convert processed data to validation format - DEPRECATED
+     * Server-side validation has been removed. All validation is handled on the frontend.
+     * This method is kept for backward compatibility but returns data as-is.
      *
      * @param array $data Processed form data
-     * @return array Data formatted for validation
+     * @return array Data returned as-is (no validation conversion needed)
      */
     private static function convertToValidationFormat($data) {
-        $validationData = [];
-
-        // Map any remaining field name differences for validation
-        $fieldMapping = [
-            'seta_id' => 'seta',  // Validation expects 'seta' not 'seta_id'
-            'initial_class_agent' => 'class_agent',  // Validation expects 'class_agent'
-            'backup_agent_ids' => 'backup_agent'  // Validation expects 'backup_agent'
-        ];
-
-        // Convert mapped fields
-        foreach ($fieldMapping as $processedKey => $validationKey) {
-            if (isset($data[$processedKey])) {
-                $validationData[$validationKey] = $data[$processedKey];
-            }
-        }
-
-        // Copy other fields as-is
-        foreach ($data as $key => $value) {
-            if (!array_key_exists($key, $fieldMapping)) {
-                $validationData[$key] = $value;
-            }
-        }
-
-        return $validationData;
+        // Server-side validation disabled - using frontend validation only
+        // Return data as-is since no validation conversion is needed
+        return $data;
     }
 
     /**
@@ -637,7 +667,7 @@ class ClassController {
      * Helper function to send JSON error response
      *
      * @param string $message Error message
-     * @param array $errors Optional validation errors
+     * @param array $errors Optional errors (deprecated - validation errors no longer used)
      */
     private function sendJsonError($message, $errors = null) {
         header('Content-Type: application/json');
@@ -646,9 +676,8 @@ class ClassController {
             'message' => $message
         ];
 
-        if ($errors) {
-            $response['data'] = ['errors' => $errors];
-        }
+        // Server-side validation disabled - errors parameter is ignored
+        // All validation is handled on the frontend
 
         echo json_encode($response);
         exit;

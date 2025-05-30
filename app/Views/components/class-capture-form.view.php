@@ -49,7 +49,7 @@
  *
  * @see \WeCoza\Controllers\ClassController::captureClassShortcode() For the controller method that renders this view
  * @see \WeCoza\Models\Assessment\ClassModel For the data model that stores class information
- * @see \WeCoza\Services\Validation\ValidationService For the validation service used to validate form data
+ * @see \WeCoza\Services\Validation\ValidationService DEPRECATED - Server-side validation has been removed
  */
 ?>
 <!-- Classes Capture Form -->
