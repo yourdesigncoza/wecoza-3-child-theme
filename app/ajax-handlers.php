@@ -65,12 +65,6 @@ function register_shortcodes() {
     // Class shortcodes
     $classController = new WeCoza\Controllers\ClassController();
     \add_shortcode('wecoza_capture_class', [$classController, 'captureClassShortcode']);
-    \add_shortcode('wecoza_display_class', [$classController, 'displayClassShortcode']);
-
-    // Phase 1: New shortcodes for create/update modes
-    \add_shortcode('wecoza_create_class', [$classController, 'createClassShortcode']);
-    \add_shortcode('wecoza_update_class', [$classController, 'updateClassShortcode']);
-
 }
 
 // Register shortcodes

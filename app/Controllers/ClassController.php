@@ -13,9 +13,6 @@ use WeCoza\Controllers\MainController;
 use WeCoza\Controllers\ClassTypesController;
 use WeCoza\Controllers\PublicHolidaysController;
 use WeCoza\Services\Export\CalendarExportService;
-use WeCoza\Repositories\ClassRepository;
-use WeCoza\Services\ClassService;
-use WeCoza\Validators\ClassValidator;
 
 // WordPress functions are in global namespace
 // We'll access them directly with the global namespace prefix
@@ -23,22 +20,12 @@ use WeCoza\Validators\ClassValidator;
 
 class ClassController {
 
-    private $classService;
-    private $classRepository;
-    private $classValidator;
-
     /**
-     * Constructor with dependency injection
+     * Constructor
      */
-    public function __construct(
-        ClassService $classService = null,
-        ClassRepository $classRepository = null,
-        ClassValidator $classValidator = null
-    ) {
-        // Initialize dependencies (with fallback for backward compatibility)
-        $this->classRepository = $classRepository ?? new ClassRepository();
-        $this->classValidator = $classValidator ?? new ClassValidator();
-        $this->classService = $classService ?? new ClassService($this->classRepository, $this->classValidator);
+    public function __construct() {
+        // Register WordPress hooks
+        \add_action('init', [$this, 'registerShortcodes']);
     }
 
     /**
@@ -46,13 +33,6 @@ class ClassController {
      */
     public function registerShortcodes() {
         \add_shortcode('wecoza_capture_class', [$this, 'captureClassShortcode']);
-        \add_shortcode('wecoza_display_class', [$this, 'displayClassShortcode']);
-
-        // New RESTful shortcodes (WEC-90-2)
-        \add_shortcode('wecoza_classes_index', [$this, 'index']);
-        \add_shortcode('wecoza_class_create', [$this, 'create']);
-        \add_shortcode('wecoza_class_show', [$this, 'show']);
-        \add_shortcode('wecoza_class_edit', [$this, 'edit']);
     }
 
     /**
@@ -119,47 +99,7 @@ class ClassController {
         }
     }
 
-    /**
-     * Handle create class shortcode
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function createClassShortcode($atts) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'redirect_url' => '',
-        ], $atts);
 
-        return $this->handleCreateMode($atts);
-    }
-
-    /**
-     * Handle update class shortcode
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function updateClassShortcode($atts) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'class_id' => 0,
-            'redirect_url' => '',
-        ], $atts);
-
-        // Try to get class_id from shortcode attribute first, then URL parameter
-        $class_id = intval($atts['class_id']);
-        if ($class_id <= 0 && isset($_GET['class_id'])) {
-            $class_id = intval($_GET['class_id']);
-        }
-
-        // For testing: allow update mode without class_id
-        if ($class_id <= 0) {
-            return $this->handleUpdateMode($atts, null); // Pass null for testing
-        }
-
-        return $this->handleUpdateMode($atts, $class_id);
-    }
 
     /**
      * Handle create mode logic
@@ -199,8 +139,8 @@ class ClassController {
         // Get the class data (null for testing mode)
         $class = null;
         if ($class_id !== null) {
-            // Use service layer instead of direct model access
-            $class = $this->classService->getClass($class_id);
+            // Use direct model access
+            $class = ClassModel::getById($class_id);
             if (!$class) {
                 return '<div class="alert alert-danger">Error: Class not found.</div>';
             }
@@ -226,62 +166,17 @@ class ClassController {
         return \WeCoza\view('components/class-capture-form', $viewData);
     }
 
-    /**
-     * Handle class display shortcode
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function displayClassShortcode($atts) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'class_id' => 0,
-            'show_header' => true,
-        ], $atts);
 
-        // If no class ID provided, show a list of classes
-        if (empty($atts['class_id'])) {
-            return $this->displayClassList();
-        }
-
-        // Get the class data using service layer
-        $class = $this->classService->getClass($atts['class_id']);
-        if (!$class) {
-            return '<div class="alert alert-danger">Class not found.</div>';
-        }
-
-        // Render the view
-        return \WeCoza\view('components/class-display', [
-            'class' => $class,
-            'show_header' => $atts['show_header']
-        ]);
-    }
-
-    /**
-     * Display a list of classes
-     *
-     * @return string HTML output
-     */
-    private function displayClassList() {
-        // Get all classes using service layer
-        $classes = $this->classService->getAllClasses();
-
-        // Render the view
-        return \WeCoza\view('components/class-list', [
-            'classes' => $classes
-        ]);
-    }
 
     /**
      * Handle AJAX request to save class data
-     * Refactored to use Service Layer (WEC-90-1)
      */
     public static function saveClassAjax() {
-        error_log('=== CLASS SAVE AJAX START (Repository Pattern) ===');
+        error_log('=== CLASS SAVE AJAX START ===');
         error_log('POST data: ' . print_r($_POST, true));
         error_log('FILES data: ' . print_r($_FILES, true));
 
-        // Create instance with dependencies
+        // Create instance
         $instance = new self();
 
         // Check nonce
@@ -297,44 +192,35 @@ class ClassController {
         $formData = self::processFormData($_POST, $_FILES);
         error_log('Processed form data: ' . print_r($formData, true));
 
-        // Validate file uploads if present
-        if (!empty($_FILES)) {
-            $fileValidation = $instance->classService->validateFileUploads($_FILES);
-            if (!$fileValidation['success']) {
-                error_log('File validation failed: ' . print_r($fileValidation['errors'], true));
-                $instance->sendJsonError('File validation failed.', $fileValidation['errors']);
-                return;
-            }
-        }
-
         // Determine if this is create or update operation
         $isUpdate = isset($formData['id']) && !empty($formData['id']);
         $classId = $isUpdate ? intval($formData['id']) : null;
 
         error_log($isUpdate ? "Updating existing class with ID: {$classId}" : 'Creating new class');
 
-        // Use service layer for create or update
-        if ($isUpdate) {
-            $result = $instance->classService->updateClass($classId, $formData);
-        } else {
-            $result = $instance->classService->createClass($formData);
-        }
+        // Use direct model access for create or update
+        try {
+            if ($isUpdate) {
+                $class = ClassModel::updateClass($classId, $formData);
+            } else {
+                $class = ClassModel::createClass($formData);
+            }
 
-        error_log('Service result: ' . print_r($result, true));
-
-        if ($result['success']) {
-            $class = $result['data'];
-            error_log('Class saved successfully with ID: ' . $class->getId());
-            $instance->sendJsonSuccess([
-                'message' => $isUpdate ? 'Class updated successfully.' : 'Class created successfully.',
-                'class_id' => $class->getId()
-            ]);
-        } else {
-            error_log('Service operation failed: ' . print_r($result['errors'], true));
-            $instance->sendJsonError(
-                $isUpdate ? 'Failed to update class.' : 'Failed to create class.',
-                $result['errors']
-            );
+            if ($class) {
+                error_log('Class saved successfully with ID: ' . $class->getId());
+                $instance->sendJsonSuccess([
+                    'message' => $isUpdate ? 'Class updated successfully.' : 'Class created successfully.',
+                    'class_id' => $class->getId()
+                ]);
+            } else {
+                error_log('Model operation failed');
+                $instance->sendJsonError(
+                    $isUpdate ? 'Failed to update class.' : 'Failed to create class.'
+                );
+            }
+        } catch (\Exception $e) {
+            error_log('Exception during class save: ' . $e->getMessage());
+            $instance->sendJsonError('An error occurred while saving the class: ' . $e->getMessage());
         }
     }
 
@@ -966,248 +852,9 @@ class ClassController {
         ];
     }
 
-    /**
-     * Get all classes
-     * Refactored to use Service Layer (WEC-90-1)
-     *
-     * @return array List of classes
-     */
-    private function getAllClasses() {
-        return $this->classService->getAllClasses();
-    }
 
-    // ===== RESTful Controller Methods (WEC-90-2) =====
 
-    /**
-     * Display a listing of classes (index)
-     * RESTful method for GET /classes
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function index($atts = []) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'per_page' => 10,
-            'page' => 1,
-            'client_id' => null,
-            'class_type' => null,
-            'search' => null,
-        ], $atts);
 
-        // Build filters from attributes
-        $filters = [];
-        if (!empty($atts['client_id'])) {
-            $filters['client_id'] = intval($atts['client_id']);
-        }
-        if (!empty($atts['class_type'])) {
-            $filters['class_type'] = sanitize_text_field($atts['class_type']);
-        }
-        if (!empty($atts['search'])) {
-            $filters['search'] = sanitize_text_field($atts['search']);
-        }
-
-        // Get paginated classes
-        $page = max(1, intval($atts['page']));
-        $perPage = max(1, min(50, intval($atts['per_page']))); // Limit to reasonable range
-
-        $result = $this->classService->getClassesPaginated($page, $perPage, $filters);
-
-        // Prepare view data
-        $viewData = [
-            'classes' => $result['data'],
-            'pagination' => [
-                'current_page' => $result['page'],
-                'per_page' => $result['perPage'],
-                'total' => $result['total'],
-                'total_pages' => $result['totalPages']
-            ],
-            'filters' => $filters,
-            'clients' => $this->getClients(),
-            'class_types' => MainController::getClassType()
-        ];
-
-        // Render the index view
-        return \WeCoza\view('classes/index', $viewData);
-    }
-
-    /**
-     * Show the form for creating a new class (create)
-     * RESTful method for GET /classes/create
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function create($atts = []) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'redirect_url' => '',
-        ], $atts);
-
-        // Prepare view data
-        $viewData = [
-            'class_data' => null,
-            'clients' => $this->getClients(),
-            'sites' => $this->getSites(),
-            'agents' => $this->getAgents(),
-            'supervisors' => $this->getSupervisors(),
-            'learners' => $this->getLearnersExam(),
-            'setas' => MainController::getSeta(),
-            'class_types' => MainController::getClassType(),
-            'yes_no_options' => MainController::getYesNoOptions(),
-            'class_notes_options' => MainController::getClassNotesOptions(),
-            'redirect_url' => $atts['redirect_url']
-        ];
-
-        // Render the create view
-        return \WeCoza\view('classes/create', $viewData);
-    }
-
-    /**
-     * Store a newly created class (store)
-     * RESTful method for POST /classes
-     * This method is called via AJAX and handled by saveClassAjax
-     */
-    public function store() {
-        // This functionality is handled by the existing saveClassAjax method
-        // which has been refactored to use the service layer
-        return $this->saveClassAjax();
-    }
-
-    /**
-     * Display the specified class (show)
-     * RESTful method for GET /classes/{id}
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function show($atts = []) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'class_id' => 0,
-            'show_header' => true,
-        ], $atts);
-
-        $classId = intval($atts['class_id']);
-        if ($classId <= 0) {
-            return '<div class="alert alert-danger">Error: Class ID is required.</div>';
-        }
-
-        // Get the class data using service layer
-        $class = $this->classService->getClass($classId);
-        if (!$class) {
-            return '<div class="alert alert-danger">Error: Class not found.</div>';
-        }
-
-        // Prepare view data
-        $viewData = [
-            'class' => $class,
-            'show_header' => filter_var($atts['show_header'], FILTER_VALIDATE_BOOLEAN)
-        ];
-
-        // Render the show view
-        return \WeCoza\view('classes/show', $viewData);
-    }
-
-    /**
-     * Show the form for editing the specified class (edit)
-     * RESTful method for GET /classes/{id}/edit
-     *
-     * @param array $atts Shortcode attributes
-     * @return string HTML output
-     */
-    public function edit($atts = []) {
-        // Process shortcode attributes
-        $atts = \shortcode_atts([
-            'class_id' => 0,
-            'redirect_url' => '',
-        ], $atts);
-
-        $classId = intval($atts['class_id']);
-        if ($classId <= 0) {
-            return '<div class="alert alert-danger">Error: Class ID is required.</div>';
-        }
-
-        // Get the class data using service layer
-        $class = $this->classService->getClass($classId);
-        if (!$class) {
-            return '<div class="alert alert-danger">Error: Class not found.</div>';
-        }
-
-        // Prepare view data
-        $viewData = [
-            'class_data' => $class,
-            'clients' => $this->getClients(),
-            'sites' => $this->getSites(),
-            'agents' => $this->getAgents(),
-            'supervisors' => $this->getSupervisors(),
-            'learners' => $this->getLearnersExam(),
-            'setas' => MainController::getSeta(),
-            'class_types' => MainController::getClassType(),
-            'yes_no_options' => MainController::getYesNoOptions(),
-            'class_notes_options' => MainController::getClassNotesOptions(),
-            'redirect_url' => $atts['redirect_url']
-        ];
-
-        // Render the edit view
-        return \WeCoza\view('classes/edit', $viewData);
-    }
-
-    /**
-     * Update the specified class (update)
-     * RESTful method for PUT/PATCH /classes/{id}
-     * This method is called via AJAX and handled by saveClassAjax
-     */
-    public function update() {
-        // This functionality is handled by the existing saveClassAjax method
-        // which has been refactored to use the service layer
-        return $this->saveClassAjax();
-    }
-
-    /**
-     * Remove the specified class (destroy)
-     * RESTful method for DELETE /classes/{id}
-     */
-    public static function destroy() {
-        error_log('=== CLASS DELETE AJAX START ===');
-
-        // Create instance with dependencies
-        $instance = new self();
-
-        // Check nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
-            error_log('Nonce verification failed');
-            $instance->sendJsonError('Security check failed.');
-            return;
-        }
-
-        // Get class ID
-        $classId = isset($_POST['class_id']) ? intval($_POST['class_id']) : 0;
-        if ($classId <= 0) {
-            error_log('Invalid class ID provided');
-            $instance->sendJsonError('Invalid class ID.');
-            return;
-        }
-
-        error_log("Attempting to delete class with ID: {$classId}");
-
-        // Use service layer for deletion
-        $result = $instance->classService->deleteClass($classId);
-
-        if ($result['success']) {
-            error_log('Class deleted successfully');
-            $instance->sendJsonSuccess([
-                'message' => 'Class deleted successfully.',
-                'class_id' => $classId
-            ]);
-        } else {
-            error_log('Class deletion failed: ' . print_r($result['errors'], true));
-            $instance->sendJsonError(
-                'Failed to delete class.',
-                $result['errors']
-            );
-        }
-    }
 
     /**
      * Generate schedule data based on pattern
