@@ -33,6 +33,7 @@ class ClassController {
      */
     public function registerShortcodes() {
         \add_shortcode('wecoza_capture_class', [$this, 'captureClassShortcode']);
+        \add_shortcode('wecoza_display_classes', [$this, 'displayClassesShortcode']);
     }
 
     /**
@@ -1263,5 +1264,121 @@ class ClassController {
         // Output the iCalendar content
         echo $icalContent;
         exit;
+    }
+
+    /**
+     * Handle display classes shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function displayClassesShortcode($atts) {
+        // Process shortcode attributes
+        $atts = \shortcode_atts([
+            'limit' => 50,
+            'order_by' => 'created_at',
+            'order' => 'DESC',
+            'show_loading' => true,
+        ], $atts);
+
+        try {
+            // Get all classes from database
+            $classes = $this->getAllClasses($atts);
+
+            // Prepare view data
+            $viewData = [
+                'classes' => $classes,
+                'show_loading' => $atts['show_loading'],
+                'total_count' => count($classes)
+            ];
+
+            // Render the view
+            return \WeCoza\view('components/classes-display', $viewData);
+
+        } catch (\Exception $e) {
+            // Log error and return user-friendly message
+            \error_log('Error in displayClassesShortcode: ' . $e->getMessage());
+            \error_log('Error trace: ' . $e->getTraceAsString());
+
+            // For debugging - show detailed error (remove in production)
+            if (current_user_can('manage_options')) {
+                return '<div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Debug Error:</strong> ' . esc_html($e->getMessage()) . '
+                    <br><small>File: ' . esc_html($e->getFile()) . ' Line: ' . $e->getLine() . '</small>
+                </div>';
+            }
+
+            return '<div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Unable to load classes at this time. Please try again later.
+            </div>';
+        }
+    }
+
+    /**
+     * Get all classes from database with optional filtering
+     *
+     * @param array $options Query options (limit, order_by, order)
+     * @return array Array of class data
+     */
+    private function getAllClasses($options = []) {
+        $db = \WeCoza\Services\Database\DatabaseService::getInstance();
+
+        // Set defaults
+        $limit = isset($options['limit']) ? intval($options['limit']) : 50;
+        $order_by = isset($options['order_by']) ? $options['order_by'] : 'created_at';
+        $order = isset($options['order']) ? strtoupper($options['order']) : 'DESC';
+
+        // Validate order_by to prevent SQL injection
+        $allowed_columns = [
+            'class_id', 'client_id', 'class_type', 'class_subject',
+            'original_start_date', 'delivery_date', 'created_at', 'updated_at'
+        ];
+
+        if (!in_array($order_by, $allowed_columns)) {
+            $order_by = 'created_at';
+        }
+
+        // Validate order direction
+        if (!in_array($order, ['ASC', 'DESC'])) {
+            $order = 'DESC';
+        }
+
+        // Build the query - start simple without JOINs to avoid missing table issues
+        $sql = "
+            SELECT
+                c.class_id,
+                c.client_id,
+                c.class_type,
+                c.class_subject,
+                c.class_code,
+                c.class_duration,
+                c.original_start_date,
+                c.delivery_date,
+                c.seta_funded,
+                c.seta,
+                c.exam_class,
+                c.exam_type,
+                c.class_agent,
+                c.project_supervisor_id,
+                c.created_at,
+                c.updated_at
+            FROM public.classes c
+            ORDER BY c." . $order_by . " " . $order . "
+            LIMIT " . $limit;
+
+        $stmt = $db->query($sql);
+        $results = $stmt->fetchAll();
+
+        // Add placeholder names for missing related data
+        foreach ($results as &$row) {
+            $row['client_name'] = 'Client ID: ' . ($row['client_id'] ?? 'Unknown');
+            $row['site_name'] = 'Site ID: ' . ($row['site_id'] ?? 'Unknown');
+            $row['agent_name'] = 'Agent ID: ' . ($row['class_agent'] ?? 'Unassigned');
+            $row['supervisor_name'] = 'Supervisor ID: ' . ($row['project_supervisor_id'] ?? 'Unassigned');
+        }
+
+        return $results;
     }
 }

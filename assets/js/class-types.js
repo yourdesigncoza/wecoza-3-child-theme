@@ -166,8 +166,20 @@ document.addEventListener('DOMContentLoaded', function() {
      * @return {string} The generated class code
      */
     function generateClassCode(classType, subjectId) {
-        // Format: [ClassType]-[SubjectID]-[CurrentYear]
-        const currentYear = new Date().getFullYear();
-        return `${classType}-${subjectId}-${currentYear}`;
+        // Format: [ClassType]-[SubjectID]-[CurrentYear]-[DateTimeStamp]
+        // DateTimeStamp format: YMDHMM (Year, Month, Day, Hour, Minute)
+        const now = new Date();
+        const currentYear = now.getFullYear();
+
+        // Create datetime stamp: YMDHMM format
+        const year = now.getFullYear().toString().slice(-2); // Last 2 digits of year
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month (01-12)
+        const day = now.getDate().toString().padStart(2, '0'); // Day (01-31)
+        const hour = now.getHours().toString().padStart(2, '0'); // Hour (00-23)
+        const minute = now.getMinutes().toString().padStart(2, '0'); // Minute (00-59)
+
+        const dateTimeStamp = `${year}${month}${day}${hour}${minute}`;
+
+        return `${classType}-${subjectId}-${currentYear}-${dateTimeStamp}`;
     }
 });
