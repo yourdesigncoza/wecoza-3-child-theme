@@ -77,7 +77,7 @@ $total_count = $total_count ?? 0;
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <table id="classes-table" class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col" class="border-0 ps-4">
