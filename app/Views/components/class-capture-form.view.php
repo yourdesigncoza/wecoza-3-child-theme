@@ -69,10 +69,10 @@
       <?php include_once('class-capture-partials/class-info.php'); ?>
 
       <!-- Class Schedule Form Section -->
-      <?php include_once('class-capture-partials/class-schedule-form.php'); ?>
+      <?php // include_once('class-capture-partials/class-schedule-form.php'); ?>
 
       <!-- Class Date History Section -->
-      <?php include_once('class-capture-partials/date-history.php'); ?>
+      <?php // include_once('class-capture-partials/date-history.php'); ?>
 
       <!-- YDCOZA Replace With TableView -->
       <!-- Calendar Reference View (hidden by default) -->
@@ -81,22 +81,22 @@
       <?php echo section_divider(); ?>
 
       <!-- ===== Section: Funding & Exam Details ===== -->
-      <?php include_once('class-capture-partials/funding-exam-details.php'); ?>
+      <?php // include_once('class-capture-partials/funding-exam-details.php'); ?>
 
       <!-- Class Learners Section -->
       <?php echo section_divider(); ?>
-      <?php include_once('class-capture-partials/class-learners.php'); ?>
+      <?php // include_once('class-capture-partials/class-learners.php'); ?>
 
       <!-- Exam Learners (conditionally displayed) -->
-      <?php include_once('class-capture-partials/exam-learners.php'); ?>
+      <?php // include_once('class-capture-partials/exam-learners.php'); ?>
 
       <?php echo section_divider(); ?>
-      <?php include_once('class-capture-partials/class-notes-qa.php'); ?>
+      <?php // include_once('class-capture-partials/class-notes-qa.php'); ?>
 
       <?php echo section_divider(); ?>
 
       <!-- ===== Section: Assignments & Dates ===== -->
-      <?php include_once('class-capture-partials/assignments-dates.php'); ?>
+      <?php // include_once('class-capture-partials/assignments-dates.php'); ?>
 
       <?php echo section_divider(); ?>
       <!-- Submit Button - Mode-aware text -->

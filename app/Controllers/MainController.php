@@ -157,6 +157,166 @@ class MainController {
     }
 
     /**
+     * Get all clients
+     *
+     * @return array List of clients
+     */
+    public static function getClients() {
+        // This would typically come from a database query
+        // For now, returning static data
+        return [
+            ['id' => 11, 'name' => 'Aspen Pharmacare'],
+            ['id' => 14, 'name' => 'Barloworld'],
+            ['id' => 9, 'name' => 'Bidvest Group'],
+            ['id' => 8, 'name' => 'FirstRand'],
+            ['id' => 4, 'name' => 'MTN Group'],
+            ['id' => 15, 'name' => 'Multichoice Group'],
+            ['id' => 5, 'name' => 'Naspers'],
+            ['id' => 12, 'name' => 'Nedbank Group'],
+            ['id' => 10, 'name' => 'Sanlam'],
+            ['id' => 1, 'name' => 'Sasol Limited'],
+            ['id' => 3, 'name' => 'Shoprite Holdings'],
+            ['id' => 2, 'name' => 'Standard Bank Group'],
+            ['id' => 13, 'name' => 'Tiger Brands'],
+            ['id' => 6, 'name' => 'Vodacom Group'],
+            ['id' => 7, 'name' => 'Woolworths Holdings']
+        ];
+    }
+
+    /**
+     * Get all sites
+     *
+     * @return array List of sites grouped by client
+     */
+    public static function getSites() {
+        // This would typically come from a database query
+        // For now, returning static data
+        return [
+            11 => [ // Aspen Pharmacare
+                ['id' => '11_1', 'name' => 'Aspen Pharmacare - Head Office'],
+                ['id' => '11_2', 'name' => 'Aspen Pharmacare - Production Unit'],
+                ['id' => '11_3', 'name' => 'Aspen Pharmacare - Research Centre']
+            ],
+            14 => [ // Barloworld
+                ['id' => '14_1', 'name' => 'Barloworld - Northern Branch'],
+                ['id' => '14_2', 'name' => 'Barloworld - Southern Branch'],
+                ['id' => '14_3', 'name' => 'Barloworld - Central Branch']
+            ],
+            // Additional clients would be added here
+        ];
+    }
+
+    /**
+     * Get site addresses
+     *
+     * @return array Mapping of site IDs to addresses
+     */
+    public static function getSiteAddresses() {
+        // This would typically come from a database query
+        // For now, returning static data
+        return [
+            // Aspen Pharmacare
+            "11_1" => "Aspen Pharmacare - Head Office, 100 Pharma Rd, Durban, 4001",
+            "11_2" => "Aspen Pharmacare - Production Unit, 101 Pharma Rd, Durban, 4001",
+            "11_3" => "Aspen Pharmacare - Research Centre, 102 Pharma Rd, Durban, 4001",
+
+            // Barloworld
+            "14_1" => "Barloworld - Northern Branch, 10 Northern Ave, Johannesburg, 2001",
+            "14_2" => "Barloworld - Southern Branch, 20 Southern St, Johannesburg, 2002",
+            "14_3" => "Barloworld - Central Branch, 30 Central Blvd, Johannesburg, 2003",
+
+            // Additional sites would be added here
+        ];
+    }
+
+    /**
+     * Get all agents
+     *
+     * @return array List of agents
+     */
+    public static function getAgents() {
+        // This would typically come from a database query
+        // For now, returning static data
+        return [
+            ['id' => 1, 'name' => 'Michael M. van der Berg'],
+            ['id' => 2, 'name' => 'Thandi T. Nkosi'],
+            ['id' => 3, 'name' => 'Rajesh R. Patel'],
+            ['id' => 4, 'name' => 'Lerato L. Moloi'],
+            ['id' => 5, 'name' => 'Johannes J. Pretorius'],
+            ['id' => 6, 'name' => 'Nomvula N. Dlamini'],
+            ['id' => 7, 'name' => 'David D. O\'Connor'],
+            ['id' => 8, 'name' => 'Zanele Z. Mthembu'],
+            ['id' => 9, 'name' => 'Pieter P. van Zyl'],
+            ['id' => 10, 'name' => 'Fatima F. Ismail'],
+            ['id' => 11, 'name' => 'Sipho S. Ndlovu'],
+            ['id' => 12, 'name' => 'Anita A. van Rensburg'],
+            ['id' => 13, 'name' => 'Themba T. Mkhize'],
+            ['id' => 14, 'name' => 'Sarah S. Botha'],
+            ['id' => 15, 'name' => 'Lwazi L. Zuma']
+        ];
+    }
+
+    /**
+     * Get all supervisors
+     *
+     * @return array List of supervisors
+     */
+    public static function getSupervisors() {
+        // This would typically come from a database query
+        // For now, returning static data
+        return [
+            ['id' => 1, 'name' => 'Ethan J. Williams'],
+            ['id' => 2, 'name' => 'Aisha K. Mohamed'],
+            ['id' => 3, 'name' => 'Carlos M. Rodriguez'],
+            ['id' => 4, 'name' => 'Emily R. Thompson'],
+            ['id' => 5, 'name' => 'Samuel B. Johnson'],
+            ['id' => 6, 'name' => 'Lungile T. Mthethwa'],
+            ['id' => 7, 'name' => 'David C. Martins'],
+            ['id' => 8, 'name' => 'Zanele P. Khumalo'],
+            ['id' => 9, 'name' => 'Johan D. Venter'],
+            ['id' => 10, 'name' => 'Fatima H. Desai'],
+            ['id' => 11, 'name' => 'Sipho M. Zondi'],
+            ['id' => 12, 'name' => 'Annelize S. du Preez'],
+            ['id' => 13, 'name' => 'Themba L. Sithole'],
+            ['id' => 14, 'name' => 'Sophia V. Naidoo'],
+            ['id' => 15, 'name' => 'Mandla N. Dube']
+        ];
+    }
+
+    /**
+     * Get all learners for exam selection
+     *
+     * @return array List of learners available for exam classes
+     */
+    public static function getLearnersExam() {
+        // This would typically come from a database query
+        // For now, returning static data for exam selection
+        return [
+            ['id' => 1, 'name' => 'John J.M. Smith'],
+            ['id' => 2, 'name' => 'Nosipho N. Dlamini'],
+            ['id' => 3, 'name' => 'Ahmed A. Patel'],
+            ['id' => 4, 'name' => 'Lerato L. Moloi'],
+            ['id' => 5, 'name' => 'Pieter P. van der Merwe'],
+            ['id' => 6, 'name' => 'Thandi T. Nkosi'],
+            ['id' => 7, 'name' => 'Daniel D. O\'Connor'],
+            ['id' => 8, 'name' => 'Zinhle Z. Mthembu'],
+            ['id' => 9, 'name' => 'Willem W. Botha'],
+            ['id' => 10, 'name' => 'Nomsa N. Tshabalala'],
+            ['id' => 11, 'name' => 'Raj R. Singh'],
+            ['id' => 12, 'name' => 'Emma E. van Wyk'],
+            ['id' => 13, 'name' => 'Sibusiso S. Ngcobo'],
+            ['id' => 14, 'name' => 'Charmaine C. Pillay'],
+            ['id' => 15, 'name' => 'Themba T. Maseko'],
+            ['id' => 23, 'name' => 'Sibusiso eryery. Montgomery'],
+            ['id' => 24, 'name' => 'John2 ey. Montgomery'],
+            ['id' => 25, 'name' => 'John2 y ery. Montgomery3'],
+            ['id' => 35, 'name' => 'Peter P.J. Wessels'],
+            ['id' => 36, 'name' => 'Peter 2 P.J. Wessels2'],
+            ['id' => 37, 'name' => 'Comm Nume. Wessels']
+        ];
+    }
+
+    /**
      * Additional shared methods can be added here
      */
 }
