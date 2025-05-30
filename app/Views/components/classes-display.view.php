@@ -74,10 +74,11 @@ $total_count = $total_count ?? 0;
             </div>
         <?php else: ?>
             <!-- Classes Table -->
-            <div class="card border-0 shadow-sm">
+            <div class="card shadow-none border mb-3">
+
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="classes-table" class="table table-hover mb-0">
+                        <table id="classes-table" class="table table-sm fs-9 mb-0 overflow-hidden">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col" class="border-0 ps-4">
@@ -190,12 +191,12 @@ $total_count = $total_count ?? 0;
                                     </td>
                                     <td>
                                         <?php if ($class['seta_funded']): ?>
-                                        <span class="badge bg-success bg-opacity-10 text-success">
+                                        <span class="badge fs-10 badge-phoenix badge-phoenix-success">
                                             <i class="bi bi-check-circle me-1"></i>
                                             SETA Funded
                                         </span>
                                         <?php else: ?>
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                        <span class="badge fs-10 badge-phoenix badge-phoenix-secondary">
                                             <i class="bi bi-x-circle me-1"></i>
                                             Not SETA
                                         </span>
