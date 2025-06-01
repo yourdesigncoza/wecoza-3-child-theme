@@ -37,31 +37,6 @@ $total_count = $total_count ?? 0;
     <!-- Classes Content -->
     <div id="classes-content" class="<?php echo $show_loading ? 'd-none' : ''; ?>">
         <!-- Header Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-1">
-                            <i class="bi bi-calendar-event me-2 text-primary"></i>
-                            All Classes
-                        </h4>
-                        <p class="text-muted mb-0">
-                            <?php echo $total_count; ?> class<?php echo $total_count !== 1 ? 'es' : ''; ?> found
-                        </p>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-outline-secondary btn-sm" onclick="refreshClasses()">
-                            <i class="bi bi-arrow-clockwise me-1"></i>
-                            Refresh
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="exportClasses()">
-                            <i class="bi bi-download me-1"></i>
-                            Export
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <?php if (empty($classes)): ?>
             <!-- No Classes Found -->
@@ -74,12 +49,36 @@ $total_count = $total_count ?? 0;
             </div>
         <?php else: ?>
             <!-- Classes Table -->
-            <div class="card shadow-none border mb-3">
-
+            <div class="card shadow-none border my-3" data-component-card="data-component-card">
+                <div class="card-header p-3 border-bottom bg-body">
+                    <div class="row g-3 justify-content-between align-items-center">
+                        <div class="col-12 col-md">
+                            <h4 class="text-body mb-0" data-anchor="data-anchor" id="classes-table-header">
+                                <i class="bi bi-calendar-event me-2"></i>
+                                All Classes
+                            </h4>
+                            <p class="text-muted mb-0 mt-1">
+                                Displaying <?php echo $total_count; ?> classes from the database
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshClasses()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>
+                                    Refresh
+                                </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportClasses()">
+                                    <i class="bi bi-download me-1"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table id="classes-table" class="table table-sm fs-9 mb-0 overflow-hidden">
-                            <thead class="table-light">
+                            <thead class="border-bottom">
                                 <tr>
                                     <th scope="col" class="border-0 ps-4">
                                         <i class="bi bi-hash me-1"></i>
@@ -128,17 +127,9 @@ $total_count = $total_count ?? 0;
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="d-flex flex-column">
-                                            <span class="fw-medium">
-                                                <?php echo esc_html($class['client_name'] ?? 'Unknown Client'); ?>
-                                            </span>
-                                            <?php if (!empty($class['site_name'])): ?>
-                                            <small class="text-muted">
-                                                <i class="bi bi-geo-alt me-1"></i>
-                                                <?php echo esc_html($class['site_name']); ?>
-                                            </small>
-                                            <?php endif; ?>
-                                        </div>
+                                        <span class="fw-medium">
+                                            <?php echo esc_html($class['client_name'] ?? 'Unknown Client'); ?>
+                                        </span>
                                     </td>
                                     <td>
                                         <?php if (!empty($class['class_type'])): ?>
@@ -150,16 +141,9 @@ $total_count = $total_count ?? 0;
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <div class="d-flex flex-column">
-                                            <span class="fw-medium">
-                                                <?php echo esc_html($class['class_subject'] ?? 'No Subject'); ?>
-                                            </span>
-                                            <?php if (!empty($class['class_code'])): ?>
-                                            <small class="text-muted">
-                                                Code: <?php echo esc_html($class['class_code']); ?>
-                                            </small>
-                                            <?php endif; ?>
-                                        </div>
+                                        <span class="fw-medium">
+                                            <?php echo esc_html($class['class_subject'] ?? 'No Subject'); ?>
+                                        </span>
                                     </td>
                                     <td>
                                         <?php if (!empty($class['original_start_date'])): ?>
@@ -204,10 +188,15 @@ $total_count = $total_count ?? 0;
                                     </td>
                                     <td class="pe-4">
                                         <div class="dropdown">
-                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <button class="btn btn-link text-body btn-sm dropdown-toggle"
+                                                    style="text-decoration: none;"
+                                                    type="button"
+                                                    id="dropdownMenuButton<?php echo $class['class_id']; ?>"
+                                                    data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
                                                 <i class="bi bi-three-dots"></i>
                                             </button>
-                                            <ul class="dropdown-menu">
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<?php echo $class['class_id']; ?>">
                                                 <li>
                                                     <a class="dropdown-item" href="?mode=update&class_id=<?php echo $class['class_id']; ?>">
                                                         <i class="bi bi-pencil me-2"></i>
@@ -295,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         const loading = document.getElementById('classes-loading');
         const content = document.getElementById('classes-content');
-        
+
         if (loading) loading.classList.add('d-none');
         if (content) content.classList.remove('d-none');
     }, 500);
@@ -323,37 +312,3 @@ function deleteClass(classId) {
     }
 }
 </script>
-
-<!-- Custom CSS for enhanced styling -->
-<style>
-.wecoza-classes-display .table th {
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #6c757d;
-}
-
-.wecoza-classes-display .table td {
-    vertical-align: middle;
-    padding: 1rem 0.75rem;
-}
-
-.wecoza-classes-display .card {
-    border-radius: 0.75rem;
-}
-
-.wecoza-classes-display .badge {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
-}
-
-.wecoza-classes-display .dropdown-toggle::after {
-    display: none;
-}
-
-.wecoza-classes-display .spinner-border {
-    width: 2rem;
-    height: 2rem;
-}
-</style>

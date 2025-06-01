@@ -199,41 +199,20 @@ html[data-bs-theme="dark"] .fc .fc-multimonth {
 
 
 /* -------------------------------------------------------------------------- */
-/* Table "small / compact"                                      */
+/* Table                                      */
 /* -------------------------------------------------------------------------- */
-.bootstrap-table .fixed-table-container .table.ydcoza-compact-table tfoot th .th-inner,
-.breadcrumb .fixed-table-container .table.ydcoza-compact-table thead th .th-inner {
-    padding: .5rem .5rem;
+.table {
+  vertical-align: middle;
 }
-.ydcoza-compact-content,
-.ydcoza-compact-table {
-    font-size: 0.8rem !important;
-    line-height: 0.8rem;
+.table-sm > :not(caption) > * > * {
+    padding: 0 0.25rem;
 }
-.ydcoza-compact-table a.detail-icon {
-    font-size: 22px !important;
+.wecoza-classes-display .dropdown-toggle::after {
+  display: none;
 }
-.table.ydcoza-compact-table>:not(caption)>*>* {
-    padding: 0 0.25rem
-    /* line-height: 13px !important; */
-}
-.table-responsive {
-    padding: 0.8rem;
-}
-.ydcoza-compact-content .btn-sm,
-.ydcoza-compact-table .btn-sm {
-    padding: 0.2rem 0.5rem;
-    font-size: 12px;
-    line-height: 12px;
-}
-.ydcoza-compact-table .btn-close {
-    background-size: 0.6em;
-}
-.bootstrap-table .pagination-detail {
-    font-size: 14px;
-}
-.table > tbody > tr > td:first-child {
-  padding-left: .5rem;
+.wecoza-classes-display .dropdown-toggle.show,
+.wecoza-classes-display .dropdown-toggle:hover {
+  color: rgba(var(--phoenix-danger-rgb), var(--phoenix-text-opacity)) !important;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -249,7 +228,6 @@ html[data-bs-theme="dark"] .fc .fc-multimonth {
 .form-check-inline {
     margin-right: 0;
 }
-
 #day-selection-container .invalid-feedback,
 #day-selection-container .valid-feedback {
     display: block;

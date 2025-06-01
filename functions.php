@@ -46,8 +46,8 @@ function enqueue_assets() {
     wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array('jquery'), null, true);
     // popper
     wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), null, true);
-    // bootstrap
-    wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
+    // bootstrap Loaded in Parent theme no need to load again
+    // wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
 
     // Custom scripts with localization
     wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array('ajax_url' => admin_url('admin-ajax.php'),'nonce' => wp_create_nonce('wecoza_table_nonce') ));
