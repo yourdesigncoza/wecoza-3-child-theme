@@ -1484,64 +1484,161 @@ class ClassController {
     /**
      * Handle AJAX request to delete class
      */
-    public static function deleteClassAjax() {
-        // Check nonce for security
-        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
-            \wp_send_json_error('Security check failed.');
-            return;
-        }
+public static function deleteClassAjax() {
+    // Check nonce for security
+    if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
+        \wp_send_json_error('Security check failed.');
+        return;
+    }
 
-        // Check user permissions - only administrators can delete classes
-        if (!current_user_can('manage_options')) {
-            \wp_send_json_error('Only administrators can delete classes.');
-            return;
-        }
+    // Check user permissions - only administrators can delete classes
+    if (!current_user_can('manage_options')) {
+        \wp_send_json_error('Only administrators can delete classes.');
+        return;
+    }
 
-        // Validate class_id
-        $class_id = isset($_POST['class_id']) ? intval($_POST['class_id']) : 0;
-        if (empty($class_id) || $class_id <= 0) {
-            \wp_send_json_error('Invalid class ID provided.');
-            return;
-        }
+    // Validate class_id
+    $class_id = isset($_POST['class_id']) ? intval($_POST['class_id']) : 0;
+    if (empty($class_id) || $class_id <= 0) {
+        \wp_send_json_error('Invalid class ID provided.');
+        return;
+    }
+
+    try {
+        $db = \WeCoza\Services\Database\DatabaseService::getInstance();
+        $db->beginTransaction();
 
         try {
-            $db = \WeCoza\Services\Database\DatabaseService::getInstance();
+            // 1. Delete all class_agents
+            $db->query(
+                "DELETE FROM public.class_agents WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
 
-            // First check if class exists
-            $checkSql = "SELECT class_id, class_code, class_subject FROM public.classes WHERE class_id = :class_id LIMIT 1";
-            $checkStmt = $db->query($checkSql, ['class_id' => $class_id]);
-            $class = $checkStmt->fetch();
+            // 2. Delete all class_notes
+            $db->query(
+                "DELETE FROM public.class_notes WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
 
-            if (!$class) {
-                \wp_send_json_error('Class not found in database.');
-                return;
-            }
+            // 3. Delete all attendance_registers
+            $db->query(
+                "DELETE FROM public.attendance_registers WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
 
-            // Delete the class
-            $deleteSql = "DELETE FROM public.classes WHERE class_id = :class_id";
-            $deleteStmt = $db->query($deleteSql, ['class_id' => $class_id]);
+            // 4. Delete all agent_orders
+            $db->query(
+                "DELETE FROM public.agent_orders WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
 
-            // Check if deletion was successful
-            if ($deleteStmt->rowCount() > 0) {
-                // Log the deletion
-                \error_log("Class deleted successfully - ID: {$class_id}, Code: {$class['class_code']}, Subject: {$class['class_subject']}");
+            // 5. Delete all deliveries
+            $db->query(
+                "DELETE FROM public.deliveries WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 6. Delete all collections
+            $db->query(
+                "DELETE FROM public.collections WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 7. Delete all agent_absences
+            $db->query(
+                "DELETE FROM public.agent_absences WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 8. Delete all agent_replacements
+            $db->query(
+                "DELETE FROM public.agent_replacements WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 9. Delete all progress_reports
+            $db->query(
+                "DELETE FROM public.progress_reports WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 10. Delete all agent_qa_visits for QA reports tied to this class
+            $db->query(
+                "DELETE FROM public.agent_qa_visits
+                 WHERE qa_report_id IN (
+                   SELECT qa_report_id
+                     FROM public.qa_reports
+                    WHERE class_id = :class_id
+                 )",
+                ['class_id' => $class_id]
+            );
+
+            // 11. Delete all qa_reports
+            $db->query(
+                "DELETE FROM public.qa_reports WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 12. Delete all class_schedules
+            $db->query(
+                "DELETE FROM public.class_schedules WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 13. Delete all class_subjects
+            $db->query(
+                "DELETE FROM public.class_subjects WHERE class_id = :class_id",
+                ['class_id' => $class_id]
+            );
+
+            // 14. Finally, delete the class itself and return its code & subject
+            $deleteClassSql = "
+                DELETE FROM public.classes
+                 WHERE class_id = :class_id
+                 RETURNING class_code, class_subject
+            ";
+            $stmt    = $db->query($deleteClassSql, ['class_id' => $class_id]);
+            $deleted = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($deleted) {
+                $db->commit();
+
+                \error_log(sprintf(
+                    "Class and all related data deleted successfully – ID: %s, Code: %s, Subject: %s",
+                    $class_id,
+                    $deleted['class_code'],
+                    $deleted['class_subject']
+                ));
 
                 \wp_send_json_success([
-                    'message' => 'Class deleted successfully.',
-                    'class_id' => $class_id,
-                    'class_code' => $class['class_code'],
-                    'class_subject' => $class['class_subject']
+                    'message'       => 'Class and all related data deleted successfully.',
+                    'class_id'      => $class_id
                 ]);
             } else {
-                \wp_send_json_error('Failed to delete class from database.');
+                // If the class was not found or already deleted, rollback
+                $db->rollback();
+                \wp_send_json_error('Class not found or already deleted.');
             }
+        } catch (\Exception $innerE) {
+            $db->rollback();
+            throw $innerE;
+        }
+    } catch (\Exception $e) {
+        \error_log('Error in deleteClassAjax: ' . $e->getMessage());
+        \error_log('Error trace: ' . $e->getTraceAsString());
 
-        } catch (\Exception $e) {
-            // Log error
-            \error_log('Error in deleteClassAjax: ' . $e->getMessage());
-            \error_log('Error trace: ' . $e->getTraceAsString());
-
+        if (strpos($e->getMessage(), 'foreign key constraint') !== false) {
+            \wp_send_json_error('Cannot delete class: it still has related records. Please contact administrator.');
+        } else {
             \wp_send_json_error('Database error occurred while deleting class.');
         }
     }
+}
+
+
+
+
+
+
 }

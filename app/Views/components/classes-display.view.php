@@ -340,9 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check for delete success message in URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('deleted') === 'success') {
-        const classSubject = urlParams.get('class_subject') || 'Unknown Class';
-        const classCode = urlParams.get('class_code') || '';
-        const message = `Class "${classSubject}" ${classCode ? '(' + classCode + ')' : ''} has been successfully deleted.`;
+        const message = `Class Deleted.`;
 
         showSuccessBanner(message);
 
@@ -402,8 +400,6 @@ function deleteClass(classId) {
                 // Redirect to current page with success message
                 const currentUrl = new URL(window.location);
                 currentUrl.searchParams.set('deleted', 'success');
-                currentUrl.searchParams.set('class_subject', data.data.class_subject);
-                currentUrl.searchParams.set('class_code', data.data.class_code);
                 window.location.href = currentUrl.toString();
             } else {
                 // Show error message
