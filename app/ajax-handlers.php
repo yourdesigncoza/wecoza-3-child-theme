@@ -20,6 +20,10 @@ function register_ajax_handlers() {
     \add_action('wp_ajax_save_class', 'WeCoza\\Controllers\\ClassController::saveClassAjax');
     \add_action('wp_ajax_nopriv_save_class', 'WeCoza\\Controllers\\ClassController::saveClassAjax');
 
+    // Class delete AJAX handler
+    \add_action('wp_ajax_delete_class', 'WeCoza\\Controllers\\ClassController::deleteClassAjax');
+    \add_action('wp_ajax_nopriv_delete_class', 'WeCoza\\Controllers\\ClassController::deleteClassAjax');
+
     // Class conflicts AJAX handler
     \add_action('wp_ajax_check_class_conflicts', function() {
         $controller = new WeCoza\Controllers\ClassController();

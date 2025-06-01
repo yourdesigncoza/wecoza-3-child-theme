@@ -197,6 +197,7 @@ $total_count = $total_count ?? 0;
                                                 <i class="bi bi-three-dots"></i>
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<?php echo $class['class_id']; ?>">
+                                                <?php if (current_user_can('edit_posts') || current_user_can('manage_options')): ?>
                                                 <li>
 <?php
 // 1. Find the page object for “app/new-class” (or just “new-class”, depending on where it lives)
@@ -226,6 +227,7 @@ $edit_url = add_query_arg(
                                                         Edit Class
                                                     </a>
                                                 </li>
+                                                <?php endif; ?>
                                                 <li>
 <?php
 // 1. Find the page object for "app/display-single-class"
@@ -252,6 +254,7 @@ $view_url = add_query_arg(
                                                         View Details
                                                     </a>
                                                 </li>
+                                                <?php if (current_user_can('manage_options')): ?>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
                                                     <a class="dropdown-item text-danger" href="#" onclick="deleteClass(<?php echo $class['class_id']; ?>)">
@@ -259,6 +262,7 @@ $view_url = add_query_arg(
                                                         Delete Class
                                                     </a>
                                                 </li>
+                                                <?php endif; ?>
                                             </ul>
                                         </div>
                                     </td>
@@ -332,6 +336,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (content) content.classList.remove('d-none');
     }, 500);
     <?php endif; ?>
+
+    // Check for delete success message in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('deleted') === 'success') {
+        const classSubject = urlParams.get('class_subject') || 'Unknown Class';
+        const classCode = urlParams.get('class_code') || '';
+        const message = `Class "${classSubject}" ${classCode ? '(' + classCode + ')' : ''} has been successfully deleted.`;
+
+        showSuccessBanner(message);
+
+        // Clean up URL parameters
+        const cleanUrl = new URL(window.location);
+        cleanUrl.searchParams.delete('deleted');
+        cleanUrl.searchParams.delete('class_subject');
+        cleanUrl.searchParams.delete('class_code');
+        window.history.replaceState({}, document.title, cleanUrl.toString());
+    }
 });
 
 function refreshClasses() {
@@ -349,9 +370,82 @@ function viewClassDetails(classId) {
 }
 
 function deleteClass(classId) {
-    if (confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
-        // Placeholder for delete functionality
-        alert('Delete functionality will be implemented soon.');
+    // Check if user is administrator
+    const isAdmin = <?php echo current_user_can('manage_options') ? 'true' : 'false'; ?>;
+    if (!isAdmin) {
+        alert('Only administrators can delete classes.');
+        return;
     }
+
+    if (confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
+        // Show loading state
+        const deleteButton = document.querySelector(`[onclick="deleteClass(${classId})"]`);
+        const originalText = deleteButton.innerHTML;
+        deleteButton.innerHTML = '<i class="bi bi-spinner-border me-2"></i>Deleting...';
+        deleteButton.disabled = true;
+
+        // Make AJAX request to delete class
+        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'delete_class',
+                nonce: '<?php echo wp_create_nonce('wecoza_class_nonce'); ?>',
+                class_id: classId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Redirect to current page with success message
+                const currentUrl = new URL(window.location);
+                currentUrl.searchParams.set('deleted', 'success');
+                currentUrl.searchParams.set('class_subject', data.data.class_subject);
+                currentUrl.searchParams.set('class_code', data.data.class_code);
+                window.location.href = currentUrl.toString();
+            } else {
+                // Show error message
+                alert('Error: ' + (data.data || 'Failed to delete class.'));
+
+                // Restore button state
+                deleteButton.innerHTML = originalText;
+                deleteButton.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Delete error:', error);
+            alert('An error occurred while deleting the class. Please try again.');
+
+            // Restore button state
+            deleteButton.innerHTML = originalText;
+            deleteButton.disabled = false;
+        });
+    }
+}
+
+
+
+function showSuccessBanner(message) {
+    // Create success banner
+    const banner = document.createElement('div');
+    banner.className = 'alert alert-subtle-success alert-dismissible fade show position-fixed';
+    banner.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px;';
+    banner.innerHTML = `
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>Success!</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    // Add to page
+    document.body.appendChild(banner);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (banner.parentNode) {
+            banner.remove();
+        }
+    }, 5000);
 }
 </script>

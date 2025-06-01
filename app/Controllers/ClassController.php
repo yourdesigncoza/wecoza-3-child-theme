@@ -1480,4 +1480,68 @@ class ClassController {
 
         return $result;
     }
+
+    /**
+     * Handle AJAX request to delete class
+     */
+    public static function deleteClassAjax() {
+        // Check nonce for security
+        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
+            \wp_send_json_error('Security check failed.');
+            return;
+        }
+
+        // Check user permissions - only administrators can delete classes
+        if (!current_user_can('manage_options')) {
+            \wp_send_json_error('Only administrators can delete classes.');
+            return;
+        }
+
+        // Validate class_id
+        $class_id = isset($_POST['class_id']) ? intval($_POST['class_id']) : 0;
+        if (empty($class_id) || $class_id <= 0) {
+            \wp_send_json_error('Invalid class ID provided.');
+            return;
+        }
+
+        try {
+            $db = \WeCoza\Services\Database\DatabaseService::getInstance();
+
+            // First check if class exists
+            $checkSql = "SELECT class_id, class_code, class_subject FROM public.classes WHERE class_id = :class_id LIMIT 1";
+            $checkStmt = $db->query($checkSql, ['class_id' => $class_id]);
+            $class = $checkStmt->fetch();
+
+            if (!$class) {
+                \wp_send_json_error('Class not found in database.');
+                return;
+            }
+
+            // Delete the class
+            $deleteSql = "DELETE FROM public.classes WHERE class_id = :class_id";
+            $deleteStmt = $db->query($deleteSql, ['class_id' => $class_id]);
+
+            // Check if deletion was successful
+            if ($deleteStmt->rowCount() > 0) {
+                // Log the deletion
+                \error_log("Class deleted successfully - ID: {$class_id}, Code: {$class['class_code']}, Subject: {$class['class_subject']}");
+
+                \wp_send_json_success([
+                    'message' => 'Class deleted successfully.',
+                    'class_id' => $class_id,
+                    'class_code' => $class['class_code'],
+                    'class_subject' => $class['class_subject']
+                ]);
+            } else {
+                \wp_send_json_error('Failed to delete class from database.');
+            }
+
+        } catch (\Exception $e) {
+            // Log error
+            \error_log('Error in deleteClassAjax: ' . $e->getMessage());
+            \error_log('Error trace: ' . $e->getTraceAsString());
+
+            \wp_send_json_error('Database error occurred while deleting class.');
+        }
+    }
 }
