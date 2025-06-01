@@ -34,6 +34,7 @@ class ClassController {
     public function registerShortcodes() {
         \add_shortcode('wecoza_capture_class', [$this, 'captureClassShortcode']);
         \add_shortcode('wecoza_display_classes', [$this, 'displayClassesShortcode']);
+        \add_shortcode('wecoza_display_single_class', [$this, 'displaySingleClassShortcode']);
     }
 
     /**
@@ -1380,5 +1381,103 @@ class ClassController {
         }
 
         return $results;
+    }
+
+    /**
+     * Handle display single class shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function displaySingleClassShortcode($atts) {
+        // Process shortcode attributes
+        $atts = \shortcode_atts([
+            'class_id' => '',
+            'show_loading' => true,
+        ], $atts);
+
+        try {
+            // Get class_id from shortcode attribute or URL parameter
+            $class_id = intval($atts['class_id']);
+
+            // If no class_id in shortcode, try to get it from URL parameter
+            if (empty($class_id) || $class_id <= 0) {
+                $class_id = isset($_GET['class_id']) ? intval($_GET['class_id']) : 0;
+            }
+
+            // Validate class_id parameter
+            if (empty($class_id) || $class_id <= 0) {
+                return '<div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Invalid Class ID:</strong> Please provide a valid class_id parameter or URL parameter.
+                    <br><small>Example: [wecoza_display_single_class class_id="25"] or URL: ?class_id=25</small>
+                </div>';
+            }
+
+            // Get single class from database
+            $class = $this->getSingleClass($class_id);
+
+            // Prepare view data
+            $viewData = [
+                'class' => $class,
+                'show_loading' => $atts['show_loading'],
+                'error_message' => ''
+            ];
+
+            // If class not found, set error message
+            if (empty($class)) {
+                $viewData['error_message'] = "Class with ID {$class_id} was not found in the database.";
+            }
+
+            // Render the view
+            return \WeCoza\view('components/single-class-display', $viewData);
+
+        } catch (\Exception $e) {
+            // Log error and return user-friendly message
+            \error_log('Error in displaySingleClassShortcode: ' . $e->getMessage());
+            \error_log('Error trace: ' . $e->getTraceAsString());
+
+            // For debugging - show detailed error (remove in production)
+            if (current_user_can('manage_options')) {
+                return '<div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Debug Error:</strong> ' . esc_html($e->getMessage()) . '
+                    <br><small>File: ' . esc_html($e->getFile()) . ' Line: ' . $e->getLine() . '</small>
+                </div>';
+            }
+
+            return '<div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Unable to load class details at this time. Please try again later.
+            </div>';
+        }
+    }
+
+    /**
+     * Get single class from database with related data
+     *
+     * @param int $class_id Class ID to retrieve
+     * @return array|null Class data or null if not found
+     */
+    private function getSingleClass($class_id) {
+        $db = \WeCoza\Services\Database\DatabaseService::getInstance();
+
+        // Simple query to get class data by class_id
+        $sql = "SELECT * FROM public.classes WHERE class_id = :class_id LIMIT 1";
+
+        $stmt = $db->query($sql, ['class_id' => $class_id]);
+        $result = $stmt->fetch();
+
+        // If no result found, return null
+        if (!$result) {
+            return null;
+        }
+
+        // Add fallback names for related data (since we're not joining tables)
+        $result['client_name'] = 'Client ID: ' . ($result['client_id'] ?? 'Unknown');
+        $result['agent_name'] = 'Agent ID: ' . ($result['class_agent'] ?? 'Unassigned');
+        $result['supervisor_name'] = 'Supervisor ID: ' . ($result['project_supervisor_id'] ?? 'Unassigned');
+
+        return $result;
     }
 }

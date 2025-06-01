@@ -227,7 +227,27 @@ $edit_url = add_query_arg(
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="#" onclick="viewClassDetails(<?php echo $class['class_id']; ?>)">
+<?php
+// 1. Find the page object for "app/display-single-class"
+$page = get_page_by_path( 'app/display-single-class' );
+
+// 2. Grab its permalink (so WP will automatically use the correct domain/child-theme slug, etc.)
+if ( $page ) {
+    $base_url = get_permalink( $page->ID );
+} else {
+    // Fallback if page not found:
+    $base_url = home_url( '/app/display-single-class/' );
+}
+
+// 3. Append ?class_id=… with add_query_arg()
+$view_url = add_query_arg(
+    [
+        'class_id' => $class['class_id'],
+    ],
+    $base_url
+);
+?>
+                                                    <a class="dropdown-item" href="<?php echo esc_url( $view_url ); ?>">
                                                         <i class="bi bi-eye me-2"></i>
                                                         View Details
                                                     </a>
