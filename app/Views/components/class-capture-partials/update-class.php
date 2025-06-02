@@ -1,5 +1,10 @@
 <!-- Classes Capture Form -->
 <form id="classes-form" class="needs-validation ydcoza-compact-form" novalidate method="POST" enctype="multipart/form-data">
+   <!-- Hidden fields for update mode -->
+   <input type="hidden" id="class_id" name="class_id" value="<?php echo esc_attr($data['class_id'] ?? $_GET['class_id'] ?? ''); ?>">
+   <input type="hidden" id="redirect_url" name="redirect_url" value="<?php echo esc_attr($data['redirect_url'] ?? $_GET['redirect_url'] ?? ''); ?>">
+   <input type="hidden" id="nonce" name="nonce" value="<?php echo wp_create_nonce('wecoza_class_nonce'); ?>">
+
    <!-- ===== Section: Basic Details ===== -->
    <div class="container container-md classes-form ps-0">
       <!-- ===== Section: Basic Details ===== -->

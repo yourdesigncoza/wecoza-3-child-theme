@@ -629,7 +629,7 @@ function editClass(classId) {
         $base_url
     );
 
-    echo "const editUrl = '" . esc_js($edit_url) . "';";
+    echo "const editUrl = '" . esc_url_raw($edit_url) . "';";
     ?>
 
     // Redirect to edit page with complete URL
@@ -676,11 +676,11 @@ function deleteClass(classId) {
                 $classes_page = get_page_by_path('app/all-classes');
                 if ($classes_page) {
                     $classes_url = get_permalink($classes_page->ID);
-                    echo "const classesUrl = '" . esc_js($classes_url) . "';";
+                    echo "const classesUrl = '" . esc_url_raw($classes_url) . "';";
                 } else {
                     // Fallback using home_url for proper domain handling
                     $fallback_url = home_url('/app/all-classes/');
-                    echo "const classesUrl = '" . esc_js($fallback_url) . "';";
+                    echo "const classesUrl = '" . esc_url_raw($fallback_url) . "';";
                 }
                 ?>
 

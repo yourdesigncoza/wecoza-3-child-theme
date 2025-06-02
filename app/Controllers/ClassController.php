@@ -152,6 +152,7 @@ class ClassController {
         $viewData = [
             'mode' => 'update',
             'class_data' => $class,
+            'class_id' => $class_id, // Pass the class_id directly for the hidden field
             'clients' => MainController::getClients(),
             'sites' => MainController::getSites(),
             'agents' => MainController::getAgents(),
@@ -181,9 +182,9 @@ class ClassController {
         // Create instance
         $instance = new self();
 
-        // Check nonce
-        if (!isset($_POST['nonce'])) {
-            error_log('Nonce not set in POST data');
+        // Check nonce for security
+        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'wecoza_class_nonce')) {
+            error_log('Nonce verification failed');
             $instance->sendJsonError('Security check failed.');
             return;
         }
