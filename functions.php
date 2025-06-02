@@ -114,6 +114,7 @@ add_action( 'wp_enqueue_scripts', 'ydcoza_remove_unwanted_styles', 20 );
 function load_required_files() {
     $required_files = array(
         '/includes/functions/helper.php', // Add the new helper.php file
+        '/includes/functions/show-hide-title.php',
         '/includes/functions/db.php',
         '/includes/functions/echarts-functions.php',
         '/includes/admin/settings.php',

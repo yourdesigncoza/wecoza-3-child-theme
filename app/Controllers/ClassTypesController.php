@@ -37,7 +37,7 @@ class ClassTypesController {
             'AET' => [
                 ['id' => 'COMM', 'name' => 'Communication (separate)', 'duration' => 120],
                 ['id' => 'NUM', 'name' => 'Numeracy (separate)', 'duration' => 120],
-                ['id' => 'BOTH', 'name' => 'Communication & Numeracy (both)', 'duration' => 240],
+                ['id' => 'COMM_NUM', 'name' => 'Communication & Numeracy (both)', 'duration' => 240],
             ],
             'GETC' => [
                 ['id' => 'CL4', 'name' => 'Communication level 4', 'duration' => 120],

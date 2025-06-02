@@ -91,8 +91,8 @@ class FileUploadService {
             }
         }
         
-        // Generate unique filename
-        $filename = \wp_unique_filename($uploadPath, $file['name']);
+        // Generate timestamped filename
+        $filename = $this->generateTimestampedFilename($file['name']);
         $filepath = $uploadPath . '/' . $filename;
         
         // Move uploaded file
@@ -170,5 +170,24 @@ class FileUploadService {
             $i++;
         }
         return round($size, 2) . ' ' . $units[$i];
+    }
+
+    /**
+     * Generate timestamped filename to prevent duplicates
+     *
+     * @param string $originalName Original filename
+     * @return string Timestamped filename
+     */
+    private function generateTimestampedFilename($originalName) {
+        // Get file info
+        $pathInfo = pathinfo($originalName);
+        $name = $pathInfo['filename'];
+        $extension = isset($pathInfo['extension']) ? '.' . $pathInfo['extension'] : '';
+
+        // Generate timestamp in Y-m-d-H-i format
+        $timestamp = date('Y-m-d-H-i');
+
+        // Combine: original-name-Y-m-d-H-i.extension
+        return $name . '-' . $timestamp . $extension;
     }
 }
