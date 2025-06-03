@@ -75,7 +75,7 @@ $total_count = $total_count ?? 0;
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-4">
                     <div class="table-responsive">
                         <table id="classes-table" class="table table-hover table-sm fs-9 mb-0 overflow-hidden">
                             <thead class="border-bottom">
@@ -86,7 +86,7 @@ $total_count = $total_count ?? 0;
                                     </th>
                                     <th scope="col" class="border-0">
                                         <i class="bi bi-building me-1"></i>
-                                        Client
+                                        Client ID & Name
                                     </th>
                                     <th scope="col" class="border-0">
                                         <i class="bi bi-tag me-1"></i>
@@ -106,7 +106,7 @@ $total_count = $total_count ?? 0;
                                     </th>
                                     <th scope="col" class="border-0">
                                         <i class="bi bi-person me-1"></i>
-                                        Agent
+                                        Agent ID & Name
                                     </th>
                                     <th scope="col" class="border-0">
                                         <i class="bi bi-award me-1"></i>
@@ -128,7 +128,11 @@ $total_count = $total_count ?? 0;
                                     </td>
                                     <td>
                                         <span class="fw-medium">
-                                            <?php echo esc_html($class['client_name'] ?? 'Unknown Client'); ?>
+                                            <?php
+                                            $client_id = $class['client_id'] ?? 'Unknown';
+                                            $client_name = $class['client_name'] ?? 'Unknown Client';
+                                            echo esc_html($client_id . ' : ' . $client_name);
+                                            ?>
                                         </span>
                                     </td>
                                     <td>
@@ -164,10 +168,14 @@ $total_count = $total_count ?? 0;
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php if (!empty($class['agent_name'])): ?>
+                                        <?php if (!empty($class['agent_name']) && !empty($class['class_agent'])): ?>
                                         <span class="text-nowrap">
                                             <i class="bi bi-person-circle me-1"></i>
-                                            <?php echo esc_html($class['agent_name']); ?>
+                                            <?php
+                                            $agent_id = $class['class_agent'] ?? 'Unknown';
+                                            $agent_name = $class['agent_name'] ?? 'Unassigned';
+                                            echo esc_html($agent_id . ' : ' . $agent_name);
+                                            ?>
                                         </span>
                                         <?php else: ?>
                                         <span class="text-muted">-</span>

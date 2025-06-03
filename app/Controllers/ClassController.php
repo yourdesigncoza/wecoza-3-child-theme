@@ -1373,12 +1373,43 @@ class ClassController {
         $stmt = $db->query($sql);
         $results = $stmt->fetchAll();
 
-        // Add placeholder names for missing related data
+        // Get lookup data for mapping IDs to names
+        $clients = MainController::getClients();
+        $agents = MainController::getAgents();
+        $supervisors = MainController::getSupervisors();
+
+        // Create lookup arrays for faster mapping
+        $clientLookup = [];
+        foreach ($clients as $client) {
+            $clientLookup[$client['id']] = $client['name'];
+        }
+
+        $agentLookup = [];
+        foreach ($agents as $agent) {
+            $agentLookup[$agent['id']] = $agent['name'];
+        }
+
+        $supervisorLookup = [];
+        foreach ($supervisors as $supervisor) {
+            $supervisorLookup[$supervisor['id']] = $supervisor['name'];
+        }
+
+        // Map IDs to actual names
         foreach ($results as &$row) {
-            $row['client_name'] = 'Client ID: ' . ($row['client_id'] ?? 'Unknown');
+            // Map client name
+            $clientId = $row['client_id'] ?? null;
+            $row['client_name'] = isset($clientLookup[$clientId]) ? $clientLookup[$clientId] : 'Unknown Client';
+
+            // Map agent name
+            $agentId = $row['class_agent'] ?? null;
+            $row['agent_name'] = isset($agentLookup[$agentId]) ? $agentLookup[$agentId] : 'Unassigned';
+
+            // Map supervisor name
+            $supervisorId = $row['project_supervisor_id'] ?? null;
+            $row['supervisor_name'] = isset($supervisorLookup[$supervisorId]) ? $supervisorLookup[$supervisorId] : 'Unassigned';
+
+            // Keep site_name as placeholder for now since sites are more complex
             $row['site_name'] = 'Site ID: ' . ($row['site_id'] ?? 'Unknown');
-            $row['agent_name'] = 'Agent ID: ' . ($row['class_agent'] ?? 'Unassigned');
-            $row['supervisor_name'] = 'Supervisor ID: ' . ($row['project_supervisor_id'] ?? 'Unassigned');
         }
 
         return $results;
@@ -1474,10 +1505,36 @@ class ClassController {
             return null;
         }
 
-        // Add fallback names for related data (since we're not joining tables)
-        $result['client_name'] = 'Client ID: ' . ($result['client_id'] ?? 'Unknown');
-        $result['agent_name'] = 'Agent ID: ' . ($result['class_agent'] ?? 'Unassigned');
-        $result['supervisor_name'] = 'Supervisor ID: ' . ($result['project_supervisor_id'] ?? 'Unassigned');
+        // Get lookup data for mapping IDs to names
+        $clients = MainController::getClients();
+        $agents = MainController::getAgents();
+        $supervisors = MainController::getSupervisors();
+
+        // Create lookup arrays for faster mapping
+        $clientLookup = [];
+        foreach ($clients as $client) {
+            $clientLookup[$client['id']] = $client['name'];
+        }
+
+        $agentLookup = [];
+        foreach ($agents as $agent) {
+            $agentLookup[$agent['id']] = $agent['name'];
+        }
+
+        $supervisorLookup = [];
+        foreach ($supervisors as $supervisor) {
+            $supervisorLookup[$supervisor['id']] = $supervisor['name'];
+        }
+
+        // Map IDs to actual names
+        $clientId = $result['client_id'] ?? null;
+        $result['client_name'] = isset($clientLookup[$clientId]) ? $clientLookup[$clientId] : 'Unknown Client';
+
+        $agentId = $result['class_agent'] ?? null;
+        $result['agent_name'] = isset($agentLookup[$agentId]) ? $agentLookup[$agentId] : 'Unassigned';
+
+        $supervisorId = $result['project_supervisor_id'] ?? null;
+        $result['supervisor_name'] = isset($supervisorLookup[$supervisorId]) ? $supervisorLookup[$supervisorId] : 'Unassigned';
 
         return $result;
     }

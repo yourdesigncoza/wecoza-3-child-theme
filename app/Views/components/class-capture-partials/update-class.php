@@ -161,7 +161,7 @@
                <a class="anchorjs-link" aria-label="Anchor" data-anchorjs-icon="#" href="#schedule-statistics" style="margin-left:0.1875em; padding:0 0.1875em;"></a>
             </h4>
          </div>
-         <div class="card-body p-0">
+         <div class="card-body p-4">
             <div class="table-responsive scrollbar mb-3">
                <table class="table table-sm fs-9 mb-0 overflow-hidden">
                <thead class="text-body">
