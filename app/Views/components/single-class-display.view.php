@@ -91,12 +91,30 @@ $error_message = $error_message ?? '';
             <?php endif; ?>
             
             <!-- Top Summary Cards -->
-            <div class="card mb-5">
+            <div class="card mb-3">
                 <div class="card-body">
                     <div class="row g-4 justify-content-between">
-                        <!-- Class Subject Card -->
+                        <!-- Client Card -->
                         <div class="col-sm-auto">
                             <div class="d-flex align-items-center">
+                                <div class="d-flex bg-primary-subtle rounded flex-center me-3" style="width:32px; height:32px">
+                                    <i class="bi bi-building text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="fw-bold mb-1">Client</p>
+                                    <h5 class="fw-bolder text-nowrap">
+                                        <?php if (!empty($class['client_name'])): ?>
+                                            <?php echo esc_html($class['client_name']); ?>
+                                        <?php else: ?>
+                                            N/A
+                                        <?php endif; ?>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Class Subject Card -->
+                        <div class="col-sm-auto">
+                            <div class="d-flex align-items-center border-start-sm ps-sm-5">
                                 <div class="d-flex bg-success-subtle rounded flex-center me-3" style="width:32px; height:32px">
                                     <i class="bi bi-book text-success"></i>
                                 </div>
@@ -142,15 +160,14 @@ $error_message = $error_message ?? '';
                         <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
-                                    <td class="py-2">
+                                    <td class="py-2 ydcoza-w-150">
                                         <div class="d-inline-flex align-items-center">
                                             <div class="d-flex bg-primary-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-hash text-primary" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Class ID</p>
+                                            <p class="fw-bold mb-0">Class ID : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
                                         <p class="fw-semibold mb-0">#<?php echo esc_html($class['class_id']); ?></p>
                                     </td>
@@ -161,10 +178,9 @@ $error_message = $error_message ?? '';
                                             <div class="d-flex bg-warning-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-clock text-warning" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Duration</p>
+                                            <p class="fw-bold mb-0">Duration :</p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
                                         <p class="fw-semibold mb-0">
                                             <?php if (!empty($class['class_duration'])): ?>
@@ -181,12 +197,51 @@ $error_message = $error_message ?? '';
                                             <div class="d-flex bg-success-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-geo-alt text-success" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Address</p>
+                                            <p class="fw-bold mb-0">Address : </p>
                                         </div>
-                                    </td>
-                                    <td class="py-2">:</td>
+                                    </td>                                    
                                     <td class="py-2">
                                         <p class="fw-semibold mb-0"><?php echo esc_html($class['class_address_line'] ?? 'N/A'); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 ydcoza-w-150">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-success-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-person-badge text-success" style="font-size: 12px;"></i>
+                                            </div>
+                                            <p class="fw-bold mb-0">Agent : </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="fw-semibold mb-0">
+                                            <?php if (!empty($class['agent_name'])): ?>
+                                                <?php echo esc_html($class['agent_name']); ?>
+                                                <div class="fs-9 text-muted">ID: <?php echo esc_html($class['class_agent']); ?></div>
+                                            <?php else: ?>
+                                                <span class="text-muted">N/A</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-warning-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-person-gear text-warning" style="font-size: 12px;"></i>
+                                            </div>
+                                            <p class="fw-bold mb-0">Supervisor : </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="fw-semibold mb-0">
+                                            <?php if (!empty($class['supervisor_name'])): ?>
+                                                <?php echo esc_html($class['supervisor_name']); ?>
+                                                <div class="fs-9 text-muted">ID: <?php echo esc_html($class['project_supervisor_id']); ?></div>
+                                            <?php else: ?>
+                                                <span class="text-muted">N/A</span>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -198,15 +253,14 @@ $error_message = $error_message ?? '';
                         <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
-                                    <td class="py-2">
+                                    <td class="py-2 ydcoza-w-150">
                                         <div class="d-inline-flex align-items-center">
                                             <div class="d-flex bg-info-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-calendar-plus text-info" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Start Date</p>
+                                            <p class="fw-bold mb-0">Start Date : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
                                         <p class="fw-semibold mb-0">
                                             <?php if (!empty($class['original_start_date'])): ?>
@@ -223,10 +277,9 @@ $error_message = $error_message ?? '';
                                             <div class="d-flex bg-warning-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-truck text-warning" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Delivery Date</p>
+                                            <p class="fw-bold mb-0">Delivery Date : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
                                         <p class="fw-semibold mb-0">
                                             <?php if (!empty($class['delivery_date'])): ?>
@@ -237,51 +290,114 @@ $error_message = $error_message ?? '';
                                         </p>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Bottom Left - People & Staff -->
-                    <div class="col-sm-12 col-xxl-6 border-end-xxl border-bottom-xxl py-3">
-                        <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
-                            <tbody>
                                 <tr>
                                     <td class="py-2">
-                                        <div class="d-inline-flex align-items-center">
-                                            <div class="d-flex bg-primary-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
-                                                <i class="bi bi-building text-primary" style="font-size: 12px;"></i>
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-secondary-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-calendar-check text-secondary" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Client</p>
+                                            <p class="fw-bold mb-0">Created : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
-                                        <div class="fw-semibold mb-0">
-                                            <?php if (!empty($class['client_name'])): ?>
-                                                <?php echo esc_html($class['client_name']); ?>
-                                                <div class="fs-9 text-muted">ID: <?php echo esc_html($class['client_id']); ?></div>
+                                        <p class="fw-semibold mb-0">
+                                            <?php if (!empty($class['created_at'])): ?>
+                                                <?php echo esc_html(date('M j, Y g:i A', strtotime($class['created_at']))); ?>
                                             <?php else: ?>
                                                 <span class="text-muted">N/A</span>
                                             <?php endif; ?>
-                                        </div>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="py-2">
                                         <div class="d-flex align-items-center">
-                                            <div class="d-flex bg-success-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
-                                                <i class="bi bi-person-badge text-success" style="font-size: 12px;"></i>
+                                            <div class="d-flex bg-primary-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-calendar-event text-primary" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Agent</p>
+                                            <p class="fw-bold mb-0">Last Updated : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
-                                        <div class="fw-semibold mb-0">
-                                            <?php if (!empty($class['agent_name'])): ?>
-                                                <?php echo esc_html($class['agent_name']); ?>
-                                                <div class="fs-9 text-muted">ID: <?php echo esc_html($class['class_agent']); ?></div>
+                                        <p class="fw-semibold mb-0">
+                                            <?php if (!empty($class['updated_at'])): ?>
+                                                <?php echo esc_html(date('M j, Y g:i A', strtotime($class['updated_at']))); ?>
                                             <?php else: ?>
                                                 <span class="text-muted">N/A</span>
+                                            <?php endif; ?>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-info-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-calendar3 text-info" style="font-size: 12px;"></i>
+                                            </div>
+                                            <p class="fw-bold mb-0">QA Visit Dates : </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <p class="fw-semibold mb-0">
+                                            <?php if (!empty($class['qa_visit_dates'])): ?>
+                                                <?php echo esc_html($class['qa_visit_dates']); ?>
+                                            <?php else: ?>
+                                                <span class="text-muted">N/A</span>
+                                            <?php endif; ?>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Bottom Left - People & Staff -->
+                    <div class="col-sm-12 col-xxl-6 border-end-xxl py-3">
+                        <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
+                            <tbody>
+
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-info-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-people text-info" style="font-size: 12px;"></i>
+                                            </div>
+                                            <p class="fw-bold mb-0">Learners : </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="fw-semibold mb-0">
+                                            <?php
+                                            // Get learner_ids data (should already be decoded by controller)
+                                            $learners = $class['learner_ids'] ?? [];
+
+                                            if (!empty($learners) && is_array($learners)):
+                                                $learnerCount = count($learners);
+                                            ?>
+                                                <span class="badge bg-primary me-2"><?php echo $learnerCount; ?> Learner<?php echo $learnerCount !== 1 ? 's' : ''; ?></span>
+                                                <div class="mt-2">
+                                                    <?php foreach ($learners as $index => $learner): ?>
+                                                        <?php if ($index < 3): // Show first 3 learners ?>
+                                                            <div class="fs-9 mb-1">
+                                                                <i class="bi bi-person-fill me-1"></i>
+                                                                <?php echo esc_html($learner['name'] ?? 'Unknown'); ?>
+                                                                <?php if (!empty($learner['status'])): ?>
+                                                                    <span class="text-secondary text-muted ">(<?php echo esc_html($learner['status']); ?>)</span>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                    <?php if ($learnerCount > 3): ?>
+                                                        <div class="fs-9 text-muted mb-2">
+                                                            <i class="bi bi-three-dots me-1"></i>
+                                                            and <?php echo ($learnerCount - 3); ?> more learner<?php echo ($learnerCount - 3) !== 1 ? 's' : ''; ?>
+                                                        </div>
+                                                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#learnersModal">
+                                                            <i class="bi bi-eye me-1"></i>View All Learners
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <span class="text-muted">No learners assigned</span>
                                             <?php endif; ?>
                                         </div>
                                     </td>
@@ -295,22 +411,36 @@ $error_message = $error_message ?? '';
                         <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
-                                    <td class="py-2">
+                                    <td class="py-2 ydcoza-w-150">
                                         <div class="d-inline-flex align-items-center">
                                             <div class="d-flex bg-success-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-check-circle text-success" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">SETA Funded</p>
+                                            <p class="fw-bold mb-0">SETA Funded : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
                                         <div class="fw-semibold mb-0">
                                             <?php if ($class['seta_funded']): ?>
-                                                <span class="badge badge-success fs-10">Yes</span>
+                                                <span>Yes</span>
                                             <?php else: ?>
-                                                <span class="badge badge-secondary fs-10">No</span>
+                                                <span>No</span>
                                             <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-info-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-building-gear text-info" style="font-size: 12px;"></i>
+                                            </div>
+                                            <p class="fw-bold mb-0">SETA Name : </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="fw-semibold mb-0">
+                                            <?php echo esc_html($class['seta'] ?? 'N/A'); ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -320,17 +450,31 @@ $error_message = $error_message ?? '';
                                             <div class="d-flex bg-warning-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
                                                 <i class="bi bi-mortarboard text-warning" style="font-size: 12px;"></i>
                                             </div>
-                                            <p class="fw-bold mb-0">Exam Class</p>
+                                            <p class="fw-bold mb-0">Exam Class : </p>
                                         </div>
                                     </td>
-                                    <td class="py-2">:</td>
                                     <td class="py-2">
                                         <div class="fw-semibold mb-0">
                                             <?php if ($class['exam_class']): ?>
-                                                <span class="badge badge-warning fs-10">Yes</span>
+                                                <span>Yes</span>
                                             <?php else: ?>
-                                                <span class="badge badge-secondary fs-10">No</span>
+                                                <span>No</span>
                                             <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex bg-primary-subtle rounded-circle flex-center me-3" style="width:24px; height:24px">
+                                                <i class="bi bi-clipboard-check text-primary" style="font-size: 12px;"></i>
+                                            </div>
+                                            <p class="fw-bold mb-0">Exam Type : </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="fw-semibold mb-0">
+                                            <?php echo esc_html($class['exam_type'] ?? 'N/A'); ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -344,15 +488,6 @@ $error_message = $error_message ?? '';
             <ul class="nav nav-underline fs-9 class-details scrollbar flex-nowrap w-100 pb-1 mb-6" id="classTab" role="tablist">
                 <li class="nav-item me-2" role="presentation">
                     <a class="nav-link active" id="details-tab" data-bs-toggle="tab" href="#tab-details" role="tab">Additional Details</a>
-                </li>
-                <li class="nav-item me-2" role="presentation">
-                    <a class="nav-link" id="seta-tab" data-bs-toggle="tab" href="#tab-seta" role="tab">SETA Information</a>
-                </li>
-                <li class="nav-item me-2" role="presentation">
-                    <a class="nav-link" id="dates-tab" data-bs-toggle="tab" href="#tab-dates" role="tab">Dates & Timeline</a>
-                </li>
-                <li class="nav-item me-2" role="presentation">
-                    <a class="nav-link" id="staff-tab" data-bs-toggle="tab" href="#tab-staff" role="tab">Staff & Supervision</a>
                 </li>
             </ul>
 
@@ -395,189 +530,133 @@ $error_message = $error_message ?? '';
                     </div>
                 </div>
 
-                <!-- SETA Information Pane -->
-                <div class="tab-pane fade" id="tab-seta" role="tabpanel">
-                    <h4 class="mb-4">SETA Information</h4>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm fs-9 mb-0">
-                            <tbody>
-                                <tr>
-                                    <td class="fw-bold">SETA Funded</td>
-                                    <td>
-                                        <?php if ($class['seta_funded']): ?>
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-check-circle me-1"></i>Yes
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary">
-                                                <i class="bi bi-x-circle me-1"></i>No
-                                            </span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">SETA Name</td>
-                                    <td><?php echo esc_html($class['seta'] ?? 'N/A'); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Exam Class</td>
-                                    <td>
-                                        <?php if ($class['exam_class']): ?>
-                                            <span class="badge bg-warning">
-                                                <i class="bi bi-mortarboard me-1"></i>Yes
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary">
-                                                <i class="bi bi-x-circle me-1"></i>No
-                                            </span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Exam Type</td>
-                                    <td><?php echo esc_html($class['exam_type'] ?? 'N/A'); ?></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Dates & Timeline Pane -->
-                <div class="tab-pane fade" id="tab-dates" role="tabpanel">
-                    <h4 class="mb-4">Dates & Timeline</h4>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm fs-9 mb-0">
-                            <tbody>
-                                <tr>
-                                    <td class="fw-bold">
-                                        <i class="bi bi-calendar-plus me-2"></i>Start Date
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($class['original_start_date'])): ?>
-                                            <?php echo esc_html(date('M j, Y', strtotime($class['original_start_date']))); ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">
-                                        <i class="bi bi-truck me-2"></i>Delivery Date
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($class['delivery_date'])): ?>
-                                            <?php echo esc_html(date('M j, Y', strtotime($class['delivery_date']))); ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">
-                                        <i class="bi bi-calendar-check me-2"></i>Created
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($class['created_at'])): ?>
-                                            <?php echo esc_html(date('M j, Y g:i A', strtotime($class['created_at']))); ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">
-                                        <i class="bi bi-calendar-event me-2"></i>Last Updated
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($class['updated_at'])): ?>
-                                            <?php echo esc_html(date('M j, Y g:i A', strtotime($class['updated_at']))); ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">
-                                        <i class="bi bi-calendar3 me-2"></i>QA Visit Dates
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($class['qa_visit_dates'])): ?>
-                                            <?php echo esc_html($class['qa_visit_dates']); ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Staff & Supervision Pane -->
-                <div class="tab-pane fade" id="tab-staff" role="tabpanel">
-                    <h4 class="mb-4">Staff & Supervision</h4>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="d-flex justify-content-center mb-3">
-                                        <div class="d-flex bg-primary-subtle rounded-circle flex-center" style="width:48px; height:48px">
-                                            <i class="bi bi-building text-primary fs-4"></i>
-                                        </div>
-                                    </div>
-                                    <h6 class="card-title">Client</h6>
-                                    <?php if (!empty($class['client_name'])): ?>
-                                        <p class="card-text fw-bold"><?php echo esc_html($class['client_name']); ?></p>
-                                        <small class="text-muted">ID: <?php echo esc_html($class['client_id']); ?></small>
-                                    <?php else: ?>
-                                        <p class="card-text text-muted">N/A</p>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="d-flex justify-content-center mb-3">
-                                        <div class="d-flex bg-success-subtle rounded-circle flex-center" style="width:48px; height:48px">
-                                            <i class="bi bi-person-badge text-success fs-4"></i>
-                                        </div>
-                                    </div>
-                                    <h6 class="card-title">Agent</h6>
-                                    <?php if (!empty($class['agent_name'])): ?>
-                                        <p class="card-text fw-bold"><?php echo esc_html($class['agent_name']); ?></p>
-                                        <small class="text-muted">ID: <?php echo esc_html($class['class_agent']); ?></small>
-                                    <?php else: ?>
-                                        <p class="card-text text-muted">N/A</p>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="d-flex justify-content-center mb-3">
-                                        <div class="d-flex bg-warning-subtle rounded-circle flex-center" style="width:48px; height:48px">
-                                            <i class="bi bi-person-gear text-warning fs-4"></i>
-                                        </div>
-                                    </div>
-                                    <h6 class="card-title">Supervisor</h6>
-                                    <?php if (!empty($class['supervisor_name'])): ?>
-                                        <p class="card-text fw-bold"><?php echo esc_html($class['supervisor_name']); ?></p>
-                                        <small class="text-muted">ID: <?php echo esc_html($class['project_supervisor_id']); ?></small>
-                                    <?php else: ?>
-                                        <p class="card-text text-muted">N/A</p>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Learners Modal -->
+<?php if (!empty($learners) && is_array($learners) && count($learners) > 0): ?>
+<div class="modal fade" id="learnersModal" tabindex="-1" aria-labelledby="learnersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="learnersModalLabel">
+                    <i class="bi bi-people me-2"></i>Class : <?php echo esc_html($class['class_code'] ?? 'N/A'); ?>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2">
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="badge bg-primary fs-9"><?php echo count($learners); ?> Total Learner<?php echo count($learners) !== 1 ? 's' : ''; ?></span>
+                            <small class="text-muted">Class: <?php echo esc_html($class['class_subject'] ?? 'N/A'); ?></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm fs-9 mb-0">
+                        <thead>
+                            <tr class="bg-body-highlight">
+                                <th class="border-top border-translucent ps-3">Learner Name</th>
+                                <th class="border-top border-translucent">Status</th>
+                                <th class="border-top border-translucent text-end pe-3">Level/Module</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($learners as $index => $learner): ?>
+                                <tr>
+                                    <td class="align-middle ps-3">
+                                        <?php
+                                        // Handle different learner data formats
+                                        $learnerName = 'Unknown Learner';
+                                        if (is_array($learner)) {
+                                            // New format: array with name field
+                                            if (isset($learner['name'])) {
+                                                $learnerName = $learner['name'];
+                                            }
+                                            // Legacy format: might have first_name/surname
+                                            elseif (isset($learner['first_name']) || isset($learner['surname'])) {
+                                                $learnerName = trim(($learner['first_name'] ?? '') . ' ' . ($learner['surname'] ?? ''));
+                                            }
+                                            // ID only format
+                                            elseif (isset($learner['id'])) {
+                                                $learnerName = 'Learner ID: ' . $learner['id'];
+                                            }
+                                        } elseif (is_numeric($learner)) {
+                                            // Legacy format: just an ID
+                                            $learnerName = 'Learner ID: ' . $learner;
+                                        }
+
+                                        echo esc_html($learnerName);
+                                        ?>
+                                    </td>
+                                    <td class="align-middle">
+                                        <?php
+                                        $learnerStatus = '';
+                                        if (is_array($learner) && isset($learner['status'])) {
+                                            $learnerStatus = $learner['status'];
+                                        }
+
+                                        if (!empty($learnerStatus)): ?>
+                                            <?php
+                                            $statusClass = 'secondary';
+                                            $statusIcon = 'bi-person';
+                                            if ($learnerStatus === 'Host Company Learner') {
+                                                $statusClass = 'success';
+                                                $statusIcon = 'bi-check';
+                                            } elseif (strpos(strtolower($learnerStatus), 'walk') !== false) {
+                                                $statusClass = 'warning';
+                                                $statusIcon = 'bi-bars-staggered';
+                                            }
+                                            ?>
+                                            <div class="badge bg-<?php echo $statusClass; ?> fs-10">
+                                                <span class="fw-bold"><?php echo esc_html($learnerStatus); ?></span>
+                                                <i class="<?php echo $statusIcon; ?> ms-1"></i>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="text-muted">N/A</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="align-middle text-end py-3 pe-3">
+                                        <?php
+                                        $learnerLevel = '';
+                                        if (is_array($learner) && isset($learner['level'])) {
+                                            $learnerLevel = $learner['level'];
+                                        }
+
+                                        if (!empty($learnerLevel)): ?>
+                                            <span class="text-body-secondary"><?php echo esc_html($learnerLevel); ?></span>
+                                        <?php else: ?>
+                                            <span class="text-muted">-</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination info (static for now) -->
+                <div class="d-flex justify-content-between mt-3">
+                    <span class="d-none d-sm-inline-block">
+                        1 to <?php echo count($learners); ?> <span class="text-body-tertiary">Items of</span> <?php echo count($learners); ?>
+                    </span>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- JavaScript for functionality -->
 <script>

@@ -1595,6 +1595,18 @@ class ClassController {
         $supervisorId = $result['project_supervisor_id'] ?? null;
         $result['supervisor_name'] = isset($supervisorLookup[$supervisorId]) ? $supervisorLookup[$supervisorId] : 'Unassigned';
 
+        // Handle JSONB fields that come as strings from PostgreSQL
+        $jsonbFields = ['learner_ids', 'backup_agent_ids', 'schedule_data', 'stop_restart_dates', 'class_notes_data', 'qa_reports'];
+
+        foreach ($jsonbFields as $field) {
+            if (isset($result[$field]) && is_string($result[$field])) {
+                $decoded = json_decode($result[$field], true);
+                if ($decoded !== null) {
+                    $result[$field] = $decoded;
+                }
+            }
+        }
+
         return $result;
     }
 
