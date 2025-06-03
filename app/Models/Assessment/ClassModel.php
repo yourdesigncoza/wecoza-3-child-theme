@@ -397,6 +397,57 @@ class ClassModel {
     public function getLearnerIds() { return $this->learnerIds; }
     public function setLearnerIds($learnerIds) { $this->learnerIds = is_array($learnerIds) ? $learnerIds : []; return $this; }
 
+    /**
+     * Get learner data in the new format (array of objects with id, name, status, level)
+     * Handles backward compatibility with old format (array of IDs)
+     */
+    public function getLearnerData() {
+        if (empty($this->learnerIds)) {
+            return [];
+        }
+
+        // Check if we have the new format (array of objects) or old format (array of IDs)
+        $firstItem = reset($this->learnerIds);
+
+        if (is_array($firstItem) && isset($firstItem['id'])) {
+            // New format - return as is
+            return $this->learnerIds;
+        } else {
+            // Old format - convert IDs to minimal object structure
+            return array_map(function($id) {
+                return [
+                    'id' => intval($id),
+                    'name' => 'Legacy Learner',
+                    'status' => 'Host Company Learner',
+                    'level' => ''
+                ];
+            }, $this->learnerIds);
+        }
+    }
+
+    /**
+     * Get only the learner IDs (for backward compatibility)
+     * Extracts IDs from both old format (array of IDs) and new format (array of objects)
+     */
+    public function getLearnerIdsOnly() {
+        if (empty($this->learnerIds)) {
+            return [];
+        }
+
+        // Check if we have the new format (array of objects) or old format (array of IDs)
+        $firstItem = reset($this->learnerIds);
+
+        if (is_array($firstItem) && isset($firstItem['id'])) {
+            // New format - extract IDs from objects
+            return array_map(function($learner) {
+                return intval($learner['id']);
+            }, $this->learnerIds);
+        } else {
+            // Old format - return as is (already just IDs)
+            return array_map('intval', $this->learnerIds);
+        }
+    }
+
     public function getBackupAgentIds() { return $this->backupAgentIds; }
     public function setBackupAgentIds($backupAgentIds) { $this->backupAgentIds = is_array($backupAgentIds) ? $backupAgentIds : []; return $this; }
 

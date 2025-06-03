@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Class subjects data (will be populated via AJAX)
     let classSubjectsData = {};
 
+    // Event listener for client change
+    const clientSelect = document.getElementById('client_id');
+    if (clientSelect) {
+        clientSelect.addEventListener('change', function() {
+            // Regenerate class code when client changes
+            regenerateClassCode();
+        });
+    }
+
     // Event listener for class type change
     if (classTypeSelect) {
         classTypeSelect.addEventListener('change', function() {
@@ -49,8 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
         classSubjectSelect.addEventListener('change', function() {
             const selectedClassType = classTypeSelect.value;
             const selectedSubject = this.value;
+            const selectedClientId = document.getElementById('client_id')?.value;
 
-            if (selectedClassType && selectedSubject) {
+            if (selectedClassType && selectedSubject && selectedClientId) {
                 // Find the selected subject in the data
                 const subjectData = classSubjectsData[selectedClassType].find(
                     subject => subject.id === selectedSubject
@@ -60,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Set duration
                     classDurationInput.value = subjectData.duration;
 
-                    // Generate class code
-                    classCodeInput.value = generateClassCode(selectedClassType, selectedSubject);
+                    // Generate class code with client ID
+                    classCodeInput.value = generateClassCode(selectedClientId, selectedClassType, selectedSubject);
                 }
             } else {
                 // Reset duration and code
@@ -159,27 +169,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Generate a class code based on class type and subject
+     * Helper function to regenerate class code when any required field changes
+     */
+    function regenerateClassCode() {
+        const selectedClientId = document.getElementById('client_id')?.value;
+        const selectedClassType = classTypeSelect?.value;
+        const selectedSubject = classSubjectSelect?.value;
+
+        if (selectedClientId && selectedClassType && selectedSubject) {
+            classCodeInput.value = generateClassCode(selectedClientId, selectedClassType, selectedSubject);
+        } else {
+            classCodeInput.value = '';
+        }
+    }
+
+    /**
+     * Generate a class code based on client ID, class type and subject
      *
+     * @param {string} clientId The selected client ID
      * @param {string} classType The selected class type
      * @param {string} subjectId The selected subject ID
      * @return {string} The generated class code
      */
-    function generateClassCode(classType, subjectId) {
-        // Format: [ClassType]-[SubjectID]-[CurrentYear]-[DateTimeStamp]
-        // DateTimeStamp format: YMDHMM (Year, Month, Day, Hour, Minute)
+    function generateClassCode(clientId, classType, subjectId) {
+        // Format: [ClientID]-[ClassType]-[SubjectID]-[YYYY]-[MM]-[DD]-[HH]-[MM]
+        // Example: 11-REALLL-RLN-2025-06-25-02-14
         const now = new Date();
-        const currentYear = now.getFullYear();
 
-        // Create datetime stamp: YMDHMM format
-        const year = now.getFullYear().toString().slice(-2); // Last 2 digits of year
+        // Create readable datetime components
+        const year = now.getFullYear(); // Full year (2025)
         const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month (01-12)
         const day = now.getDate().toString().padStart(2, '0'); // Day (01-31)
         const hour = now.getHours().toString().padStart(2, '0'); // Hour (00-23)
         const minute = now.getMinutes().toString().padStart(2, '0'); // Minute (00-59)
 
-        const dateTimeStamp = `${year}${month}${day}${hour}${minute}`;
-
-        return `${classType}-${subjectId}-${currentYear}-${dateTimeStamp}`;
+        return `${clientId}-${classType}-${subjectId}-${year}-${month}-${day}-${hour}-${minute}`;
     }
 });

@@ -109,7 +109,7 @@
             <div class="form-floating">
                <input type="text" id="class_code" name="class_code" class="form-control" placeholder="Class Code" readonly>
                <label for="class_code">Class Code</label>
-               <div class="form-text">Automatically generated based on selections.</div>
+               <div class="form-text">Auto generated [ClientID]-[ClassType]-[SubjectID]-[YYYY]-[MM]-[DD]-[HH]-[MM] </div>
             </div>
          </div>
 
@@ -291,7 +291,7 @@
          <!-- Exception Dates -->
          <div class="mb-4">
             <h6 class="mb-2">Exception Dates</h6>
-            <p class="text-muted small mb-3">Add dates when classes will not occur (e.g., holidays, client cancellations).</p>
+            <p class="text-muted small mb-3">Add dates when classes will not occur (e.g. client closed).</p>
 
             <!-- Container for all exception date rows -->
             <div id="exception-dates-container"></div>

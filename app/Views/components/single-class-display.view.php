@@ -102,7 +102,7 @@ $error_message = $error_message ?? '';
                                 </div>
                                 <div>
                                     <p class="fw-bold mb-1">Class Subject</p>
-                                    <h4 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_subject'] ?? 'N/A'); ?></h4>
+                                    <h5 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_subject'] ?? 'N/A'); ?></h5>
                                 </div>
                             </div>
                         </div>
@@ -114,7 +114,7 @@ $error_message = $error_message ?? '';
                                 </div>
                                 <div>
                                     <p class="fw-bold mb-1">Class Code</p>
-                                    <h4 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_code'] ?? 'N/A'); ?></h4>
+                                    <h5 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_code'] ?? 'N/A'); ?></h5>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +126,7 @@ $error_message = $error_message ?? '';
                                 </div>
                                 <div>
                                     <p class="fw-bold mb-1">Class Type</p>
-                                    <h4 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_type'] ?? 'Unknown Type'); ?></h4>
+                                    <h5 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_type'] ?? 'Unknown Type'); ?></h5>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +139,7 @@ $error_message = $error_message ?? '';
                 <div class="row mx-0">
                     <!-- Left Column - Basic Information -->
                     <div class="col-sm-12 col-xxl-6 border-bottom border-end-xxl py-3">
-                        <table class="w-100 table-stats">
+                        <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
                                     <td class="py-2">
@@ -195,7 +195,7 @@ $error_message = $error_message ?? '';
 
                     <!-- Right Column - Dates & Schedule -->
                     <div class="col-sm-12 col-xxl-6 border-bottom py-3">
-                        <table class="w-100 table-stats">
+                        <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
                                     <td class="py-2">
@@ -242,7 +242,7 @@ $error_message = $error_message ?? '';
                     </div>
                     <!-- Bottom Left - People & Staff -->
                     <div class="col-sm-12 col-xxl-6 border-end-xxl border-bottom-xxl py-3">
-                        <table class="w-100 table-stats">
+                        <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
                                     <td class="py-2">
@@ -292,7 +292,7 @@ $error_message = $error_message ?? '';
 
                     <!-- Bottom Right - SETA & Exam Information -->
                     <div class="col-sm-12 col-xxl-6 py-3">
-                        <table class="w-100 table-stats">
+                        <table class="w-100 table-stats table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
                                     <td class="py-2">
@@ -360,7 +360,7 @@ $error_message = $error_message ?? '';
             <div class="tab-content" id="classTabContent">
                 <!-- Additional Details Pane -->
                 <div class="tab-pane fade show active" id="tab-details" role="tabpanel">
-                    <h2 class="mb-4">Additional Details</h2>
+                    <h4 class="mb-4">Additional Details</h4>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -397,9 +397,9 @@ $error_message = $error_message ?? '';
 
                 <!-- SETA Information Pane -->
                 <div class="tab-pane fade" id="tab-seta" role="tabpanel">
-                    <h2 class="mb-4">SETA Information</h2>
+                    <h4 class="mb-4">SETA Information</h4>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
                                     <td class="fw-bold">SETA Funded</td>
@@ -444,9 +444,9 @@ $error_message = $error_message ?? '';
 
                 <!-- Dates & Timeline Pane -->
                 <div class="tab-pane fade" id="tab-dates" role="tabpanel">
-                    <h2 class="mb-4">Dates & Timeline</h2>
+                    <h4 class="mb-4">Dates & Timeline</h4>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-hover table-sm fs-9 mb-0">
                             <tbody>
                                 <tr>
                                     <td class="fw-bold">
@@ -515,7 +515,7 @@ $error_message = $error_message ?? '';
 
                 <!-- Staff & Supervision Pane -->
                 <div class="tab-pane fade" id="tab-staff" role="tabpanel">
-                    <h2 class="mb-4">Staff & Supervision</h2>
+                    <h4 class="mb-4">Staff & Supervision</h4>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <div class="card h-100">

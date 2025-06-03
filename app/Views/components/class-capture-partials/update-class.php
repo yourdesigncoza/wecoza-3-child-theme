@@ -31,7 +31,7 @@
          <!-- Exception Dates -->
          <div class="mb-4">
             <h6 class="mb-2">Exception Dates</h6>
-            <p class="text-muted small mb-3">Add dates when classes will not occur (e.g., holidays, client cancellations).</p>
+            <p class="text-muted small mb-3">Add dates when classes will not occur (e.g. client closed).</p>
 
             <!-- Container for all exception date rows -->
             <div id="exception-dates-container"></div>

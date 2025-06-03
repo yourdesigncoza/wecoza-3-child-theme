@@ -386,8 +386,9 @@ class ClassController {
         $processed['class_notes'] = isset($data['class_notes']) && is_array($data['class_notes']) ? array_map([self::class, 'sanitizeText'], $data['class_notes']) : [];
 
         // Handle learner data from the hidden field (class_learners_data) - WordPress escaping aware
+        // Store complete learner data structure instead of just IDs to preserve Level/Module and Host/Walk-in Status
         $processed['learner_ids'] = [];
-        error_log('=== LEARNER DATA PROCESSING (WordPress Escaping Fix) ===');
+        error_log('=== LEARNER DATA PROCESSING (Complete Data Structure) ===');
         error_log('Raw class_learners_data: ' . (isset($data['class_learners_data']) ? $data['class_learners_data'] : 'NOT SET'));
 
         if (isset($data['class_learners_data']) && !empty($data['class_learners_data'])) {
@@ -395,8 +396,9 @@ class ClassController {
             $learnerData = self::decodeWordPressJson($data['class_learners_data']);
 
             if ($learnerData !== null && is_array($learnerData)) {
-                $processed['learner_ids'] = array_map('intval', array_column($learnerData, 'id'));
-                error_log('Successfully processed learner IDs: ' . print_r($processed['learner_ids'], true));
+                // Store the complete learner data structure with validation
+                $processed['learner_ids'] = self::validateAndCleanLearnerData($learnerData);
+                error_log('Successfully processed complete learner data: ' . print_r($processed['learner_ids'], true));
             } else {
                 error_log('Failed to decode learner data using WordPress JSON decoder');
                 error_log('Attempting fallback processing...');
@@ -407,14 +409,22 @@ class ClassController {
                 $learnerData = json_decode($decodedJson, true);
 
                 if (is_array($learnerData)) {
-                    $processed['learner_ids'] = array_map('intval', array_column($learnerData, 'id'));
+                    $processed['learner_ids'] = self::validateAndCleanLearnerData($learnerData);
                     error_log('Fallback processing successful: ' . print_r($processed['learner_ids'], true));
                 } else {
                     error_log('Fallback processing failed. JSON error: ' . json_last_error_msg());
-                    // Final fallback: try to extract IDs from malformed JSON
+                    // Final fallback: try to extract IDs from malformed JSON and create minimal structure
                     if (preg_match_all('/"id":\s*(\d+)/', $decodedJson, $matches)) {
-                        $processed['learner_ids'] = array_map('intval', $matches[1]);
-                        error_log('Regex extraction successful: ' . print_r($processed['learner_ids'], true));
+                        $learnerIds = array_map('intval', $matches[1]);
+                        $processed['learner_ids'] = array_map(function($id) {
+                            return [
+                                'id' => $id,
+                                'name' => 'Unknown Learner',
+                                'status' => 'Host Company Learner',
+                                'level' => ''
+                            ];
+                        }, $learnerIds);
+                        error_log('Regex extraction with minimal structure successful: ' . print_r($processed['learner_ids'], true));
                     }
                 }
             }
@@ -568,6 +578,55 @@ class ClassController {
         error_log('Final stop_restart_dates: ' . print_r($processed['stop_restart_dates'], true));
 
         return $processed;
+    }
+
+    /**
+     * Validate and clean learner data structure
+     *
+     * @param array $learnerData Raw learner data from form
+     * @return array Cleaned and validated learner data structure
+     */
+    private static function validateAndCleanLearnerData($learnerData) {
+        $cleanedData = [];
+
+        if (!is_array($learnerData)) {
+            error_log('validateAndCleanLearnerData: Input is not an array');
+            return $cleanedData;
+        }
+
+        foreach ($learnerData as $learner) {
+            if (!is_array($learner)) {
+                error_log('validateAndCleanLearnerData: Learner entry is not an array: ' . print_r($learner, true));
+                continue;
+            }
+
+            // Validate required fields
+            if (!isset($learner['id']) || empty($learner['id'])) {
+                error_log('validateAndCleanLearnerData: Learner missing ID: ' . print_r($learner, true));
+                continue;
+            }
+
+            // Clean and validate the learner data
+            $cleanedLearner = [
+                'id' => intval($learner['id']),
+                'name' => isset($learner['name']) ? self::sanitizeText($learner['name']) : 'Unknown Learner',
+                'status' => isset($learner['status']) ? self::sanitizeText($learner['status']) : 'Host Company Learner',
+                'level' => isset($learner['level']) ? self::sanitizeText($learner['level']) : ''
+            ];
+
+            // Validate status is one of the allowed values
+            $allowedStatuses = ['Host Company Learner', 'Walk-in Learner', 'Transferred'];
+            if (!in_array($cleanedLearner['status'], $allowedStatuses)) {
+                error_log('validateAndCleanLearnerData: Invalid status "' . $cleanedLearner['status'] . '", defaulting to "Host Company Learner"');
+                $cleanedLearner['status'] = 'Host Company Learner';
+            }
+
+            $cleanedData[] = $cleanedLearner;
+            error_log('validateAndCleanLearnerData: Cleaned learner: ' . print_r($cleanedLearner, true));
+        }
+
+        error_log('validateAndCleanLearnerData: Final cleaned data count: ' . count($cleanedData));
+        return $cleanedData;
     }
 
     /**

@@ -114,6 +114,28 @@ Complete getter/setter pairs for all properties following camelCase convention.
 ### Required Services
 - **`WeCoza\Services\Database\DatabaseService`** - Database operations
 
+### Learner Data Structure
+
+The `learner_ids` field now supports two formats for backward compatibility:
+
+**New Format (Recommended):**
+```php
+'learner_ids' => [
+    ['id' => 10, 'name' => 'John Smith', 'status' => 'Host Company Learner', 'level' => 'Communication'],
+    ['id' => 11, 'name' => 'Jane Doe', 'status' => 'Walk-in Learner', 'level' => 'Finance']
+]
+```
+
+**Legacy Format (Still Supported):**
+```php
+'learner_ids' => [10, 11, 12]
+```
+
+**Available Methods:**
+- `getLearnerData()` - Returns complete learner data with backward compatibility
+- `getLearnerIdsOnly()` - Returns only learner IDs for backward compatibility
+- `getLearnerIds()` - Returns raw data (could be either format)
+
 ### Related Models
 - **`WeCoza\Models\Learner\LearnerModel`** - Learner data (referenced via learner_ids)
 - **Agent Models** - Agent data (referenced via class_agent, backup_agent_ids)
@@ -138,7 +160,11 @@ $classData = [
     'class_agent' => 5,
     'project_supervisor' => 3,
     'delivery_date' => '2024-02-15',
-    'learner_ids' => [10, 11, 12],
+    'learner_ids' => [
+        ['id' => 10, 'name' => 'John Smith', 'status' => 'Host Company Learner', 'level' => 'Communication'],
+        ['id' => 11, 'name' => 'Jane Doe', 'status' => 'Walk-in Learner', 'level' => 'Finance'],
+        ['id' => 12, 'name' => 'Bob Wilson', 'status' => 'Transferred', 'level' => '']
+    ],
     'backup_agent_ids' => [6, 7]
 ];
 

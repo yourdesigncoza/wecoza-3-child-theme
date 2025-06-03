@@ -216,6 +216,10 @@ html[data-bs-theme="dark"] .fc .fc-multimonth {
 .wecoza-classes-display .dropdown-toggle:hover {
   color: rgba(var(--phoenix-danger-rgb), var(--phoenix-text-opacity)) !important;
 }
+/* More specific selector */
+.w-100.table-stats.table tbody tr:last-child td {
+  border-bottom: none !important;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Class Schedule Form Styles                                      */
