@@ -1337,7 +1337,7 @@ function showCustomAlert(message) {
     }
 
     /**
-     * Get schedule data from form fields (replaces calendar-based approach)
+     * Get schedule data from form fields
      */
     function getScheduleDataFromForm() {
         const scheduleData = [];
@@ -1379,7 +1379,7 @@ function showCustomAlert(message) {
             return;
         }
 
-        // Get schedule data from form fields instead of calendar
+        // Get schedule data from form fields
         const scheduleData = getScheduleDataFromForm();
 
         // If no schedule data, skip conflict checking

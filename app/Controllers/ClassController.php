@@ -12,7 +12,6 @@ use WeCoza\Models\Assessment\ClassModel;
 use WeCoza\Controllers\MainController;
 use WeCoza\Controllers\ClassTypesController;
 use WeCoza\Controllers\PublicHolidaysController;
-use WeCoza\Services\Export\CalendarExportService;
 
 // WordPress functions are in global namespace
 // We'll access them directly with the global namespace prefix
@@ -48,9 +47,7 @@ class ClassController {
 
         // Custom scripts
         \wp_enqueue_script('wecoza-class-js', WECOZA_CHILD_URL . '/public/js/class-capture.js', ['jquery'], WECOZA_PLUGIN_VERSION, true);
-        // \wp_enqueue_script('wecoza-calendar-init-js', WECOZA_CHILD_URL . '/public/js/class-calendar-init.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
         \wp_enqueue_script('wecoza-class-schedule-form-js', WECOZA_CHILD_URL . '/public/js/class-schedule-form.js', ['jquery'], WECOZA_PLUGIN_VERSION, true);
-        // \wp_enqueue_script('wecoza-calendar-export-js', WECOZA_CHILD_URL . '/public/js/calendar-export.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
         \wp_enqueue_script('wecoza-class-types-js', WECOZA_CHILD_URL . '/assets/js/class-types.js', ['jquery', 'wecoza-class-js'], WECOZA_PLUGIN_VERSION, true);
 
         // Localize script with AJAX URL and nonce
@@ -61,14 +58,6 @@ class ClassController {
             'debug' => true,
             'conflictCheckEnabled' => true
         ]);
-
-        // Add public holidays data to the calendar
-        $holidaysController = PublicHolidaysController::getInstance();
-        \wp_localize_script('wecoza-class-js', 'wecozaPublicHolidays', [
-            'events' => $holidaysController->getHolidaysAsCalendarEvents()
-        ]);
-
-        // Calendar initialization is now handled by class-calendar-init.js
     }
 
     /**
@@ -1300,31 +1289,6 @@ class ClassController {
             error_log('Error checking learner conflicts: ' . $e->getMessage());
             return [];
         }
-    }
-
-    /**
-     * Handle AJAX request to export calendar data
-     */
-    public function exportCalendarAjax() {
-        // Check nonce
-        if (!isset($_POST['nonce'])) {
-            $this->sendJsonError('Security check failed.');
-            return;
-        }
-
-        // Get class IDs from request
-        $classIds = isset($_POST['class_ids']) ? json_decode(stripslashes($_POST['class_ids']), true) : [];
-
-        // Generate iCalendar content
-        $icalContent = CalendarExportService::generateICalendar($classIds);
-
-        // Set headers for file download
-        header('Content-Type: text/calendar; charset=utf-8');
-        header('Content-Disposition: attachment; filename="wecoza-classes.ics"');
-
-        // Output the iCalendar content
-        echo $icalContent;
-        exit;
     }
 
     /**

@@ -18,7 +18,7 @@
  *   - supervisor information (name, ID)
  *   - SETA funding status and details
  *   - exam class status and type
- *   - class address and additional details
+ *   - class address information
  *
  * @package WeCoza
  * @see \WeCoza\Controllers\ClassController::displaySingleClassShortcode() For the controller method that renders this view
@@ -484,52 +484,34 @@ $error_message = $error_message ?? '';
                 </div>
             </div>
 
-            <!-- Nav Tabs for Additional Information -->
-            <ul class="nav nav-underline fs-9 class-details scrollbar flex-nowrap w-100 pb-1 mb-6" id="classTab" role="tablist">
-                <li class="nav-item me-2" role="presentation">
-                    <a class="nav-link active" id="details-tab" data-bs-toggle="tab" href="#tab-details" role="tab">Additional Details</a>
-                </li>
-            </ul>
+            <!-- Class Calendar Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>Class Schedule Calendar
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Calendar Container -->
+                    <div id="classCalendar" class="mb-4">
+                        <!-- FullCalendar will be rendered here -->
+                    </div>
 
-            <!-- Tab Content -->
-            <div class="tab-content" id="classTabContent">
-                <!-- Additional Details Pane -->
-                <div class="tab-pane fade show active" id="tab-details" role="tabpanel">
-                    <h4 class="mb-4">Additional Details</h4>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-geo-alt me-2"></i>Location Information
-                                    </h6>
-                                    <p class="card-text">
-                                        <strong>Address:</strong><br>
-                                        <?php echo esc_html($class['class_address_line'] ?? 'N/A'); ?>
-                                    </p>
-                                </div>
-                            </div>
+                    <!-- Calendar Loading State -->
+                    <div id="calendar-loading" class="text-center py-4">
+                        <div class="spinner-border text-primary me-2" role="status">
+                            <span class="visually-hidden">Loading calendar...</span>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-clock me-2"></i>Duration & Schedule
-                                    </h6>
-                                    <p class="card-text">
-                                        <strong>Duration:</strong>
-                                        <?php if (!empty($class['class_duration'])): ?>
-                                            <?php echo esc_html($class['class_duration']); ?> hours
-                                        <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                        <?php endif; ?>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <span class="text-muted">Loading class schedule...</span>
+                    </div>
+
+                    <!-- Calendar Error State -->
+                    <div id="calendar-error" class="alert alert-warning d-none">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Calendar Unavailable:</strong>
+                        <span id="calendar-error-message">Unable to load class schedule data.</span>
                     </div>
                 </div>
-
             </div>
 
         <?php endif; ?>
@@ -671,7 +653,66 @@ document.addEventListener('DOMContentLoaded', function() {
         if (content) content.classList.remove('d-none');
     }, 500);
     <?php endif; ?>
+
+    // Initialize FullCalendar if the calendar container exists
+    if (document.getElementById('classCalendar')) {
+        console.log('Calendar container found, initializing...');
+        initializeClassCalendar();
+    } else {
+        console.log('Calendar container not found');
+    }
 });
+
+/**
+ * Initialize FullCalendar for the class schedule
+ * Following WordPress best practices
+ */
+function initializeClassCalendar() {
+    console.log('initializeClassCalendar called');
+
+    // Check if FullCalendar is loaded
+    console.log('FullCalendar available:', typeof FullCalendar !== 'undefined');
+    console.log('WeCozaCalendar available:', typeof window.WeCozaCalendar !== 'undefined');
+
+    // Pass class data to JavaScript
+    const classData = {
+        id: <?php echo json_encode($class['class_id'] ?? null); ?>,
+        code: <?php echo json_encode($class['class_code'] ?? ''); ?>,
+        subject: <?php echo json_encode($class['class_subject'] ?? ''); ?>,
+        startDate: <?php echo json_encode($class['original_start_date'] ?? ''); ?>,
+        deliveryDate: <?php echo json_encode($class['delivery_date'] ?? ''); ?>,
+        duration: <?php echo json_encode($class['class_duration'] ?? ''); ?>,
+        scheduleData: <?php echo json_encode($class['schedule_data'] ?? null); ?>,
+        ajaxUrl: <?php echo json_encode(admin_url('admin-ajax.php')); ?>,
+        nonce: <?php echo json_encode(wp_create_nonce('wecoza_calendar_nonce')); ?>
+    };
+
+    console.log('Class data:', classData);
+
+    // Initialize the calendar with the class data
+    if (typeof window.WeCozaCalendar !== 'undefined') {
+        console.log('Initializing WeCoza Calendar...');
+        window.WeCozaCalendar.init(classData);
+    } else {
+        console.warn('WeCoza Calendar library not loaded');
+        showCalendarError('Calendar library not available');
+    }
+}
+
+/**
+ * Show calendar error message
+ */
+function showCalendarError(message) {
+    const loadingEl = document.getElementById('calendar-loading');
+    const errorEl = document.getElementById('calendar-error');
+    const messageEl = document.getElementById('calendar-error-message');
+
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorEl) {
+        errorEl.classList.remove('d-none');
+        if (messageEl) messageEl.textContent = message;
+    }
+}
 
 /**
  * Edit Class Function

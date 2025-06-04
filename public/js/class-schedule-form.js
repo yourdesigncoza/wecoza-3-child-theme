@@ -1,8 +1,7 @@
 /**
  * Class Schedule Form JavaScript
  *
- * Handles the client-side functionality for the class schedule form
- * and the view-only calendar reference.
+ * Handles the client-side functionality for the class schedule form.
  */
 (function($) {
     'use strict';
@@ -25,9 +24,6 @@
 
         // Initialize holiday overrides
         initHolidayOverrides();
-
-        // Initialize calendar toggle
-        initCalendarToggle();
 
         // Initialize schedule data updates
         initScheduleDataUpdates();
@@ -109,9 +105,6 @@
             } else if (pattern === 'monthly') {
                 $dayOfMonth.removeClass('d-none');
                 $('#schedule_day_of_month').attr('required', 'required');
-            } else if (pattern === 'custom') {
-                // For custom pattern, we'll use the calendar view
-                $('#view-calendar-btn').trigger('click');
             }
 
             // Update schedule data
@@ -851,39 +844,14 @@ function getClassTypeHours(classTypeId) {
                     console.log('Calculated end date:', endDate);
                     $('#schedule_end_date').val(endDate);
 
-                    // Update schedule tables if visible
-                    if (!$('#calendar-reference-container').hasClass('d-none')) {
-                        updateScheduleTables();
-                    }
+                    // Update schedule tables
+                    updateScheduleTables();
                 }
             }
         }
     }
 
-    /**
-     * Initialize calendar toggle
-     */
-    function initCalendarToggle() {
-        const $viewButton = $('#view-calendar-btn');
-        const $hideButton = $('#hide-calendar-btn');
-        const $calendarContainer = $('#calendar-reference-container');
 
-        // Show schedule view when view button is clicked
-        $viewButton.on('click', function() {
-            $calendarContainer.removeClass('d-none');
-
-            // Update schedule tables with current data
-            updateScheduleTables();
-
-            // Update schedule data to trigger statistics calculation
-            updateScheduleData();
-        });
-
-        // Hide schedule view when hide button is clicked
-        $hideButton.on('click', function() {
-            $calendarContainer.addClass('d-none');
-        });
-    }
 
     /**
      * Update schedule tables with current data
@@ -1041,7 +1009,7 @@ function getClassTypeHours(classTypeId) {
 
         // 1. Training Duration Statistics
 
-        // Calculate total calendar days
+        // Calculate total days
         const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
         $('#stat-total-days').text(totalDays + ' days');
 
@@ -1226,37 +1194,6 @@ function getClassTypeHours(classTypeId) {
     }
 
     /**
-     * Count overridden holidays
-     */
-    function countOverriddenHolidays(jsonData) {
-        if (!jsonData.holidays) {
-            return 0;
-        }
-
-        // Count holidays that are overridden and fall on selected days
-        let count = 0;
-        const selectedDays = jsonData.schedule.selectedDays;
-        const dayIndices = selectedDays.map(day => getDayIndex(day));
-
-        jsonData.holidays.forEach(holiday => {
-            if (holiday.isOverridden) {
-                const holidayDate = new Date(holiday.date);
-                const dayOfWeek = holidayDate.getDay();
-
-                if (dayIndices.includes(dayOfWeek)) {
-                    count++;
-                }
-            }
-        });
-
-        return count;
-    }
-
-
-
-
-
-    /**
      * Initialize holiday override functionality
      */
     function initHolidayOverrides() {
@@ -1331,19 +1268,8 @@ function getClassTypeHours(classTypeId) {
             // Recalculate end date with the new overrides
             recalculateEndDate();
 
-            // Update schedule tables if visible
-            if (!$('#calendar-reference-container').hasClass('d-none')) {
-                updateScheduleTables();
-            } else {
-                // Always update the debug JSON display even if the tables aren't visible
-                const pattern = $('#schedule_pattern').val();
-                const startDate = $('#schedule_start_date').val();
-                const endDate = $('#schedule_end_date').val();
-                const startTime = $('#schedule_start_time').val();
-                const endTime = $('#schedule_end_time').val();
-                const selectedDays = getSelectedDays();
-                updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
-            }
+            // Update schedule tables
+            updateScheduleTables();
         });
 
         // Check for holidays when start date changes
@@ -1422,19 +1348,8 @@ function getClassTypeHours(classTypeId) {
             // Recalculate end date with the new overrides (once for all changes)
             recalculateEndDate();
 
-            // Update schedule tables if visible (once for all changes)
-            if (!$('#calendar-reference-container').hasClass('d-none')) {
-                updateScheduleTables();
-            } else {
-                // Always update the debug JSON display even if the tables aren't visible
-                const pattern = $('#schedule_pattern').val();
-                const startDate = $('#schedule_start_date').val();
-                const endDate = $('#schedule_end_date').val();
-                const startTime = $('#schedule_start_time').val();
-                const endTime = $('#schedule_end_time').val();
-                const selectedDays = getSelectedDays();
-                updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
-            }
+            // Update schedule tables
+            updateScheduleTables();
         }
     }
 
@@ -1528,68 +1443,6 @@ function getClassTypeHours(classTypeId) {
         // Show the holidays table
         $('#no-holidays-message').addClass('d-none');
         $('#holidays-table-container').removeClass('d-none');
-    }
-
-    /**
-     * Check if a holiday conflicts with the class schedule
-     * Note: This function is no longer used as we now handle conflicts directly in checkForHolidays
-     */
-    function holidayConflictsWithSchedule(holidayDate, pattern, scheduleDay, dayOfMonth, startDate) {
-        // Parse the holiday date
-        const holidayDateObj = new Date(holidayDate);
-        const holidayDayOfWeek = holidayDateObj.getDay(); // 0 = Sunday, 1 = Monday, etc.
-        const holidayDayOfMonth = holidayDateObj.getDate(); // 1-31
-
-        // For weekly pattern, check if the holiday falls on the scheduled day of the week
-        if (pattern === 'weekly') {
-            const scheduleDayIndex = getDayIndex(scheduleDay);
-            return holidayDayOfWeek === scheduleDayIndex;
-        }
-
-        // For bi-weekly pattern, check if the holiday falls on the scheduled day of the week
-        // and is in the correct week sequence
-        if (pattern === 'biweekly') {
-            const scheduleDayIndex = getDayIndex(scheduleDay);
-
-            // First, check if it's the right day of the week
-            if (holidayDayOfWeek !== scheduleDayIndex) {
-                return false;
-            }
-
-            // Then check if it's in the correct bi-weekly sequence
-            const startDateObj = new Date(startDate);
-
-            // Set start date to the first occurrence of the scheduled day
-            while (startDateObj.getDay() !== scheduleDayIndex) {
-                startDateObj.setDate(startDateObj.getDate() + 1);
-            }
-
-            // Calculate days between start date and holiday
-            const daysDiff = Math.round((holidayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
-
-            // Check if the difference is divisible by 14 (bi-weekly)
-            return daysDiff % 14 === 0;
-        }
-
-        // For monthly pattern, check if the holiday falls on the scheduled day of the month
-        if (pattern === 'monthly') {
-            if (dayOfMonth === 'last') {
-                // Check if it's the last day of the month
-                const lastDayOfMonth = new Date(holidayDateObj.getFullYear(), holidayDateObj.getMonth() + 1, 0).getDate();
-                return holidayDayOfMonth === lastDayOfMonth;
-            } else {
-                // Check if it's the specified day of the month
-                return holidayDayOfMonth === parseInt(dayOfMonth);
-            }
-        }
-
-        // For custom pattern, we can't determine conflicts automatically
-        if (pattern === 'custom') {
-            // For custom patterns, we'll show all holidays in the range
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -1927,37 +1780,32 @@ function getClassTypeHours(classTypeId) {
             $container.append('<input type="hidden" name="schedule_data[exception_dates]" value=\'' + JSON.stringify(exceptionDates) + '\'>');
         }
 
-        // Update schedule tables if visible
-        if (!$('#calendar-reference-container').hasClass('d-none')) {
-            updateScheduleTables();
+        // Update schedule tables
+        updateScheduleTables();
 
-            // Create JSON data for statistics
-            const jsonData = {
-                schedule: {
-                    pattern: pattern,
-                    startDate: startDate,
-                    endDate: endDate,
-                    selectedDays: selectedDays,
-                    classTime: {
-                        start: startTime,
-                        end: endTime
-                    }
-                },
-                exceptionDates: exceptionDates,
-                holidays: getHolidaysInRange(startDate, endDate),
-                metadata: {
-                    lastUpdated: new Date().toISOString(),
-                    version: "1.0"
+        // Create JSON data for statistics
+        const jsonData = {
+            schedule: {
+                pattern: pattern,
+                startDate: startDate,
+                endDate: endDate,
+                selectedDays: selectedDays,
+                classTime: {
+                    start: startTime,
+                    end: endTime
                 }
-            };
-
-            // Update schedule statistics if the statistics section is visible
-            if (!$('#schedule-statistics-section').hasClass('d-none')) {
-                updateScheduleStatistics(jsonData);
+            },
+            exceptionDates: exceptionDates,
+            holidays: getHolidaysInRange(startDate, endDate),
+            metadata: {
+                lastUpdated: new Date().toISOString(),
+                version: "1.0"
             }
-        } else {
-            // Always update the debug JSON display even if the tables aren't visible
-            updateDebugJsonDisplay(pattern, startDate, endDate, startTime, endTime, selectedDays);
+        };
+
+        // Update schedule statistics if the statistics section is visible
+        if (!$('#schedule-statistics-section').hasClass('d-none')) {
+            updateScheduleStatistics(jsonData);
         }
     }
 

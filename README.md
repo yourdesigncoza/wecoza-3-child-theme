@@ -41,7 +41,6 @@ This child theme extends the GeneratePress parent theme with custom functionalit
 - **Class Management**
   - Class scheduling
   - Public holiday integration
-  - Calendar export
   - Attendance tracking
 
 ### Technical Features
@@ -208,7 +207,6 @@ vendor/bin/phpunit --testsuite Integration
 ### Class Management Enhancements
 - Improved public holiday detection and handling
 - Fixed checkbox interaction issues in holiday override UI
-- Enhanced calendar display with FullCalendar integration
 - Added schedule export functionality
 
 ### Technical Improvements

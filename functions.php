@@ -122,6 +122,7 @@ function load_required_files() {
         '/includes/shortcodes/datatable.php',
         '/includes/shortcodes/echarts-shortcode.php',
         '/includes/shortcodes/outstanding-deliveries-shortcode.php',
+        '/includes/calendar-functions.php', // FullCalendar integration
     );
 
     foreach ($required_files as $file) {

@@ -34,16 +34,6 @@ function register_ajax_handlers() {
         $controller->checkClassConflictsAjax();
     });
 
-    // Calendar export AJAX handler
-    \add_action('wp_ajax_export_calendar', function() {
-        $controller = new WeCoza\Controllers\ClassController();
-        $controller->exportCalendarAjax();
-    });
-    \add_action('wp_ajax_nopriv_export_calendar', function() {
-        $controller = new WeCoza\Controllers\ClassController();
-        $controller->exportCalendarAjax();
-    });
-
     // Class subjects AJAX handler
     \add_action('wp_ajax_get_class_subjects', function() {
         $controller = new WeCoza\Controllers\ClassController();

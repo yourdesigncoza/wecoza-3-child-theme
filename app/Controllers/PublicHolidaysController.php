@@ -133,50 +133,6 @@ class PublicHolidaysController {
     }
 
     /**
-     * Get public holidays as calendar events
-     *
-     * @return array Array of events formatted for FullCalendar
-     */
-    public function getHolidaysAsCalendarEvents() {
-        $events = [];
-        $holidays = $this->repository->getAllHolidays();
-
-        foreach ($holidays as $holiday) {
-            $date = $holiday->getDate();
-
-            // Debug log
-            // error_log("Preparing holiday for Table: {$holiday->getName()} on {$date}");
-
-            // IMPORTANT: DO NOT CHANGE THIS ADJUSTMENT!
-            // Subtract one day from the date to compensate for the timezone shift
-            // Removing or changing this adjustment will cause holidays to display on the wrong dates
-            $dateObj = new \DateTime($date);
-            $dateObj->modify('-1 day');
-            $adjustedDate = $dateObj->format('Y-m-d');
-
-            // Debug log
-            // error_log("Adjusted holiday date: {$date} -> {$adjustedDate}");
-
-            $events[] = [
-                'title' => $holiday->getName(),
-                'start' => $adjustedDate,
-                'allDay' => true,
-                'className' => 'public-holiday',
-                'description' => $holiday->getDescription(),
-                'extendedProps' => [
-                    'isPublicHoliday' => true,
-                    'isObserved' => $holiday->isObserved()
-                ]
-            ];
-        }
-
-        // Debug log
-        // error_log("Total holidays prepared for Table: " . count($events));
-
-        return $events;
-    }
-
-    /**
      * Add a new holiday
      *
      * @param string $date Date in Y-m-d format

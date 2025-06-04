@@ -9,7 +9,6 @@
  *
  * The form includes multiple sections:
  * - Basic Details: Client and site selection
- * - Class Schedule Calendar: Visual calendar for scheduling class sessions
  * - Class Info: Type, start date, subjects
  * - Date History: Managing stop/restart dates for classes
  * - Funding & Exam Details: SETA funding and exam information
@@ -29,8 +28,7 @@
  * The form includes client-side validation using Bootstrap's validation classes and custom JavaScript.
  * All validation is handled on the frontend for better user experience.
  *
- * JavaScript functionality is provided by class-capture.js and class-calendar-init.js, which handle:
- * - Calendar initialization and event management
+ * JavaScript functionality is provided by class-capture.js, which handles:
  * - Dynamic form field behavior (conditional fields, multi-select)
  * - Form submission via AJAX
  * - Validation feedback
