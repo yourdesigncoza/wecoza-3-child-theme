@@ -249,3 +249,41 @@ html[data-bs-theme="dark"] .fc .fc-multimonth {
 .ydcoza-table-subheader th {
     padding-left: 0.5rem;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Calendar                                     */
+/* -------------------------------------------------------------------------- */
+
+
+/* Public Holiday Styles */
+.wecoza-public-holiday {
+    opacity: 1;
+    pointer-events: none; /* Make non-interactive */
+}
+
+.fc-event.wecoza-public-holiday {
+    background-color: #dc3545 !important; /* Bootstrap danger color */
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-align: center;
+    cursor: default;
+    font-style: normal;
+}
+
+.fc-event.wecoza-public-holiday:hover {
+    background-color: #c82333 !important; /* Darker red on hover */
+    border-color: #c82333 !important;
+    transform: none; /* Disable hover transform */
+}
+
+/* Public holiday day number styling */
+.fc-day.fc-day-today.wecoza-public-holiday-day .fc-daygrid-day-number {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+  .fc .fc-daygrid-event {
+    font-size: 0.65rem;
+  }

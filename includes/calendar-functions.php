@@ -181,13 +181,13 @@ function wecoza_get_class_by_id($class_id) {
  */
 function wecoza_generate_calendar_events($class_data) {
     $events = array();
-    
+
     // Parse schedule data if available
     $schedule_data = null;
     if (!empty($class_data['schedule_data'])) {
         $schedule_data = json_decode($class_data['schedule_data'], true);
     }
-    
+
     // If we have schedule data, generate recurring events
     if ($schedule_data && is_array($schedule_data)) {
         $events = wecoza_generate_recurring_events($class_data, $schedule_data);
@@ -195,7 +195,11 @@ function wecoza_generate_calendar_events($class_data) {
         // Fallback: create basic events from start/end dates
         $events = wecoza_generate_basic_events($class_data);
     }
-    
+
+    // Add stop-restart date events
+    $stop_restart_events = wecoza_generate_stop_restart_events($class_data);
+    $events = array_merge($events, $stop_restart_events);
+
     return $events;
 }
 
@@ -357,6 +361,110 @@ function wecoza_generate_basic_events($class_data) {
                 'description' => 'Class delivery/end date'
             )
         );
+    }
+
+    return $events;
+}
+
+/**
+ * Generate stop-restart date events
+ *
+ * @param array $class_data Class data from database
+ * @return array Array of stop-restart events
+ */
+function wecoza_generate_stop_restart_events($class_data) {
+    $events = array();
+
+    // Parse stop_restart_dates if available
+    $stop_restart_data = null;
+    if (!empty($class_data['stop_restart_dates'])) {
+        $stop_restart_data = json_decode($class_data['stop_restart_dates'], true);
+    }
+
+    if (!$stop_restart_data || !is_array($stop_restart_data)) {
+        return $events;
+    }
+
+    foreach ($stop_restart_data as $period) {
+        $stop_date = $period['stop_date'] ?? null;
+        $restart_date = $period['restart_date'] ?? null;
+
+        // Create stop date event
+        if ($stop_date) {
+            $events[] = array(
+                'title' => 'Class Stopped',
+                'start' => $stop_date,
+                'allDay' => true,
+                'display' => 'block',
+                'classNames' => array('text-danger', 'wecoza-stop-restart'),
+                'extendedProps' => array(
+                    'type' => 'stop_date',
+                    'class_id' => $class_data['class_id'],
+                    'description' => sprintf(
+                        'Class Stopped: %s\nClass: %s',
+                        $stop_date,
+                        $class_data['class_subject'] ?? 'Class'
+                    ),
+                    'interactive' => false
+                )
+            );
+        }
+
+        // Create restart date event
+        if ($restart_date) {
+            $events[] = array(
+                'title' => 'Restart',
+                'start' => $restart_date,
+                'allDay' => true,
+                'display' => 'block',
+                'classNames' => array('text-danger', 'wecoza-stop-restart'),
+                'extendedProps' => array(
+                    'type' => 'restart_date',
+                    'class_id' => $class_data['class_id'],
+                    'description' => sprintf(
+                        'Class Restart: %s\nClass: %s',
+                        $restart_date,
+                        $class_data['class_subject'] ?? 'Class'
+                    ),
+                    'interactive' => false
+                )
+            );
+        }
+
+        // Create events for days between stop and restart (red circles only)
+        if ($stop_date && $restart_date) {
+            $current_date = new DateTime($stop_date);
+            $end_date = new DateTime($restart_date);
+
+            // Move to the day after stop date
+            $current_date->add(new DateInterval('P1D'));
+
+            while ($current_date < $end_date) {
+                $date_str = $current_date->format('Y-m-d');
+
+                $events[] = array(
+                    'title' => '', // No text, just red circle
+                    'start' => $date_str,
+                    'allDay' => true,
+                    'display' => 'block',
+                    'classNames' => array('text-danger', 'wecoza-stop-period'),
+                    'extendedProps' => array(
+                        'type' => 'stop_period',
+                        'class_id' => $class_data['class_id'],
+                        'description' => sprintf(
+                            'Class Stopped Period: %s\nClass: %s\nStopped from %s to %s',
+                            $date_str,
+                            $class_data['class_subject'] ?? 'Class',
+                            $stop_date,
+                            $restart_date
+                        ),
+                        'interactive' => false
+                    )
+                );
+
+                $current_date->add(new DateInterval('P1D'));
+            }
+        }
     }
 
     return $events;

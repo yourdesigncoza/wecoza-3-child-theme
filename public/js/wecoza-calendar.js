@@ -89,7 +89,7 @@
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth,timeGridWeek'
                 },
                 height: 'auto',
                 aspectRatio: 1.8,

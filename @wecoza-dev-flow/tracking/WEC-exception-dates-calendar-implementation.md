@@ -19,7 +19,7 @@ Successfully implemented exception dates display in the WeCoza calendar system. 
 - All-day events with `display: 'block'`
 - CSS class: `wecoza-exception-date`
 
-### 2. Calendar Styling (`public/css/wecoza-calendar.css`)
+### 2. Calendar Styling 
 
 **Added**: Complete styling system for exception dates
 - **Lines 220-240**: Base exception date styles
@@ -107,7 +107,6 @@ Potential improvements for future development:
 ## Files Modified
 
 1. `includes/calendar-functions.php` - Event generation logic
-2. `public/css/wecoza-calendar.css` - Visual styling
 3. `@wecoza-dev-flow/tracking/WEC-exception-dates-calendar-implementation.md` - Documentation
 
 ## Compatibility
