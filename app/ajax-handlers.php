@@ -47,6 +47,10 @@ function register_ajax_handlers() {
     // Contact form AJAX handler
     \add_action('wp_ajax_wecoza_save_contact', 'WeCoza\\Controllers\\ContactController::saveContactAjax');
     \add_action('wp_ajax_nopriv_wecoza_save_contact', 'WeCoza\\Controllers\\ContactController::saveContactAjax');
+
+    // Public holidays AJAX handler
+    \add_action('wp_ajax_wecoza_get_public_holidays', 'WeCoza\\Controllers\\PublicHolidaysController::handlePublicHolidaysAjax');
+    \add_action('wp_ajax_nopriv_wecoza_get_public_holidays', 'WeCoza\\Controllers\\PublicHolidaysController::handlePublicHolidaysAjax');
 }
 
 // Register AJAX handlers

@@ -167,12 +167,79 @@ class PublicHolidaysController {
     }
 
     /**
+     * Get public holidays formatted for FullCalendar
+     *
+     * @param int $year The year to get holidays for
+     * @return array Array of FullCalendar-compatible event objects
+     */
+    public function getHolidaysForCalendar($year) {
+        $holidays = $this->repository->getHolidaysByYear($year);
+        $calendarEvents = array();
+
+        foreach ($holidays as $holiday) {
+            $calendarEvents[] = array(
+                'id' => 'holiday_' . $holiday->getDate(),
+                'title' => $holiday->getName(),
+                'start' => $holiday->getDate(),
+                'allDay' => true,
+                'display' => 'background', // Shows as background event
+                'classNames' => array('wecoza-public-holiday'),
+                'extendedProps' => array(
+                    'type' => 'public_holiday',
+                    'isObserved' => $holiday->isObserved(),
+                    'description' => $holiday->getDescription(),
+                    'interactive' => false // Mark as non-interactive
+                )
+            );
+        }
+
+        return $calendarEvents;
+    }
+
+    /**
+     * AJAX handler for getting public holidays
+     * Following WordPress AJAX best practices
+     */
+    public static function handlePublicHolidaysAjax() {
+        // Verify nonce for security
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'wecoza_calendar_nonce')) {
+            wp_send_json_error('Security check failed');
+            return;
+        }
+
+        // Get and validate year parameter
+        $year = intval($_POST['year'] ?? date('Y'));
+
+        // Validate year range (reasonable bounds)
+        if ($year < 2020 || $year > 2030) {
+            $year = date('Y');
+        }
+
+        try {
+            // Get controller instance
+            $controller = self::getInstance();
+
+            // Get holidays formatted for FullCalendar
+            $holidays = $controller->getHolidaysForCalendar($year);
+
+            // Return holidays in FullCalendar format
+            wp_send_json($holidays);
+
+        } catch (Exception $e) {
+            error_log('WeCoza Public Holidays Error: ' . $e->getMessage());
+            error_log('WeCoza Public Holidays Error Stack: ' . $e->getTraceAsString());
+            wp_send_json_error('Failed to load public holidays: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Register hooks for the controller
      *
-     * Note: This is a placeholder for WordPress hooks.
-     * The actual integration is handled in ClassController.
+     * Registers WordPress AJAX handlers for public holidays
      */
     public function registerHooks() {
-        // Hooks are handled in ClassController
+        // Register AJAX handlers for public holidays
+        add_action('wp_ajax_wecoza_get_public_holidays', array($this, 'handlePublicHolidaysAjax'));
+        add_action('wp_ajax_nopriv_wecoza_get_public_holidays', array($this, 'handlePublicHolidaysAjax'));
     }
 }

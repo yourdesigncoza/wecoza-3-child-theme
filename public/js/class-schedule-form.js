@@ -1181,7 +1181,9 @@ function getClassTypeHours(classTypeId) {
 
         // Loop through each holiday
         jsonData.holidays.forEach(holiday => {
-            const holidayDate = new Date(holiday.date);
+            // Parse the date parts to ensure correct date (avoid timezone issues)
+            const [year, month, day] = holiday.date.split('-').map(Number);
+            const holidayDate = new Date(year, month - 1, day);
             const dayOfWeek = holidayDate.getDay();
 
             // Check if this holiday falls on a selected day
@@ -1402,7 +1404,9 @@ function getClassTypeHours(classTypeId) {
         // Check which holidays conflict with the class schedule
         allHolidaysInRange.forEach(holiday => {
             // Mark if this holiday conflicts with the schedule
-            const holidayDate = new Date(holiday.start);
+            // Parse the date parts to ensure correct date (avoid timezone issues)
+            const [year, month, day] = holiday.start.split('-').map(Number);
+            const holidayDate = new Date(year, month - 1, day);
             const dayName = holidayDate.toLocaleDateString('en-US', { weekday: 'long' });
 
             // For weekly/biweekly patterns, check if the holiday falls on a selected day
@@ -1631,7 +1635,9 @@ function getClassTypeHours(classTypeId) {
 
         // Filter to only include holidays that conflict with the schedule
         const conflictingHolidays = holidaysInRange.filter(holiday => {
-            const holidayDate = new Date(holiday.start);
+            // Parse the date parts to ensure correct date (avoid timezone issues)
+            const [year, month, day] = holiday.start.split('-').map(Number);
+            const holidayDate = new Date(year, month - 1, day);
             const dayName = holidayDate.toLocaleDateString('en-US', { weekday: 'long' });
 
             // For weekly/biweekly patterns, check if the holiday falls on a selected day

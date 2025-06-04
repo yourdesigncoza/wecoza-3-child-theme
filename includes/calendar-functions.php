@@ -267,20 +267,24 @@ function wecoza_generate_recurring_events($class_data, $schedule_data) {
         
         // Add event if it should be included
         if ($should_include) {
+            // Create title with class subject and time range (using standard time format)
+            $class_subject = $class_data['class_subject'] ?? 'Class Session';
+            $event_title = sprintf('%s : %s - %s', $class_subject, $start_time, $end_time);
+
             $events[] = array(
-                'title' => $class_data['class_subject'] ?? 'Class Session',
+                'title' => $event_title,
                 'start' => $date_str . 'T' . $start_time,
                 'end' => $date_str . 'T' . $end_time,
-                'backgroundColor' => '#0d6efd',
-                'borderColor' => '#0d6efd',
                 'extendedProps' => array(
                     'type' => 'class_session',
                     'class_id' => $class_data['class_id'],
                     'class_code' => $class_data['class_code'] ?? '',
                     'description' => sprintf(
-                        'Class: %s\nCode: %s\nDuration: %s hours',
+                        'Class: %s\nCode: %s\nTime: %s - %s\nDuration: %s hours',
                         $class_data['class_subject'] ?? 'N/A',
                         $class_data['class_code'] ?? 'N/A',
+                        $start_time,
+                        $end_time,
                         $class_data['class_duration'] ?? 'N/A'
                     )
                 )
@@ -302,14 +306,19 @@ function wecoza_generate_recurring_events($class_data, $schedule_data) {
  */
 function wecoza_generate_basic_events($class_data) {
     $events = array();
-    
+
+    // Get default times if not specified
+    $default_start_time = '09:00';
+    $default_end_time = '17:00';
+
     // Add start date event
     if (!empty($class_data['original_start_date'])) {
+        $class_subject = $class_data['class_subject'] ?? 'Class';
+        $start_title = sprintf('%s : %s - %s (Start)', $class_subject, $default_start_time, $default_end_time);
+
         $events[] = array(
-            'title' => 'Class Start: ' . ($class_data['class_subject'] ?? 'Class'),
+            'title' => $start_title,
             'start' => $class_data['original_start_date'],
-            'backgroundColor' => '#28a745',
-            'borderColor' => '#28a745',
             'extendedProps' => array(
                 'type' => 'class_start',
                 'class_id' => $class_data['class_id'],
@@ -317,14 +326,15 @@ function wecoza_generate_basic_events($class_data) {
             )
         );
     }
-    
+
     // Add delivery date event
     if (!empty($class_data['delivery_date'])) {
+        $class_subject = $class_data['class_subject'] ?? 'Class';
+        $end_title = sprintf('%s : %s - %s (End)', $class_subject, $default_start_time, $default_end_time);
+
         $events[] = array(
-            'title' => 'Class End: ' . ($class_data['class_subject'] ?? 'Class'),
+            'title' => $end_title,
             'start' => $class_data['delivery_date'],
-            'backgroundColor' => '#dc3545',
-            'borderColor' => '#dc3545',
             'extendedProps' => array(
                 'type' => 'class_end',
                 'class_id' => $class_data['class_id'],
@@ -332,6 +342,6 @@ function wecoza_generate_basic_events($class_data) {
             )
         );
     }
-    
+
     return $events;
 }

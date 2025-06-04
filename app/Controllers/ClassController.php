@@ -58,6 +58,29 @@ class ClassController {
             'debug' => true,
             'conflictCheckEnabled' => true
         ]);
+
+        // Get public holidays data for the class schedule form
+        try {
+            $publicHolidaysController = \WeCoza\Controllers\PublicHolidaysController::getInstance();
+            $currentYear = date('Y');
+            $nextYear = $currentYear + 1;
+
+            // Get holidays for current and next year to cover class schedules
+            $currentYearHolidays = $publicHolidaysController->getHolidaysForCalendar($currentYear);
+            $nextYearHolidays = $publicHolidaysController->getHolidaysForCalendar($nextYear);
+            $allHolidays = array_merge($currentYearHolidays, $nextYearHolidays);
+
+            // Localize public holidays data for class-schedule-form.js
+            \wp_localize_script('wecoza-class-schedule-form-js', 'wecozaPublicHolidays', [
+                'events' => $allHolidays
+            ]);
+        } catch (\Exception $e) {
+            // If public holidays fail to load, provide empty array so JavaScript doesn't break
+            \wp_localize_script('wecoza-class-schedule-form-js', 'wecozaPublicHolidays', [
+                'events' => []
+            ]);
+            error_log('Failed to load public holidays for class schedule form: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -195,10 +195,81 @@
     }
 }
 
+/* Public Holiday Styles */
+.wecoza-public-holiday {
+    opacity: 1;
+    pointer-events: none; /* Make non-interactive */
+}
+
+.fc-event.wecoza-public-holiday {
+    background-color: #dc3545 !important; /* Bootstrap danger color */
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-align: center;
+    cursor: default;
+}
+
+.fc-event.wecoza-public-holiday:hover {
+    background-color: #c82333 !important; /* Darker red on hover */
+    border-color: #c82333 !important;
+    transform: none; /* Disable hover transform */
+}
+
+/* Public holiday background events (for day highlighting) */
+/* .fc-bg-event.wecoza-public-holiday {
+    background-color: rgba(220, 53, 69, 0.1) !important; /* Light red background */
+    border: none;
+} */
+
+/* Public holiday day number styling */
+.fc-day.fc-day-today.wecoza-public-holiday-day .fc-daygrid-day-number {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+/* Public holiday in month view */
+.fc-daygrid-event.wecoza-public-holiday {
+    margin: 1px;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* Public holiday in week/day view */
+.fc-timegrid-event.wecoza-public-holiday {
+    border-radius: var(--bs-border-radius);
+}
+
+/* Holiday tooltip/title styling */
+.wecoza-public-holiday .fc-event-title {
+    font-weight: bold !important;
+    font-style: normal !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments for holidays */
+@media (max-width: 768px) {
+    .fc-event.wecoza-public-holiday {
+        font-size: 0.65rem;
+        padding: 1px 3px;
+    }
+}
+
 /* Dark Mode Support */
 [data-bs-theme="dark"] .fc-header-toolbar {
     background: var(--bs-dark);
     border-color: var(--bs-border-color);
+}
+
+/* Dark mode public holiday adjustments */
+[data-bs-theme="dark"] .fc-event.wecoza-public-holiday {
+    background-color: #e74c3c !important; /* Slightly brighter red for dark mode */
+    border-color: #e74c3c !important;
+}
+
+[data-bs-theme="dark"] .fc-bg-event.wecoza-public-holiday {
+    background-color: rgba(231, 76, 60, 0.15) !important; /* Slightly more visible in dark mode */
 }
 
 [data-bs-theme="dark"] .fc-toolbar-title {

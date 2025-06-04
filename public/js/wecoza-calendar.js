@@ -95,32 +95,41 @@
                 aspectRatio: 1.8,
 
                 // Event sources - using AJAX to load real events
-                events: {
-                    url: classData.ajaxUrl,
-                    method: 'POST',
-                    extraParams: {
-                        action: 'get_class_calendar_events',
-                        class_id: classData.id,
-                        nonce: classData.nonce
+                eventSources: [
+                    // Class events
+                    {
+                        url: classData.ajaxUrl,
+                        method: 'POST',
+                        extraParams: {
+                            action: 'get_class_calendar_events',
+                            class_id: classData.id,
+                            nonce: classData.nonce
+                        },
+                        failure: function() {
+                            WeCozaCalendar.showError('Failed to load calendar events');
+                        }
                     },
-                    failure: function() {
-                        WeCozaCalendar.showError('Failed to load calendar events');
+                    // Public holidays
+                    {
+                        url: classData.ajaxUrl,
+                        method: 'POST',
+                        extraParams: {
+                            action: 'wecoza_get_public_holidays',
+                            year: new Date().getFullYear(),
+                            nonce: classData.nonce
+                        },
+                        failure: function() {
+                            console.warn('Failed to load public holidays');
+                        }
                     }
-                },
+                ],
 
                 // Event rendering
                 eventDisplay: 'block',
-                eventColor: '#0d6efd',
-                eventTextColor: '#ffffff',
 
-                // Event interactions
-                eventClick: function(info) {
-                    WeCozaCalendar.handleEventClick(info);
-                },
-
-                // Date interactions
-                dateClick: function(info) {
-                    WeCozaCalendar.handleDateClick(info);
+                // View change handler to update public holidays for the new year
+                datesSet: function(info) {
+                    WeCozaCalendar.updatePublicHolidaysForYear(info.start.getFullYear());
                 },
 
                 // Loading state
@@ -147,53 +156,7 @@
             }
         },
 
-        /**
-         * Handle event click
-         * @param {Object} info - Event click info
-         */
-        handleEventClick: function(info) {
-            const event = info.event;
-            
-            // Create event details modal or tooltip
-            const eventDetails = {
-                title: event.title,
-                start: event.start,
-                end: event.end,
-                description: event.extendedProps.description || '',
-                type: event.extendedProps.type || 'class'
-            };
 
-            this.showEventDetails(eventDetails);
-        },
-
-        /**
-         * Handle date click
-         * @param {Object} info - Date click info
-         */
-        handleDateClick: function(info) {
-            // Optional: Add functionality for clicking on dates
-            console.log('Date clicked:', info.dateStr);
-        },
-
-        /**
-         * Show event details in a modal or tooltip
-         * @param {Object} eventDetails - Event details object
-         */
-        showEventDetails: function(eventDetails) {
-            // Create a simple alert for now - can be enhanced with Bootstrap modal
-            const startDate = eventDetails.start ? eventDetails.start.toLocaleDateString() : 'N/A';
-            const startTime = eventDetails.start ? eventDetails.start.toLocaleTimeString() : 'N/A';
-            
-            let message = `Event: ${eventDetails.title}\n`;
-            message += `Date: ${startDate}\n`;
-            message += `Time: ${startTime}\n`;
-            
-            if (eventDetails.description) {
-                message += `Description: ${eventDetails.description}`;
-            }
-
-            alert(message);
-        },
 
         /**
          * Toggle loading state
@@ -251,6 +214,39 @@
         refreshEvents: function() {
             if (calendar) {
                 calendar.refetchEvents();
+            }
+        },
+
+        /**
+         * Update public holidays for a specific year
+         * @param {number} year - The year to load holidays for
+         */
+        updatePublicHolidaysForYear: function(year) {
+            if (!calendar || !classData) {
+                return;
+            }
+
+            // Find the public holidays event source (index 1)
+            const eventSources = calendar.getEventSources();
+            if (eventSources.length > 1) {
+                const holidaysSource = eventSources[1];
+
+                // Remove the old holidays source
+                holidaysSource.remove();
+
+                // Add a new holidays source with the updated year
+                calendar.addEventSource({
+                    url: classData.ajaxUrl,
+                    method: 'POST',
+                    extraParams: {
+                        action: 'wecoza_get_public_holidays',
+                        year: year,
+                        nonce: classData.nonce
+                    },
+                    failure: function() {
+                        console.warn('Failed to load public holidays for year ' + year);
+                    }
+                });
             }
         },
 
