@@ -255,11 +255,36 @@ function wecoza_generate_recurring_events($class_data, $schedule_data) {
             $should_include = true;
         }
         
-        // Check for exception dates
-        if ($should_include && is_array($exception_dates)) {
+        // Check for exception dates and create exception events
+        if (is_array($exception_dates)) {
             foreach ($exception_dates as $exception) {
                 if (is_array($exception) && $exception['date'] === $date_str) {
                     $should_include = false;
+
+                    // Create an exception date event to show on calendar
+                    $exception_reason = $exception['reason'] ?? 'Other';
+                    $class_subject = $class_data['class_subject'] ?? 'Class';
+                    $exception_title = sprintf('%s : Exception - %s', $class_subject, $exception_reason);
+
+                    $events[] = array(
+                        'title' => $exception_title,
+                        'start' => $date_str,
+                        'allDay' => true,
+                        'display' => 'block',
+                        'classNames' => array('wecoza-exception-date'),
+                        'extendedProps' => array(
+                            'type' => 'exception_date',
+                            'class_id' => $class_data['class_id'],
+                            'reason' => $exception_reason,
+                            'description' => sprintf(
+                                'Exception Date: %s\nReason: %s\nClass: %s',
+                                $date_str,
+                                $exception_reason,
+                                $class_subject
+                            ),
+                            'interactive' => false
+                        )
+                    );
                     break;
                 }
             }
