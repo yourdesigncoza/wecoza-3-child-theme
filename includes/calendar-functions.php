@@ -31,14 +31,6 @@ function wecoza_enqueue_calendar_assets() {
         'latest'
     );
 
-    // WeCoza Calendar CSS
-    wp_enqueue_style(
-        'wecoza-calendar-css',
-        get_stylesheet_directory_uri() . '/public/css/wecoza-calendar.css',
-        array('fullcalendar'),
-        filemtime(get_stylesheet_directory() . '/public/css/wecoza-calendar.css')
-    );
-
     // FullCalendar JS - using official CDN (latest stable)
     wp_enqueue_script(
         'fullcalendar',
@@ -263,15 +255,14 @@ function wecoza_generate_recurring_events($class_data, $schedule_data) {
 
                     // Create an exception date event to show on calendar
                     $exception_reason = $exception['reason'] ?? 'Other';
-                    $class_subject = $class_data['class_subject'] ?? 'Class';
-                    $exception_title = sprintf('%s : Exception - %s', $class_subject, $exception_reason);
+                    $exception_title = sprintf('Exception - %s', $exception_reason);
 
                     $events[] = array(
                         'title' => $exception_title,
                         'start' => $date_str,
                         'allDay' => true,
                         'display' => 'block',
-                        'classNames' => array('wecoza-exception-date'),
+                        'classNames' => array('text-warning'),
                         'extendedProps' => array(
                             'type' => 'exception_date',
                             'class_id' => $class_data['class_id'],
@@ -280,7 +271,7 @@ function wecoza_generate_recurring_events($class_data, $schedule_data) {
                                 'Exception Date: %s\nReason: %s\nClass: %s',
                                 $date_str,
                                 $exception_reason,
-                                $class_subject
+                                $class_data['class_subject'] ?? 'Class'
                             ),
                             'interactive' => false
                         )
