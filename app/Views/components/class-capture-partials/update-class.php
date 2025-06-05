@@ -1,3 +1,70 @@
+<!-- Class Details Display Section -->
+<?php if (isset($data['class_data']) && $data['class_data']): ?>
+<div class="wecoza-class-details-display mb-4">
+    <!-- Top Summary Cards -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-4 justify-content-between">
+                <!-- Client Card -->
+                <div class="col-sm-auto">
+                    <div class="d-flex align-items-center">
+                        <div class="d-flex bg-primary-subtle rounded flex-center me-3" style="width:32px; height:32px">
+                            <i class="bi bi-building text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">Client</p>
+                            <h5 class="fw-bolder text-nowrap">
+                                <?php if (!empty($data['class_data']['client_name'])): ?>
+                                    <?php echo esc_html($data['class_data']['client_name']); ?>
+                                <?php else: ?>
+                                    N/A
+                                <?php endif; ?>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- Class Type Card -->
+                <div class="col-sm-auto">
+                    <div class="d-flex align-items-center border-start-sm ps-sm-5">
+                        <div class="d-flex bg-primary-subtle rounded flex-center me-3" style="width:32px; height:32px">
+                            <i class="bi bi-layers text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">Class Type</p>
+                            <h5 class="fw-bolder text-nowrap"><?php echo esc_html($data['class_data']['class_type'] ?? 'Unknown Type'); ?></h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- Class Subject Card -->
+                <div class="col-sm-auto">
+                    <div class="d-flex align-items-center border-start-sm ps-sm-5">
+                        <div class="d-flex bg-success-subtle rounded flex-center me-3" style="width:32px; height:32px">
+                            <i class="bi bi-book text-success"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">Class Subject</p>
+                            <h5 class="fw-bolder text-nowrap"><?php echo esc_html($data['class_data']['class_subject'] ?? 'N/A'); ?></h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- Class Code Card -->
+                <div class="col-sm-auto">
+                    <div class="d-flex align-items-center border-start-sm ps-sm-5">
+                        <div class="d-flex bg-info-subtle rounded flex-center me-3" style="width:32px; height:32px">
+                            <i class="bi bi-tag text-info"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">Class Code</p>
+                            <h5 class="fw-bolder text-nowrap"><?php echo esc_html($data['class_data']['class_code'] ?? 'N/A'); ?></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- Classes Capture Form -->
 <form id="classes-form" class="needs-validation ydcoza-compact-form" novalidate method="POST" enctype="multipart/form-data">
    <!-- Hidden fields for update mode -->
@@ -10,23 +77,287 @@
       <!-- ===== Section: Basic Details ===== -->
          <!-- UPDATE MODE: Display existing client/site info (read-only) -->
          <div class="row">
-            <div class="col-md-12 mb-3">
-               <div class="alert alert-info">
-                  <h6 class="mb-2">Class Information</h6>
-                  <p class="mb-1"><strong>Client:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html($data['class_data']->client_name ?? 'Not specified') : 'Loading...'; ?></p>
-                  <p class="mb-0"><strong>Site:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html($data['class_data']->site_name ?? 'Not specified') : 'Loading...'; ?></p>
+            <!-- Client Name (ID) -->
+            <div class="col-md-3 mb-3">
+               <div class="form-floating">
+                  <select id="client_id" name="client_id" class="form-select" required>
+                     <option value="">Select</option>
+                     <?php foreach ($data['clients'] as $client): ?>
+                        <option value="<?php echo esc_attr($client['id']); ?>" <?php echo (isset($data['class_data']['client_id']) && $data['class_data']['client_id'] == $client['id']) ? 'selected' : ''; ?>><?php echo esc_html($client['name']); ?></option>
+                     <?php endforeach; ?>
+                  </select>
+                  <label for="client_id">Client Name (ID) <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select a client.</div>
+                  <div class="valid-feedback">Looks good!</div>
                </div>
             </div>
-         </div> <!-- UPDATE MODE: Display existing schedule info -->
-            <div class="alert alert-success mb-3">
-               <h6 class="mb-2">Current Schedule</h6>
-               <p class="mb-1"><strong>Pattern:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html($data['class_data']->schedule_pattern ?? 'Not specified') : 'Loading...'; ?></p>
-               <p class="mb-1"><strong>Days:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html($data['class_data']->schedule_days ?? 'Not specified') : 'Loading...'; ?></p>
-               <p class="mb-0"><strong>Time:</strong> <?php echo isset($data['class_data']) && $data['class_data'] ? esc_html(($data['class_data']->start_time ?? '') . ' - ' . ($data['class_data']->end_time ?? '')) : 'Loading...'; ?></p>
+
+            <!-- Class/Site Name -->
+            <div class="col-md-3 mb-3">
+               <div class="form-floating">
+                  <select id="site_id" name="site_id" class="form-select" required>
+                     <option value="">Select Site</option>
+                     <?php foreach ($data['clients'] as $client): ?>
+                        <optgroup label="<?php echo esc_attr($client['name']); ?>">
+                           <?php if (isset($data['sites'][$client['id']])): ?>
+                              <?php foreach ($data['sites'][$client['id']] as $site): ?>
+                                 <option value="<?php echo esc_attr($site['id']); ?>" <?php echo (isset($data['class_data']['site_id']) && $data['class_data']['site_id'] == $site['id']) ? 'selected' : ''; ?>><?php echo esc_html($site['name']); ?></option>
+                              <?php endforeach; ?>
+                           <?php endif; ?>
+                        </optgroup>
+                     <?php endforeach; ?>
+                  </select>
+                  <label for="site_id">Class/Site Name <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select a class/site name.</div>
+                  <div class="valid-feedback">Looks good!</div>
+               </div>
             </div>
+
+            <!-- Single Address Field -->
+            <div class="col-md-6 mb-3" id="address-wrapper">
+               <div class="form-floating">
+                  <input
+                     type="text"
+                     id="site_address"
+                     name="site_address"
+                     class="form-control"
+                     placeholder="Street, Suburb, Town, Postal Code"
+                     value="<?php echo esc_attr($data['class_data']['class_address_line'] ?? ''); ?>"
+                     readonly
+                     />
+                  <label for="site_address">Address</label>
+               </div>
+            </div>
+         </div>
 
       <?php echo section_divider(); ?>
 
+      <!-- ===== Section: Scheduling & Class Info ===== -->
+      <div class="row mt-3">
+         <!-- Class Type (Main Category) -->
+         <div class="col-md-4 mb-3">
+            <div class="form-floating">
+               <select id="class_type" name="class_type" class="form-select" required>
+                  <option value="">Select</option>
+                  <?php foreach ($data['class_types'] as $class_type): ?>
+                     <option value="<?php echo esc_attr($class_type['id']); ?>" <?php echo (isset($data['class_data']['class_type']) && $data['class_data']['class_type'] == $class_type['id']) ? 'selected' : ''; ?>><?php echo esc_html($class_type['name']); ?></option>
+                  <?php endforeach; ?>
+               </select>
+               <label for="class_type">Class Type <span class="text-danger">*</span></label>
+               <div class="invalid-feedback">Please select the class type.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+         </div>
+
+         <!-- Class Subject (Specific Subject/Level/Module) -->
+         <div class="col-md-4 mb-3">
+            <div class="form-floating">
+               <select id="class_subject" name="class_subject" class="form-select" required>
+                  <option value="">Select Class Type First</option>
+                  <!-- Will be populated dynamically based on class type, but pre-populate current value -->
+                  <?php if (isset($data['class_data']['class_subject']) && !empty($data['class_data']['class_subject'])): ?>
+                     <option value="<?php echo esc_attr($data['class_data']['class_subject']); ?>" selected><?php echo esc_html($data['class_data']['class_subject']); ?></option>
+                  <?php endif; ?>
+               </select>
+               <label for="class_subject">Class Subject <span class="text-danger">*</span></label>
+               <div class="invalid-feedback">Please select the class subject.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+         </div>
+
+         <!-- Class Duration (Auto-calculated) -->
+         <div class="col-md-4 mb-3">
+            <div class="form-floating">
+               <input type="number" id="class_duration" name="class_duration" class="form-control" placeholder="Duration" value="<?php echo esc_attr($data['class_data']['class_duration'] ?? ''); ?>" readonly>
+               <label for="class_duration">Duration (Hours)</label>
+               <div class="form-text">Automatically calculated based on class type and subject.</div>
+            </div>
+         </div>
+      </div>
+
+      <div class="row">
+         <!-- Class Code (Auto-generated) -->
+         <div class="col-md-4 mb-3">
+            <div class="form-floating">
+               <input type="text" id="class_code" name="class_code" class="form-control" placeholder="Class Code" value="<?php echo esc_attr($data['class_data']['class_code'] ?? ''); ?>" readonly>
+               <label for="class_code">Class Code</label>
+               <div class="form-text">Auto generated [ClientID]-[ClassType]-[SubjectID]-[YYYY]-[MM]-[DD]-[HH]-[MM] </div>
+            </div>
+         </div>
+
+         <!-- Class Original Start Date -->
+         <div class="col-md-4 mb-3">
+            <div class="form-floating">
+               <input type="date" id="class_start_date" name="class_start_date" class="form-control" placeholder="YYYY-MM-DD" value="<?php echo esc_attr($data['class_data']['original_start_date'] ?? ''); ?>" required>
+               <label for="class_start_date">Class Original Start Date <span class="text-danger">*</span></label>
+               <div class="invalid-feedback">Please select the start date.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Class Schedule Form Section -->
+      <div class="mb-4 mt-3">
+         <h5 class="mb-3">Class Schedule</h5>
+            <!-- UPDATE MODE: Display existing schedule info -->
+            <p class="text-muted small mb-3">Update the recurring schedule for this class.</p>
+
+         <?php
+         // Extract schedule data for pre-population
+         $scheduleData = $data['class_data']['schedule_data'] ?? [];
+         $schedulePattern = $scheduleData['pattern'] ?? '';
+         $scheduleDays = $scheduleData['days'] ?? [];
+         $scheduleStartTime = $scheduleData['start_time'] ?? '';
+         $scheduleEndTime = $scheduleData['end_time'] ?? '';
+         $scheduleStartDate = $scheduleData['start_date'] ?? '';
+         $scheduleEndDate = $scheduleData['end_date'] ?? '';
+         $holidayOverrides = $scheduleData['holiday_overrides'] ?? [];
+
+         // Convert holiday overrides to JSON string for the hidden field
+         $holidayOverridesJson = !empty($holidayOverrides) ? json_encode($holidayOverrides) : '';
+         ?>
+
+         <!-- Schedule Pattern Selection -->
+         <div class="row mb-3">
+            <div class="col-md-4 mb-3">
+               <div class="form-floating">
+                  <select id="schedule_pattern" name="schedule_pattern" class="form-select" required>
+                     <option value="">Select</option>
+                     <option value="weekly" <?php echo ($schedulePattern == 'weekly') ? 'selected' : ''; ?>>Weekly (Every Week)</option>
+                     <option value="biweekly" <?php echo ($schedulePattern == 'biweekly') ? 'selected' : ''; ?>>Bi-Weekly (Every Two Weeks)</option>
+                     <option value="monthly" <?php echo ($schedulePattern == 'monthly') ? 'selected' : ''; ?>>Monthly</option>
+                     <option value="custom" <?php echo ($schedulePattern == 'custom') ? 'selected' : ''; ?>>Custom</option>
+                  </select>
+                  <label for="schedule_pattern">Schedule Pattern <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select a schedule pattern.</div>
+                  <div class="valid-feedback">Looks good!</div>
+               </div>
+            </div>
+
+            <!-- Day Selection (for weekly/biweekly) -->
+            <div class="col-md-12 mb-3" id="day-selection-container">
+               <label class="form-label">Days of Week <span class="text-danger">*</span></label>
+               <div class="days-checkbox-group">
+                  <?php
+                  $weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                  foreach ($weekDays as $day):
+                     $isChecked = is_array($scheduleDays) && in_array($day, $scheduleDays);
+                  ?>
+                  <div class="form-check form-check-inline">
+                     <input class="form-check-input schedule-day-checkbox" type="checkbox" id="schedule_day_<?php echo strtolower($day); ?>" name="schedule_days[]" value="<?php echo $day; ?>" <?php echo $isChecked ? 'checked' : ''; ?>>
+                     <label class="form-check-label" for="schedule_day_<?php echo strtolower($day); ?>"><?php echo $day; ?></label>
+                  </div>
+                  <?php endforeach; ?>
+               </div>
+               <div class="mt-2">
+                  <button type="button" class="btn btn-sm btn-outline-primary" id="select-all-days">Select All</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-all-days">Clear All</button>
+               </div>
+               <div class="invalid-feedback">Please select at least one day.</div>
+               <div class="valid-feedback">Looks good!</div>
+            </div>
+
+            <!-- Day of Month (for monthly) -->
+            <div class="col-md-4 mb-3 d-none" id="day-of-month-container">
+               <div class="form-floating">
+                  <select id="schedule_day_of_month" name="schedule_day_of_month" class="form-select">
+                     <option value="">Select</option>
+                     <?php for ($i = 1; $i <= 31; $i++): ?>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                     <?php endfor; ?>
+                     <option value="last">Last Day</option>
+                  </select>
+                  <label for="schedule_day_of_month">Day of Month <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select a day of the month.</div>
+                  <div class="valid-feedback">Looks good!</div>
+               </div>
+            </div>
+         </div>
+
+         <!-- Time Selection -->
+         <div class="row mb-3">
+            <div class="col-md-4 mb-3">
+               <div class="form-floating">
+                  <select id="schedule_start_time" name="schedule_start_time" class="form-select" required>
+                     <option value="">Select</option>
+                     <?php
+                     // Generate time options from 6:00 AM to 8:00 PM in 30-minute increments
+                     $start = strtotime('06:00:00');
+                     $end = strtotime('20:00:00');
+                     $interval = 30 * 60; // 30 minutes in seconds
+
+                     for ($time = $start; $time <= $end; $time += $interval) {
+                        $timeStr = date('H:i', $time);
+                        $isSelected = ($scheduleStartTime == $timeStr) ? 'selected' : '';
+                        echo '<option value="' . $timeStr . '" ' . $isSelected . '>' . date('g:i A', $time) . '</option>';
+                     }
+                     ?>
+                  </select>
+                  <label for="schedule_start_time">Start Time <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select a start time.</div>
+                  <div class="valid-feedback">Looks good!</div>
+               </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+               <div class="form-floating">
+                  <select id="schedule_end_time" name="schedule_end_time" class="form-select" required>
+                     <option value="">Select</option>
+                     <?php
+                     // Generate time options from 6:30 AM to 8:30 PM in 30-minute increments
+                     $start = strtotime('06:30:00');
+                     $end = strtotime('20:30:00');
+                     $interval = 30 * 60; // 30 minutes in seconds
+
+                     for ($time = $start; $time <= $end; $time += $interval) {
+                        $timeStr = date('H:i', $time);
+                        $isSelected = ($scheduleEndTime == $timeStr) ? 'selected' : '';
+                        echo '<option value="' . $timeStr . '" ' . $isSelected . '>' . date('g:i A', $time) . '</option>';
+                     }
+                     ?>
+                  </select>
+                  <label for="schedule_end_time">End Time <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select an end time.</div>
+                  <div class="valid-feedback">Looks good!</div>
+               </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+               <div class="form-floating">
+                  <input type="text" id="schedule_duration" name="schedule_duration" class="form-control readonly-field" placeholder="Duration" readonly>
+                  <label for="schedule_duration">Class Duration (Hours)</label>
+                  <small class="text-muted">Automatically calculated</small>
+               </div>
+            </div>
+         </div>
+
+         <!-- Date Range -->
+         <div class="row mb-3">
+            <div class="col-md-4 mb-3">
+               <div class="form-floating">
+                  <input type="date" id="schedule_start_date" name="schedule_start_date" class="form-control" placeholder="YYYY-MM-DD" value="<?php echo esc_attr($scheduleStartDate); ?>" required>
+                  <label for="schedule_start_date">Start Date <span class="text-danger">*</span></label>
+                  <div class="invalid-feedback">Please select a start date.</div>
+                  <div class="valid-feedback">Looks good!</div>
+               </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+               <div class="form-floating">
+                  <input type="date" id="schedule_end_date" name="schedule_end_date" class="form-control readonly-field" placeholder="YYYY-MM-DD" value="<?php echo esc_attr($scheduleEndDate); ?>" readonly>
+                  <label for="schedule_end_date">End Date</label>
+                  <small class="text-muted">Automatically calculated based on class duration</small>
+               </div>
+            </div>
+
+            <div class="col-md-4 d-none">
+               <div class="form-floating">
+                  <input type="text" id="schedule_total_hours" name="schedule_total_hours" class="form-control readonly-field" placeholder="Total Hours" readonly>
+                  <label for="schedule_total_hours">Total Hours</label>
+                  <small class="text-muted">Based on class type</small>
+               </div>
+            </div>
+         </div>
 
          <!-- Exception Dates -->
          <div class="mb-4">
@@ -136,7 +467,7 @@
          </template>
 
          <!-- Hidden input to store holiday override data -->
-         <input type="hidden" id="holiday_overrides" name="schedule_data[holiday_overrides]" value="">
+         <input type="hidden" id="holiday_overrides" name="schedule_data[holiday_overrides]" value="<?php echo esc_attr($holidayOverridesJson); ?>">
 
          <!-- Hidden inputs to store schedule data in the format expected by the backend -->
          <div id="schedule-data-container">
@@ -283,7 +614,7 @@
                <select id="seta_funded" name="seta_funded" class="form-select" required>
                   <option value="">Select</option>
                   <?php foreach ($data['yes_no_options'] as $option): ?>
-                     <option value="<?php echo $option['id']; ?>"><?php echo $option['name']; ?></option>
+                     <option value="<?php echo $option['id']; ?>" <?php echo (isset($data['class_data']['seta_funded']) && $data['class_data']['seta_funded'] == $option['id']) ? 'selected' : ''; ?>><?php echo $option['name']; ?></option>
                   <?php endforeach; ?>
                </select>
                <label for="seta_funded">SETA Funded? <span class="text-danger">*</span></label>
@@ -293,12 +624,16 @@
          </div>
 
          <!-- SETA (conditionally displayed) -->
-         <div class="col-md-3 mb-3" id="seta_container" style="display: none;">
+         <?php
+         $setaFunded = $data['class_data']['seta_funded'] ?? '';
+         $showSeta = ($setaFunded == 'Yes' || $setaFunded == '1');
+         ?>
+         <div class="col-md-3 mb-3" id="seta_container" style="display: <?php echo $showSeta ? 'block' : 'none'; ?>;">
             <div class="form-floating">
                <select id="seta_id" name="seta_id" class="form-select">
                   <option value="">Select</option>
                   <?php foreach ($data['setas'] as $seta): ?>
-                     <option value="<?php echo $seta['id']; ?>"><?php echo $seta['name']; ?></option>
+                     <option value="<?php echo $seta['id']; ?>" <?php echo (isset($data['class_data']['seta']) && $data['class_data']['seta'] == $seta['id']) ? 'selected' : ''; ?>><?php echo $seta['name']; ?></option>
                   <?php endforeach; ?>
                </select>
                <label for="seta_id">SETA <span class="text-danger">*</span></label>
@@ -313,7 +648,7 @@
                <select id="exam_class" name="exam_class" class="form-select" required>
                   <option value="">Select</option>
                   <?php foreach ($data['yes_no_options'] as $option): ?>
-                     <option value="<?php echo $option['id']; ?>"><?php echo $option['name']; ?></option>
+                     <option value="<?php echo $option['id']; ?>" <?php echo (isset($data['class_data']['exam_class']) && $data['class_data']['exam_class'] == $option['id']) ? 'selected' : ''; ?>><?php echo $option['name']; ?></option>
                   <?php endforeach; ?>
                </select>
                <label for="exam_class">Exam Class <span class="text-danger">*</span></label>
@@ -323,10 +658,14 @@
          </div>
 
          <!-- Exam Type (conditionally displayed) -->
+         <?php
+         $examClass = $data['class_data']['exam_class'] ?? '';
+         $showExamType = ($examClass == 'Yes' || $examClass == '1');
+         ?>
          <div class="col-md-3 mb-3">
-            <div id="exam_type_container" style="display: none;">
+            <div id="exam_type_container" style="display: <?php echo $showExamType ? 'block' : 'none'; ?>;">
                <div class="form-floating">
-                  <input type="text" id="exam_type" name="exam_type" class="form-control" placeholder="Enter exam type">
+                  <input type="text" id="exam_type" name="exam_type" class="form-control" placeholder="Enter exam type" value="<?php echo esc_attr($data['class_data']['exam_type'] ?? ''); ?>">
                   <label for="exam_type">Exam Type</label>
                   <div class="invalid-feedback">Please provide the exam type.</div>
                   <div class="valid-feedback">Looks good!</div>
@@ -457,8 +796,12 @@
                multiple
                aria-label="Class notes selection"
             >
-               <?php foreach ($data['class_notes_options'] as $option): ?>
-                  <option value="<?= $option['id'] ?>"><?= $option['name'] ?></option>
+               <?php
+               $selectedNotes = $data['class_data']['class_notes_data'] ?? [];
+               foreach ($data['class_notes_options'] as $option):
+                  $isSelected = is_array($selectedNotes) && in_array($option['id'], $selectedNotes);
+               ?>
+                  <option value="<?= $option['id'] ?>" <?php echo $isSelected ? 'selected' : ''; ?>><?= $option['name'] ?></option>
                <?php endforeach; ?>
             </select>
             <div class="form-text">
@@ -533,7 +876,7 @@
                   <select id="initial_class_agent" name="initial_class_agent" class="form-select" required>
                      <option value="">Select</option>
                      <?php foreach ($data['agents'] as $agent): ?>
-                        <option value="<?php echo $agent['id']; ?>"><?php echo $agent['name']; ?></option>
+                        <option value="<?php echo $agent['id']; ?>" <?php echo (isset($data['class_data']['class_agent']) && $data['class_data']['class_agent'] == $agent['id']) ? 'selected' : ''; ?>><?php echo $agent['name']; ?></option>
                      <?php endforeach; ?>
                   </select>
                   <label for="initial_class_agent">Initial Class Agent <span class="text-danger">*</span></label>
@@ -543,7 +886,7 @@
             </div>
             <div class="col-md-5 mb-3">
                <div class="form-floating">
-                  <input type="date" id="initial_agent_start_date" name="initial_agent_start_date" class="form-control" placeholder="YYYY-MM-DD" required>
+                  <input type="date" id="initial_agent_start_date" name="initial_agent_start_date" class="form-control" placeholder="YYYY-MM-DD" value="<?php echo esc_attr($data['class_data']['initial_agent_start_date'] ?? ''); ?>" required>
                   <label for="initial_agent_start_date">Start Date <span class="text-danger">*</span></label>
                   <div class="invalid-feedback">Please select the start date.</div>
                   <div class="valid-feedback">Looks good!</div>
@@ -606,7 +949,7 @@
                <select id="project_supervisor" name="project_supervisor" class="form-select" required>
                   <option value="">Select</option>
                   <?php foreach ($data['supervisors'] as $supervisor): ?>
-                     <option value="<?php echo $supervisor['id']; ?>"><?php echo $supervisor['name']; ?></option>
+                     <option value="<?php echo $supervisor['id']; ?>" <?php echo (isset($data['class_data']['project_supervisor_id']) && $data['class_data']['project_supervisor_id'] == $supervisor['id']) ? 'selected' : ''; ?>><?php echo $supervisor['name']; ?></option>
                   <?php endforeach; ?>
                </select>
                <label for="project_supervisor">Project Supervisor <span class="text-danger">*</span></label>
@@ -617,7 +960,7 @@
 
          <div class="col-md-5 mb-3">
             <div class="form-floating">
-               <input type="date" id="delivery_date" name="delivery_date" class="form-control" placeholder="YYYY-MM-DD" required>
+               <input type="date" id="delivery_date" name="delivery_date" class="form-control" placeholder="YYYY-MM-DD" value="<?php echo esc_attr($data['class_data']['delivery_date'] ?? ''); ?>" required>
                <label for="delivery_date">Delivery Date <span class="text-danger">*</span></label>
                <div class="invalid-feedback">Please select the delivery date.</div>
                <div class="valid-feedback">Looks good!</div>
@@ -686,3 +1029,144 @@
 
 <!-- Alert container for form messages -->
 <div id="form-messages" class="mt-3"></div>
+
+<!-- Pre-populate form data for update mode -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Pre-populate learner data if available
+    <?php if (isset($data['class_data']['learner_ids']) && !empty($data['class_data']['learner_ids'])): ?>
+    const learnerData = <?php echo json_encode($data['class_data']['learner_ids']); ?>;
+
+    // Pre-populate the class learners table
+    if (learnerData && Array.isArray(learnerData)) {
+        const classLearnersData = document.getElementById('class_learners_data');
+        const classLearnersTable = document.getElementById('class-learners-table');
+        const classLearnersTbody = document.getElementById('class-learners-tbody');
+        const noLearnersMessage = document.getElementById('no-learners-message');
+
+        if (classLearnersData && classLearnersTable && classLearnersTbody) {
+            // Set the hidden field value
+            classLearnersData.value = JSON.stringify(learnerData);
+
+            // Clear existing rows
+            classLearnersTbody.innerHTML = '';
+
+            // Add each learner to the table
+            learnerData.forEach(function(learner, index) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${learner.name || 'Unknown Learner'}</td>
+                    <td>
+                        <select class="form-select form-select-sm learner-level-select" data-learner-id="${learner.id}">
+                            <option value="">Select Level</option>
+                            <option value="Level 1" ${learner.level === 'Level 1' ? 'selected' : ''}>Level 1</option>
+                            <option value="Level 2" ${learner.level === 'Level 2' ? 'selected' : ''}>Level 2</option>
+                            <option value="Level 3" ${learner.level === 'Level 3' ? 'selected' : ''}>Level 3</option>
+                            <option value="Level 4" ${learner.level === 'Level 4' ? 'selected' : ''}>Level 4</option>
+                            <option value="Level 5" ${learner.level === 'Level 5' ? 'selected' : ''}>Level 5</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm learner-status-select" data-learner-id="${learner.id}">
+                            <option value="Host Company Learner" ${learner.status === 'Host Company Learner' ? 'selected' : ''}>Host Company Learner</option>
+                            <option value="Walk-in Learner" ${learner.status === 'Walk-in Learner' ? 'selected' : ''}>Walk-in Learner</option>
+                            <option value="Transferred" ${learner.status === 'Transferred' ? 'selected' : ''}>Transferred</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-learner-btn" data-learner-id="${learner.id}">Remove</button>
+                    </td>
+                `;
+                classLearnersTbody.appendChild(row);
+            });
+
+            // Show the table and hide the no learners message
+            classLearnersTable.classList.remove('d-none');
+            if (noLearnersMessage) {
+                noLearnersMessage.classList.add('d-none');
+            }
+        }
+    }
+    <?php endif; ?>
+
+    // Pre-populate QA visit dates if available
+    <?php if (isset($data['class_data']['qa_visit_dates']) && !empty($data['class_data']['qa_visit_dates'])): ?>
+    const qaVisitDates = <?php echo json_encode($data['class_data']['qa_visit_dates']); ?>;
+
+    if (qaVisitDates && Array.isArray(qaVisitDates)) {
+        const qaVisitsContainer = document.getElementById('qa-visits-container');
+        const qaVisitTemplate = document.getElementById('qa-visit-row-template');
+
+        if (qaVisitsContainer && qaVisitTemplate) {
+            qaVisitDates.forEach(function(date) {
+                const newRow = qaVisitTemplate.cloneNode(true);
+                newRow.classList.remove('d-none');
+                newRow.removeAttribute('id');
+
+                const dateInput = newRow.querySelector('input[name="qa_visit_dates[]"]');
+                if (dateInput) {
+                    dateInput.value = date;
+                }
+
+                qaVisitsContainer.appendChild(newRow);
+            });
+        }
+    }
+    <?php endif; ?>
+
+    // Pre-populate stop/restart dates if available
+    <?php if (isset($data['class_data']['stop_restart_dates']) && !empty($data['class_data']['stop_restart_dates'])): ?>
+    const stopRestartDates = <?php echo json_encode($data['class_data']['stop_restart_dates']); ?>;
+
+    if (stopRestartDates && Array.isArray(stopRestartDates)) {
+        const dateHistoryContainer = document.getElementById('date-history-container');
+        const dateHistoryTemplate = document.getElementById('date-history-row-template');
+
+        if (dateHistoryContainer && dateHistoryTemplate) {
+            stopRestartDates.forEach(function(dateEntry) {
+                const newRow = dateHistoryTemplate.cloneNode(true);
+                newRow.classList.remove('d-none');
+                newRow.removeAttribute('id');
+
+                const stopDateInput = newRow.querySelector('input[name="stop_dates[]"]');
+                const restartDateInput = newRow.querySelector('input[name="restart_dates[]"]');
+
+                if (stopDateInput && dateEntry.stop_date) {
+                    stopDateInput.value = dateEntry.stop_date;
+                }
+                if (restartDateInput && dateEntry.restart_date) {
+                    restartDateInput.value = dateEntry.restart_date;
+                }
+
+                dateHistoryContainer.appendChild(newRow);
+            });
+        }
+    }
+    <?php endif; ?>
+
+    // Pre-populate backup agent data if available
+    <?php if (isset($data['class_data']['backup_agent_ids']) && !empty($data['class_data']['backup_agent_ids'])): ?>
+    const backupAgentIds = <?php echo json_encode($data['class_data']['backup_agent_ids']); ?>;
+
+    if (backupAgentIds && Array.isArray(backupAgentIds)) {
+        const backupAgentsContainer = document.getElementById('backup-agents-container');
+        const backupAgentTemplate = document.getElementById('backup-agent-row-template');
+
+        if (backupAgentsContainer && backupAgentTemplate) {
+            backupAgentIds.forEach(function(agentId) {
+                const newRow = backupAgentTemplate.cloneNode(true);
+                newRow.classList.remove('d-none');
+                newRow.removeAttribute('id');
+
+                const agentSelect = newRow.querySelector('select[name="backup_agent_ids[]"]');
+                if (agentSelect) {
+                    agentSelect.value = agentId;
+                }
+
+                backupAgentsContainer.appendChild(newRow);
+            });
+        }
+    }
+    <?php endif; ?>
+});
+</script>

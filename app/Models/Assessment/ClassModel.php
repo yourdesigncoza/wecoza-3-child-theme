@@ -42,6 +42,12 @@ class ClassModel {
     private $createdAt;
     private $updatedAt;
 
+    // Additional properties for enriched data (not stored in database)
+    public $client_name;
+    public $agent_name;
+    public $supervisor_name;
+    public $site_name;
+
     /**
      * Constructor
      */
@@ -80,11 +86,6 @@ class ClassModel {
         $this->setUpdatedAt($data['updated_at'] ?? null);
 
         // Handle JSONB arrays - support both snake_case and camelCase
-        error_log('ClassModel constructor - learner data check:');
-        error_log('  learner_ids: ' . (isset($data['learner_ids']) ? print_r($data['learner_ids'], true) : 'NOT SET'));
-        error_log('  learnerIds: ' . (isset($data['learnerIds']) ? print_r($data['learnerIds'], true) : 'NOT SET'));
-        error_log('  add_learner: ' . (isset($data['add_learner']) ? print_r($data['add_learner'], true) : 'NOT SET'));
-
         $this->setLearnerIds($this->parseJsonField($data['learner_ids'] ?? $data['learnerIds'] ?? $data['add_learner'] ?? []));
         $this->setBackupAgentIds($this->parseJsonField($data['backup_agent_ids'] ?? $data['backupAgentIds'] ?? $data['backup_agent'] ?? []));
         $this->setScheduleData($this->parseJsonField($data['schedule_data'] ?? $data['scheduleData'] ?? []));
@@ -125,13 +126,9 @@ class ClassModel {
      * Save class data to optimized schema
      */
     public function save() {
-        error_log('=== ClassModel::save() START ===');
         try {
             $db = DatabaseService::getInstance();
-            error_log('Database instance obtained');
-
             $db->beginTransaction();
-            error_log('Transaction started');
 
             $now = date('Y-m-d H:i:s');
             $this->setCreatedAt($now);
@@ -139,7 +136,6 @@ class ClassModel {
 
             // Prepare stop/restart dates as JSONB
             $stopRestartJson = $this->prepareStopRestartDates();
-            error_log('Stop/restart dates prepared: ' . $stopRestartJson);
 
             // Insert into single classes table
             $sql = "INSERT INTO classes (
@@ -151,60 +147,44 @@ class ClassModel {
                 class_notes_data, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            // Debug the specific parameters we're focusing on
-            error_log('=== DEBUGGING PARAMETERS [19] and [21] ===');
-            error_log('Parameter [19] - BackupAgentIds raw: ' . print_r($this->getBackupAgentIds(), true));
-            error_log('Parameter [19] - BackupAgentIds JSON: ' . json_encode($this->getBackupAgentIds()));
-            error_log('Parameter [21] - StopRestartDates raw: ' . print_r($this->getStopRestartDates(), true));
-            error_log('Parameter [21] - StopRestartJson: ' . $stopRestartJson);
-
             $params = [
-                $this->getClientId(),                               // [0]
-                $this->getSiteId(),                                 // [1]
-                $this->getClassAddressLine(),                       // [2]
-                $this->getClassType(),                              // [3]
-                $this->getClassSubject(),                           // [4]
-                $this->getClassCode(),                              // [5]
-                $this->getClassDuration(),                          // [6]
-                $this->getOriginalStartDate(),                      // [7]
-                $this->getSetaFunded(),                             // [8]
-                $this->getSeta(),                                   // [9]
-                $this->getExamClass(),                              // [10]
-                $this->getExamType(),                               // [11]
-                $this->getQaVisitDates(),                           // [12]
-                json_encode($this->getQaReports()),                 // [13] - NEW QA REPORTS
-                $this->getClassAgent(),                             // [14]
-                $this->getInitialClassAgent(),                      // [15]
-                $this->getInitialAgentStartDate(),                  // [16]
-                $this->getProjectSupervisorId(),                    // [17]
-                $this->getDeliveryDate(),                           // [18]
-                json_encode($this->getLearnerIds()),                // [19]
-                json_encode($this->getBackupAgentIds()),            // [20] - FOCUS PARAMETER
-                json_encode($this->getScheduleData()),              // [21]
-                $stopRestartJson,                                   // [22] - FOCUS PARAMETER
-                json_encode($this->getClassNotesData()),            // [23]
-                $this->getCreatedAt(),                              // [24]
-                $this->getUpdatedAt()                               // [25]
+                $this->getClientId(),
+                $this->getSiteId(),
+                $this->getClassAddressLine(),
+                $this->getClassType(),
+                $this->getClassSubject(),
+                $this->getClassCode(),
+                $this->getClassDuration(),
+                $this->getOriginalStartDate(),
+                $this->getSetaFunded(),
+                $this->getSeta(),
+                $this->getExamClass(),
+                $this->getExamType(),
+                $this->getQaVisitDates(),
+                json_encode($this->getQaReports()),
+                $this->getClassAgent(),
+                $this->getInitialClassAgent(),
+                $this->getInitialAgentStartDate(),
+                $this->getProjectSupervisorId(),
+                $this->getDeliveryDate(),
+                json_encode($this->getLearnerIds()),
+                json_encode($this->getBackupAgentIds()),
+                json_encode($this->getScheduleData()),
+                $stopRestartJson,
+                json_encode($this->getClassNotesData()),
+                $this->getCreatedAt(),
+                $this->getUpdatedAt()
             ];
-
-            error_log('Executing SQL: ' . $sql);
-            error_log('With params: ' . print_r($params, true));
 
             $db->query($sql, $params);
             $classId = $db->lastInsertId();
             $this->setId($classId);
 
-            error_log('Class inserted with ID: ' . $classId);
-
             $db->commit();
-            error_log('Transaction committed successfully');
             return true;
         } catch (\Exception $e) {
-            error_log('Exception in ClassModel::save(): ' . $e->getMessage());
-            error_log('Exception trace: ' . $e->getTraceAsString());
             if ($db->inTransaction()) {
                 $db->rollback();
-                error_log('Transaction rolled back');
             }
             error_log('Error saving class: ' . $e->getMessage());
             return false;

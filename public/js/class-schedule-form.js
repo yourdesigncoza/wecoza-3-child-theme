@@ -326,6 +326,9 @@
             }
         }
 
+        // Calculate initial duration on page load for existing data
+        calculateDuration();
+
         // Initialize date fields
         const $startDate = $('#schedule_start_date');
         const $classType = $('#class_type');

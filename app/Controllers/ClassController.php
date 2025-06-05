@@ -153,18 +153,22 @@ class ClassController {
         // Get the class data (null for testing mode)
         $class = null;
         if ($class_id !== null) {
-            // Use direct model access
-            $class = ClassModel::getById($class_id);
-            if (!$class) {
+            // Use the same method as single-class-display to get enriched data
+            $classData = $this->getSingleClass($class_id);
+            if (!$classData) {
                 return '<div class="alert alert-danger">Error: Class not found.</div>';
             }
+
+            // Keep the data as an array (same format as single-class-display)
+            // This allows us to access fields like $class['class_type'], $class['class_subject'], etc.
+            $class = $classData;
         }
 
         // Get data for the view
         $viewData = [
             'mode' => 'update',
             'class_data' => $class,
-            'class_id' => $class_id, // Pass the class_id directly for the hidden field
+            'class_id' => $class_id,
             'clients' => MainController::getClients(),
             'sites' => MainController::getSites(),
             'agents' => MainController::getAgents(),
@@ -180,8 +184,6 @@ class ClassController {
         // Render the view
         return \WeCoza\view('components/class-capture-form', $viewData);
     }
-
-
 
     /**
      * Handle AJAX request to save class data
@@ -1555,6 +1557,7 @@ class ClassController {
         $clients = MainController::getClients();
         $agents = MainController::getAgents();
         $supervisors = MainController::getSupervisors();
+        $sites = MainController::getSites();
 
         // Create lookup arrays for faster mapping
         $clientLookup = [];
@@ -1572,6 +1575,15 @@ class ClassController {
             $supervisorLookup[$supervisor['id']] = $supervisor['name'];
         }
 
+        $siteLookup = [];
+        foreach ($sites as $clientId => $clientSites) {
+            if (is_array($clientSites)) {
+                foreach ($clientSites as $site) {
+                    $siteLookup[$site['id']] = $site['name'];
+                }
+            }
+        }
+
         // Map IDs to actual names
         $clientId = $result['client_id'] ?? null;
         $result['client_name'] = isset($clientLookup[$clientId]) ? $clientLookup[$clientId] : 'Unknown Client';
@@ -1581,6 +1593,9 @@ class ClassController {
 
         $supervisorId = $result['project_supervisor_id'] ?? null;
         $result['supervisor_name'] = isset($supervisorLookup[$supervisorId]) ? $supervisorLookup[$supervisorId] : 'Unassigned';
+
+        $siteId = $result['site_id'] ?? null;
+        $result['site_name'] = isset($siteLookup[$siteId]) ? $siteLookup[$siteId] : 'Unknown Site';
 
         // Handle JSONB fields that come as strings from PostgreSQL
         $jsonbFields = ['learner_ids', 'backup_agent_ids', 'schedule_data', 'stop_restart_dates', 'class_notes_data', 'qa_reports'];
