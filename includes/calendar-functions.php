@@ -266,7 +266,7 @@ function wecoza_generate_recurring_events($class_data, $schedule_data) {
                         'start' => $date_str,
                         'allDay' => true,
                         'display' => 'block',
-                        'classNames' => array('wecoza-exception-date'),
+                        'classNames' => array('text-warning'),
                         'extendedProps' => array(
                             'type' => 'exception_date',
                             'class_id' => $class_data['class_id'],

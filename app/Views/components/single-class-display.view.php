@@ -112,6 +112,18 @@ $error_message = $error_message ?? '';
                                 </div>
                             </div>
                         </div>
+                        <!-- Class Type Card -->
+                        <div class="col-sm-auto">
+                            <div class="d-flex align-items-center border-start-sm ps-sm-5">
+                                <div class="d-flex bg-primary-subtle rounded flex-center me-3" style="width:32px; height:32px">
+                                    <i class="bi bi-layers text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="fw-bold mb-1">Class Type</p>
+                                    <h5 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_type'] ?? 'Unknown Type'); ?></h5>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Class Subject Card -->
                         <div class="col-sm-auto">
                             <div class="d-flex align-items-center border-start-sm ps-sm-5">
@@ -133,18 +145,6 @@ $error_message = $error_message ?? '';
                                 <div>
                                     <p class="fw-bold mb-1">Class Code</p>
                                     <h5 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_code'] ?? 'N/A'); ?></h5>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Class Type Card -->
-                        <div class="col-sm-auto">
-                            <div class="d-flex align-items-center border-start-sm ps-sm-5">
-                                <div class="d-flex bg-primary-subtle rounded flex-center me-3" style="width:32px; height:32px">
-                                    <i class="bi bi-layers text-primary"></i>
-                                </div>
-                                <div>
-                                    <p class="fw-bold mb-1">Class Type</p>
-                                    <h5 class="fw-bolder text-nowrap"><?php echo esc_html($class['class_type'] ?? 'Unknown Type'); ?></h5>
                                 </div>
                             </div>
                         </div>
