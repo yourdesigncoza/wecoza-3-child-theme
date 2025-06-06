@@ -37,9 +37,6 @@
   max-width: 160px;
   overflow: hidden;
 }
-/* .navbar-top {
-  padding: var(--ydzoca-nav-padding);
-} */
 .page-template-dashboard-template .content {
     padding-top: 2rem;
 }
@@ -206,7 +203,9 @@ html[data-bs-theme="dark"] .fc.fc-theme-standard th {
 html[data-bs-theme="dark"] .fc .fc-multimonth {
     border: 1px solid #566485;
 }
-
+html[data-bs-theme="dark"] .navbar-top {
+  padding-top: 0.4rem;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Table                                      */
