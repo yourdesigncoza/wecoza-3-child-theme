@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+.nav-id-193,
+.nav-id-199,
+.nav-id-201 {
+  display: none;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Override theme styles here                                      */

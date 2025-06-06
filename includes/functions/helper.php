@@ -301,3 +301,90 @@ function ydcoza_breadcrumbs_after_primary( $template ) {
     // }
 }
 add_action( 'bootscore_after_primary_open', 'ydcoza_breadcrumbs_after_primary', 10, 1 );
+
+/**
+ * Hide the front-end admin toolbar for everyone except Administrators.
+ */
+function hide_admin_toolbar_for_non_admins() {
+    if ( ! current_user_can( 'administrator' ) ) {
+        add_filter( 'show_admin_bar', '__return_false' );
+    }
+}
+add_action( 'after_setup_theme', 'hide_admin_toolbar_for_non_admins' );
+
+/**
+ * Redirect all users to the site’s front page after they log in.
+ *
+ * @param string           $redirect_to URL to redirect to.
+ * @param string           $request     Original requested redirect URL (if any).
+ * @param WP_User|WP_Error $user        WP_User object if login was successful, WP_Error otherwise.
+ * @return string                      The URL you want to send the user to.
+ */
+function ydcoza_force_login_redirect_to_home( $redirect_to, $request, $user ) {
+    // Only redirect on successful login (i.e. $user is a WP_User object)
+    if ( isset( $user->ID ) ) {
+        return home_url();
+    }
+    // Otherwise (e.g. login failed), leave WordPress to handle fallback
+    return $redirect_to;
+}
+add_filter( 'login_redirect', 'ydcoza_force_login_redirect_to_home', 10, 3 );
+
+
+/**
+ * Replace the default WordPress login logo with a custom image.
+ */
+function ydcoza_custom_login_logo() {
+    // URL to your logo file; adjust the path if you placed it elsewhere.
+    $logo_url = get_stylesheet_directory_uri() . '/assets/img/logo/wecoza-logo-dark.png';
+
+    // You may need to tweak width/height to match your actual image dimensions.
+    ?>
+    <style type="text/css">
+        /* Target the logo on the login page */
+        .login h1 a {
+            background-image: url(<?php echo esc_url( $logo_url ); ?>) !important;
+            background-size: contain;
+            width: 320px;    /* set to your logo’s width */
+            height: 80px;    /* set to your logo’s height */
+        }
+    </style>
+    <?php
+}
+add_action( 'login_enqueue_scripts', 'ydcoza_custom_login_logo' );
+
+/**
+ * (Optional) Change the login logo URL to point to your site homepage 
+ * instead of wordpress.org.
+ */
+function ydcoza_custom_login_logo_url() {
+    return home_url();
+}
+add_filter( 'login_headerurl', 'ydcoza_custom_login_logo_url' );
+
+/**
+ * (Optional) Change the logo’s title attribute (hover text) 
+ * to your site name rather than “Powered by WordPress”.
+ */
+function ydcoza_custom_login_logo_title() {
+    return get_bloginfo( 'name' );
+}
+add_filter( 'login_headertext', 'ydcoza_custom_login_logo_title' );
+
+/**
+ * Add custom styles to the WordPress login page.
+ */
+function ydcoza_custom_login_styles() {
+    ?>
+    <style type="text/css">
+        /* -------------------------------------------------------------------------- */
+        /* login logo                                                                */
+        /* -------------------------------------------------------------------------- */
+        .login h1 a {
+            background-size: 260px !important;
+            width: 260px !important;
+        }
+    </style>
+    <?php
+}
+add_action( 'login_enqueue_scripts', 'ydcoza_custom_login_styles' );

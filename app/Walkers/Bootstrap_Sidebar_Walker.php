@@ -105,7 +105,7 @@ class Bootstrap_Sidebar_Walker extends Walker_Nav_Menu {
         // Build <a> attributes
         $atts            = [];
         $atts['href']    = $item->url ? $item->url : '';
-        $link_classes    = 'nav-link';
+        $link_classes    = 'nav-link nav-id-' . $item->ID;
 
         if ( $has_children ) {
             $submenu_id = 'submenu-' . $item->ID;
