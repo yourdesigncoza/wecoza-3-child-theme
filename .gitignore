@@ -41,5 +41,7 @@ dictate.txt
 # Vertex AI related files
 vertex-ai-mcp-server-tools.md
 .augment/
-.prompts/
 
+
+prompts/
+@wecoza-dev-flow/

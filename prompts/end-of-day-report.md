@@ -76,4 +76,4 @@ You are an AI assistant that produces a Daily Development Report. Follow these s
    - If at any point Git commands fail, stop and output only the relevant Git error.
 
 6. **Save Report**  
-   - Save the generated report to `@wecoza-dev-flow/tracking/WEC-DAILY-WORK-REPORT-2025-06-05.md` (replace date with today’s date).
+   - Save the generated report to `@wecoza-dev-flow/tracking/WEC-GIT-WORK-REPORT-2025-06-05.md` (replace date with today’s date).
