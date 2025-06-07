@@ -66,5 +66,6 @@ return [
         'WeCoza\\Controllers\\PublicHolidaysController',
         'WeCoza\\Controllers\\ContactController',
         'WeCoza\\Controllers\\NavigationController',
+        'WeCoza\\Controllers\\ShortcodeListController',
     ],
 ];

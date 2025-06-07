@@ -64,6 +64,10 @@ function register_shortcodes() {
     $classController = new WeCoza\Controllers\ClassController();
     \add_shortcode('wecoza_capture_class', [$classController, 'captureClassShortcode']);
     \add_shortcode('wecoza_display_classes', [$classController, 'displayClassesShortcode']);
+
+    // Shortcode list shortcode
+    $shortcodeListController = new WeCoza\Controllers\ShortcodeListController();
+    \add_shortcode('wecoza_shortcode_list', [$shortcodeListController, 'displayShortcodeList']);
 }
 
 // Register shortcodes

@@ -295,6 +295,36 @@ html[data-bs-theme="dark"] .navbar-top {
     font-size: 0.65rem;
   }
 /* -------------------------------------------------------------------------- */
+/* Shortcode List                                */
+/* -------------------------------------------------------------------------- */
+.wecoza-shortcode-list .category-section:not(:last-child) {
+    border-bottom: 1px solid var(--phoenix-border-color);
+}
+
+.wecoza-shortcode-list code {
+    font-size: 0.8rem;
+    word-break: break-all;
+}
+
+.wecoza-shortcode-list .badge {
+    font-size: 0.65rem;
+    font-weight: 500;
+}
+
+.wecoza-shortcode-list .table td {
+    vertical-align: middle;
+    padding: 0.75rem 0.5rem;
+}
+
+.wecoza-shortcode-list .table th {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 0.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Fontawesome                                   */
 /* -------------------------------------------------------------------------- */
 .bi {
