@@ -7,15 +7,25 @@
 
 namespace WeCoza;
 
-// Define constants
-define('WECOZA_PATH', dirname(__DIR__));
-define('WECOZA_APP_PATH', WECOZA_PATH . '/app');
-define('WECOZA_CONFIG_PATH', WECOZA_PATH . '/config');
-define('WECOZA_PUBLIC_PATH', WECOZA_PATH . '/public');
-define('WECOZA_VIEWS_PATH', WECOZA_APP_PATH . '/Views');
+// Define theme-specific constants (only if not already defined)
+if (!defined('WECOZA_PATH')) {
+    define('WECOZA_PATH', dirname(__DIR__));
+}
+if (!defined('WECOZA_APP_PATH')) {
+    define('WECOZA_APP_PATH', WECOZA_PATH . '/app');
+}
+if (!defined('WECOZA_CONFIG_PATH')) {
+    define('WECOZA_CONFIG_PATH', WECOZA_PATH . '/config');
+}
+if (!defined('WECOZA_PUBLIC_PATH')) {
+    define('WECOZA_PUBLIC_PATH', WECOZA_PATH . '/public');
+}
+if (!defined('WECOZA_VIEWS_PATH')) {
+    define('WECOZA_VIEWS_PATH', WECOZA_APP_PATH . '/Views');
+}
 
 /**
- * Autoloader function
+ * Autoloader function for theme classes
  */
 spl_autoload_register(function ($class) {
     // Only handle our namespace

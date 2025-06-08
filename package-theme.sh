@@ -61,7 +61,7 @@ mkdir -p "$PACKAGE_DIR/app/Services/Database"
 mkdir -p "$PACKAGE_DIR/app/Services/Export"
 mkdir -p "$PACKAGE_DIR/app/Services/Authentication"
 mkdir -p "$PACKAGE_DIR/app/Services/FileUpload"
-mkdir -p "$PACKAGE_DIR/app/Views/components/class-capture-partials"
+
 mkdir -p "$PACKAGE_DIR/app/Views/learner"
 mkdir -p "$PACKAGE_DIR/app/Views/agent"
 mkdir -p "$PACKAGE_DIR/app/Views/client"
@@ -69,7 +69,7 @@ mkdir -p "$PACKAGE_DIR/app/Views/admin"
 mkdir -p "$PACKAGE_DIR/app/Views/layouts"
 
 mkdir -p "$PACKAGE_DIR/assets/agents/js"
-mkdir -p "$PACKAGE_DIR/assets/classes"
+
 mkdir -p "$PACKAGE_DIR/assets/clients"
 mkdir -p "$PACKAGE_DIR/assets/learners/components"
 mkdir -p "$PACKAGE_DIR/assets/learners/js"
@@ -129,7 +129,7 @@ fi
 
 # Copy Views
 cp app/Views/components/*.php "$PACKAGE_DIR/app/Views/components/" 2>/dev/null || true
-cp app/Views/components/class-capture-partials/*.php "$PACKAGE_DIR/app/Views/components/class-capture-partials/" 2>/dev/null || true
+
 cp app/Views/learner/*.php "$PACKAGE_DIR/app/Views/learner/" 2>/dev/null || true
 
 # Copy additional Views if they exist

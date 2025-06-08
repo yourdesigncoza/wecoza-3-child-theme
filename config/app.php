@@ -61,9 +61,7 @@ return [
         'WeCoza\\Controllers\\AgentController',
         'WeCoza\\Controllers\\ClientController',
         'WeCoza\\Controllers\\AssessmentController',
-        'WeCoza\\Controllers\\ClassController',
-        'WeCoza\\Controllers\\ClassTypesController',
-        'WeCoza\\Controllers\\PublicHolidaysController',
+
         'WeCoza\\Controllers\\ContactController',
         'WeCoza\\Controllers\\NavigationController',
         'WeCoza\\Controllers\\ShortcodeListController',
