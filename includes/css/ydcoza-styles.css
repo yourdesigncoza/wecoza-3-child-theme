@@ -1,5 +1,7 @@
 @charset "UTF-8";
-
+/*!
+ * All theme styles should be placed in this file.
+ */
 .nav-id-193,
 .nav-id-199,
 .nav-id-201 {
@@ -444,6 +446,594 @@ html[data-bs-theme="dark"] .navbar-top {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     padding: 0.75rem 0.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* WeCoza Classes Plugin v4.0 - Per-Day Time Controls Styling (Tasks 5.1-5.5) */
+/* Implementation Date: 2025-01-09                                             */
+/* -------------------------------------------------------------------------- */
+
+/* Task 5.1: Per-Day Time Control Layout Styles */
+
+#per-day-time-controls.active {
+    border-color: var(--phoenix-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--phoenix-primary-rgb), 0.25);
+}
+
+/* Individual Day Time Section Cards */
+.per-day-time-section {
+    position: relative;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: slideInUp 0.4s ease forwards;
+}
+
+.per-day-time-section:nth-child(1) { animation-delay: 0.1s; }
+.per-day-time-section:nth-child(2) { animation-delay: 0.2s; }
+.per-day-time-section:nth-child(3) { animation-delay: 0.3s; }
+.per-day-time-section:nth-child(4) { animation-delay: 0.4s; }
+.per-day-time-section:nth-child(5) { animation-delay: 0.5s; }
+.per-day-time-section:nth-child(6) { animation-delay: 0.6s; }
+.per-day-time-section:nth-child(7) { animation-delay: 0.7s; }
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.per-day-time-section .card {
+    border: 2px solid var(--phoenix-border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.per-day-time-section .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--phoenix-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.per-day-time-section:hover .card,
+.per-day-time-section:focus-within .card {
+    border-color: var(--phoenix-primary);
+    box-shadow: 0 4px 12px rgba(var(--phoenix-primary-rgb), 0.15);
+    transform: translateY(-2px);
+}
+
+.per-day-time-section:hover .card::before,
+.per-day-time-section:focus-within .card::before {
+    opacity: 1;
+}
+
+/* Day Time Header Styling */
+.day-time-header {
+    background: linear-gradient(135deg, var(--phoenix-emphasis-bg) 0%, var(--phoenix-body-bg) 100%);
+    border-bottom: 1px solid var(--phoenix-border-color);
+    padding: 0.75rem 1rem;
+    position: relative;
+}
+
+.day-time-header .day-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--phoenix-emphasis-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.day-time-header .day-name::before {
+    content: '📅';
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+/* Copy to All Button Styling */
+.copy-to-all-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.copy-to-all-btn:hover {
+    background-color: var(--phoenix-primary);
+    border-color: var(--phoenix-primary);
+    color: white;
+    transform: scale(1.05);
+}
+
+.copy-to-all-btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(var(--phoenix-primary-rgb), 0.5);
+}
+
+/* Card Body Styling */
+/* .per-day-time-section .card-body {
+    padding: 1rem;
+    background: var(--phoenix-body-bg);
+} */
+
+/* Time Input Controls */
+.per-day-time-section .form-floating {
+    position: relative;
+}
+
+.per-day-time-section .form-select {
+    border: 1px solid var(--phoenix-border-color);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: var(--phoenix-body-bg);
+}
+
+.per-day-time-section .form-select:focus {
+    border-color: var(--phoenix-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--phoenix-primary-rgb), 0.25);
+    background-color: var(--phoenix-body-bg);
+}
+
+.per-day-time-section .form-select:valid {
+    border-color: var(--phoenix-success);
+}
+
+.per-day-time-section .form-select:invalid {
+    border-color: var(--phoenix-danger);
+}
+
+/* Duration Display */
+.day-duration-display {
+    font-size: 0.8rem;
+    color: var(--phoenix-secondary-color);
+    font-weight: 500;
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.day-duration-display::before {
+    content: '⏱️';
+    font-size: 0.75rem;
+}
+
+/* .duration-value {
+    font-weight: 600;
+    color: var(--phoenix-warning-text-emphasis);
+} */
+
+
+/* Mobile-First Approach */
+@media (max-width: 575.98px) {
+    #per-day-time-controls {
+        margin: 1rem -0.5rem 0;
+        padding: 0.75rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    /* Bootstrap handles spacing with g-4 class */
+
+    .per-day-time-section .card {
+        border-radius: 6px;
+    }
+
+    .day-time-header {
+        padding: 0.5rem 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .day-time-header .d-flex {
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .copy-to-all-btn {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .per-day-time-section .card-body {
+        padding: 0.75rem;
+    }
+
+    .per-day-time-section .row {
+        margin: 0;
+    }
+
+    .per-day-time-section .col-md-6 {
+        padding: 0 0.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    /* Stack time inputs vertically on very small screens */
+    .per-day-time-section .form-select {
+        font-size: 0.9rem;
+        min-height: 48px; /* Touch-friendly minimum */
+    }
+
+    .per-day-time-section .form-floating label {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablet Styles */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    /* Bootstrap grid handles layout */
+
+    .per-day-time-section .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .per-day-time-section .col-md-6 {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .copy-to-all-btn {
+        font-size: 0.75rem;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 992px) {
+    /* Bootstrap grid handles layout */
+
+    .per-day-time-section .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .per-day-time-section .col-md-6 {
+        margin-bottom: 0;
+    }
+
+    /* Duration display gets its own column on desktop */
+    .per-day-time-section .row > div:last-child {
+        display: flex;
+        align-items: end;
+        padding-bottom: 0.5rem;
+    }
+}
+
+/* Large Desktop Optimizations */
+/* @media (min-width: 1200px) {
+    #per-day-time-controls {
+        padding: 1.5rem;
+    } */
+
+    /* Bootstrap handles spacing with g-4 class */
+
+    /* .per-day-time-section .card-body {
+        padding: 1.25rem;
+    }
+} */
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .copy-to-all-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem;
+    }
+
+    .per-day-time-section .form-select {
+        min-height: 48px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Remove hover effects on touch devices */
+    .per-day-time-section:hover .card {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .copy-to-all-btn:hover {
+        transform: none;
+    }
+}
+
+/* Task 5.3: Visual Indicators for Active/Inactive Days */
+/* Active Day States */
+.per-day-time-section.day-active .card {
+    border-color: var(--phoenix-success);
+    background: linear-gradient(135deg, rgba(var(--phoenix-success-rgb), 0.05) 0%, transparent 100%);
+}
+
+.per-day-time-section.day-active .day-time-header {
+    background: linear-gradient(135deg, rgba(var(--phoenix-success-rgb), 0.1) 0%, var(--phoenix-emphasis-bg) 100%);
+    border-bottom-color: rgba(var(--phoenix-success-rgb), 0.2);
+}
+
+.per-day-time-section.day-active .day-name::before {
+    content: '✅';
+}
+
+.per-day-time-section.day-active .card::before {
+    background: var(--phoenix-success);
+    opacity: 1;
+}
+
+/* Inactive Day States */
+.per-day-time-section.day-inactive .card {
+    border-color: var(--phoenix-border-color);
+    background: rgba(var(--phoenix-secondary-bg), 0.3);
+    opacity: 0.7;
+}
+
+.per-day-time-section.day-inactive .day-time-header {
+    background: var(--phoenix-secondary-bg);
+    color: var(--phoenix-secondary-color);
+}
+
+.per-day-time-section.day-inactive .day-name {
+    color: var(--phoenix-secondary-color);
+}
+
+.per-day-time-section.day-inactive .day-name::before {
+    content: '⭕';
+    opacity: 0.5;
+}
+
+.per-day-time-section.day-inactive .form-select {
+    background-color: var(--phoenix-secondary-bg);
+    color: var(--phoenix-secondary-color);
+    cursor: not-allowed;
+}
+
+.per-day-time-section.day-inactive .copy-to-all-btn {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Validation States with Visual Indicators */
+.per-day-time-section.has-error .card {
+    border-color: var(--phoenix-danger);
+    animation: shake 0.5s ease-in-out;
+}
+
+.per-day-time-section.has-error .day-name::after {
+    content: '⚠️';
+    margin-left: 0.5rem;
+    animation: pulse 1s infinite;
+}
+
+.per-day-time-section.has-success .card {
+    border-color: var(--phoenix-success);
+}
+
+.per-day-time-section.has-success .day-name::after {
+    content: '✓';
+    margin-left: 0.5rem;
+    color: var(--phoenix-success);
+    font-weight: bold;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .per-day-time-section.day-active .card {
+        border-width: 3px;
+        border-style: solid;
+    }
+
+    .per-day-time-section.day-inactive .card {
+        border-width: 3px;
+        border-style: dashed;
+    }
+
+    .per-day-time-section.has-error .card {
+        border-width: 4px;
+        border-style: double;
+    }
+}
+
+/* Task 5.4: Accessible Tooltips and Help Text */
+/* Tooltip Container */
+.wecoza-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+/* Tooltip Content */
+.wecoza-tooltip-content {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--phoenix-dark);
+    color: var(--phoenix-white);
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    max-width: 250px;
+    white-space: normal;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+/* Tooltip Arrow */
+.wecoza-tooltip-content::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--phoenix-dark) transparent transparent transparent;
+}
+
+/* Show Tooltip on Hover and Focus */
+.wecoza-tooltip:hover .wecoza-tooltip-content,
+.wecoza-tooltip:focus .wecoza-tooltip-content,
+.wecoza-tooltip:focus-within .wecoza-tooltip-content {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+    pointer-events: auto;
+}
+
+/* Tooltip Positioning Variants */
+.wecoza-tooltip.tooltip-top .wecoza-tooltip-content {
+    bottom: 125%;
+    top: auto;
+}
+
+.wecoza-tooltip.tooltip-bottom .wecoza-tooltip-content {
+    top: 125%;
+    bottom: auto;
+}
+
+.wecoza-tooltip.tooltip-bottom .wecoza-tooltip-content::after {
+    top: -5px;
+    bottom: auto;
+    border-color: transparent transparent var(--phoenix-dark) transparent;
+}
+
+.wecoza-tooltip.tooltip-left .wecoza-tooltip-content {
+    top: 50%;
+    right: 125%;
+    left: auto;
+    bottom: auto;
+    transform: translateY(-50%);
+}
+
+.wecoza-tooltip.tooltip-left .wecoza-tooltip-content::after {
+    top: 50%;
+    left: 100%;
+    right: auto;
+    margin-top: -5px;
+    margin-left: 0;
+    border-color: transparent transparent transparent var(--phoenix-dark);
+}
+
+.wecoza-tooltip.tooltip-right .wecoza-tooltip-content {
+    top: 50%;
+    left: 125%;
+    right: auto;
+    bottom: auto;
+    transform: translateY(-50%);
+}
+
+.wecoza-tooltip.tooltip-right .wecoza-tooltip-content::after {
+    top: 50%;
+    right: 100%;
+    left: auto;
+    margin-top: -5px;
+    margin-left: 0;
+    border-color: transparent var(--phoenix-dark) transparent transparent;
+}
+
+/* Help Text Styling */
+.wecoza-help-text {
+    font-size: 0.8rem;
+    color: var(--phoenix-secondary-color);
+    margin-top: 0.25rem;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.wecoza-help-text::before {
+    content: 'ℹ️';
+    font-size: 0.75rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.wecoza-help-text.help-warning {
+    color: var(--phoenix-warning);
+}
+
+.wecoza-help-text.help-warning::before {
+    content: '⚠️';
+}
+
+.wecoza-help-text.help-success {
+    color: var(--phoenix-success);
+}
+
+.wecoza-help-text.help-success::before {
+    content: '✅';
+}
+
+/* Keyboard Navigation Support */
+.wecoza-tooltip:focus {
+    outline: 2px solid var(--phoenix-primary);
+    outline-offset: 2px;
+}
+
+/* Screen Reader Support */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Dark Mode Support for Tooltips */
+html[data-bs-theme="dark"] .wecoza-tooltip-content {
+    background-color: var(--phoenix-emphasis-bg);
+    color: var(--phoenix-emphasis-color);
+    border: 1px solid var(--phoenix-border-color);
+}
+
+html[data-bs-theme="dark"] .wecoza-tooltip-content::after {
+    border-top-color: var(--phoenix-emphasis-bg);
+}
+
+html[data-bs-theme="dark"] .wecoza-tooltip.tooltip-bottom .wecoza-tooltip-content::after {
+    border-bottom-color: var(--phoenix-emphasis-bg);
+    border-top-color: transparent;
+}
+
+html[data-bs-theme="dark"] .wecoza-tooltip.tooltip-left .wecoza-tooltip-content::after {
+    border-left-color: var(--phoenix-emphasis-bg);
+}
+
+html[data-bs-theme="dark"] .wecoza-tooltip.tooltip-right .wecoza-tooltip-content::after {
+    border-right-color: var(--phoenix-emphasis-bg);
 }
 
 /* -------------------------------------------------------------------------- */
