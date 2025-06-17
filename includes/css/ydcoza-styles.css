@@ -449,6 +449,241 @@ html[data-bs-theme="dark"] .navbar-top {
 }
 
 /* -------------------------------------------------------------------------- */
+/* WeCoza Classes Plugin v4.0 - Calendar/List View Toggle Feature             */
+/* Implementation Date: 2025-06-17                                             */
+/* -------------------------------------------------------------------------- */
+
+/* View Toggle Navigation Tabs */
+#scheduleViewTabs {
+    border-bottom: 2px solid var(--phoenix-border-color);
+    margin-bottom: 1.5rem;
+}
+
+#scheduleViewTabs .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: var(--phoenix-body-color);
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+#scheduleViewTabs .nav-link:hover {
+    border-bottom-color: var(--phoenix-primary);
+    color: var(--phoenix-primary);
+    background: rgba(var(--phoenix-primary-rgb), 0.05);
+}
+
+#scheduleViewTabs .nav-link.active {
+    border-bottom-color: var(--phoenix-primary);
+    color: var(--phoenix-primary);
+    background: rgba(var(--phoenix-primary-rgb), 0.1);
+    font-weight: 600;
+}
+
+#scheduleViewTabs .nav-link i {
+    font-size: 0.9rem;
+}
+
+/* List View Styling */
+#classScheduleList {
+    min-height: 400px;
+}
+
+#classScheduleList .card {
+    transition: box-shadow 0.3s ease;
+}
+
+#classScheduleList .card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Event Group Headers */
+#classScheduleList .card-header {
+    background: var(--phoenix-emphasis-bg) !important;
+    border-bottom: 1px solid var(--phoenix-border-color);
+}
+
+#classScheduleList .card-header h6 {
+    color: var(--phoenix-body-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Event List Table Styling */
+#classScheduleList .table {
+    font-size: 0.875rem;
+}
+
+#classScheduleList .table th {
+    background: var(--phoenix-tertiary-bg);
+    color: var(--phoenix-body-color);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem;
+}
+
+#classScheduleList .table td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--phoenix-border-color);
+}
+
+#classScheduleList .table tbody tr:hover {
+    background: var(--phoenix-tertiary-bg);
+}
+
+/* Event Type Badges */
+#classScheduleList .badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Loading and Error States */
+#list-loading, #list-error, #list-empty {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#list-empty i {
+    font-size: 3rem;
+    color: var(--phoenix-tertiary-color);
+    margin-bottom: 1rem;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+    #scheduleViewTabs .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    #scheduleViewTabs .nav-link i {
+        font-size: 0.8rem;
+    }
+
+    #classScheduleList .table {
+        font-size: 0.8rem;
+    }
+
+    #classScheduleList .table th,
+    #classScheduleList .table td {
+        padding: 0.5rem;
+    }
+
+    #classScheduleList .card-header h6 {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #scheduleViewTabs {
+        margin-bottom: 1rem;
+    }
+
+    #scheduleViewTabs .nav-link {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* Stack event details vertically on mobile */
+    #classScheduleList .table td .d-flex {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    #classScheduleList .table td .d-flex > * {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    #scheduleViewTabs {
+        border-bottom-color: #495057;
+    }
+
+    #scheduleViewTabs .nav-link {
+        color: #adb5bd;
+    }
+
+    #scheduleViewTabs .nav-link:hover,
+    #scheduleViewTabs .nav-link.active {
+        color: #fff;
+        background: rgba(13, 110, 253, 0.1);
+    }
+
+    #classScheduleList .card {
+        background: #212529;
+        border-color: #495057;
+    }
+
+    #classScheduleList .card-header {
+        background: #343a40 !important;
+        border-bottom-color: #495057;
+    }
+
+    #classScheduleList .table th {
+        background: #343a40;
+        color: #fff;
+    }
+
+    #classScheduleList .table td {
+        border-bottom-color: #495057;
+        color: #adb5bd;
+    }
+
+    #classScheduleList .table tbody tr:hover {
+        background: #343a40;
+    }
+}
+
+/* Animation for View Switching */
+.tab-pane {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Print Styles for List View */
+@media print {
+    #scheduleViewTabs {
+        display: none;
+    }
+
+    #classScheduleList .card {
+        box-shadow: none;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+    }
+
+    #classScheduleList .card-header {
+        background: #f8f9fa !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    #classScheduleList .table {
+        font-size: 0.75rem;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
 /* WeCoza Classes Plugin v4.0 - Per-Day Time Controls Styling (Tasks 5.1-5.5) */
 /* Implementation Date: 2025-01-09                                             */
 /* -------------------------------------------------------------------------- */

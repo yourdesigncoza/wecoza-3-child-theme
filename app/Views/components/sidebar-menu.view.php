@@ -68,7 +68,7 @@ use WeCoza\Walkers\Bootstrap_Sidebar_Walker;
                         <div class="clearfix"></div>
                      </div>
                      <div class="text-center mt-auto">
-                        <div class="avatar avatar-3xl status-online"><img class="rounded-circle border border-3 border-light-subtle" src="https://scontent-cpt1-1.xx.fbcdn.net/v/t1.6435-9/96672703_10159734336813496_6079313520707502080_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=GnEyik7iuzEQ7kNvwH92AvN&_nc_oc=Adl7Wn_ANTZcscW202FawPoavgFMBfwKQlJmr9ipj-xxNR6_ir8LaI-PtUhbntq8NQQ&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=3kYAgWLxcRtBGtTJqt6f2g&oh=00_AfJwVQpAEXquwtzN_7NRy8BxKY7nn1xHiEpn2aY6ouC_dg&oe=684D35C4" alt=""></div>
+                        <div class="avatar avatar-3xl status-online"><img class="rounded-circle border border-3 border-light-subtle" src="https://yourdesign.co.za/yd2020/wp-content/uploads/2022/04/profile-150x150.jpg" alt=""></div>
                         <h5 class="mt-2 mb-3">John</h5>
                         <p class="text-center text-body-emphasis mb-0">Have a Technical Issue ~ We will reply ASAP!</p>
                      </div>
