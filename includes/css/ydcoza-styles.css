@@ -30,6 +30,115 @@
 .ydcoza-w-150 {
    width: 150px;
 }
+.table.table-stats > tbody > tr > td {
+    padding-left: 0.25rem;
+}
+/* -------------------------------------------------------------------------- */
+/* WeCoza Classes Plugin - QA Report File Display                            */
+/* -------------------------------------------------------------------------- */
+/* QA-specific styles (extending existing patterns) */
+.qa-visit-row {
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s ease;
+    padding-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.qa-visit-row:hover {
+    border-left-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* QA Report File Display Container */
+.qa-report-file-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.625rem;
+}
+
+/* File Info Section */
+.qa-report-file-display .file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0; /* Allow text truncation */
+}
+
+/* File link styling */
+.qa-report-file-display .file-info a {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #495057;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.qa-report-file-display .file-info a:hover {
+    color: #0056b3;
+}
+
+/* File size text */
+.qa-report-file-display .file-info .text-muted {
+    font-size: 0.625rem;
+    white-space: nowrap;
+}
+
+/* Replace button styling */
+.qa-report-file-display .btn-replace-file {
+    white-space: nowrap;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    flex-shrink: 0;
+}
+
+.qa-report-file-display .btn-replace-file i {
+    font-size: 0.875rem;
+}
+
+/* New file preview styling */
+.qa-new-file-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 0.25rem;
+    color: #0c5460;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.qa-new-file-preview i {
+    font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .qa-report-file-display {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .qa-report-file-display .file-info {
+        justify-content: center;
+    }
+    
+    .qa-report-file-display .btn-replace-file {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
 /* -------------------------------------------------------------------------- */
 /* WeCoza Classes Plugin - Monthly Schedule Breakdown                        */
@@ -2256,17 +2365,6 @@ html[data-bs-theme="dark"] .note-category-equipment-problems {
         margin-right: 0 !important;
         margin-bottom: 0.5rem;
     }
-}
-
-/* QA-specific styles (extending existing patterns) */
-.qa-visit-row {
-    border-left: 3px solid transparent;
-    transition: border-color 0.2s ease;
-}
-
-.qa-visit-row:hover {
-    border-left-color: #0d6efd;
-    background-color: rgba(13, 110, 253, 0.05);
 }
 
 /* QA Visit Types - reuse existing color patterns */

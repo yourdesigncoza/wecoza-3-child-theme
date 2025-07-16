@@ -1,0 +1,52 @@
+WeCoza Agents Plugin Extraction Project
+
+Extract all agent-related functionality from WeCoza theme into standalone WordPress plugin.
+
+Tasks:
+
+1. Create Plugin Foundation
+   - Create wecoza-agents-plugin directory structure
+   - Set up main plugin file with headers
+   - Implement activation and deactivation hooks
+   - Configure PSR-4 autoloading
+
+2. Database Service Implementation
+   - Duplicate DatabaseService from theme
+   - Support PostgreSQL and MySQL
+   - Create agent-specific query classes
+
+3. Migrate Agent Shortcodes
+   - Extract wecoza_capture_agents shortcode
+   - Extract wecoza_display_agents shortcode
+   - Convert to OOP class structure
+   - Maintain backward compatibility
+
+4. Migrate Assets and Templates
+   - Move JavaScript files to plugin
+   - Extract CSS if needed
+   - Create template system
+   - Update asset enqueueing
+
+5. Implement Security and Permissions
+   - Add role-based access control
+   - Verify Editors and Admins only
+   - Add nonce verification
+   - Implement input validation
+
+6. Theme Cleanup
+   - Add deprecation notices
+   - Comment out old includes
+   - Create deprecation log
+   - Test theme without agents
+
+7. Testing and Documentation
+   - Test all functionality
+   - Create user documentation
+   - Write developer guide
+   - Prepare for deployment
+
+8. Future Enhancements Planning
+   - Document CRUD operations needed
+   - Plan AJAX implementation
+   - Design reporting features
+   - Define integration points
