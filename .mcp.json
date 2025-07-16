@@ -3,6 +3,18 @@
         "git": {
             "command": "npx",
             "args": ["-y", "mcp-git"]
+        },
+        "postgres-do": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@bytebase/dbhub",
+                "--transport",
+                "stdio",
+                "--readonly",
+                "--dsn",
+                "postgresql://username:password@host:port/database?sslmode=require"
+            ]
         }
     }
 }

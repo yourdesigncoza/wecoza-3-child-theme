@@ -1,4 +1,22 @@
 <?php
+/**
+ * Display agents shortcode functionality
+ *
+ * @deprecated 1.0.0 This file has been moved to the WeCoza Agents Plugin.
+ *                   Please remove this file after confirming the plugin is active.
+ */
+
+// Deprecation notice
+_deprecated_file( 
+    basename(__FILE__), 
+    '1.0.0', 
+    'WeCoza Agents Plugin', 
+    'This functionality has been moved to the WeCoza Agents Plugin. Please activate the plugin and remove this theme file.'
+);
+
+// Only execute if plugin is not active
+if (!defined('WECOZA_AGENTS_VERSION')) {
+
    function wecoza_display_agents_shortcode() {
        ob_start();
        ?>
@@ -638,3 +656,5 @@
 return ob_get_clean();
 }
 add_shortcode('wecoza_display_agents', 'wecoza_display_agents_shortcode');
+
+} // End plugin check

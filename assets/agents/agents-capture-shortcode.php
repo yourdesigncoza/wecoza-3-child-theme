@@ -2,7 +2,21 @@
 /**
  * Shortcode to capture and edit agent information with Bootstrap (needs-validation) style.
  * Includes server-side validation and example client-side markup for valid/invalid feedback.
+ *
+ * @deprecated 1.0.0 This file has been moved to the WeCoza Agents Plugin.
+ *                   Please remove this file after confirming the plugin is active.
  */
+
+// Deprecation notice
+_deprecated_file( 
+    basename(__FILE__), 
+    '1.0.0', 
+    'WeCoza Agents Plugin', 
+    'This functionality has been moved to the WeCoza Agents Plugin. Please activate the plugin and remove this theme file.'
+);
+
+// Only execute if plugin is not active
+if (!defined('WECOZA_AGENTS_VERSION')) {
 
 function agents_capture_shortcode($atts) {
     // global $wpdb;
@@ -528,3 +542,5 @@ function agents_capture_shortcode($atts) {
 }
 
 add_shortcode('wecoza_capture_agents', 'agents_capture_shortcode');
+
+} // End plugin check

@@ -3,7 +3,21 @@
  * AgentController.php
  * 
  * Controller for handling agent-related operations
+ *
+ * @deprecated 1.0.0 This file has been moved to the WeCoza Agents Plugin.
+ *                   Please remove this file after confirming the plugin is active.
  */
+
+// Deprecation notice
+_deprecated_file( 
+    basename(__FILE__), 
+    '1.0.0', 
+    'WeCoza Agents Plugin', 
+    'This functionality has been moved to the WeCoza Agents Plugin. Please activate the plugin and remove this theme file.'
+);
+
+// Only execute if plugin is not active
+if (!defined('WECOZA_AGENTS_VERSION')) {
 
 namespace WeCoza\Controllers;
 
@@ -46,3 +60,5 @@ class AgentController {
         return 'Agent information will be displayed here';
     }
 }
+
+} // End plugin check
