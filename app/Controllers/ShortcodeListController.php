@@ -133,40 +133,6 @@ class ShortcodeListController {
                 'shortcode_attrs' => false
             ],
             
-            // Agent Management Shortcodes
-            [
-                'name' => 'wecoza_agent_capture',
-                'category' => 'Agent Management',
-                'description' => 'Form for capturing and managing agent information',
-                'usage' => '[wecoza_agent_capture]',
-                'parameters' => 'Accepts URL parameters for mode and agent_id',
-                'controller' => 'AgentController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            [
-                'name' => 'wecoza_agent_display',
-                'category' => 'Agent Management',
-                'description' => 'Displays agent information and details',
-                'usage' => '[wecoza_agent_display]',
-                'parameters' => 'Accepts URL parameters for filtering and display options',
-                'controller' => 'AgentController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            [
-                'name' => 'wecoza_display_agents',
-                'category' => 'Agent Management',
-                'description' => 'Displays all agents in a responsive table with modal details',
-                'usage' => '[wecoza_display_agents]',
-                'parameters' => 'No parameters required',
-                'controller' => 'Legacy implementation',
-                'view' => 'assets/agents/agents-display-shortcode.php',
-                'url_params' => false,
-                'shortcode_attrs' => false
-            ],
             
             // Learner Management Shortcodes
             [

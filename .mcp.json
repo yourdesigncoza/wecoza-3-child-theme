@@ -1,9 +1,5 @@
 {
     "mcpServers": {
-        "git": {
-            "command": "npx",
-            "args": ["-y", "mcp-git"]
-        },
         "postgres-do": {
             "command": "npx",
             "args": [
@@ -15,6 +11,10 @@
                 "--dsn",
                 "postgresql://username:password@host:port/database?sslmode=require"
             ]
+        },
+        "context7": {
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp@latest"]
         }
     }
 }

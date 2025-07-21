@@ -41,19 +41,6 @@ class learner_DB {
         }
     }
 
-    /*------------------YDCOZA-----------------------*/
-    /* Example method to fetch all agents            */
-    /* Demonstrates a simple query execution         */
-    /*-----------------------------------------------*/
-    public function get_agents() {
-        try {
-            $lrner = $this->db->get_pdo()->query("SELECT * FROM agents");
-            return $lrner->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            error_log("Failed to fetch agents: " . $e->getMessage());
-            return [];
-        }
-    }
 
 
     /**

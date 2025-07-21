@@ -229,32 +229,6 @@ class MainController {
         ];
     }
 
-    /**
-     * Get all agents
-     *
-     * @return array List of agents
-     */
-    public static function getAgents() {
-        // This would typically come from a database query
-        // For now, returning static data
-        return [
-            ['id' => 1, 'name' => 'Michael M. van der Berg'],
-            ['id' => 2, 'name' => 'Thandi T. Nkosi'],
-            ['id' => 3, 'name' => 'Rajesh R. Patel'],
-            ['id' => 4, 'name' => 'Lerato L. Moloi'],
-            ['id' => 5, 'name' => 'Johannes J. Pretorius'],
-            ['id' => 6, 'name' => 'Nomvula N. Dlamini'],
-            ['id' => 7, 'name' => 'David D. O\'Connor'],
-            ['id' => 8, 'name' => 'Zanele Z. Mthembu'],
-            ['id' => 9, 'name' => 'Pieter P. van Zyl'],
-            ['id' => 10, 'name' => 'Fatima F. Ismail'],
-            ['id' => 11, 'name' => 'Sipho S. Ndlovu'],
-            ['id' => 12, 'name' => 'Anita A. van Rensburg'],
-            ['id' => 13, 'name' => 'Themba T. Mkhize'],
-            ['id' => 14, 'name' => 'Sarah S. Botha'],
-            ['id' => 15, 'name' => 'Lwazi L. Zuma']
-        ];
-    }
 
     /**
      * Get all supervisors

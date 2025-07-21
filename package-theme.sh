@@ -53,7 +53,6 @@ fi
 mkdir -p "$PACKAGE_DIR/app/Controllers"
 mkdir -p "$PACKAGE_DIR/app/Models/Assessment"
 mkdir -p "$PACKAGE_DIR/app/Models/Learner"
-mkdir -p "$PACKAGE_DIR/app/Models/Agent"
 mkdir -p "$PACKAGE_DIR/app/Models/Client"
 mkdir -p "$PACKAGE_DIR/app/Models/Portfolio"
 mkdir -p "$PACKAGE_DIR/app/Helpers"
@@ -63,12 +62,10 @@ mkdir -p "$PACKAGE_DIR/app/Services/Authentication"
 mkdir -p "$PACKAGE_DIR/app/Services/FileUpload"
 
 mkdir -p "$PACKAGE_DIR/app/Views/learner"
-mkdir -p "$PACKAGE_DIR/app/Views/agent"
 mkdir -p "$PACKAGE_DIR/app/Views/client"
 mkdir -p "$PACKAGE_DIR/app/Views/admin"
 mkdir -p "$PACKAGE_DIR/app/Views/layouts"
 
-mkdir -p "$PACKAGE_DIR/assets/agents/js"
 
 mkdir -p "$PACKAGE_DIR/assets/clients"
 mkdir -p "$PACKAGE_DIR/assets/learners/components"
@@ -101,9 +98,6 @@ cp app/Models/Assessment/*.php "$PACKAGE_DIR/app/Models/Assessment/" 2>/dev/null
 cp app/Models/Learner/*.php "$PACKAGE_DIR/app/Models/Learner/" 2>/dev/null || true
 
 # Copy additional Models if they exist
-if [ -d "app/Models/Agent" ] && [ "$(ls -A app/Models/Agent 2>/dev/null)" ]; then
-    cp app/Models/Agent/*.php "$PACKAGE_DIR/app/Models/Agent/" 2>/dev/null || true
-fi
 
 if [ -d "app/Models/Client" ] && [ "$(ls -A app/Models/Client 2>/dev/null)" ]; then
     cp app/Models/Client/*.php "$PACKAGE_DIR/app/Models/Client/" 2>/dev/null || true
@@ -133,9 +127,6 @@ cp app/Views/components/*.php "$PACKAGE_DIR/app/Views/components/" 2>/dev/null |
 cp app/Views/learner/*.php "$PACKAGE_DIR/app/Views/learner/" 2>/dev/null || true
 
 # Copy additional Views if they exist
-if [ -d "app/Views/agent" ] && [ "$(ls -A app/Views/agent 2>/dev/null)" ]; then
-    cp app/Views/agent/*.php "$PACKAGE_DIR/app/Views/agent/" 2>/dev/null || true
-fi
 
 if [ -d "app/Views/client" ] && [ "$(ls -A app/Views/client 2>/dev/null)" ]; then
     cp app/Views/client/*.php "$PACKAGE_DIR/app/Views/client/" 2>/dev/null || true
@@ -151,8 +142,6 @@ fi
 
 # Copy assets
 echo "Copying assets..."
-cp assets/agents/*.php "$PACKAGE_DIR/assets/agents/" 2>/dev/null || true
-cp assets/agents/js/*.js "$PACKAGE_DIR/assets/agents/js/" 2>/dev/null || true
 cp assets/classes/*.php "$PACKAGE_DIR/assets/classes/" 2>/dev/null || true
 cp assets/clients/*.php "$PACKAGE_DIR/assets/clients/" 2>/dev/null || true
 cp assets/learners/*.php "$PACKAGE_DIR/assets/learners/" 2>/dev/null || true

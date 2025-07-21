@@ -58,7 +58,6 @@ return [
     'controllers' => [
         'WeCoza\\Controllers\\MainController',
         'WeCoza\\Controllers\\LearnerController',
-        'WeCoza\\Controllers\\AgentController',
         'WeCoza\\Controllers\\ClientController',
         'WeCoza\\Controllers\\AssessmentController',
 

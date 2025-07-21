@@ -138,15 +138,6 @@ load_required_files(); // Load required files
 
 // Legacy files - these will be migrated to the MVC structure
 require_once WECOZA_CHILD_DIR . '/assets/learners/learners-function.php';
-
-// DEPRECATED: Agent functionality has been moved to WeCoza Agents Plugin
-// TODO: Remove this line after March 1, 2025 (60 days from January 1, 2025)
-// require_once WECOZA_CHILD_DIR . '/assets/agents/agents-functions.php';
-if (!defined('WECOZA_AGENTS_VERSION')) {
-    // Load theme agent functions only if plugin is not active
-    require_once WECOZA_CHILD_DIR . '/assets/agents/agents-functions.php';
-}
-
 require_once WECOZA_CHILD_DIR . '/assets/clients/clients-functions.php';
 
 // Template loader functionality
