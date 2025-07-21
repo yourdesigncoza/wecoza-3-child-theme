@@ -10,11 +10,11 @@ Now I have all the information I need to create an updated README.md file. Here'
 
 # WeCoza 3 Child Theme
 
-A WordPress child theme for WeCoza based on GeneratePress, providing custom functionality for learner management, agent management, and client management through a modern MVC architecture.
+A WordPress child theme for WeCoza based on GeneratePress, providing custom functionality for learner management and client management through a modern MVC architecture.
 
 ## Overview
 
-This child theme extends the GeneratePress parent theme with custom functionality specifically designed for WeCoza's business needs. It includes custom shortcodes, database integrations, and specialized features for managing learners, agents, and clients. The codebase follows a strict MVC (Model-View-Controller) architecture for better organization, maintainability, and testability.
+This child theme extends the GeneratePress parent theme with custom functionality specifically designed for WeCoza's business needs. It includes custom shortcodes, database integrations, and specialized features for managing learners and clients. The codebase follows a strict MVC (Model-View-Controller) architecture for better organization, maintainability, and testability.
 
 ## Features
 
@@ -26,8 +26,6 @@ This child theme extends the GeneratePress parent theme with custom functionalit
   - POE (Portfolio of Evidence) system
   - Status tracking (CIC, RBE, DRO)
 
-- **Agent Management**
-  - Registration and verification
   - Performance tracking
   - Relationship management
   - Reporting tools
@@ -63,7 +61,6 @@ Models represent data structures and business logic. They handle data relationsh
 ```
 /app/Models/
   /Learner/
-  /Agent/
   /Client/
   /Assessment/
   /Portfolio/
@@ -75,7 +72,6 @@ Views handle presentation logic. They should not contain business logic and use 
 ```
 /app/Views/
   /learner/
-  /agent/
   /client/
   /admin/
   /components/
@@ -88,7 +84,6 @@ Controllers handle the request/response cycle. They implement WordPress hooks as
 ```
 /app/Controllers/
   LearnerController.php
-  AgentController.php
   ClientController.php
   AssessmentController.php
   ClassController.php

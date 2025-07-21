@@ -142,7 +142,6 @@ class MainController {
      */
     public static function getClassNotesOptions() {
         return [
-            ['id' => 'Agent Absent', 'name' => 'Agent Absent'],
             ['id' => 'Client Cancelled', 'name' => 'Client Cancelled'],
             ['id' => 'Poor attendance', 'name' => 'Poor attendance'],
             ['id' => 'Learners behind schedule', 'name' => 'Learners behind schedule'],

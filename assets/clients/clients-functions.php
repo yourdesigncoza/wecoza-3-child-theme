@@ -1,8 +1,8 @@
 <?php
 /**
- * agents Management System
+ * Clients Management System
  * 
- * This file contains core functionality for managing agents including file loading,
+ * This file contains core functionality for managing clients including file loading,
  * asset enqueueing, and AJAX handlers.
  * 
 

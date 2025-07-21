@@ -87,12 +87,6 @@ class NavigationController {
             ]);
 
             \wp_update_nav_menu_item($menu_id, 0, [
-                'menu-item-title' => 'Agents',
-                'menu-item-url' => \home_url('/agents/'),
-                'menu-item-status' => 'publish'
-            ]);
-
-            \wp_update_nav_menu_item($menu_id, 0, [
                 'menu-item-title' => 'Clients',
                 'menu-item-url' => \home_url('/clients/'),
                 'menu-item-status' => 'publish'
