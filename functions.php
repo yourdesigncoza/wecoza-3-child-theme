@@ -14,6 +14,37 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Fix locale and update core warnings
+add_filter('locale', function($locale) {
+    return is_string($locale) && !empty($locale) ? $locale : 'en_US';
+});
+
+// Fix WordPress update system errors and clear corrupt transients
+add_action('admin_init', function() {
+    // Clear corrupt update transients on admin pages
+    if (is_admin() && !wp_doing_ajax()) {
+        $transients = ['update_core', 'update_plugins', 'update_themes'];
+        foreach ($transients as $transient) {
+            $value = get_site_transient($transient);
+            if ($value === false || !is_object($value)) {
+                delete_site_transient($transient);
+            }
+        }
+    }
+});
+
+// Provide fallback objects for update system
+add_filter('pre_site_transient_update_core', function($value) {
+    if ($value === false || !is_object($value)) {
+        return (object) [
+            'updates' => [],
+            'version_checked' => get_bloginfo('version'),
+            'last_checked' => time()
+        ];
+    }
+    return $value;
+});
+
 // Define plugin constants
 $rand = rand();
 define('WECOZA_PLUGIN_VERSION', $rand);
