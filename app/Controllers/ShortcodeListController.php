@@ -109,51 +109,7 @@ class ShortcodeListController {
                 'shortcode_attrs' => true
             ],
             
-            // Learner Management Shortcodes
-            [
-                'name' => 'wecoza_learner_capture',
-                'category' => 'Learner Management',
-                'description' => 'Form for capturing and managing learner information',
-                'usage' => '[wecoza_learner_capture]',
-                'parameters' => 'Accepts URL parameters for mode and learner_id',
-                'controller' => 'LearnerController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            [
-                'name' => 'wecoza_learner_display',
-                'category' => 'Learner Management',
-                'description' => 'Displays learner information and details',
-                'usage' => '[wecoza_learner_display]',
-                'parameters' => 'Accepts URL parameters for filtering and display options',
-                'controller' => 'LearnerController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            [
-                'name' => 'wecoza_learner_update',
-                'category' => 'Learner Management',
-                'description' => 'Form for updating existing learner information',
-                'usage' => '[wecoza_learner_update]',
-                'parameters' => 'Accepts URL parameters for learner_id',
-                'controller' => 'LearnerController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            [
-                'name' => 'wecoza_display_learners',
-                'category' => 'Learner Management',
-                'description' => 'Displays all learners in a responsive table with modal details',
-                'usage' => '[wecoza_display_learners]',
-                'parameters' => 'No parameters required',
-                'controller' => 'Legacy implementation',
-                'view' => 'assets/learners/learners-diplay-shortcode.php',
-                'url_params' => false,
-                'shortcode_attrs' => false
-            ],
+            // Learner Management Shortcodes moved to standalone plugin
             
             // Reporting & Analytics Shortcodes
             [

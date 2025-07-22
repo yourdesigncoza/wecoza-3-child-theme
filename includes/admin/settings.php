@@ -79,42 +79,12 @@ function wecoza3_redirects_page() {
         return;
     }
 
-    // Save the form data if the form is submitted
-    if (isset($_POST['wecoza_redirects_submit'])) {
-        update_option('wecoza_learners_capture_form_url', sanitize_text_field($_POST['learners_capture_form_url']));
-        update_option('wecoza_learners_update_form_url', sanitize_text_field($_POST['learners_update_form_url']));
-        echo '<div class="updated"><p>Settings saved.</p></div>';
-    }
-
-    // Retrieve stored URLs
-    $learners_capture_form_url = get_option('wecoza_learners_capture_form_url', '');
-    $learners_update_form_url = get_option('wecoza_learners_update_form_url', '');
-
-    // Display the form
+    // Learner redirect forms moved to standalone plugin
     ?>
     <div class="wrap">
         <h1><?php _e('Redirects', 'wecoza'); ?></h1>
-        <form method="post" action="">
-            <table class="form-table">
-                <tr>
-                    <th scope="row">
-                        <label for="learners_capture_form_url"><?php _e('Learners Capture Form URL', 'wecoza'); ?></label>
-                    </th>
-                    <td>
-                        <input type="url" id="learners_capture_form_url" name="learners_capture_form_url" value="<?php echo esc_attr($learners_capture_form_url); ?>" class="regular-text" required>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">
-                        <label for="learners_update_form_url"><?php _e('Learners Update Form URL', 'wecoza'); ?></label>
-                    </th>
-                    <td>
-                        <input type="url" id="learners_update_form_url" name="learners_update_form_url" value="<?php echo esc_attr($learners_update_form_url); ?>" class="regular-text" required>
-                    </td>
-                </tr>
-            </table>
-            <?php submit_button('Save Changes', 'primary', 'wecoza_redirects_submit'); ?>
-        </form>
+        <p><?php _e('Learner form redirects have been moved to the WeCoza Learners Plugin.', 'wecoza'); ?></p>
+        <p><?php _e('Please configure redirect URLs in the WeCoza Learners Plugin settings.', 'wecoza'); ?></p>
     </div>
     <?php
 }

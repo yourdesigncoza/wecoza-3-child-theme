@@ -57,7 +57,7 @@ return [
      */
     'controllers' => [
         'WeCoza\\Controllers\\MainController',
-        'WeCoza\\Controllers\\LearnerController',
+        // LearnerController moved to standalone plugin
         'WeCoza\\Controllers\\AssessmentController',
         'WeCoza\\Controllers\\NavigationController',
         'WeCoza\\Controllers\\ShortcodeListController',
