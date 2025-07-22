@@ -9,12 +9,18 @@
                 "stdio",
                 "--readonly",
                 "--dsn",
-                "postgresql://username:password@host:port/database?sslmode=require"
+                "${DATABASE_URL}"
             ]
         },
-        "context7": {
-        "command": "npx",
-        "args": ["-y", "@upstash/context7-mcp@latest"]
+        "gemini-cli": {
+            "command": "npx",
+            "args": [
+                "mcp-gemini-cli"
+            ],
+            "env": {
+                "GEMINI_API_KEY": "${GEMINI_API_KEY}"
+            },
+            "type": "stdio"
         }
     }
 }

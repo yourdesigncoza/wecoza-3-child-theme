@@ -414,4 +414,4 @@
 <?php
 return ob_get_clean();
 }
-add_shortcode('wecoza_capture_clients', 'clients_capture_shortcode');
+add_shortcode('wecoza_capture_clients_xxx', 'clients_capture_shortcode');
