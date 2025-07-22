@@ -16,6 +16,52 @@
 }
 
 /* -------------------------------------------------------------------------- */
+/* Timeline Scrollbar Styles                                                  */
+/* -------------------------------------------------------------------------- */
+.timeline-scroll-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #e5e7eb #f3f4f6;
+}
+
+.timeline-scroll-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.timeline-scroll-wrapper::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.timeline-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.timeline-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Smooth scroll behavior */
+.timeline-scroll-wrapper {
+    scroll-behavior: smooth;
+}
+
+/* Add subtle shadow at top/bottom when scrolling */
+.timeline-scroll-wrapper {
+    position: relative;
+    background:
+        linear-gradient(white 30%, rgba(255,255,255,0)),
+        linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+        radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.1), rgba(0,0,0,0)),
+        radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.1), rgba(0,0,0,0)) 0 100%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+    background-attachment: local, local, scroll, scroll;
+}
+
+/* -------------------------------------------------------------------------- */
 /* form                                      */
 /* -------------------------------------------------------------------------- */
 .form-label {
@@ -1231,6 +1277,7 @@ html[data-bs-theme="dark"] .navbar-top {
     #classScheduleList .card-header {
         background: #f8f9fa !important;
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     #classScheduleList .table {
@@ -3030,4 +3077,13 @@ option:disabled {
 }
 #agents-display-data .sort a{
   color: rgba(var(--phoenix-body-color-rgb), var(--phoenix-text-opacity)) !important;
+}
+
+.ydcoza-timeline-vertical .timeline-item::before {
+    display: none;
+}
+.ydcoza-timeline-vertical .timeline-item {
+    position: relative;
+    margin-bottom: 0;
+    padding-left: 0;
 }
