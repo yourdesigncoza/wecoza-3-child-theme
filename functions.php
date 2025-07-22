@@ -169,7 +169,6 @@ load_required_files(); // Load required files
 
 // Legacy files - these will be migrated to the MVC structure
 require_once WECOZA_CHILD_DIR . '/assets/learners/learners-function.php';
-require_once WECOZA_CHILD_DIR . '/assets/clients/clients-functions.php';
 
 // Template loader functionality
 if (!class_exists('Plugin_Templates_Loader')) {

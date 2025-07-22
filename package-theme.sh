@@ -67,7 +67,6 @@ mkdir -p "$PACKAGE_DIR/app/Views/admin"
 mkdir -p "$PACKAGE_DIR/app/Views/layouts"
 
 
-mkdir -p "$PACKAGE_DIR/assets/clients"
 mkdir -p "$PACKAGE_DIR/assets/learners/components"
 mkdir -p "$PACKAGE_DIR/assets/learners/js"
 mkdir -p "$PACKAGE_DIR/assets/js"
@@ -143,7 +142,6 @@ fi
 # Copy assets
 echo "Copying assets..."
 cp assets/classes/*.php "$PACKAGE_DIR/assets/classes/" 2>/dev/null || true
-cp assets/clients/*.php "$PACKAGE_DIR/assets/clients/" 2>/dev/null || true
 cp assets/learners/*.php "$PACKAGE_DIR/assets/learners/" 2>/dev/null || true
 cp assets/learners/components/*.php "$PACKAGE_DIR/assets/learners/components/" 2>/dev/null || true
 cp assets/learners/js/*.js "$PACKAGE_DIR/assets/learners/js/" 2>/dev/null || true

@@ -109,31 +109,6 @@ class ShortcodeListController {
                 'shortcode_attrs' => true
             ],
             
-            // Client Management Shortcodes
-            [
-                'name' => 'wecoza_client_capture',
-                'category' => 'Client Management',
-                'description' => 'Form for capturing and managing client information',
-                'usage' => '[wecoza_client_capture]',
-                'parameters' => 'Accepts URL parameters for mode and client_id',
-                'controller' => 'ClientController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            [
-                'name' => 'wecoza_client_display',
-                'category' => 'Client Management',
-                'description' => 'Displays client information and details',
-                'usage' => '[wecoza_client_display]',
-                'parameters' => 'Accepts URL parameters for filtering and display options',
-                'controller' => 'ClientController',
-                'view' => 'TBD - Implementation pending',
-                'url_params' => true,
-                'shortcode_attrs' => false
-            ],
-            
-            
             // Learner Management Shortcodes
             [
                 'name' => 'wecoza_learner_capture',

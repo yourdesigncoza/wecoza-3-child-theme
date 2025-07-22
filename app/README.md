@@ -8,18 +8,15 @@ This directory contains the MVC (Model-View-Controller) architecture for the WeC
 /app
   /Models
     /Learner
-    /Client
     /Assessment
     /Portfolio
   /Views
     /learner
-    /client
     /admin
     /components
     /layouts
   /Controllers
     /LearnerController.php
-    /ClientController.php
     /AssessmentController.php
   /Services
     /Database

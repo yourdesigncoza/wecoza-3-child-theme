@@ -14,7 +14,7 @@ A WordPress child theme for WeCoza based on GeneratePress, providing custom func
 
 ## Overview
 
-This child theme extends the GeneratePress parent theme with custom functionality specifically designed for WeCoza's business needs. It includes custom shortcodes, database integrations, and specialized features for managing learners and clients. The codebase follows a strict MVC (Model-View-Controller) architecture for better organization, maintainability, and testability.
+This child theme extends the GeneratePress parent theme with custom functionality specifically designed for WeCoza's business needs. It includes custom shortcodes, database integrations, and specialized features for managing learners. The codebase follows a strict MVC (Model-View-Controller) architecture for better organization, maintainability, and testability.
 
 ## Features
 
