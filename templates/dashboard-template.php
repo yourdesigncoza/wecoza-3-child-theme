@@ -60,8 +60,8 @@
          </div>
          <div class="card-body px-5 position-relative">
             <div class="badge badge-phoenix fs-10 badge-phoenix-warning mb-4"><span class="fw-bold">Coming soon</span><span class="fa-solid fa-award ms-1"></span></div>
-            <h3 class="mb-5">Early bird gets the warm leads!</h3>
-            <p class="text-body-tertiary fw-semibold">Lorem ipsum dolor sit amet<br class="d-sm-block">Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br class="d-none d-sm-block">sed do eiusmod tempor incididunt.</p>
+            <h3 class="mb-5">Project Pulse: Real-Time Progress at a Glance</h3>
+            <p class="text-body-tertiary fw-semibold d-sm-block" style="max-width: 80%;">We've turned every behind-the-scenes commit, fix and feature into a clear story your whole team can follow. The new DevAI Activity Timeline automatically converts daily reports into friendly, time-stamped updates complete with intuitive icons, plain-language summaries and milestone highlights. No more digging through tickets or spreadsheets; you get a live, shareable snapshot of what's been shipped, what's coming next and how each improvement benefits your users. Transparency for you.</p>
          </div>
          <div class="card-footer border-0 py-0 px-5 z-1">
             <p class="text-body-tertiary fw-semibold">Follow <a href="https://devai.co.za">DevAi </a> For updates.</p>
@@ -790,9 +790,9 @@
          <div class="card h-100 ydcoza-timeline-vertical">
             <div class="card-body">
                <div class="card-title mb-1">
-                  <h3 class="text-body-emphasis">Activity</h3>
+                  <h3 class="text-body-emphasis">Development</h3>
                </div>
-               <p class="text-body-tertiary mb-4">Recent activity across all projects</p>
+               <p class="text-body-tertiary mb-4">Recent development activity across all plugins.</p>
                <div class="timeline-scroll-wrapper" style="max-height: 600px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
                <div class="timeline-vertical timeline-with-details">
 
