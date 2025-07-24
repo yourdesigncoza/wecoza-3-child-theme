@@ -152,7 +152,6 @@ function load_required_files() {
         '/includes/admin/sql-manager.php',
         '/includes/shortcodes/datatable.php',
         '/includes/shortcodes/echarts-shortcode.php',
-        '/includes/shortcodes/outstanding-deliveries-shortcode.php',
 
     );
 

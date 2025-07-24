@@ -60,6 +60,5 @@ return [
         // LearnerController moved to standalone plugin
         'WeCoza\\Controllers\\AssessmentController',
         'WeCoza\\Controllers\\NavigationController',
-        'WeCoza\\Controllers\\ShortcodeListController',
     ],
 ];

@@ -22,14 +22,3 @@ function register_ajax_handlers() {
 // Register AJAX handlers
 register_ajax_handlers();
 
-/**
- * Register shortcodes
- */
-function register_shortcodes() {
-    // Shortcode list shortcode
-    $shortcodeListController = new WeCoza\Controllers\ShortcodeListController();
-    \add_shortcode('wecoza_shortcode_list', [$shortcodeListController, 'displayShortcodeList']);
-}
-
-// Register shortcodes
-\add_action('init', 'register_shortcodes');

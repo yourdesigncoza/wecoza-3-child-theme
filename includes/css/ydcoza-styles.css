@@ -1019,35 +1019,6 @@ html[data-bs-theme="dark"] .navbar-top {
 .fc .text-danger.wecoza-restart.fc-daygrid-event .fc-event-main::after {
     border: 4px solid var(--phoenix-success);
 }
-/* -------------------------------------------------------------------------- */
-/* Shortcode List                                */
-/* -------------------------------------------------------------------------- */
-.wecoza-shortcode-list .category-section:not(:last-child) {
-    border-bottom: 1px solid var(--phoenix-border-color);
-}
-
-.wecoza-shortcode-list code {
-    font-size: 0.8rem;
-    word-break: break-all;
-}
-
-.wecoza-shortcode-list .badge {
-    font-size: 0.65rem;
-    font-weight: 500;
-}
-
-.wecoza-shortcode-list .table td {
-    vertical-align: middle;
-    padding: 0.75rem 0.5rem;
-}
-
-.wecoza-shortcode-list .table th {
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 0.75rem 0.5rem;
-}
 
 /* -------------------------------------------------------------------------- */
 /* WeCoza Classes Plugin v4.0 - Calendar/List View Toggle Feature             */
@@ -3058,7 +3029,9 @@ option:disabled {
 }
 
 /* Initials field styling */
-#initials {
+#initials,
+#class_duration,
+#schedule_end_date {
     background-color: #e9ecef;
     text-align: center;
     letter-spacing: 1px;
@@ -3086,4 +3059,24 @@ option:disabled {
     position: relative;
     margin-bottom: 0;
     padding-left: 0;
+}
+
+.ydcoza-mini-card-header {
+    padding: 0.6rem 1rem 0.3rem;
+}
+.ydcoza-mini-card-header p {
+    line-height: 1;
+    font-size: 0.8rem;
+}
+.ydcoza-mini-card-header h5 {
+    line-height: 1;
+    font-size: 0.8rem;
+}
+.ydcoza-mini-card-header .rounded {
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+}
+.ydcoza-mini-card-header .ps-sm-5 {
+    padding-left: 1rem !important;
 }

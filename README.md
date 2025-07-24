@@ -152,11 +152,6 @@ The theme provides a comprehensive set of shortcodes for various functionality:
   - `exclude_columns_from_editing` (optional) - Non-editable columns
 - **Example**: `[wecoza_dynamic_table sql_id="4" columns="class_id,c.subject,c.start_date"]`
 
-**`[wecoza_outstanding_deliveries]`**
-- **Purpose**: Displays outstanding book deliveries with status indicators
-- **Parameters**: None
-- **Example**: `[wecoza_outstanding_deliveries]`
-
 ### Learner Management
 
 **`[wecoza_display_learners]`**
@@ -183,12 +178,6 @@ The theme provides a comprehensive set of shortcodes for various functionality:
   - `menu_class` (optional, default: "nav flex-column")
 - **Example**: `[wecoza_sidebar_menu container_class="my-nav"]`
 
-**`[wecoza_shortcode_list]`**
-- **Purpose**: Displays comprehensive list of all available shortcodes
-- **Parameters**: 
-  - `show_loading` (optional, default: "true")
-  - `category` (optional, default: "all")
-- **Example**: `[wecoza_shortcode_list show_loading="false"]`
 
 ### MVC-Based Shortcodes (Development)
 
