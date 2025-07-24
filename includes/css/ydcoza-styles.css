@@ -2145,62 +2145,6 @@ html[data-bs-theme="dark"] .file-item:hover {
     border-color: #fc8181;
 }
 
-.note-category-learners-unhappy {
-    background-color: #ffedd5;
-    color: #c2410c;
-    border-color: #fdba74;
-}
-
-/* Operational Category Badges (Blue variants) */
-.note-category-agent-absent {
-    background-color: #dbeafe;
-    color: #1e40af;
-    border-color: #93c5fd;
-}
-
-.note-category-client-cancelled {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border-color: #7dd3fc;
-}
-
-.note-category-weather-delay {
-    background-color: #e0f7fa;
-    color: #0891b2;
-    border-color: #67e8f9;
-}
-
-/* Resource Problem Category Badges (Purple/Brown variants) */
-.note-category-venue-issues {
-    background-color: #f3e8ff;
-    color: #7c3aed;
-    border-color: #c4b5fd;
-}
-
-.note-category-equipment-problems {
-    background-color: #fef3c7;
-    color: #d97706;
-    border-color: #fbbf24;
-}
-
-.note-category-material-shortage {
-    background-color: #f0f4f8;
-    color: #4a5568;
-    border-color: #cbd5e0;
-}
-
-/* Progress Category Badges (Yellow/Amber variants) */
-.note-category-learners-behind-schedule {
-    background-color: #fef3c7;
-    color: #92400e;
-    border-color: #fcd34d;
-}
-
-.note-category-learners-too-fast {
-    background-color: #fffbeb;
-    color: #b45309;
-    border-color: #fed7aa;
-}
 
 /* Dark mode support for enhanced badges */
 html[data-bs-theme="dark"] .note-category-badge {

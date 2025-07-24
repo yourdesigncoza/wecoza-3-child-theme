@@ -278,27 +278,6 @@
     }
 
 
-    // /*------------------YDCOZA-----------------------*/
-    // /* Client-side form validation using Bootstrap 5  */
-    // /* with visual feedback for learners-form only.   */
-    // /* Prevents form submission if validation fails   */
-    // /* and shows custom Bootstrap feedback styles.    */
-    // /*-----------------------------------------------*/
-
-    // const form = $('#learners-form'); // Target the specific learners form
-
-    // if (form.length) {
-    //     form.on('submit', function(event) {
-    //         // Check if form is valid
-    //         if (!this.checkValidity()) {
-    //             event.preventDefault();
-    //             event.stopPropagation();
-    //         }
-
-    //         // Add Bootstrap's 'was-validated' class to trigger validation styles
-    //         $(this).addClass('was-validated');
-    //     });
-    // }
 
     // /*------------------YDCOZA-----------------------*/
     // /* Generalized toggle function for dynamic fields */

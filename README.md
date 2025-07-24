@@ -1,17 +1,14 @@
 # WeCoza 3 Child Theme
 
-A WordPress child theme for WeCoza based on Bootscore, providing custom functionality for learner management through a modern MVC architecture with dashboard analytics and timeline features.
+A WordPress child theme for WeCoza based on Bootscore, providing custom functionality through a modern MVC architecture with dashboard analytics and timeline features.
 
 ## Overview
 
-This child theme extends the Bootscore parent theme with custom functionality specifically designed for WeCoza's educational platform. It includes learner management systems, custom dashboards with timeline views, and specialized features for tracking educational progress. The codebase follows an MVC (Model-View-Controller) architecture for better organization and maintainability.
+This child theme extends the Bootscore parent theme with custom functionality specifically designed for WeCoza's educational platform. It includes custom dashboards with timeline views and specialized features for tracking educational progress. The codebase follows an MVC (Model-View-Controller) architecture for better organization and maintainability.
 
 ## Features
 
 ### Core Management Systems
-- **Learner Management**
-  - Portfolio upload and tracking
-  - Assessment management
   - Progress monitoring
   - POE (Portfolio of Evidence) system
   - Class information and scheduling
@@ -37,18 +34,15 @@ The codebase follows an MVC architecture:
 
 ### Controllers (`/app/Controllers/`)
 - `AssessmentController.php` - Assessment management
-- `LearnerController.php` - Learner data operations  
 - `MainController.php` - Core application logic
 - `NavigationController.php` - Menu and navigation
 - `ShortcodeListController.php` - Shortcode management
 
 ### Models (`/app/Models/`)
-- `Learner/LearnerModel.php` - Learner data model
 - `Assessment/` - Assessment-related models
 - `PublicHoliday/` - Holiday management models
 
 ### Views (`/app/Views/`)
-- `learner/learner-form.view.php` - Learner form templates
 - `components/` - Reusable UI components
 - `class-capture-partials/` - Class-specific view partials
 
@@ -84,7 +78,6 @@ The codebase follows an MVC architecture:
 /assets/                        # Front-end assets
   /css/, /js/, /img/           # Compiled assets
   /scss/                       # Source SCSS files
-  /learners/                   # Learner-specific components
 /includes/                      # WordPress integration
   /css/                        # Additional stylesheets
   /js/                         # JavaScript libraries
@@ -105,14 +98,14 @@ The codebase follows an MVC architecture:
 ### Codebase Cleanup
 - Removed outdated client and agent management systems
 - Cleaned up IDE-specific configuration files
-- Streamlined project structure for focus on learner management
+- Streamlined project structure
 - Removed legacy documentation and tracking files
 
 ### Technical Improvements
 - Enhanced MVC architecture implementation  
 - Improved database service layer
 - Updated CSS styling for modern interface
-- Consolidated functionality around core learner management features
+- Consolidated functionality around core features
 
 ## Development
 
@@ -152,23 +145,6 @@ The theme provides a comprehensive set of shortcodes for various functionality:
   - `exclude_columns_from_editing` (optional) - Non-editable columns
 - **Example**: `[wecoza_dynamic_table sql_id="4" columns="class_id,c.subject,c.start_date"]`
 
-### Learner Management
-
-**`[wecoza_display_learners]`**
-- **Purpose**: Displays all learners in responsive Bootstrap table with modal details
-- **Parameters**: None
-- **Example**: `[wecoza_display_learners]`
-
-**`[wecoza_learners_form]`**
-- **Purpose**: Comprehensive learner registration form with file upload
-- **Parameters**: Various form configuration options
-- **Example**: `[wecoza_learners_form]`
-
-**`[wecoza_learners_update_form]`**
-- **Purpose**: Form for updating existing learner information
-- **Parameters**: Uses URL parameter `learner_id`
-- **Example**: `[wecoza_learners_update_form]`
-
 ### Navigation & UI
 
 **`[wecoza_sidebar_menu]`**
@@ -183,9 +159,6 @@ The theme provides a comprehensive set of shortcodes for various functionality:
 
 The following shortcodes are implemented as stubs in the MVC controllers:
 
-- `[wecoza_learner_capture]` - Learner capture form (placeholder)
-- `[wecoza_learner_display]` - Learner display functionality (placeholder)  
-- `[wecoza_learner_update]` - Learner update form (placeholder)
 - `[wecoza_assessment_capture]` - Assessment capture form (placeholder)
 - `[wecoza_assessment_display]` - Assessment display functionality (placeholder)
 

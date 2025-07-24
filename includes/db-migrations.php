@@ -17,7 +17,7 @@ function wecoza_run_migrations() {
 
 function wecoza_migration_1_0() {
     global $wpdb;
-    // Example migration
-    $sql = "ALTER TABLE {$wpdb->prefix}learners ADD COLUMN version_created VARCHAR(10)";
-    $wpdb->query($sql);
+    // Example migration - Learner table migration removed (moved to plugin)
+    // $sql = "ALTER TABLE {$wpdb->prefix}learners ADD COLUMN version_created VARCHAR(10)";
+    // $wpdb->query($sql);
 }
