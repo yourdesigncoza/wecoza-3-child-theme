@@ -48,6 +48,183 @@
 }
 
 /* Add subtle shadow at top/bottom when scrolling */
+
+/* -------------------------------------------------------------------------- */
+/* OpenAI Chat Interface Styles                                               */
+/* -------------------------------------------------------------------------- */
+
+/* Main chat container improvements */
+.openai-chat-container .card-body {
+    min-height: 400px;
+    max-height: 600px;
+}
+
+/* Loading spinner enhancements */
+#openai-loading {
+    animation: fadeIn 0.3s ease-in;
+}
+
+#openai-loading .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 0.25em;
+}
+
+/* Chat messages styling */
+.chat-message-sent .bg-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    position: relative;
+}
+
+.chat-message-sent .bg-primary::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -8px;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-left-color: #7c3aed;
+    border-bottom: 0;
+    margin-top: -4px;
+}
+
+.chat-message-received .bg-light {
+    background: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.chat-message-received .bg-light::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-right-color: #f8f9fa;
+    border-bottom: 0;
+    margin-top: -4px;
+}
+
+/* Message content styling */
+.openai-content {
+    line-height: 1.6;
+}
+
+.openai-content p {
+    margin-bottom: 0.75rem;
+}
+
+.openai-content p:last-child {
+    margin-bottom: 0;
+}
+
+.openai-content ul {
+    margin-left: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.openai-content ul:last-child {
+    margin-bottom: 0;
+}
+
+.openai-content li {
+    margin-bottom: 0.25rem;
+}
+
+.openai-content code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.875em;
+    padding: 0.2em 0.4em;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    border-radius: 3px;
+}
+
+/* Textarea improvements */
+#openai-prompt {
+    resize: none;
+    min-height: 44px;
+    max-height: 120px;
+    transition: height 0.2s ease;
+    border-radius: 0.5rem;
+}
+
+#openai-prompt:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+}
+
+/* Send button improvements */
+#openai-send {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border: none;
+    transition: all 0.2s ease;
+}
+
+#openai-send:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+    transform: translateY(-1px);
+}
+
+#openai-send:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Error message styling */
+.alert-danger {
+    border-left: 4px solid #dc3545;
+    background: linear-gradient(90deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message-sent,
+.chat-message-received {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Scrollbar styling for chat messages */
+.phoenix-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.phoenix-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.phoenix-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.phoenix-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .chat-message-sent .bg-primary,
+    .chat-message-received .bg-light {
+        max-width: 95% !important;
+    }
+    
+    #openai-prompt {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
 .timeline-scroll-wrapper {
     position: relative;
     background:
