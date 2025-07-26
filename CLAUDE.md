@@ -1,417 +1,184 @@
-# Task Master AI - Claude Code Integration Guide
+# CLAUDE.md
 
-## Essential Commands
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-### Core Workflow Commands
+## Project Overview
 
+This is a WordPress child theme for WeCoza based on Bootscore, implementing a modern MVC architecture for educational platform functionality. The theme includes custom dashboards with timeline views, data visualization, and specialized features for tracking educational progress.
+
+## Development Commands
+
+### Theme Packaging
 ```bash
-# Project Setup
-task-master init                                    # Initialize Task Master in current project
-task-master parse-prd .taskmaster/docs/prd.txt      # Generate tasks from PRD document
-task-master models --setup                        # Configure AI models interactively
-
-# Daily Development Workflow
-task-master list                                   # Show all tasks with status
-task-master next                                   # Get next available task to work on
-task-master show <id>                             # View detailed task information (e.g., task-master show 1.2)
-task-master set-status --id=<id> --status=done    # Mark task complete
-
-# Task Management
-task-master add-task --prompt="description" --research        # Add new task with AI assistance
-task-master expand --id=<id> --research --force              # Break task into subtasks
-task-master update-task --id=<id> --prompt="changes"         # Update specific task
-task-master update --from=<id> --prompt="changes"            # Update multiple tasks from ID onwards
-task-master update-subtask --id=<id> --prompt="notes"        # Add implementation notes to subtask
-
-# Analysis & Planning
-task-master analyze-complexity --research          # Analyze task complexity
-task-master complexity-report                      # View complexity analysis
-task-master expand --all --research               # Expand all eligible tasks
-
-# Dependencies & Organization
-task-master add-dependency --id=<id> --depends-on=<id>       # Add task dependency
-task-master move --from=<id> --to=<id>                       # Reorganize task hierarchy
-task-master validate-dependencies                            # Check for dependency issues
-task-master generate                                         # Update task markdown files (usually auto-called)
+# Package theme for WordPress upload
+./package-theme.sh
 ```
 
-## Key Files & Project Structure
-
-### Core Files
-
-- `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
-- `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
-- `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
-- `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
-- `.env` - API keys for CLI usage
-
-### Claude Code Integration Files
-
-- `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
-- `.claude/settings.json` - Claude Code tool allowlist and preferences
-- `.claude/commands/` - Custom slash commands for repeated workflows
-- `.mcp.json` - MCP server configuration (project-specific)
-
-### Directory Structure
-
-```
-project/
-├── .taskmaster/
-│   ├── tasks/              # Task files directory
-│   │   ├── tasks.json      # Main task database
-│   │   ├── task-1.md      # Individual task files
-│   │   └── task-2.md
-│   ├── docs/              # Documentation directory
-│   │   ├── prd.txt        # Product requirements
-│   ├── reports/           # Analysis reports directory
-│   │   └── task-complexity-report.json
-│   ├── templates/         # Template files
-│   │   └── example_prd.txt  # Example PRD template
-│   └── config.json        # AI models & settings
-├── .claude/
-│   ├── settings.json      # Claude Code configuration
-│   └── commands/         # Custom slash commands
-├── .env                  # API keys
-├── .mcp.json            # MCP configuration
-└── CLAUDE.md            # This file - auto-loaded by Claude Code
-```
-
-## MCP Integration
-
-Task Master provides an MCP server that Claude Code can connect to. Configure in `.mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "task-master-ai": {
-      "command": "npx",
-      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
-      "env": {
-        "ANTHROPIC_API_KEY": "your_key_here",
-        "PERPLEXITY_API_KEY": "your_key_here",
-        "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
-        "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
-        "XAI_API_KEY": "XAI_API_KEY_HERE",
-        "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
-        "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
-        "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
-        "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
-      }
-    }
-  }
-}
-```
-
-### Essential MCP Tools
-
-```javascript
-help; // = shows available taskmaster commands
-// Project setup
-initialize_project; // = task-master init
-parse_prd; // = task-master parse-prd
-
-// Daily workflow
-get_tasks; // = task-master list
-next_task; // = task-master next
-get_task; // = task-master show <id>
-set_task_status; // = task-master set-status
-
-// Task management
-add_task; // = task-master add-task
-expand_task; // = task-master expand
-update_task; // = task-master update-task
-update_subtask; // = task-master update-subtask
-update; // = task-master update
-
-// Analysis
-analyze_project_complexity; // = task-master analyze-complexity
-complexity_report; // = task-master complexity-report
-```
-
-## Claude Code Workflow Integration
-
-### Standard Development Workflow
-
-#### 1. Project Initialization
-
+### Common WordPress Development
 ```bash
-# Initialize Task Master
-task-master init
+# View WordPress debug logs
+tail -f /opt/lampp/logs/php_error_log
 
-# Create or obtain PRD, then parse it
-task-master parse-prd .taskmaster/docs/prd.txt
+# Check database connectivity
+php -f /opt/lampp/htdocs/wecoza/wp-content/themes/wecoza_3_child_theme/includes/functions/db.php
 
-# Analyze complexity and expand tasks
-task-master analyze-complexity --research
-task-master expand --all --research
+# Clear WordPress cache (if using cache plugins)
+wp cache flush
 ```
 
-If tasks already exist, another PRD can be parsed (with new information only!) using parse-prd with --append flag. This will add the generated tasks to the existing list of tasks..
+## Architecture & Code Structure
 
-#### 2. Daily Development Loop
+### MVC Framework
+The theme implements a custom MVC architecture under the `WeCoza` namespace:
 
-```bash
-# Start each session
-task-master next                           # Find next available task
-task-master show <id>                     # Review task details
+**Bootstrap System**: 
+- Entry point: `app/bootstrap.php`
+- Autoloader for `WeCoza\*` classes
+- Configuration loader via `config()` function
+- View renderer via `view()` function
 
-# During implementation, check in code context into the tasks and subtasks
-task-master update-subtask --id=<id> --prompt="implementation notes..."
+**Controllers** (`app/Controllers/`):
+- `NavigationController.php` - Menu and navigation management
+- Controllers auto-initialize via `config/app.php` configuration
 
-# Complete tasks
-task-master set-status --id=<id> --status=done
+**Services** (`app/Services/`):
+- `DatabaseService.php` - PostgreSQL connection singleton with PDO
+- Clean separation between data layer and business logic
+
+**Views** (`app/Views/`):
+- `.view.php` extension for view files  
+- Data passed via extract() in view helper
+- Bootstrap 5 UI components
+
+### Database Architecture
+
+**Dual Database System**:
+1. **PostgreSQL** (Primary) - DigitalOcean hosted for main application data
+2. **MySQL** (Logger) - SQL query storage and logging system
+
+**Connection Classes**:
+- `Wecoza3_DB` - PostgreSQL connection with graceful error handling
+- `Wecoza3_Logger` - MySQL singleton for query logging and execution
+
+**Key Features**:
+- Base64 encoded SQL storage for security
+- Comprehensive error logging to `wp-content/wecoza-error.log`
+- Prepared statements for all database operations
+- SSL connections required for PostgreSQL
+
+### Asset Management
+
+**CSS Loading Order** (critical for styling):
+1. Parent Bootscore styles (dequeued)
+2. `ydcoza-bootstrap-demo.css` 
+3. Bootstrap Icons CDN
+4. `ydcoza-theme.css`
+5. **`ydcoza-styles.css` (loads last at priority 99)**
+
+**JavaScript Dependencies**:
+- jQuery (WordPress core)
+- Bootstrap 5 (from parent theme)
+- Chart.js, Select2, Popper.js (CDN)
+- Custom `app.js` with AJAX handlers
+
+### Shortcode System
+
+**Data Visualization**:
+- `[wecoza_echart]` - ECharts integration (tree/sunburst charts)
+- `[wecoza_dynamic_table]` - AJAX data tables with Bootstrap styling
+
+**Navigation**:
+- `[wecoza_sidebar_menu]` - Bootstrap sidebar with custom walker
+
+**Implementation**: All shortcodes use database SQL ID references for dynamic data loading.
+
+## Development Guidelines
+
+### Styling Rules
+- **ALL CSS** must go in `/includes/css/ydcoza-styles.css`
+- Never create separate CSS files in plugin directories
+- Always append new styles to existing ydcoza-styles.css
+- Respect the CSS loading priority order (ydcoza-styles.css loads last)
+
+### Database Development
+- Use `DatabaseService::getInstance()` for PostgreSQL operations
+- Use `Wecoza3_Logger` static methods for MySQL operations
+- Always wrap database operations in try-catch blocks
+- Log errors to `wp-content/wecoza-error.log`
+
+### MVC Development Patterns
+```php
+// Controller registration in config/app.php
+'controllers' => [
+    'WeCoza\\Controllers\\NewController',
+],
+
+// View rendering
+return \WeCoza\view('component-name', ['data' => $data]);
+
+// Service usage  
+$db = \WeCoza\Services\Database\DatabaseService::getInstance();
+$result = $db->query("SELECT * FROM table WHERE id = ?", [$id]);
 ```
 
-#### 3. Multi-Claude Workflows
+### Namespace Conventions
+- All classes use `WeCoza\` namespace
+- Autoloader handles `WeCoza\Controllers\`, `WeCoza\Services\`, etc.
+- WordPress functions called with `\` prefix in namespaced files
 
-For complex projects, use multiple Claude Code sessions:
+## File Locations
 
-```bash
-# Terminal 1: Main implementation
-cd project && claude
+### Critical Files
+- `functions.php` - WordPress integration and asset loading
+- `app/bootstrap.php` - MVC system initialization
+- `config/app.php` - Application configuration
+- `includes/css/ydcoza-styles.css` - **Primary stylesheet**
 
-# Terminal 2: Testing and validation
-cd project-test-worktree && claude
+### WordPress Integration
+- `style.css` - Theme header (WordPress requirement)
+- `screenshot.png` - Theme screenshot
+- `templates/` - Custom page templates
+- `includes/functions/` - WordPress helper functions
 
-# Terminal 3: Documentation updates
-cd project-docs-worktree && claude
+### Database Scripts
+- `includes/functions/db.php` - Database connection classes
+- `includes/admin/sql-manager.php` - SQL query management interface
+- `includes/db-migrations.php` - Database migrations
+
+## Configuration
+
+### Database Settings
+Database credentials stored in WordPress options:
+- `wecoza_postgres_*` - PostgreSQL settings
+- `wecoza_mysql_*` - MySQL logger settings
+
+### Theme Constants
+```php
+WECOZA_PLUGIN_VERSION  // Random version for cache busting
+WECOZA_CHILD_DIR       // Theme directory path  
+WECOZA_CHILD_URL       // Theme URL
+WECOZA_PATH            // App path constants
 ```
 
-### Custom Slash Commands
-
-Create `.claude/commands/taskmaster-next.md`:
-
-```markdown
-Find the next available Task Master task and show its details.
-
-Steps:
-
-1. Run `task-master next` to get the next task
-2. If a task is available, run `task-master show <id>` for full details
-3. Provide a summary of what needs to be implemented
-4. Suggest the first implementation step
-```
-
-Create `.claude/commands/taskmaster-complete.md`:
-
-```markdown
-Complete a Task Master task: $ARGUMENTS
-
-Steps:
-
-1. Review the current task with `task-master show $ARGUMENTS`
-2. Verify all implementation is complete
-3. Run any tests related to this task
-4. Mark as complete: `task-master set-status --id=$ARGUMENTS --status=done`
-5. Show the next available task with `task-master next`
-```
-
-## Tool Allowlist Recommendations
-
-Add to `.claude/settings.json`:
-
-```json
-{
-  "allowedTools": [
-    "Edit",
-    "Bash(task-master *)",
-    "Bash(git commit:*)",
-    "Bash(git add:*)",
-    "Bash(npm run *)",
-    "mcp__task_master_ai__*"
-  ]
-}
-```
-
-## Configuration & Setup
-
-### API Keys Required
-
-At least **one** of these API keys must be configured:
-
-- `ANTHROPIC_API_KEY` (Claude models) - **Recommended**
-- `PERPLEXITY_API_KEY` (Research features) - **Highly recommended**
-- `OPENAI_API_KEY` (GPT models)
-- `GOOGLE_API_KEY` (Gemini models)
-- `MISTRAL_API_KEY` (Mistral models)
-- `OPENROUTER_API_KEY` (Multiple models)
-- `XAI_API_KEY` (Grok models)
-
-An API key is required for any provider used across any of the 3 roles defined in the `models` command.
-
-### Model Configuration
-
-```bash
-# Interactive setup (recommended)
-task-master models --setup
-
-# Set specific models
-task-master models --set-main claude-3-5-sonnet-20241022
-task-master models --set-research perplexity-llama-3.1-sonar-large-128k-online
-task-master models --set-fallback gpt-4o-mini
-```
-
-## Task Structure & IDs
-
-### Task ID Format
-
-- Main tasks: `1`, `2`, `3`, etc.
-- Subtasks: `1.1`, `1.2`, `2.1`, etc.
-- Sub-subtasks: `1.1.1`, `1.1.2`, etc.
-
-### Task Status Values
-
-- `pending` - Ready to work on
-- `in-progress` - Currently being worked on
-- `done` - Completed and verified
-- `deferred` - Postponed
-- `cancelled` - No longer needed
-- `blocked` - Waiting on external factors
-
-### Task Fields
-
-```json
-{
-  "id": "1.2",
-  "title": "Implement user authentication",
-  "description": "Set up JWT-based auth system",
-  "status": "pending",
-  "priority": "high",
-  "dependencies": ["1.1"],
-  "details": "Use bcrypt for hashing, JWT for tokens...",
-  "testStrategy": "Unit tests for auth functions, integration tests for login flow",
-  "subtasks": []
-}
-```
-
-## Claude Code Best Practices with Task Master
-
-### Context Management
-
-- Use `/clear` between different tasks to maintain focus
-- This CLAUDE.md file is automatically loaded for context
-- Use `task-master show <id>` to pull specific task context when needed
-
-### Iterative Implementation
-
-1. `task-master show <subtask-id>` - Understand requirements
-2. Explore codebase and plan implementation
-3. `task-master update-subtask --id=<id> --prompt="detailed plan"` - Log plan
-4. `task-master set-status --id=<id> --status=in-progress` - Start work
-5. Implement code following logged plan
-6. `task-master update-subtask --id=<id> --prompt="what worked/didn't work"` - Log progress
-7. `task-master set-status --id=<id> --status=done` - Complete task
-
-### Complex Workflows with Checklists
-
-For large migrations or multi-step processes:
-
-1. Create a markdown PRD file describing the new changes: `touch task-migration-checklist.md` (prds can be .txt or .md)
-2. Use Taskmaster to parse the new prd with `task-master parse-prd --append` (also available in MCP)
-3. Use Taskmaster to expand the newly generated tasks into subtasks. Consdier using `analyze-complexity` with the correct --to and --from IDs (the new ids) to identify the ideal subtask amounts for each task. Then expand them.
-4. Work through items systematically, checking them off as completed
-5. Use `task-master update-subtask` to log progress on each task/subtask and/or updating/researching them before/during implementation if getting stuck
-
-### Git Integration
-
-Task Master works well with `gh` CLI:
-
-```bash
-# Create PR for completed task
-gh pr create --title "Complete task 1.2: User authentication" --body "Implements JWT auth system as specified in task 1.2"
-
-# Reference task in commits
-git commit -m "feat: implement JWT auth (task 1.2)"
-```
-
-### Parallel Development with Git Worktrees
-
-```bash
-# Create worktrees for parallel task development
-git worktree add ../project-auth feature/auth-system
-git worktree add ../project-api feature/api-refactor
-
-# Run Claude Code in each worktree
-cd ../project-auth && claude    # Terminal 1: Auth work
-cd ../project-api && claude     # Terminal 2: API work
-```
-
-## Troubleshooting
-
-### AI Commands Failing
-
-```bash
-# Check API keys are configured
-cat .env                           # For CLI usage
-
-# Verify model configuration
-task-master models
-
-# Test with different model
-task-master models --set-fallback gpt-4o-mini
-```
-
-### MCP Connection Issues
-
-- Check `.mcp.json` configuration
-- Verify Node.js installation
-- Use `--mcp-debug` flag when starting Claude Code
-- Use CLI as fallback if MCP unavailable
-
-### Task File Sync Issues
-
-```bash
-# Regenerate task files from tasks.json
-task-master generate
-
-# Fix dependency issues
-task-master fix-dependencies
-```
-
-DO NOT RE-INITIALIZE. That will not do anything beyond re-adding the same Taskmaster core files.
-
-## Important Notes
-
-### AI-Powered Operations
-
-These commands make AI calls and may take up to a minute:
-
-- `parse_prd` / `task-master parse-prd`
-- `analyze_project_complexity` / `task-master analyze-complexity`
-- `expand_task` / `task-master expand`
-- `expand_all` / `task-master expand --all`
-- `add_task` / `task-master add-task`
-- `update` / `task-master update`
-- `update_task` / `task-master update-task`
-- `update_subtask` / `task-master update-subtask`
-
-### File Management
-
-- Never manually edit `tasks.json` - use commands instead
-- Never manually edit `.taskmaster/config.json` - use `task-master models`
-- Task markdown files in `tasks/` are auto-generated
-- Run `task-master generate` after manual changes to tasks.json
-
-### Claude Code Session Management
-
-- Use `/clear` frequently to maintain focused context
-- Create custom slash commands for repeated Task Master workflows
-- Configure tool allowlist to streamline permissions
-- Use headless mode for automation: `claude -p "task-master next"`
-
-### Multi-Task Updates
-
-- Use `update --from=<id>` to update multiple future tasks
-- Use `update-task --id=<id>` for single task updates
-- Use `update-subtask --id=<id>` for implementation logging
-
-### Research Mode
-
-- Add `--research` flag for research-based AI enhancement
-- Requires a research model API key like Perplexity (`PERPLEXITY_API_KEY`) in environment
-- Provides more informed task creation and updates
-- Recommended for complex technical tasks
-
----
-
-_This guide ensures Claude Code has immediate access to Task Master's essential functionality for agentic development workflows._
+## Common Tasks
+
+### Adding New Controller
+1. Create `app/Controllers/NewController.php` 
+2. Add to `config/app.php` controllers array
+3. Register WordPress hooks in constructor
+
+### Adding Database Functionality
+1. Use `DatabaseService::getInstance()` for PostgreSQL
+2. Use `Wecoza3_Logger::execute_sql_query()` for stored queries
+3. Add error handling and logging
+
+### Creating New Views
+1. Create `.view.php` file in `app/Views/`
+2. Use `\WeCoza\view('name', $data)` to render
+3. Access data via extracted variables
+
+### Debugging
+- Check `/opt/lampp/logs/php_error_log` for PHP errors
+- Check `wp-content/wecoza-error.log` for database errors  
+- Use `error_log()` for custom debugging output
+- WordPress debug: `WP_DEBUG` and `WP_DEBUG_LOG` in wp-config.php

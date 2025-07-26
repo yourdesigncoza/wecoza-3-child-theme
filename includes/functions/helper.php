@@ -330,6 +330,15 @@ function ydcoza_force_login_redirect_to_home( $redirect_to, $request, $user ) {
 }
 add_filter( 'login_redirect', 'ydcoza_force_login_redirect_to_home', 10, 3 );
 
+/**
+ * Redirect users to the home page after logout.
+ */
+function ydcoza_logout_redirect_to_home() {
+    wp_redirect( home_url() );
+    exit;
+}
+add_action( 'wp_logout', 'ydcoza_logout_redirect_to_home' );
+
 
 /**
  * Replace the default WordPress login logo with a custom image.
@@ -388,3 +397,46 @@ function ydcoza_custom_login_styles() {
     <?php
 }
 add_action( 'login_enqueue_scripts', 'ydcoza_custom_login_styles' );
+
+/**
+ * Redirect non-logged-in users to login page for all pages except home page.
+ * 
+ * This function checks if a user is logged in and redirects them to the WordPress 
+ * login page if they are not, except for the home page which remains accessible 
+ * to all visitors.
+ */
+function wecoza_redirect_non_logged_users() {
+    // Skip if user is already logged in
+    if ( is_user_logged_in() ) {
+        return;
+    }
+    
+    // Allow access to home page regardless of login status
+    if ( is_front_page() ) {
+        return;
+    }
+    
+    // Allow access to login page to prevent redirect loops
+    if ( $GLOBALS['pagenow'] === 'wp-login.php' ) {
+        return;
+    }
+    
+    // Skip redirects for admin pages and AJAX requests
+    if ( is_admin() || wp_doing_ajax() ) {
+        return;
+    }
+    
+    // Skip redirects for RSS feeds, REST API, and other special pages
+    if ( is_feed() || is_robots() || is_trackback() ) {
+        return;
+    }
+    
+    // Get current URL for return redirect after login
+    $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    
+    // Redirect to login page with return URL
+    $login_url = wp_login_url( $current_url );
+    wp_redirect( $login_url );
+    exit;
+}
+add_action( 'template_redirect', 'wecoza_redirect_non_logged_users' );
