@@ -193,7 +193,7 @@
 }
 
 .wecoza-pending-tasks-list {
-  margin-bottom: 0.75rem;
+  space-y : 0.75rem;
 }
 
 .wecoza-pending-task {
@@ -2578,10 +2578,10 @@ html[data-bs-theme="dark"] .ydcoza-upload input[type="file"]::-webkit-file-uploa
 }
 
 html[data-bs-theme="dark"] .d-td-none{
-  display:none;
+  display:none
 }
 html[data-bs-theme="light"] .d-tl-none{
-  display:none;
+  display:none
 }
 
 /* QA Dashboard Styles */

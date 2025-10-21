@@ -5,9 +5,62 @@
  *
  * @version 6.0.0
  */
+declare(strict_types=1);
 
 // Exit if accessed directly
 defined('ABSPATH') || exit;
+
+/**
+ * Bridge the Events plugin cron to front-end traffic.
+ *
+ * This runs on the front/home page and ensures `wecoza_events_process_notifications`
+ * is queued (or fired immediately) whenever visitors hit the site.
+ * declare(strict_types=1); is part of this 
+ */
+add_action('template_redirect', function (): void {
+    if (!is_front_page() && !is_home()) {
+        return; // keep extra work scoped to the landing page
+    }
+
+    $hook = 'wecoza_events_process_notifications';
+    $now  = time();
+
+    $next = wp_next_scheduled($hook);
+    if ($next && $next <= $now) {
+        // WP-Cron missed its window; run it now and fall back to direct invocation.
+        wp_cron();
+        $next = wp_next_scheduled($hook);
+
+        if ($next && $next <= $now) {
+            do_action($hook);
+            $next = wp_next_scheduled($hook);
+
+            while ($next && $next <= $now) {
+                wp_unschedule_event($next, $hook);
+                $next = wp_next_scheduled($hook);
+            }
+        }
+    }
+
+    if ($next && $next > $now) {
+        return; // a future single-run is already waiting
+    }
+
+    $runAt = $now + 5 * MINUTE_IN_SECONDS;
+    $result = wp_schedule_single_event($runAt, $hook, [], true); // return WP_Error on failure
+
+    if (is_wp_error($result)) {
+        return;
+    }
+
+    if (!defined('DISABLE_WP_CRON') || !DISABLE_WP_CRON) {
+        wp_remote_post(
+            site_url('wp-cron.php'),
+            ['timeout' => 0.01, 'blocking' => false, 'sslverify' => apply_filters('https_local_ssl_verify', false)]
+        );
+    }
+});
+
 
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
@@ -148,7 +201,6 @@ function load_required_files() {
         '/includes/functions/show-hide-title.php',
         '/includes/functions/db.php',
         '/includes/functions/echarts-functions.php',
-        '/includes/admin/settings.php',
         '/includes/admin/sql-manager.php',
         '/includes/shortcodes/datatable.php',
         '/includes/shortcodes/echarts-shortcode.php',
