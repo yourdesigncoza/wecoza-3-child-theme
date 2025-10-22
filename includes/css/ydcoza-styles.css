@@ -5334,8 +5334,7 @@ option:disabled {
 }
 
 .learner-row.table-secondary {
-    opacity: 0.7;
-    background-color: var(--phoenix-gray-100);
+    opacity: 0.5;
 }
 
 .learner-row.table-secondary .learner-checkbox {

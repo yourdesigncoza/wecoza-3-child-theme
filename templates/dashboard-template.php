@@ -883,6 +883,9 @@
          </div>
       </div>
    </div>
+
+<?php echo do_shortcode('[wecoza_event_tasks]'); ?>
+
    <div class="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-body-emphasis pt-7 mt-5 border-y">
       <div data-list="{&quot;valueNames&quot;:[&quot;product&quot;,&quot;customer&quot;,&quot;rating&quot;,&quot;review&quot;,&quot;time&quot;],&quot;page&quot;:6}">
          <div class="row align-items-end justify-content-between pb-5 g-3">

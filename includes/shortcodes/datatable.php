@@ -43,6 +43,82 @@ function wecoza_dynamic_table_shortcode($atts) {
     $output .= "
         <script>
             jQuery(document).ready(function($) {
+                
+                /*------------------YDCOZA-----------------------*/
+                /* Sync Class Learners From Table                */
+                /* Extracts learner data from dynamic table and   */
+                /* triggers legacy exam learner synchronization    */
+                /*-----------------------------------------------*/
+                function syncClassLearnersFromTable() {
+                    const $classLearnersTable = $('#class-learners-table');
+                    const $wecozaDynamicTable = $('#wecoza-dynamic-table');
+                    
+                    // Try to find learners in class-learners-table first, then wecoza-dynamic-table
+                    const $targetTable = $classLearnersTable.length ? $classLearnersTable : $wecozaDynamicTable;
+                    
+                    if (!$targetTable.length) {
+                        return; // No table found
+                    }
+                    
+                    const learners = [];
+                    
+                    // Extract learner data from table rows
+                    $targetTable.find('tbody tr').each(function() {
+                        const $row = $(this);
+                        const cells = $row.find('td');
+                        
+                        if (cells.length >= 2) {
+                            // Try to determine ID and name based on column order
+                            let learnerId = '';
+                            let learnerName = '';
+                            
+                            // Check if first column contains ID (numeric) or name (text)
+                            const firstCell = $(cells[0]).text().trim();
+                            const secondCell = $(cells[1]).text().trim();
+                            
+                            // If first cell is numeric, assume it's ID, second is name
+                            if (/^\d+$/.test(firstCell)) {
+                                learnerId = firstCell;
+                                learnerName = secondCell;
+                            } else {
+                                // If first cell is text, try to find ID in other columns
+                                learnerName = firstCell;
+                                // Look for numeric ID in subsequent cells
+                                for (let i = 1; i < cells.length; i++) {
+                                    const cellText = $(cells[i]).text().trim();
+                                    if (/^\d+$/.test(cellText)) {
+                                        learnerId = cellText;
+                                        break;
+                                    }
+                                }
+                                // If no numeric ID found, use first cell as both ID and name
+                                if (!learnerId) {
+                                    learnerId = firstCell;
+                                }
+                            }
+                            
+                            if (learnerId && learnerName) {
+                                learners.push({
+                                    id: learnerId.toString(),
+                                    name: learnerName
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Update the class_learners_data hidden field if it exists
+                    const $classLearnersData = $('#class_learners_data');
+                    if ($classLearnersData.length) {
+                        $classLearnersData.val(JSON.stringify(learners));
+                        console.log('Updated class_learners_data with', learners.length, 'learners');
+                        
+                        // Trigger the legacy synchronization function
+                        if (typeof window.classes_sync_exam_learner_options === 'function') {
+                            window.classes_sync_exam_learner_options();
+                        }
+                    }
+                }
+                
                 $('#wecoza-loader').show();
                 // Fetch data via AJAX
                 $.ajax({
@@ -56,6 +132,15 @@ function wecoza_dynamic_table_shortcode($atts) {
                         if (response.success) {
                             $('#wecoza-dynamic-table tbody').html(response.data);
                             console.log('Table data loaded successfully.');
+                            
+                            // Check if this is a class learners table and trigger exam learner synchronization
+                            if (typeof window.classes_sync_exam_learner_options === 'function') {
+                                // Extract learner data from the loaded table
+                                setTimeout(function() {
+                                    syncClassLearnersFromTable();
+                                }, 100); // Small delay to ensure DOM is updated
+                            }
+                            
                             $('#wecoza-loader').hide();
                         } else {
                             console.error('Failed to load data:', response.data);
