@@ -412,9 +412,9 @@ function wecoza_redirect_non_logged_users() {
     }
     
     // Allow access to home page regardless of login status
-    if ( is_front_page() ) {
-        return;
-    }
+    // if ( is_front_page() ) {
+    //     return;
+    // }
     
     // Allow access to login page to prevent redirect loops
     if ( $GLOBALS['pagenow'] === 'wp-login.php' ) {

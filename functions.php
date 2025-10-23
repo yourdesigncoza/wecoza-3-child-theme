@@ -10,6 +10,13 @@ declare(strict_types=1);
 // Exit if accessed directly
 defined('ABSPATH') || exit;
 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
+
 /**
  * Bridge the Events plugin cron to front-end traffic.
  *
@@ -60,12 +67,6 @@ add_action('template_redirect', function (): void {
         );
     }
 });
-
-
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 // Fix locale and update core warnings
 add_filter('locale', function($locale) {
@@ -132,6 +133,14 @@ function enqueue_assets() {
     wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), null, true);
     // bootstrap Loaded in Parent theme no need to load again
     // wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
+
+    wp_enqueue_script(
+        'wecoza-gmp-autocomplete-style',
+        WECOZA_CHILD_URL . '/includes/js/gmp-autocomplete-style.js',
+        array(),
+        WECOZA_PLUGIN_VERSION,
+        false
+    );
 
     // Custom scripts with localization
     wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array('ajax_url' => admin_url('admin-ajax.php'),'nonce' => wp_create_nonce('wecoza_table_nonce') ));
@@ -200,10 +209,10 @@ function load_required_files() {
         '/includes/functions/helper.php', // Add the new helper.php file
         '/includes/functions/show-hide-title.php',
         '/includes/functions/db.php',
-        '/includes/functions/echarts-functions.php',
-        '/includes/admin/sql-manager.php',
-        '/includes/shortcodes/datatable.php',
-        '/includes/shortcodes/echarts-shortcode.php',
+        //'/includes/functions/echarts-functions.php',
+        //'/includes/admin/sql-manager.php',
+        //'/includes/shortcodes/datatable.php',
+        //'/includes/shortcodes/echarts-shortcode.php',
 
     );
 
