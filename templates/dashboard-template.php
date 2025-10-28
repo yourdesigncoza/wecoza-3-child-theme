@@ -68,8 +68,17 @@
          </div>
       </div>
    </div>
+
+
+<?php echo do_shortcode('[wecoza_insert_update_ai_summary]'); ?>
+
    <div class="row mt-3 g-3">
-      <div class="col-12 col-xl-6 col-xxl-7">
+      <div class="col-12">
+         <?php echo do_shortcode('[wecoza_material_tracking]'); ?>
+   </div>
+</div>
+   <div class="row mt-3 g-3">
+      <div class="col-12">
          <div class="card todo-list h-100">
             <div class="card-header border-bottom-0 pb-0">
                <div class="row justify-content-between align-items-center mb-4">
