@@ -20,10 +20,10 @@ class DatabaseService {
     private function __construct() {
         try {
             // Get PostgreSQL database credentials from options
-            $pgHost = get_option('wecoza_postgres_host', 'db-wecoza-3-do-user-17263152-0.m.db.ondigitalocean.com');
-            $pgPort = get_option('wecoza_postgres_port', '25060');
-            $pgName = get_option('wecoza_postgres_dbname', 'defaultdb');
-            $pgUser = get_option('wecoza_postgres_user', 'doadmin');
+            $pgHost = get_option('wecoza_postgres_host', '');
+            $pgPort = get_option('wecoza_postgres_port', '');
+            $pgName = get_option('wecoza_postgres_dbname', '');
+            $pgUser = get_option('wecoza_postgres_user', '');
             $pgPass = get_option('wecoza_postgres_password', '');
 
             // Create PDO instance for PostgreSQL
