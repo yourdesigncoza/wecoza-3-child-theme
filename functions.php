@@ -100,8 +100,7 @@ add_filter('pre_site_transient_update_core', function($value) {
 });
 
 // Define plugin constants
-$rand = rand();
-define('WECOZA_PLUGIN_VERSION', $rand);
+define('WECOZA_PLUGIN_VERSION', '6.0.2');
 define('WECOZA_CHILD_DIR', get_stylesheet_directory(__FILE__));
 define('WECOZA_CHILD_URL', get_stylesheet_directory_uri(__FILE__));
 
@@ -112,7 +111,8 @@ function enqueue_assets() {
     // style.css
     // wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('ydcoza-bootstrap-demo', WECOZA_CHILD_URL . '/includes/css/ydcoza-bootstrap-demo.css', array('main'), WECOZA_PLUGIN_VERSION);
-    wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css', array('ydcoza-bootstrap-demo'), WECOZA_PLUGIN_VERSION);
+    wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css', array('ydcoza-bootstrap-demo'), '1.11.3');
+    wp_enqueue_style('font-awesome-cdn', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array('ydcoza-bootstrap-demo'), '6.5.1');
 
     // Theme styles - load after Parent
     wp_enqueue_style('ydcoza_theme-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-theme.css', array('ydcoza-bootstrap-demo'), WECOZA_PLUGIN_VERSION);
@@ -126,11 +126,13 @@ function enqueue_assets() {
         wp_enqueue_script('gradio-script', 'https://gradio.s3-us-west-2.amazonaws.com/4.40.0/gradio.js', array(), WECOZA_PLUGIN_VERSION, true);
     }
     // Enqueue Select2 JS
-    wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), '4.1.0-rc.0', true);
+    wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
+    // Font Awesome JS
+    wp_enqueue_script('font-awesome-js', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js', NULL, WECOZA_PLUGIN_VERSION, true);
     // Chart .js
-    wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array('jquery'), null, true);
+    wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
     // popper
-    wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), null, true);
+    wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
     // bootstrap Loaded in Parent theme no need to load again
     // wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
 
@@ -165,6 +167,14 @@ add_action( 'wp_enqueue_scripts', 'ydcoza_load_child_style_last', 99 );
 
 
 /**
+ * Add DNS prefetch for Font Awesome CDN.
+ */
+function ydcoza_add_dns_prefetch() {
+    echo '<link rel=\'dns-prefetch\' href=\'//use.fontawesome.com\' />';
+}
+add_action( 'wp_head', 'ydcoza_add_dns_prefetch', 10);
+
+/**
  * Print inline theme-sniffer script before any CSS loads.
  */
 function ydcoza_print_theme_sniffer() {
@@ -189,9 +199,6 @@ add_action( 'wp_head', 'ydcoza_print_theme_sniffer', 1 );
  */
 
 function ydcoza_remove_unwanted_styles() {
-    // FontAwesome
-    wp_dequeue_style( 'fontawesome' );
-    wp_deregister_style( 'fontawesome' );
 
     // Bootscore
     wp_dequeue_style( 'bootscore-style' );

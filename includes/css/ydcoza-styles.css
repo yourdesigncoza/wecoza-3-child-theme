@@ -2,7 +2,9 @@
 /*!
  * All theme styles should be placed in this file.
  */
-
+.svg-inline--fa {
+    height: 1em;
+}
 /* -------------------------------------------------------------------------- */
 /* WECOZA Notifications System Styles                                        */
 /* -------------------------------------------------------------------------- */
