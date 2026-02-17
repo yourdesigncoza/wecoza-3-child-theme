@@ -35,49 +35,58 @@ function add_type_module_to_gradio_script($tag, $handle, $src) {
 add_filter('script_loader_tag', 'add_type_module_to_gradio_script', 10, 3);
 
 /**
- * AJAX handler for dynamic table data
+ * AJAX handler for dynamic table data.
+ *
+ * Fetches data from stored SQL queries and returns HTML table rows.
+ * Requires user to be logged in and have read capability.
  */
-function fetch_dynamic_table_data() {
-    $sql_id = intval($_POST['sql_id']);
-    if (!$sql_id) {
-        wp_send_json_error('Invalid SQL ID.');
-        return;
+function fetch_dynamic_table_data(): void {
+    // Capability check - user must be able to read content.
+    if ( ! current_user_can( 'read' ) ) {
+        wp_send_json_error( 'Unauthorized access.', 403 );
     }
 
-    $query_data = Wecoza3_Logger::get_query_by_id($sql_id);
-    if (!$query_data) {
-        wp_send_json_error('SQL query not found.');
-        return;
+    $sql_id = isset( $_POST['sql_id'] ) ? absint( $_POST['sql_id'] ) : 0;
+
+    if ( ! $sql_id ) {
+        wp_send_json_error( 'Invalid SQL ID.' );
+    }
+
+    $query_data = Wecoza3_Logger::get_query_by_id( $sql_id );
+
+    if ( ! $query_data ) {
+        wp_send_json_error( 'SQL query not found.' );
     }
 
     try {
-        $db = new Wecoza3_DB();
-        $pdo = $db->get_pdo();
-        $stmt = $pdo->query($query_data->sql_query);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db      = new Wecoza3_DB();
+        $pdo     = $db->get_pdo();
+        $stmt    = $pdo->query( $query_data->sql_query );
+        $results = $stmt->fetchAll( PDO::FETCH_ASSOC );
 
-        if (empty($results)) {
-            wp_send_json_error('No data found.');
-            return;
+        if ( empty( $results ) ) {
+            wp_send_json_error( 'No data found.' );
         }
 
-        // Generate table rows
+        // Generate table rows with escaped output.
         $rows = '';
-        foreach ($results as $row) {
+        foreach ( $results as $row ) {
             $rows .= '<tr>';
-            foreach ($row as $column_value) {
-                $rows .= '<td>' . esc_html($column_value) . '</td>';
+            foreach ( $row as $column_value ) {
+                $rows .= '<td>' . esc_html( $column_value ?? '' ) . '</td>';
             }
             $rows .= '</tr>';
         }
 
-        wp_send_json_success($rows);
-    } catch (Exception $e) {
-        wp_send_json_error('Error fetching data: ' . $e->getMessage());
+        wp_send_json_success( $rows );
+    } catch ( Exception $e ) {
+        error_log( 'WeCoza fetch_dynamic_table_data error: ' . $e->getMessage() );
+        wp_send_json_error( 'Error fetching data.' );
     }
 }
-add_action('wp_ajax_fetch_dynamic_table_data', 'fetch_dynamic_table_data');
-add_action('wp_ajax_nopriv_fetch_dynamic_table_data', 'fetch_dynamic_table_data');
+add_action( 'wp_ajax_fetch_dynamic_table_data', 'fetch_dynamic_table_data' );
+// Note: nopriv handler kept for compatibility but site requires login anyway.
+add_action( 'wp_ajax_nopriv_fetch_dynamic_table_data', 'fetch_dynamic_table_data' );
 
 /**
  * Add theme‐toggle switch to end of Primary menu
@@ -208,47 +217,49 @@ function ydcoza_register_app_cpt() {
 add_action( 'init', 'ydcoza_register_app_cpt' );
 
 /**
- * Output breadcrumb trail.
+ * Output breadcrumb trail with proper escaping.
  */
-function ydcoza_breadcrumbs() {
-    $sep  = ' &raquo; ';
-    $home = '<a href="' . home_url() . '">Home</a>';
-
+function ydcoza_breadcrumbs(): void {
     if ( is_front_page() ) {
-        // Nothing
         return;
     }
+
+    $sep  = ' &raquo; ';
+    $home = '<a href="' . esc_url( home_url() ) . '">' . esc_html__( 'Home', 'wecoza' ) . '</a>';
 
     echo '<nav aria-label="breadcrumb"><div class="breadcrumb">';
     echo $home;
 
     if ( is_home() ) {
-        echo $sep . 'Blog';
-    }
-    elseif ( is_singular() ) {
+        echo $sep . esc_html__( 'Blog', 'wecoza' );
+    } elseif ( is_singular() ) {
         $post_type = get_post_type();
 
-        // Custom Post Type
-        if ( $post_type && $post_type !== 'post' && $post_type !== 'page' ) {
+        // Custom Post Type archive link.
+        if ( $post_type && ! in_array( $post_type, [ 'post', 'page' ], true ) ) {
             $pt_obj  = get_post_type_object( $post_type );
             $archive = get_post_type_archive_link( $post_type );
-            if ( $archive ) {
+            if ( $archive && $pt_obj ) {
                 echo $sep . '<a href="' . esc_url( $archive ) . '">' . esc_html( $pt_obj->labels->name ) . '</a>';
             }
         }
 
-        // If Page, show ancestors
+        // Page ancestors.
         if ( is_page() ) {
             $ancestors = get_post_ancestors( get_the_ID() );
             if ( ! empty( $ancestors ) ) {
+                // Prime post cache to avoid N+1 queries in the loop.
+                // This fetches all ancestor posts in a single query.
+                _prime_post_caches( $ancestors, false, false );
+
                 $ancestors = array_reverse( $ancestors );
                 foreach ( $ancestors as $crumb_id ) {
-                    echo $sep . '<a href="' . get_permalink( $crumb_id ) . '">' . get_the_title( $crumb_id ) . '</a>';
+                    echo $sep . '<a href="' . esc_url( get_permalink( $crumb_id ) ) . '">' . esc_html( get_the_title( $crumb_id ) ) . '</a>';
                 }
             }
         }
 
-        // If Post, show category
+        // Post category.
         if ( is_single() && get_post_type() === 'post' ) {
             $cats = get_the_category();
             if ( ! empty( $cats ) ) {
@@ -258,32 +269,33 @@ function ydcoza_breadcrumbs() {
             }
         }
 
-        // Finally, current item
-        echo $sep . '<span class="current">' . get_the_title() . '</span>';
-    }
-    elseif ( is_archive() ) {
+        // Current item.
+        echo $sep . '<span class="current">' . esc_html( get_the_title() ) . '</span>';
+    } elseif ( is_archive() ) {
         if ( is_post_type_archive() ) {
             $pt_obj = get_post_type_object( get_post_type() );
-            echo $sep . '<span class="current">' . esc_html( $pt_obj->labels->name ) . ' Archive</span>';
+            if ( $pt_obj ) {
+                /* translators: %s: post type name */
+                echo $sep . '<span class="current">' . esc_html( sprintf( __( '%s Archive', 'wecoza' ), $pt_obj->labels->name ) ) . '</span>';
+            }
+        } elseif ( is_category() ) {
+            /* translators: %s: category name */
+            echo $sep . '<span class="current">' . esc_html( sprintf( __( 'Category: %s', 'wecoza' ), single_cat_title( '', false ) ) ) . '</span>';
+        } elseif ( is_tag() ) {
+            /* translators: %s: tag name */
+            echo $sep . '<span class="current">' . esc_html( sprintf( __( 'Tag: %s', 'wecoza' ), single_tag_title( '', false ) ) ) . '</span>';
+        } elseif ( is_author() ) {
+            /* translators: %s: author name */
+            echo $sep . '<span class="current">' . esc_html( sprintf( __( 'Author: %s', 'wecoza' ), get_the_author() ) ) . '</span>';
+        } elseif ( is_date() ) {
+            /* translators: %s: date */
+            echo $sep . '<span class="current">' . esc_html( sprintf( __( 'Archives for %s', 'wecoza' ), get_the_date() ) ) . '</span>';
         }
-        elseif ( is_category() ) {
-            echo $sep . '<span class="current">Category: ' . single_cat_title( '', false ) . '</span>';
-        }
-        elseif ( is_tag() ) {
-            echo $sep . '<span class="current">Tag: ' . single_tag_title( '', false ) . '</span>';
-        }
-        elseif ( is_author() ) {
-            echo $sep . '<span class="current">Author: ' . get_the_author() . '</span>';
-        }
-        elseif ( is_date() ) {
-            echo $sep . '<span class="current">Archives for ' . get_the_date() . '</span>';
-        }
-    }
-    elseif ( is_search() ) {
-        echo $sep . '<span class="current">Search results for "' . get_search_query() . '"</span>';
-    }
-    elseif ( is_404() ) {
-        echo $sep . '<span class="current">404 Not Found</span>';
+    } elseif ( is_search() ) {
+        /* translators: %s: search query */
+        echo $sep . '<span class="current">' . esc_html( sprintf( __( 'Search results for "%s"', 'wecoza' ), get_search_query() ) ) . '</span>';
+    } elseif ( is_404() ) {
+        echo $sep . '<span class="current">' . esc_html__( '404 Not Found', 'wecoza' ) . '</span>';
     }
 
     echo '</div></nav>';

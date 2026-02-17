@@ -2,55 +2,43 @@
 /**
  * DatabaseService.php
  *
- * Service for database operations
+ * Service for database operations.
+ * Uses PostgresConnection singleton for unified connection management.
+ *
+ * @package WeCoza_3_Child_Theme
  */
 
 namespace WeCoza\Services\Database;
 
 class DatabaseService {
-    /**
-     * PDO instance
-     */
-    private static $instance = null;
-    private $pdo;
 
     /**
-     * Constructor - private to prevent direct instantiation
+     * Singleton instance.
+     *
+     * @var DatabaseService|null
+     */
+    private static ?DatabaseService $instance = null;
+
+    /**
+     * PostgresConnection instance.
+     *
+     * @var PostgresConnection
+     */
+    private PostgresConnection $connection;
+
+    /**
+     * Private constructor - uses unified PostgresConnection.
      */
     private function __construct() {
-        try {
-            // Get PostgreSQL database credentials from options
-            $pgHost = get_option('wecoza_postgres_host', '');
-            $pgPort = get_option('wecoza_postgres_port', '');
-            $pgName = get_option('wecoza_postgres_dbname', '');
-            $pgUser = get_option('wecoza_postgres_user', '');
-            $pgPass = get_option('wecoza_postgres_password', '');
-
-            // Create PDO instance for PostgreSQL
-            $this->pdo = new \PDO(
-                "pgsql:host=$pgHost;port=$pgPort;dbname=$pgName",
-                $pgUser,
-                $pgPass,
-                [
-                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                    \PDO::ATTR_EMULATE_PREPARES => false,
-                ]
-            );
-
-        } catch (\PDOException $e) {
-            // Log error
-            error_log('Database connection error: ' . $e->getMessage());
-            throw new \Exception('Database connection failed');
-        }
+        $this->connection = PostgresConnection::getInstance();
     }
 
     /**
-     * Get database instance (singleton)
+     * Get database instance (singleton).
      *
      * @return DatabaseService
      */
-    public static function getInstance() {
+    public static function getInstance(): DatabaseService {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -58,68 +46,68 @@ class DatabaseService {
     }
 
     /**
-     * Get PDO instance
+     * Get PDO instance.
      *
      * @return \PDO
      */
-    public function getPdo() {
-        return $this->pdo;
+    public function getPdo(): \PDO {
+        return $this->connection->getPdo();
     }
 
     /**
-     * Execute a query
+     * Execute a query.
      *
-     * @param string $sql SQL query
-     * @param array $params Query parameters
+     * @param string               $sql    SQL query.
+     * @param array<string, mixed> $params Query parameters.
      * @return \PDOStatement
      */
-    public function query($sql, $params = []) {
-        try {
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
-            return $stmt;
-        } catch (\PDOException $e) {
-            error_log('Query error: ' . $e->getMessage());
-            throw new \Exception('Database query failed');
-        }
+    public function query(string $sql, array $params = []): \PDOStatement {
+        return $this->connection->query($sql, $params);
     }
 
     /**
-     * Begin a transaction
-     */
-    public function beginTransaction() {
-        return $this->pdo->beginTransaction();
-    }
-
-    /**
-     * Commit a transaction
-     */
-    public function commit() {
-        return $this->pdo->commit();
-    }
-
-    /**
-     * Rollback a transaction
-     */
-    public function rollback() {
-        return $this->pdo->rollBack();
-    }
-
-    /**
-     * Check if in transaction
+     * Begin a transaction.
      *
      * @return bool
      */
-    public function inTransaction() {
-        return $this->pdo->inTransaction();
+    public function beginTransaction(): bool {
+        return $this->connection->beginTransaction();
     }
 
     /**
-     * Get last insert ID
+     * Commit a transaction.
      *
+     * @return bool
+     */
+    public function commit(): bool {
+        return $this->connection->commit();
+    }
+
+    /**
+     * Rollback a transaction.
+     *
+     * @return bool
+     */
+    public function rollback(): bool {
+        return $this->connection->rollback();
+    }
+
+    /**
+     * Check if in transaction.
+     *
+     * @return bool
+     */
+    public function inTransaction(): bool {
+        return $this->connection->inTransaction();
+    }
+
+    /**
+     * Get last insert ID.
+     *
+     * @param string|null $name Sequence name for PostgreSQL.
      * @return string
      */
-    public function lastInsertId() {
-        return $this->pdo->lastInsertId();
+    public function lastInsertId(?string $name = null): string {
+        return $this->connection->lastInsertId($name);
     }
 }

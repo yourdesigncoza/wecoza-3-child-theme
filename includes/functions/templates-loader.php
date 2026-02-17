@@ -1,65 +1,109 @@
 <?php
+/**
+ * Plugin Templates Loader
+ *
+ * Allows loading custom page templates from the theme's templates directory.
+ *
+ * @package WeCoza_3_Child_Theme
+ */
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Handles loading of custom page templates from the theme.
+ */
 class Plugin_Templates_Loader {
-    
-    private $templates_dir;
-    
+
+    /**
+     * Path to the templates directory.
+     */
+    private string $templates_dir;
+
+    /**
+     * Constructor: Register template filters.
+     */
     public function __construct() {
-        $this->templates_dir = plugin_dir_path(__FILE__) . '../../templates/';
-        add_filter('theme_page_templates', array($this, 'register_plugin_templates'));
-        add_filter('template_include', array($this, 'add_template_filter'));
+        $this->templates_dir = plugin_dir_path( __FILE__ ) . '../../templates/';
+        add_filter( 'theme_page_templates', [ $this, 'register_plugin_templates' ] );
+        add_filter( 'template_include', [ $this, 'add_template_filter' ] );
     }
-    
-    private function load_plugin_templates () {
-        $templates = array();  // Initialize templates array
+
+    /**
+     * Load all templates from the templates directory.
+     *
+     * @return array<string,string> Map of template path => template name.
+     */
+    private function load_plugin_templates(): array {
+        $templates    = [];
         $template_dir = $this->templates_dir;
 
-        // Reads all templates from the folder
-        if (is_dir($template_dir)) {
-            if ($dh = opendir($template_dir)) {
-                while (($file = readdir($dh)) !== false) {
-                    $full_path = $template_dir . $file;
+        if ( ! is_dir( $template_dir ) ) {
+            return $templates;
+        }
 
-                    if (filetype($full_path) == 'dir') {
-                        continue;
-                    }
+        $handle = opendir( $template_dir );
+        if ( ! $handle ) {
+            return $templates;
+        }
 
-                    // Gets Template Name from the file
-                    $filedata = get_file_data($full_path, array(
-                        'Template Name' => 'Template Name',
-                    ));
+        while ( ( $file = readdir( $handle ) ) !== false ) {
+            $full_path = $template_dir . $file;
 
-                    $template_name = $filedata['Template Name'];
+            if ( filetype( $full_path ) === 'dir' ) {
+                continue;
+            }
 
-                    if ($template_name) {
-                        $templates[$full_path] = $template_name;
-                    }
-                }
-                closedir($dh);
+            $filedata      = get_file_data( $full_path, [ 'Template Name' => 'Template Name' ] );
+            $template_name = $filedata['Template Name'] ?? '';
+
+            if ( $template_name ) {
+                $templates[ $full_path ] = $template_name;
             }
         }
+
+        closedir( $handle );
+
         return $templates;
     }
 
-    public function register_plugin_templates($theme_templates) {
-        // Merging the WP templates with this plugin's active templates
+    /**
+     * Register plugin templates with WordPress.
+     *
+     * @param array<string,string> $theme_templates Existing theme templates.
+     * @return array<string,string> Merged templates.
+     */
+    public function register_plugin_templates( array $theme_templates ): array {
         $plugin_templates = $this->load_plugin_templates();
-        $theme_templates = array_merge($theme_templates, $plugin_templates);
-        
-        return $theme_templates;
+        return array_merge( $theme_templates, $plugin_templates );
     }
 
-    public function add_template_filter($template) {
+    /**
+     * Filter template include to use plugin templates when selected.
+     *
+     * @param string $template Current template path.
+     * @return string Template path to use.
+     */
+    public function add_template_filter( string $template ): string {
         global $post;
-        
-        $user_selected_template = get_page_template_slug($post->ID);
 
-        // We need to check if the selected template is inside the plugin folder
-        $file_name = pathinfo($user_selected_template, PATHINFO_BASENAME);
-        $template_dir = $this->templates_dir;
+        // Guard against null post object (404, archive pages, etc.).
+        if ( ! $post instanceof \WP_Post ) {
+            return $template;
+        }
 
-        if (file_exists($template_dir . $file_name)) {
-            $template = $template_dir . $file_name;
+        $user_selected_template = get_page_template_slug( $post->ID );
+
+        if ( empty( $user_selected_template ) ) {
+            return $template;
+        }
+
+        // Check if the selected template exists in the plugin folder.
+        $file_name       = pathinfo( $user_selected_template, PATHINFO_BASENAME );
+        $plugin_template = $this->templates_dir . $file_name;
+
+        if ( file_exists( $plugin_template ) ) {
+            return $plugin_template;
         }
 
         return $template;

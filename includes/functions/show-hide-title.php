@@ -1,8 +1,19 @@
 <?php
+/**
+ * Hide The Title - Meta box functionality.
+ *
+ * Allows hiding titles on individual posts/pages via a meta box checkbox.
+ *
+ * @package WeCoza_3_Child_Theme
+ */
+
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 // ──────────────────────────────────────────────────────────────────────────────
-// 1) Register a “Hide The Title” meta‐box for all public post types
+// 1) Register a "Hide The Title" meta‐box for all public post types
 // ──────────────────────────────────────────────────────────────────────────────
-add_action('add_meta_boxes', function() {
+add_action( 'add_meta_boxes', function (): void {
     // Get every public post type (posts, pages, CPTs, etc.)
     $all_post_types = get_post_types(
         [ 'public' => true ],

@@ -18,74 +18,39 @@ error_reporting(E_ALL);
 
 
 /**
- * Bridge the Events plugin cron to front-end traffic.
+ * WP-Cron Configuration Note:
  *
- * This runs on the front/home page and ensures `wecoza_events_process_notifications`
- * is queued (or fired immediately) whenever visitors hit the site.
- * declare(strict_types=1); is part of this 
+ * The previous homepage cron logic was removed due to performance issues:
+ * - Caused "thundering herd" problem with DB writes on every homepage load
+ * - Self-DDoS risk from wp_remote_post() loopback requests
+ *
+ * Proper setup for wecoza_events_process_notifications:
+ * 1. Add to wp-config.php: define('DISABLE_WP_CRON', true);
+ * 2. Add server crontab: * /5 * * * * wget -q -O - https://site.com/wp-cron.php >/dev/null 2>&1
+ * 3. Register the cron event once on theme activation, not every page load.
+ *
+ * @see docs/performance-review-2026-02-01.md for details.
  */
-add_action('template_redirect', function (): void {
-    if (!is_front_page() && !is_home()) {
-        return; // keep extra work scoped to the landing page
-    }
-
-    $hook = 'wecoza_events_process_notifications';
-    $now  = time();
-
-    $next = wp_next_scheduled($hook);
-    if ($next && $next <= $now) {
-        // WP-Cron missed its window; run it now and fall back to direct invocation.
-        wp_cron();
-        $next = wp_next_scheduled($hook);
-
-        if ($next && $next <= $now) {
-            do_action($hook);
-            $next = wp_next_scheduled($hook);
-
-            while ($next && $next <= $now) {
-                wp_unschedule_event($next, $hook);
-                $next = wp_next_scheduled($hook);
-            }
-        }
-    }
-
-    if ($next && $next > $now) {
-        return; // a future single-run is already waiting
-    }
-
-    $runAt = $now + 5 * MINUTE_IN_SECONDS;
-    $result = wp_schedule_single_event($runAt, $hook, [], true); // return WP_Error on failure
-
-    if (is_wp_error($result)) {
-        return;
-    }
-
-    if (!defined('DISABLE_WP_CRON') || !DISABLE_WP_CRON) {
-        wp_remote_post(
-            site_url('wp-cron.php'),
-            ['timeout' => 0.01, 'blocking' => false, 'sslverify' => apply_filters('https_local_ssl_verify', false)]
-        );
-    }
-});
 
 // Fix locale and update core warnings
 add_filter('locale', function($locale) {
     return is_string($locale) && !empty($locale) ? $locale : 'en_US';
 });
 
-// Fix WordPress update system errors and clear corrupt transients
-add_action('admin_init', function() {
-    // Clear corrupt update transients on admin pages
-    if (is_admin() && !wp_doing_ajax()) {
-        $transients = ['update_core', 'update_plugins', 'update_themes'];
-        foreach ($transients as $transient) {
-            $value = get_site_transient($transient);
-            if ($value === false || !is_object($value)) {
-                delete_site_transient($transient);
-            }
-        }
-    }
-});
+/**
+ * Admin transient cleanup removed for performance.
+ *
+ * The previous code ran on every admin page load and forced WordPress
+ * to re-fetch updates from wordpress.org API, causing unnecessary
+ * HTTP requests and slowdowns.
+ *
+ * If you need to debug update issues, use WP-CLI:
+ *   wp transient delete update_core --network
+ *   wp transient delete update_plugins --network
+ *   wp transient delete update_themes --network
+ *
+ * @see docs/performance-review-2026-02-01.md
+ */
 
 // Provide fallback objects for update system
 add_filter('pre_site_transient_update_core', function($value) {
@@ -99,80 +64,167 @@ add_filter('pre_site_transient_update_core', function($value) {
     return $value;
 });
 
-// Define plugin constants
-define('WECOZA_PLUGIN_VERSION', '6.0.2');
-define('WECOZA_CHILD_DIR', get_stylesheet_directory(__FILE__));
-define('WECOZA_CHILD_URL', get_stylesheet_directory_uri(__FILE__));
+// Define theme constants.
+// WECOZA_THEME_VERSION: Bump this when CSS/JS changes to bust browser cache.
+define('WECOZA_THEME_VERSION', '6.0.3');
+define('WECOZA_PLUGIN_VERSION', WECOZA_THEME_VERSION); // Alias for backward compatibility.
+define('WECOZA_CHILD_DIR', get_stylesheet_directory());
+define('WECOZA_CHILD_URL', get_stylesheet_directory_uri());
 
 /**
- * Enqueue all necessary GLOBAL assets
+ * Enqueue assets with conditional loading and defer/async strategies.
+ *
+ * Heavy libraries (Chart.js, Select2) are only loaded on pages that need them.
+ * Scripts use 'defer' strategy to avoid blocking page render (WP 6.3+).
+ *
+ * @see docs/performance-review-2026-02-01.md
  */
 function enqueue_assets() {
-    // style.css
-    // wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
+    // Global CSS - always needed.
     wp_enqueue_style('ydcoza-bootstrap-demo', WECOZA_CHILD_URL . '/includes/css/ydcoza-bootstrap-demo.css', array('main'), WECOZA_PLUGIN_VERSION);
     wp_enqueue_style('bootstrap-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css', array('ydcoza-bootstrap-demo'), '1.11.3');
     wp_enqueue_style('font-awesome-cdn', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array('ydcoza-bootstrap-demo'), '6.5.1');
-
-    // Theme styles - load after Parent
     wp_enqueue_style('ydcoza_theme-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-theme.css', array('ydcoza-bootstrap-demo'), WECOZA_PLUGIN_VERSION);
 
-    wp_enqueue_style('select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array('jquery'), '4.1.0-rc.0');
+    // Helper to check if current page needs form components (Select2, etc.).
+    $needs_forms = wecoza_page_needs_forms();
 
+    // Helper to check if current page needs charts.
+    $needs_charts = wecoza_page_needs_charts();
 
-    // JS
-    // Check if we are on a specific page
-    if (is_page('all-learners-table')) {
-        wp_enqueue_script('gradio-script', 'https://gradio.s3-us-west-2.amazonaws.com/4.40.0/gradio.js', array(), WECOZA_PLUGIN_VERSION, true);
+    // Select2 - only on pages with forms/dropdowns (deferred loading).
+    if ( $needs_forms ) {
+        wp_enqueue_style('select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array('jquery'), '4.1.0-rc.0');
+        wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
     }
-    // Enqueue Select2 JS
-    wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
-    // Font Awesome JS
-    wp_enqueue_script('font-awesome-js', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js', NULL, WECOZA_PLUGIN_VERSION, true);
-    // Chart .js
-    wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
-    // popper
-    wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
-    // bootstrap Loaded in Parent theme no need to load again
-    // wp_enqueue_script('bootstrap-5-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
 
+    // Chart.js - only on dashboard/reports pages (deferred loading).
+    if ( $needs_charts ) {
+        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array('jquery'), WECOZA_PLUGIN_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
+    }
+
+    // Popper - only when needed for tooltips/popovers (deferred loading).
+    if ( $needs_forms || $needs_charts ) {
+        wp_enqueue_script('popper2-js', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
+    }
+
+    // Gradio - only on all-learners-table page (deferred loading).
+    if ( is_page('all-learners-table') ) {
+        wp_enqueue_script('gradio-script', 'https://gradio.s3-us-west-2.amazonaws.com/4.40.0/gradio.js', array(), WECOZA_PLUGIN_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
+    }
+
+    // GMP autocomplete - loaded in head for early availability.
     wp_enqueue_script(
         'wecoza-gmp-autocomplete-style',
         WECOZA_CHILD_URL . '/includes/js/gmp-autocomplete-style.js',
         array(),
         WECOZA_PLUGIN_VERSION,
-        false
+        array('in_footer' => false, 'strategy' => 'defer')
     );
 
-    // Custom scripts with localization
-    wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array('ajax_url' => admin_url('admin-ajax.php'),'nonce' => wp_create_nonce('wecoza_table_nonce') ));
-    // Localize AJAX URL for all scripts
+    // Custom scripts with localization.
+    wp_localize_script('wecoza-table-handler', 'wecoza_table_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('wecoza_table_nonce')));
     wp_localize_script('jquery', 'wecoza_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
-
-
 }
-add_action('wp_enqueue_scripts', 'enqueue_assets'); // Enqueue assets
+add_action('wp_enqueue_scripts', 'enqueue_assets');
 
 /**
- * Ensure child ydcoza-style.css loads last
+ * Check if current page needs form components (Select2, etc.).
+ *
+ * @return bool True if page needs form assets.
+ */
+function wecoza_page_needs_forms(): bool {
+    // Dashboard and admin-like pages.
+    if ( is_page(['dashboard', 'learners', 'agents', 'clients', 'classes', 'assessments', 'contact']) ) {
+        return true;
+    }
+
+    // Pages with forms in their templates.
+    if ( is_page_template(['templates/dashboard-template.php', 'templates/learner-form.php']) ) {
+        return true;
+    }
+
+    // Check for form shortcodes in content.
+    global $post;
+    if ( $post && ( has_shortcode($post->post_content, 'wecoza_form') || has_shortcode($post->post_content, 'contact-form-7') ) ) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Check if current page needs chart components.
+ *
+ * @return bool True if page needs chart assets.
+ */
+function wecoza_page_needs_charts(): bool {
+    // Dashboard and reports pages.
+    if ( is_page(['dashboard', 'reports', 'analytics', 'statistics']) ) {
+        return true;
+    }
+
+    // Dashboard template.
+    if ( is_page_template('templates/dashboard-template.php') ) {
+        return true;
+    }
+
+    // Check for chart shortcodes.
+    global $post;
+    if ( $post && has_shortcode($post->post_content, 'wecoza_chart') ) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Ensure child ydcoza-style.css loads last and app.js uses defer strategy.
  */
 function ydcoza_load_child_style_last() {
     // YDCOZA Styles
     wp_enqueue_style('ydcoza_styles-css', WECOZA_CHILD_URL . '/includes/css/ydcoza-styles.css', array(), WECOZA_PLUGIN_VERSION);
-    // app
-    wp_enqueue_script('wecoza-table-handler', WECOZA_CHILD_URL . '/includes/js/app.js', array('jquery'), WECOZA_PLUGIN_VERSION, true);
+    // app - deferred to avoid blocking render
+    wp_enqueue_script('wecoza-table-handler', WECOZA_CHILD_URL . '/includes/js/app.js', array('jquery'), WECOZA_PLUGIN_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
 }
 // Run at priority 99 so it fires after most other enqueue calls:
 add_action( 'wp_enqueue_scripts', 'ydcoza_load_child_style_last', 99 );
 
 
 /**
- * Add DNS prefetch for Font Awesome CDN.
+ * Add resource hints (preconnect/dns-prefetch) for external CDNs.
+ *
+ * Preconnect establishes early connections to important third-party origins,
+ * reducing latency when resources are requested.
  */
-function ydcoza_add_dns_prefetch() {
-    echo '<link rel=\'dns-prefetch\' href=\'//use.fontawesome.com\' />';
+function ydcoza_add_resource_hints() {
+    // CDNs used by the theme - preconnect for faster resource loading.
+    $preconnect_origins = array(
+        'https://cdn.jsdelivr.net',      // Bootstrap Icons, Select2, Chart.js, Popper
+        'https://cdnjs.cloudflare.com',  // FontAwesome
+    );
+
+    foreach ( $preconnect_origins as $origin ) {
+        printf(
+            '<link rel="preconnect" href="%s" crossorigin>' . "\n",
+            esc_url( $origin )
+        );
+    }
+
+    // DNS prefetch for less critical origins.
+    $dns_prefetch_origins = array(
+        '//fonts.googleapis.com',
+        '//fonts.gstatic.com',
+    );
+
+    foreach ( $dns_prefetch_origins as $origin ) {
+        printf(
+            '<link rel="dns-prefetch" href="%s">' . "\n",
+            esc_attr( $origin )
+        );
+    }
 }
-add_action( 'wp_head', 'ydcoza_add_dns_prefetch', 10);
+add_action( 'wp_head', 'ydcoza_add_resource_hints', 1 ); // Priority 1 for early placement.
 
 /**
  * Print inline theme-sniffer script before any CSS loads.

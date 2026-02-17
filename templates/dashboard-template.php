@@ -1,13 +1,14 @@
 <?php
-   /*
+/*
    Template Name: Dashboard-Template
    */
-   
-   if ( ! defined( 'ABSPATH' ) ) {
-   	exit; // Exit if accessed directly.
-   }
-   
-   get_header(); ?>
+
+if (!defined("ABSPATH")) {
+    exit(); // Exit if accessed directly.
+}
+
+get_header();
+?>
 <style>
    /* Simple timeline styling */
    .timeline {
@@ -70,11 +71,11 @@
    </div>
 
 
-<?php echo do_shortcode('[wecoza_insert_update_ai_summary]'); ?>
+<?php echo do_shortcode("[wecoza_insert_update_ai_summary]"); ?>
 
    <div class="row mt-3 g-3">
       <div class="col-12">
-         <?php echo do_shortcode('[wecoza_material_tracking]'); ?>
+         <?php echo do_shortcode("[wecoza_material_tracking]"); ?>
    </div>
 </div>
    <div class="row mt-3 g-3">
@@ -807,68 +808,85 @@
 
 
                <!-- Generated timeline items -->
-               <?php 
+               <?php
                // Load the JSON data
-               $json_file = get_stylesheet_directory() . '/dashboard-timeline-data.json';
+               $json_file =
+                   get_stylesheet_directory() . "/dashboard-timeline-data.json";
                $timeline_data = [];
-               
+
                if (file_exists($json_file)) {
                    $json_content = file_get_contents($json_file);
                    $timeline_data = json_decode($json_content, true);
                }
-               
+
                // Define a set of icons to rotate through
                $icons = [
-                   'fa-dove',
-                   'fa-chess',
-                   'fa-rocket',
-                   'fa-star',
-                   'fa-bolt',
-                   'fa-fire',
-                   'fa-heart',
-                   'fa-trophy',
-                   'fa-gem',
-                   'fa-crown'
+                   "fa-dove",
+                   "fa-chess",
+                   "fa-rocket",
+                   "fa-star",
+                   "fa-bolt",
+                   "fa-fire",
+                   "fa-heart",
+                   "fa-trophy",
+                   "fa-gem",
+                   "fa-crown",
                ];
-               
+
                // Generate timeline items
                if (!empty($timeline_data)) {
                    foreach ($timeline_data as $index => $item) {
+
                        // Get a random icon or cycle through them
                        $icon = $icons[$index % count($icons)];
-                       
+
                        // Truncate title for display
-                       $display_title = strlen($item['Title']) > 120 ? substr($item['Title'], 0, 120) . '...' : $item['Title'];
-                       
+                       $display_title =
+                           strlen($item["Title"]) > 120
+                               ? substr($item["Title"], 0, 120) . "..."
+                               : $item["Title"];
+
                        // Extract first part of description for preview
-                       $preview_desc = strlen($item['Description']) > 280 ? substr($item['Description'], 0, 280) . '...' : $item['Description'];
-               ?>
+                       $preview_desc =
+                           strlen($item["Description"]) > 280
+                               ? substr($item["Description"], 0, 280) . "..."
+                               : $item["Description"];
+                       ?>
                   <div class="timeline-item position-relative">
                      <div class="row g-md-3">
                         <div class="col-12 col-md-auto d-flex">
                            <div class="timeline-item-date order-1 order-md-0 me-md-4">
-                              <p class="fs-10 fw-semibold text-body-tertiary text-opacity-85 text-end"><?php echo esc_html($item['Date']); ?><br class="d-none d-md-block"> <?php echo esc_html($item['Time']); ?></p>
+                              <p class="fs-10 fw-semibold text-body-tertiary text-opacity-85 text-end"><?php echo esc_html(
+                                  $item["Date"],
+                              ); ?><br class="d-none d-md-block"> <?php echo esc_html(
+    $item["Time"],
+); ?></p>
                            </div>
                            <div class="timeline-item-bar position-md-relative me-3 me-md-0">
                               <div class="icon-item icon-item-sm rounded-7 shadow-none bg-primary-subtle">
-                                 <span class="fa-solid <?php echo esc_attr($icon); ?> text-primary-dark fs-10"></span>
+                                 <span class="fa-solid <?php echo esc_attr(
+                                     $icon,
+                                 ); ?> text-primary-dark fs-10"></span>
                               </div>
                               <span class="timeline-bar border-end border-dashed"></span>
                            </div>
                         </div>
                         <div class="col">
                            <div class="timeline-item-content ps-6 ps-md-3">
-                              <h5 class="fs-9 lh-sm"><?php echo esc_html($display_title); ?></h5>
+                              <h5 class="fs-9 lh-sm"><?php echo esc_html(
+                                  $display_title,
+                              ); ?></h5>
                               <p class="fs-9">by <a class="fw-semibold" href="#">John @ YourDesign.co.za</a></p>
-                              <p class="fs-9 text-body-secondary mb-5"><?php echo esc_html($preview_desc); ?></p>
+                              <p class="fs-9 text-body-secondary mb-5"><?php echo esc_html(
+                                  $preview_desc,
+                              ); ?></p>
                            </div>
                         </div>
                      </div>
                   </div>
-               <?php 
+               <?php
                    }
                } else {
-                   // Fallback if no data is available
                ?>
                   <div class="timeline-item position-relative">
                      <div class="row g-md-3">
@@ -879,7 +897,7 @@
                         </div>
                      </div>
                   </div>
-               <?php 
+               <?php
                }
                ?>
                <!-- END Generated timeline items -->
@@ -893,7 +911,7 @@
       </div>
    </div>
 
-<?php echo do_shortcode('[wecoza_event_tasks]'); ?>
+<?php echo do_shortcode("[wecoza_event_tasks]"); ?>
 
    <div class="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-body-emphasis pt-7 mt-5 border-y">
       <div data-list="{&quot;valueNames&quot;:[&quot;product&quot;,&quot;customer&quot;,&quot;rating&quot;,&quot;review&quot;,&quot;time&quot;],&quot;page&quot;:6}">
@@ -4324,5 +4342,4 @@
 <!-- ===============================================-->
 <!--    End of Main Content-->
 <!-- ===============================================-->
-<?php
-get_footer();
+<?php get_footer();

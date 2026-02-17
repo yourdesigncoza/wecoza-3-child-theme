@@ -42,11 +42,12 @@ function select_dropdown($name, $options, $attributes = [], $selected = '', $emp
     
     // Add options
     foreach ($options as $option) {
-        // Handle selected state for both single and multiple selects
+        // Handle selected state for both single and multiple selects.
+        // Use strict comparison to avoid type juggling issues.
         $selected_attr = '';
-        if (is_array($selected) && in_array($option['id'], $selected)) {
+        if (is_array($selected) && in_array($option['id'], $selected, true)) {
             $selected_attr = 'selected';
-        } elseif (!is_array($selected) && $selected == $option['id']) {
+        } elseif (!is_array($selected) && (string) $selected === (string) $option['id']) {
             $selected_attr = 'selected';
         }
         
@@ -89,7 +90,8 @@ function select_dropdown_with_optgroups($name, $optgroups, $attributes = [], $se
         $html .= "   <optgroup label=\"" . esc_attr($group['label']) . "\">\n";
         
         foreach ($group['options'] as $option) {
-            $selected_attr = $selected == $option['id'] ? 'selected' : '';
+            // Use strict string comparison to avoid type juggling.
+            $selected_attr = ( (string) $selected === (string) $option['id'] ) ? 'selected' : '';
             $html .= "      <option value=\"" . esc_attr($option['id']) . "\" {$selected_attr}>" . esc_html($option['name']) . "</option>\n";
         }
         

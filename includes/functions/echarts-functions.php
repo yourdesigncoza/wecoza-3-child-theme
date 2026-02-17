@@ -1,44 +1,69 @@
 <?php
-/*------------------YDCOZA-----------------------*/
-/* Functions for ECharts data processing         */
-/*-----------------------------------------------*/
+/**
+ * Functions for ECharts data processing.
+ *
+ * @package WeCoza_3_Child_Theme
+ */
 
-function wecoza_get_chart_data($sql_id) {
-    $query_data = Wecoza3_Logger::get_query_by_id($sql_id);
-    if (!$query_data) {
-        return new WP_Error('query_not_found', __('SQL query not found.', 'wecoza'));
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Get chart data from a stored SQL query.
+ *
+ * @param int $sql_id The stored query ID.
+ * @return array|WP_Error Chart data array or error.
+ */
+function wecoza_get_chart_data( int $sql_id ): array|WP_Error {
+    $query_data = Wecoza3_Logger::get_query_by_id( $sql_id );
+
+    if ( ! $query_data ) {
+        return new WP_Error( 'query_not_found', __( 'SQL query not found.', 'wecoza' ) );
     }
 
     try {
-        $db = new Wecoza3_DB();
-        $pdo = $db->get_pdo();
-        $stmt = $pdo->query($query_data->sql_query);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        return new WP_Error('query_execution_error', $e->getMessage());
+        $db      = new Wecoza3_DB();
+        $pdo     = $db->get_pdo();
+        $stmt    = $pdo->query( $query_data->sql_query );
+        $results = $stmt->fetchAll( PDO::FETCH_ASSOC );
+    } catch ( PDOException $e ) {
+        error_log( 'WeCoza chart query error: ' . $e->getMessage() );
+        return new WP_Error( 'query_execution_error', __( 'Failed to execute chart query.', 'wecoza' ) );
     }
 
-    // The query returns a single row with a 'data' column containing the JSON
-    if (isset($results[0]['data'])) {
-        $data = json_decode($results[0]['data'], true);
-        return $data;
+    // The query returns a single row with a 'data' column containing the JSON.
+    if ( isset( $results[0]['data'] ) ) {
+        $data = json_decode( $results[0]['data'], true );
+        if ( is_array( $data ) ) {
+            return $data;
+        }
     }
 
-    return new WP_Error('invalid_data_format', __('The SQL query did not return data in the expected format.', 'wecoza'));
+    return new WP_Error( 'invalid_data_format', __( 'The SQL query did not return data in the expected format.', 'wecoza' ) );
 }
 
-function wecoza_get_chart_option($type, $data) {
-    switch ($type) {
-        case 'tree':
-            return wecoza_get_tree_option($data);
-        case 'sunburst':
-            return wecoza_get_sunburst_option($data);
-        default:
-            return new WP_Error('invalid_chart_type', __('Invalid chart type.', 'wecoza'));
-    }
+/**
+ * Get ECharts option configuration for a chart type.
+ *
+ * @param string $type Chart type (tree, sunburst).
+ * @param array  $data Chart data.
+ * @return array|WP_Error Chart options or error.
+ */
+function wecoza_get_chart_option( string $type, array $data ): array|WP_Error {
+    return match ( $type ) {
+        'tree'     => wecoza_get_tree_option( $data ),
+        'sunburst' => wecoza_get_sunburst_option( $data ),
+        default    => new WP_Error( 'invalid_chart_type', __( 'Invalid chart type.', 'wecoza' ) ),
+    };
 }
 
-function wecoza_get_tree_option($data) {
+/**
+ * Get tree chart configuration.
+ *
+ * @param array $data Tree data.
+ * @return array ECharts tree option.
+ */
+function wecoza_get_tree_option( array $data ): array {
     return [
         'tooltip' => [
             'trigger' => 'item',
@@ -77,7 +102,13 @@ function wecoza_get_tree_option($data) {
     ];
 }
 
-function wecoza_get_sunburst_option($data) {
+/**
+ * Get sunburst chart configuration.
+ *
+ * @param array $data Sunburst data.
+ * @return array ECharts sunburst option.
+ */
+function wecoza_get_sunburst_option( array $data ): array {
     return [
         'tooltip' => [
             'trigger' => 'item'

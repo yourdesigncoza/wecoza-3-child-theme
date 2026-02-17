@@ -32992,6 +32992,9 @@ a[href].bg-body-secondary:hover, a[href].bg-body-secondary:focus {
 .table > tbody > tr > td:first-child {
   padding-left: 0;
 }
+#schedule-statistics-section .table > tbody > tr > td {
+  padding-left: 0;
+}
 .table > tbody > tr > td:last-child {
   padding-right: 0;
 }
