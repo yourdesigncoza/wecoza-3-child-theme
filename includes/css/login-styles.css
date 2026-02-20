@@ -1,0 +1,12 @@
+/**
+ * WeCoza Login Page Styles
+ *
+ * Loaded only on wp-login.php via login_enqueue_scripts.
+ * Dynamic background-image is added via wp_add_inline_style() in helper.php.
+ */
+
+.login h1 a {
+    background-size: contain;
+    width: 260px;
+    height: 80px;
+}

@@ -9,38 +9,7 @@ if (!defined("ABSPATH")) {
 
 get_header();
 ?>
-<style>
-   /* Simple timeline styling */
-   .timeline {
-   position: relative;
-   padding-left: 1.5rem;
-   list-style: none;
-   }
-   .timeline::before {
-   content: "";
-   position: absolute;
-   left: 0.65rem;
-   top: 0;
-   bottom: 0;
-   width: 2px;
-   background: #dee2e6;
-   }
-   .timeline-item {
-   position: relative;
-   margin-bottom: 1.5rem;
-   padding-left: 1.5rem;
-   }
-   .timeline-item::before {
-   content: "";
-   position: absolute;
-   left: -0.15rem;
-   top: 0.25rem;
-   width: 0.75rem;
-   height: 0.75rem;
-   border-radius: 50%;
-   background: #0d6efd;
-   }
-</style>
+
 <!-- ===============================================-->
 <!--    Main Content-->
 <!-- ===============================================-->
@@ -69,13 +38,16 @@ get_header();
          </div>
       </div>
    </div>
+   <div class="row mt-3 g-3">
+       <?php echo do_shortcode("[wecoza_material_tracking]"); ?>
+   </div>
 
+   <?php echo do_shortcode("[wecoza_insert_update_ai_summary]"); ?>
 
-<?php echo do_shortcode("[wecoza_insert_update_ai_summary]"); ?>
+   <?php echo do_shortcode("[wecoza_event_tasks]"); ?>
 
    <div class="row mt-3 g-3">
       <div class="col-12">
-         <?php echo do_shortcode("[wecoza_material_tracking]"); ?>
    </div>
 </div>
    <div class="row mt-3 g-3">
@@ -887,7 +859,7 @@ get_header();
                <?php
                    }
                } else {
-               ?>
+                    ?>
                   <div class="timeline-item position-relative">
                      <div class="row g-md-3">
                         <div class="col">
@@ -910,8 +882,6 @@ get_header();
          </div>
       </div>
    </div>
-
-<?php echo do_shortcode("[wecoza_event_tasks]"); ?>
 
    <div class="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-body-emphasis pt-7 mt-5 border-y">
       <div data-list="{&quot;valueNames&quot;:[&quot;product&quot;,&quot;customer&quot;,&quot;rating&quot;,&quot;review&quot;,&quot;time&quot;],&quot;page&quot;:6}">
@@ -4337,6 +4307,7 @@ get_header();
             </div>
          </div>
       </div>
+   </div>
    </div>
 </main>
 <!-- ===============================================-->

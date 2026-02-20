@@ -94,6 +94,29 @@ add_action( 'wp_ajax_nopriv_fetch_dynamic_table_data', 'fetch_dynamic_table_data
 function add_theme_toggle_nav_item( $items, $args ) {
     // change 'primary' to your menu's theme_location if different
     if ( isset($args->theme_location) && $args->theme_location === 'main-menu' ) {
+        if ( is_user_logged_in() ) {
+            $items .= '
+            <li class="nav-item">
+              <div class="theme-control-toggle px-2">
+                <a href="' . esc_url( wp_logout_url( home_url() ) ) . '"
+                   class="logout-toggle-label"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="left"
+                   data-bs-title="Logout"
+                   style="height:32px;width:32px;text-decoration:none;"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       class="feather feather-log-out icon">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                </a>
+              </div>
+            </li>';
+        }
         $items .= '
             <li class="nav-item">
               <div class="theme-control-toggle fa-icon-wait px-2">
@@ -342,41 +365,30 @@ function ydcoza_force_login_redirect_to_home( $redirect_to, $request, $user ) {
 }
 add_filter( 'login_redirect', 'ydcoza_force_login_redirect_to_home', 10, 3 );
 
-/**
- * Redirect users to the home page after logout.
- */
-function ydcoza_logout_redirect_to_home() {
-    wp_redirect( home_url() );
-    exit;
-}
-add_action( 'wp_logout', 'ydcoza_logout_redirect_to_home' );
-
 
 /**
- * Replace the default WordPress login logo with a custom image.
+ * Enqueue login page styles and set the custom logo.
+ * Static rules live in includes/css/login-styles.css; only the dynamic
+ * background-image URL is added inline.
  */
-function ydcoza_custom_login_logo() {
-    // URL to your logo file; adjust the path if you placed it elsewhere.
+function ydcoza_login_styles() {
+    wp_enqueue_style(
+        'ydcoza-login',
+        get_stylesheet_directory_uri() . '/includes/css/login-styles.css',
+        [],
+        WECOZA_THEME_VERSION
+    );
+
     $logo_url = get_stylesheet_directory_uri() . '/assets/img/logo/wecoza-logo-dark.png';
-
-    // You may need to tweak width/height to match your actual image dimensions.
-    ?>
-    <style type="text/css">
-        /* Target the logo on the login page */
-        .login h1 a {
-            background-image: url(<?php echo esc_url( $logo_url ); ?>) !important;
-            background-size: contain;
-            width: 320px;    /* set to your logo’s width */
-            height: 80px;    /* set to your logo’s height */
-        }
-    </style>
-    <?php
+    wp_add_inline_style('ydcoza-login', sprintf(
+        '.login h1 a { background-image: url(%s) !important; }',
+        esc_url($logo_url)
+    ));
 }
-add_action( 'login_enqueue_scripts', 'ydcoza_custom_login_logo' );
+add_action( 'login_enqueue_scripts', 'ydcoza_login_styles' );
 
 /**
- * (Optional) Change the login logo URL to point to your site homepage 
- * instead of wordpress.org.
+ * Point the login logo URL to the site homepage instead of wordpress.org.
  */
 function ydcoza_custom_login_logo_url() {
     return home_url();
@@ -384,31 +396,12 @@ function ydcoza_custom_login_logo_url() {
 add_filter( 'login_headerurl', 'ydcoza_custom_login_logo_url' );
 
 /**
- * (Optional) Change the logo’s title attribute (hover text) 
- * to your site name rather than “Powered by WordPress”.
+ * Change the logo's title attribute to the site name.
  */
 function ydcoza_custom_login_logo_title() {
     return get_bloginfo( 'name' );
 }
 add_filter( 'login_headertext', 'ydcoza_custom_login_logo_title' );
-
-/**
- * Add custom styles to the WordPress login page.
- */
-function ydcoza_custom_login_styles() {
-    ?>
-    <style type="text/css">
-        /* -------------------------------------------------------------------------- */
-        /* login logo                                                                */
-        /* -------------------------------------------------------------------------- */
-        .login h1 a {
-            background-size: 260px !important;
-            width: 260px !important;
-        }
-    </style>
-    <?php
-}
-add_action( 'login_enqueue_scripts', 'ydcoza_custom_login_styles' );
 
 /**
  * Redirect non-logged-in users to login page for all pages except home page.
