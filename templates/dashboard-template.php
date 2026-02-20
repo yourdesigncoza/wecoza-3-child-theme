@@ -15,28 +15,37 @@ get_header();
 <!-- ===============================================-->
 <main class="main" id="top">
    <div class="content">
-   <h2 class="mb-4">Demo APP Landing</h2>
-   <div class="col-6">
-      <div class="card border h-100 w-100 overflow-hidden">
-         <div class="bg-holder d-block bg-card" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/spot-illustrations/32.png);background-position: top right;"></div>
-         <!--/.bg-holder-->
-         <div class="d-dark-none">
-            <div class="bg-holder d-none d-sm-block d-xl-none d-xxl-block bg-card" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/spot-illustrations/21.png);background-position: bottom right; background-size: auto;"></div>
-            <!--/.bg-holder-->
-         </div>
-         <div class="d-light-none">
-            <div class="bg-holder d-none d-sm-block d-xl-none d-xxl-block bg-card" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/spot-illustrations/dark_21.png);background-position: bottom right; background-size: auto;"></div>
-            <!--/.bg-holder-->
-         </div>
-         <div class="card-body px-5 position-relative">
-            <div class="badge badge-phoenix fs-10 badge-phoenix-warning mb-4"><span class="fw-bold">Coming soon</span><span class="fa-solid fa-award ms-1"></span></div>
-            <h3 class="mb-5">Project Pulse: Real-Time Progress at a Glance</h3>
-            <p class="text-body-tertiary fw-semibold d-sm-block" style="max-width: 80%;">We've turned every behind-the-scenes commit, fix and feature into a clear story your whole team can follow. The new DevAI Activity Timeline automatically converts daily reports into friendly, time-stamped updates complete with intuitive icons, plain-language summaries and milestone highlights. No more digging through tickets or spreadsheets; you get a live, shareable snapshot of what's been shipped, what's coming next and how each improvement benefits your users. Transparency for you.</p>
-         </div>
-         <div class="card-footer border-0 py-0 px-5 z-1">
-            <p class="text-body-tertiary fw-semibold">Follow <a href="https://devai.co.za">DevAi </a> For updates.</p>
-         </div>
-      </div>
+   <h2 class="mb-4">APP Landing</h2>
+    <?php /* Project Pulse card — temporarily disabled */ if (false): ?>
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <div class="card border h-100 w-100 overflow-hidden">
+                <div class="bg-holder d-block bg-card" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/spot-illustrations/32.png);background-position: top right;"></div>
+                <!--/.bg-holder-->
+                <div class="d-dark-none">
+                    <div class="bg-holder d-none d-sm-block d-xl-none d-xxl-block bg-card" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/spot-illustrations/21.png);background-position: bottom right; background-size: auto;"></div>
+                    <!--/.bg-holder-->
+                </div>
+                <div class="d-light-none">
+                    <div class="bg-holder d-none d-sm-block d-xl-none d-xxl-block bg-card" style="background-image:url(https://prium.github.io/phoenix/v1.22.0/assets/img/spot-illustrations/dark_21.png);background-position: bottom right; background-size: auto;"></div>
+                    <!--/.bg-holder-->
+                </div>
+                <div class="card-body px-5 position-relative">
+                    <div class="badge badge-phoenix fs-10 badge-phoenix-warning mb-4"><span class="fw-bold">Coming soon</span><span class="fa-solid fa-award ms-1"></span></div>
+                    <h3 class="mb-5">Project Pulse: Real-Time Progress at a Glance</h3>
+                    <p class="text-body-tertiary fw-semibold d-sm-block" style="max-width: 80%;">We've turned every behind-the-scenes commit, fix and feature into a clear story your whole team can follow. The new DevAI Activity Timeline automatically converts daily reports into friendly, time-stamped updates complete with intuitive icons, plain-language summaries and milestone highlights. No more digging through tickets or spreadsheets; you get a live, shareable snapshot of what's been shipped, what's coming next and how each improvement benefits your users. Transparency for you.</p>
+                </div>
+                <div class="card-footer border-0 py-0 px-5 z-1">
+                    <p class="text-body-tertiary fw-semibold">Follow <a href="https://devai.co.za">DevAi </a> For updates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    <div class="row g-3">
+        <div class="col-12">
+            <?php echo do_shortcode("[wecoza_system_pulse]"); ?>
+        </div>
    </div>
    <div class="row mt-3 g-3">
        <?php echo do_shortcode("[wecoza_material_tracking]"); ?>
