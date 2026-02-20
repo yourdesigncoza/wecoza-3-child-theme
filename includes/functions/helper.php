@@ -338,10 +338,11 @@ function ydcoza_breadcrumbs_after_primary( $template ) {
 add_action( 'bootscore_after_primary_open', 'ydcoza_breadcrumbs_after_primary', 10, 1 );
 
 /**
- * Hide the front-end admin toolbar for everyone except Administrators.
+ * Hide the front-end admin toolbar for everyone except a specific user.
  */
 function hide_admin_toolbar_for_non_admins() {
-    if ( ! current_user_can( 'administrator' ) ) {
+    $user = wp_get_current_user();
+    if ( ! $user->exists() || $user->user_email !== 'laudes.michael@gmail.com' ) {
         add_filter( 'show_admin_bar', '__return_false' );
     }
 }
