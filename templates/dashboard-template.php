@@ -47,8 +47,10 @@ get_header();
             <?php echo do_shortcode("[wecoza_system_pulse]"); ?>
         </div>
    </div>
-   <div class="row mt-3 g-3">
-       <?php echo do_shortcode("[wecoza_material_tracking]"); ?>
+   <div class="row mt-3">
+       <div class="col-12">
+           <?php echo do_shortcode("[wecoza_material_tracking]"); ?>
+       </div>
    </div>
 
    <?php echo do_shortcode("[wecoza_insert_update_ai_summary]"); ?>

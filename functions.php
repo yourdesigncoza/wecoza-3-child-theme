@@ -94,7 +94,7 @@ function enqueue_assets() {
 
     // Select2 - only on pages with forms/dropdowns (deferred loading).
     if ( $needs_forms ) {
-        wp_enqueue_style('select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array('jquery'), '4.1.0-rc.0');
+        wp_enqueue_style('select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0-rc.0');
         wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), WECOZA_PLUGIN_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
     }
 
