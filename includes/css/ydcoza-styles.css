@@ -5408,11 +5408,6 @@ option:disabled {
     pointer-events: none;
 }
 
-/* Table responsive fixes */
-.table-responsive {
-    border-radius: 0.375rem;
-}
-
 /* Animation for row selection */
 .learner-row {
     transition: all 0.2s ease-in-out;
@@ -5568,4 +5563,25 @@ option:disabled {
 .logout-toggle-label:hover {
   background-color: rgba(220, 53, 69, 0.15);
   color: #dc3545;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Regulatory Export – Expandable Detail Rows                                 */
+/* -------------------------------------------------------------------------- */
+#reg-table .reg-detail-row td { padding: 0 !important; }
+#reg-table .reg-detail-content { }
+#reg-table .reg-toggle-btn { border: none !important; background: transparent !important; padding: 0.25rem; cursor: pointer; color: var(--phoenix-primary, #3874ff); font-size: 1rem; line-height: 1; }
+
+/* -------------------------------------------------------------------------- */
+/* Progression Report – Chevron rotation on collapse toggle                   */
+/* -------------------------------------------------------------------------- */
+[data-bs-toggle="collapse"] .bi-chevron-down,
+[data-bs-toggle="collapse"] .bi-chevron-right {
+    transition: transform 0.2s ease;
+}
+[data-bs-toggle="collapse"]:not(.collapsed) .bi-chevron-down {
+    transform: rotate(180deg);
+}
+[data-bs-toggle="collapse"]:not(.collapsed) .bi-chevron-right {
+    transform: rotate(90deg);
 }

@@ -338,6 +338,48 @@ function ydcoza_breadcrumbs_after_primary( $template ) {
 add_action( 'bootscore_after_primary_open', 'ydcoza_breadcrumbs_after_primary', 10, 1 );
 
 /**
+ * Show shortcode indicators below breadcrumbs for dev user only.
+ */
+function ydcoza_shortcode_indicator(): void {
+    $user = wp_get_current_user();
+    if ( ! $user->exists() || $user->user_email !== 'laudes.michael@gmail.com' ) {
+        return;
+    }
+
+    global $post;
+    if ( ! $post || empty( $post->post_content ) ) {
+        return;
+    }
+
+    $pattern = get_shortcode_regex();
+    if ( ! preg_match_all( '/' . $pattern . '/s', $post->post_content, $matches ) ) {
+        return;
+    }
+
+    $wecoza_prefixes = [ 'wecoza_', 'qa_' ];
+    $shortcodes = array_filter( $matches[2], function( $tag ) use ( $wecoza_prefixes ) {
+        foreach ( $wecoza_prefixes as $prefix ) {
+            if ( str_starts_with( $tag, $prefix ) ) {
+                return true;
+            }
+        }
+        return false;
+    });
+
+    if ( empty( $shortcodes ) ) {
+        return;
+    }
+
+    echo '<div class="ydcoza-shortcode-indicator d-flex flex-wrap align-items-center gap-2 px-3 py-1">';
+    echo '<small class="text-body-tertiary fw-semibold me-1">Shortcodes:</small>';
+    foreach ( $shortcodes as $tag ) {
+        echo '<span class="badge badge-phoenix badge-phoenix-info fs-10">[' . esc_html( $tag ) . ']</span>';
+    }
+    echo '</div>';
+}
+add_action( 'bootscore_after_primary_open', 'ydcoza_shortcode_indicator', 11 );
+
+/**
  * Hide the front-end admin toolbar for everyone except a specific user.
  */
 function hide_admin_toolbar_for_non_admins() {
