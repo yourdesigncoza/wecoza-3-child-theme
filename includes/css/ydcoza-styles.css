@@ -5585,3 +5585,10 @@ option:disabled {
 [data-bs-toggle="collapse"]:not(.collapsed) .bi-chevron-right {
     transform: rotate(90deg);
 }
+
+/* -------------------------------------------------------------------------- */
+/* Contextual Help Offcanvas Panels                                          */
+/* -------------------------------------------------------------------------- */
+.wecoza-help-offcanvas { max-width: 420px; }
+.wecoza-help-tip { border-left: 3px solid var(--phoenix-primary, #3874ff); }
+.wecoza-help-ordered li::marker { color: var(--phoenix-primary, #3874ff); font-weight: 600; }
