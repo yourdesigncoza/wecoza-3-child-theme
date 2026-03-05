@@ -2325,7 +2325,7 @@
     .chat-message-received .bg-light {
         max-width: 95% !important;
     }
-    
+
     #openai-prompt {
         font-size: 16px; /* Prevents zoom on iOS */
     }
@@ -2457,11 +2457,11 @@
         align-items: stretch;
         gap: 0.5rem;
     }
-    
+
     .qa-report-file-display .file-info {
         justify-content: center;
     }
-    
+
     .qa-report-file-display .btn-replace-file {
         width: 100%;
         justify-content: center;
@@ -2940,31 +2940,31 @@ html[data-bs-theme="light"] .d-tl-none{
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .qa-metrics-summary {
         grid-template-columns: 1fr;
     }
-    
+
     .widget-metrics {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     .widget-actions {
         flex-direction: column;
     }
-    
+
     .visit-item {
         flex-direction: column;
         gap: 5px;
     }
-    
+
     .widget-header {
         flex-direction: column;
         gap: 10px;
         align-items: stretch;
     }
-    
+
     .widget-controls {
         justify-content: center;
     }
@@ -3232,25 +3232,25 @@ html[data-bs-theme="dark"] .navbar-top {
         background: #212529;
         color: #fff;
     }
-    
+
     .fc-header-toolbar {
         background: #343a40;
         border-bottom-color: #495057;
     }
-    
+
     .fc-toolbar-title {
         color: #fff;
     }
-    
+
     .fc-daygrid-day {
         background: #212529;
         border-color: #495057;
     }
-    
+
     .fc-daygrid-day:hover {
         background: #343a40;
     }
-    
+
     .calendar-legend {
         background: #343a40;
         color: #fff;
@@ -3284,11 +3284,11 @@ html[data-bs-theme="dark"] .navbar-top {
         box-shadow: none;
         border: 1px solid #000;
     }
-    
+
     .fc-button {
         display: none;
     }
-    
+
     .calendar-legend {
         page-break-inside: avoid;
     }
@@ -4604,12 +4604,12 @@ html[data-bs-theme="dark"] .note-category-equipment-problems {
         text-align: center;
         gap: 1rem;
     }
-    
+
     .dropzone-content .d-flex {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .dropzone-content .me-3 {
         margin-right: 0 !important;
         margin-bottom: 0.5rem;
@@ -4818,26 +4818,26 @@ html[data-bs-theme="dark"] .note-attachments-dropdown .dropdown-item:hover {
         grid-template-columns: 1fr;
         gap: 0.75rem;
     }
-    
+
     .note-card-header {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .note-card-metadata {
         justify-content: flex-end;
     }
-    
+
     .note-card-footer {
         flex-direction: column;
         gap: 0.5rem;
         align-items: stretch;
     }
-    
+
     .note-card-meta {
         justify-content: center;
     }
-    
+
     .note-card-actions {
         justify-content: center;
     }
@@ -5603,3 +5603,73 @@ option:disabled {
 .wecoza-help-offcanvas .wecoza-help-section { margin-bottom: 0.625rem !important; }
 .wecoza-help-offcanvas .wecoza-help-section + .wecoza-help-section { border-top: 1px solid var(--phoenix-border-color, #e3e6ed); padding-top: 0.625rem; }
 .wecoza-help-offcanvas .offcanvas-body .bi.bi-check-lg { font-size: 0.7rem; }
+
+/* -------------------------------------------------------------------------- */
+/* Attendance hours over-scheduled warning                                    */
+/* -------------------------------------------------------------------------- */
+.hours-over-warning { font-size: 0.85em; cursor: help; }
+
+/* -------------------------------------------------------------------------- */
+/* Attendance Monthly Calendar (WEC-182)                                      */
+/* -------------------------------------------------------------------------- */
+.att-cal-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 3px;
+    table-layout: fixed;
+}
+.att-cal-table th {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--phoenix-tertiary-color, #6c757d);
+    padding: 4px 2px;
+    text-transform: uppercase;
+}
+.att-cal-table td {
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 6px;
+    padding: 6px 2px;
+    min-height: 40px;
+    position: relative;
+}
+.att-cal-daynum { font-size: 0.78rem; font-weight: 500; display: block; }
+.att-cal-count { font-size: 0.6rem; opacity: 0.7; display: block; }
+
+/* Empty / no-class cells */
+.att-cal-empty { background: transparent; }
+.att-cal-noclass { background: transparent; color: #ccc; }
+.att-cal-noclass .att-cal-daynum { font-weight: 400; }
+
+/* Status colours -- same palette as table badges */
+.att-cal-day { border: 1px solid var(--phoenix-border-color, #dee2e6); }
+.att-cal-captured { background: #d1e7dd; border-color: #a3cfbb; color: #0f5132; }
+.att-cal-pending { background: #f8d7da; border-color: #f1aeb5; color: #842029; }
+.att-cal-exception { background: #fff3cd; border-color: #ffe69c; color: #664d03; }
+.att-cal-blocked { background: #e9ecef; border-color: #ced4da; color: #6c757d; opacity: 0.65; }
+.att-cal-future { background: #f8f9fa; border-color: #dee2e6; color: #6c757d; }
+
+/* Today marker */
+/*.att-cal-today { box-shadow: inset 0 0 0 2px var(--phoenix-success-border-subtle); }
+}*/
+.att-cal-today { border-color: var(--phoenix-success-border-subtle); border-style: dashed;}
+}
+/* Clickable */
+.att-cal-clickable { cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+.att-cal-clickable:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
+
+/* Legend dots */
+.att-cal-legend {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+.att-cal-legend.att-cal-captured { background: #d1e7dd; border: 1px solid #a3cfbb; }
+.att-cal-legend.att-cal-pending { background: #f8d7da; border: 1px solid #f1aeb5; }
+.att-cal-legend.att-cal-exception { background: #fff3cd; border: 1px solid #ffe69c; }
+.att-cal-legend.att-cal-blocked { background: #e9ecef; border: 1px solid #ced4da; }
+.att-cal-legend.att-cal-future { background: #f8f9fa; border: 1px solid #dee2e6; }
