@@ -5945,3 +5945,15 @@ option:disabled {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
 }
+
+/* Schedule Statistics accordion — remove hover bg & padding */
+#scheduleStatsAccordion .accordion-button {
+    background: transparent;
+    padding: 0.5rem 0;
+    box-shadow: none;
+}
+#scheduleStatsAccordion .accordion-button:hover,
+#scheduleStatsAccordion .accordion-button:focus {
+    background: transparent;
+    box-shadow: none;
+}
