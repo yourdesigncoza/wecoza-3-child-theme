@@ -5958,7 +5958,10 @@ option:disabled {
     box-shadow: none;
 }
 
-/* ─── NLQ Preview Table: prevent header wrapping ─── */
+/* ─── NLQ Preview Table: full-width, no header wrapping ─── */
+#nlq-ai-preview-table {
+    width: 100% !important;
+}
 #nlq-ai-preview-table th,
 #nlq-ai-preview-table td {
     white-space: nowrap;
