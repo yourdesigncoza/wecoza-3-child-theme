@@ -64,7 +64,7 @@ add_filter("pre_site_transient_update_core", function ($value) {
 
 // Define theme constants.
 // WECOZA_THEME_VERSION: Bump this when CSS/JS changes to bust browser cache.
-define("WECOZA_THEME_VERSION", "6.2.2");
+define("WECOZA_THEME_VERSION", "6.2.3");
 define("WECOZA_PLUGIN_VERSION", WECOZA_THEME_VERSION); // Alias for backward compatibility.
 define("WECOZA_CHILD_DIR", get_stylesheet_directory());
 define("WECOZA_CHILD_URL", get_stylesheet_directory_uri());
