@@ -5994,3 +5994,35 @@ option:disabled {
 .exam-step-card .exam-upload-progress {
     height: 6px;
 }
+
+/* ==========================================================================
+   WEC-187: Excessive Hours Report Dashboard
+   ========================================================================== */
+
+#excessive-hours-container .alert-container {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#eh-table tbody tr.eh-row-resolved {
+    opacity: 0.6;
+}
+
+#eh-table tbody tr.eh-row-resolved:hover {
+    opacity: 0.85;
+}
+
+#eh-table .eh-resolve-btn {
+    padding: 0.15rem 0.4rem;
+}
+
+#eh-table .eh-history-btn {
+    padding: 0.15rem 0.4rem;
+}
+
+#eh-resolve-modal .modal-body p {
+    background: var(--phoenix-body-highlight-bg, #f9fafd);
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+}
