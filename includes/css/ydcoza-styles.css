@@ -6026,3 +6026,9 @@ option:disabled {
     border-radius: 0.375rem;
     padding: 0.75rem;
 }
+
+/* WEC-193: National Agent - disabled working area selects */
+.working-area-col select:disabled {
+    opacity: 0.5;
+    background-color: var(--phoenix-gray-100, #f0f0f0);
+}
