@@ -6032,3 +6032,22 @@ option:disabled {
     opacity: 0.5;
     background-color: var(--phoenix-gray-100, #f0f0f0);
 }
+
+/* ===== Audit Deep Diff (WEC-198) ===== */
+.audit-diff-chevron {
+    transition: transform 0.2s ease;
+    display: inline-block;
+    font-size: 0.65rem;
+}
+.audit-diff-expand[aria-expanded="true"] .audit-diff-chevron {
+    transform: rotate(90deg);
+}
+.audit-diff-table table {
+    border: 1px solid var(--phoenix-border-color, #e3e6ed);
+    border-radius: 0.25rem;
+}
+.audit-diff-table td {
+    padding: 0.2rem 0.5rem !important;
+    border-color: var(--phoenix-border-color, #e3e6ed);
+    vertical-align: middle;
+}
