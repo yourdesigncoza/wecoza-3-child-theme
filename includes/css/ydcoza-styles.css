@@ -6051,3 +6051,9 @@ option:disabled {
     border-color: var(--phoenix-border-color, #e3e6ed);
     vertical-align: middle;
 }
+
+/* Geo-coordinate diff highlighting (WEC-198) */
+.audit-diff-geo-change {
+    background-color: rgba(255, 193, 7, 0.08);
+    border-left: 3px solid var(--phoenix-warning, #e5780b);
+}
